@@ -1,3 +1,4 @@
+using Terraria.Audio;
 using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
@@ -94,6 +95,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             }
             if (!DashActive && DashDir == DashDown)
             {
+                SoundEngine.PlaySound(SoundID.Item1 with { Volume = 0.6f, Pitch = -0.25f }, Player.Center);
                 DashActive = true;
                 DashTimer = MAX_DASH_TIMER;
                 DashDelay = MAX_DASH_DELAY;
@@ -120,6 +122,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 Player.immune = true;
                 Player.immuneNoBlink = true;
                 Player.immuneTime = System.Math.Max(Player.immuneTime, 20);
+                PlayImpact();
                 EndStomp();
                 return;
             }
@@ -140,7 +143,17 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         public override void PostUpdate()
         {
             if (DashActive && Player.velocity.Y == 0f)
+            {
+                PlayImpact();
                 EndStomp();
+            }
+        }
+
+        private void PlayImpact()
+        {
+            if (Main.dedServ) return;
+            SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.65f, Pitch = -0.3f }, Player.Bottom);
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.45f, Pitch = 0.1f }, Player.Bottom);
         }
 
         internal void EndStomp()
