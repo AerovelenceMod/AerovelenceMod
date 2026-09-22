@@ -422,6 +422,7 @@ internal static class MeteorInvaderArt
 {
     private const string InvaderTexture = "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorInvader/MeteorInvaderInvaders";
 	
+    private static Texture2D cachedTexture;
     private static Color[] cachedPixels;
 
     internal static void DrawInvader(Vector2 center, int variant, int frame, float scale, float fade, bool golden)
