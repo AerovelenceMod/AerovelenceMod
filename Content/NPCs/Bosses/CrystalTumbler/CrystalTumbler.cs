@@ -1227,6 +1227,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
+            npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<Content.Items.Weapons.BossDrops.CrystalTumbler.TumblerEnrichmentScepter>(), 4));
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Content.Items.TreasureBags.CrystalTumblerBag>()));
             LeadingConditionRule normal = new LeadingConditionRule(new Conditions.NotExpert());
             normal.OnSuccess(ItemDropRule.OneFromOptions(1, Content.Items.TreasureBags.CrystalTumblerBag.Weapons));

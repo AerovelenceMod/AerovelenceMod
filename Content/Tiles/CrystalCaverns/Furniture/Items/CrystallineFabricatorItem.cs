@@ -1,3 +1,4 @@
+using AerovelenceMod.Common.Systems.Language;
 using Terraria.ID;
 using Terraria.ModLoader;
 using AerovelenceMod.Common.Utilities;
@@ -9,7 +10,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture.Items
     {
         public override void SetStaticDefaults()
         {
-
+            this.ModifyLocalization("Crystalline Fabricator")
+                .AddName(Language.Spanish, "Fabricador cristalino");
         }
 
         public override void SetDefaults()

@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Globals.SkillStrikes;
+using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -20,6 +22,14 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 	public class Shocklash : ModItem
 	{
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Shocklash/Shocklash";
+
+        public override void SetStaticDefaults()
+        {
+            this.ModifyLocalization("Shocklash", "An electrified crystal whip")
+                .AddTooltip(Language.Spanish, "Un látigo de cristal electrificado")
+                .AddSkillStrike(Language.Default, "Strike with the tip to Skill Strike")
+                .AddSkillStrike(Language.Spanish, "Golpea con la punta para asestar un Golpe de Habilidad");
+        }
 
         public override void SetDefaults()
 		{
@@ -207,6 +217,17 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 
         }
 
+        private bool tipHit;
+        public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
+        {
+            var points = Projectile.WhipPointsForCollision;
+            Projectile.FillWhipControlPoints(Projectile, points);
+            tipHit = points.Count >= 2 && target.Center.Distance(points[points.Count - 2]) < 55f;
+            Projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = false;
+            if (tipHit)
+                SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, 1, 0.25f, 0.6f);
+        }
+
         int justTipperedTimer = 0;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -214,7 +235,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
             Projectile.FillWhipControlPoints(Projectile, points);
             Vector2 tip = points[points.Count - 2];
 
-            if (target.Center.Distance(tip) < 55)
+            if (tipHit)
             {
                 for (int i = 0; i < 22 + Main.rand.Next(0, 2); i++)
                 {
@@ -254,7 +275,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 
             //target.AddBuff(ModContent.BuffType<Electrified>(), 240);
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-            Projectile.damage = (int)(hit.Damage * 0.8f); // Multihit penalty. 
+            Projectile.damage = Math.Max(1, (int)(Projectile.damage * 0.8f));
         }
 
         public List<float> previousTipRotations = new List<float>();

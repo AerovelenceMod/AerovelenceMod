@@ -31,11 +31,5 @@ namespace AerovelenceMod.Content.Items.Others.Quest
             Item.rare = RewardTier >= 10 ? ItemRarityID.Pink : RewardTier >= 6 ? ItemRarityID.LightRed : ItemRarityID.Green;
             Item.value = Item.sellPrice(silver: Math.Max(1, RewardSilver / 5));
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
     }
 }

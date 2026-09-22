@@ -29,12 +29,6 @@ namespace AerovelenceMod.Content.Items.Others.Alchemical
             
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", "Restores 60 life with 30 seconds of potion sickness\nGrants 40 defense for 30 seconds, but inflicts mineral poisoning for 12 seconds\nPoisoning drains 10 life per second\nContains enough sediment to cause stomach or throat stones. Worse than a kidney stone."));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

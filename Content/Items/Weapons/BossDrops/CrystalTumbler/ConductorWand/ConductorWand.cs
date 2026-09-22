@@ -28,12 +28,6 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             this.ModifyLocalization("Conductor Wand", Description).AddSkillStrike(Language.Default, "Capturing 3 minions unleashes a plasma globe at the cost of 50 mana");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

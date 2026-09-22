@@ -69,10 +69,8 @@ namespace AerovelenceMod
         public AerovelenceMod()
         {
             Instance = this;
-            LanguageManager.Instance.OnLanguageChanged += OnLanguageChanged;
         }
 
-        private void OnLanguageChanged(object sender){ ForceRefreshAllTranslations(); }
 
 
         public override void PostSetupContent()
@@ -226,7 +224,6 @@ namespace AerovelenceMod
 				Filters.Scene["Shockwave"].Load();
 				
             }
-			GemGrapplingRange.Load();
 
             
 
@@ -335,55 +332,7 @@ namespace AerovelenceMod
 			LegElectricity = null;
 			RailgunShader = null;
 
-            if (LanguageManager.Instance != null)
-                LanguageManager.Instance.OnLanguageChanged -= OnLanguageChanged;
         }
-
-		public void ForceRefreshAllTranslations()
-		{
-			try
-			{
-				LocalizationPatcher.ApplyNamePatches();
-                if (Main.netMode != NetmodeID.Server)
-				{
-					for (int i = 0; i < Main.player.Length; i++)
-					{
-						Player player = Main.player[i];
-						if (player == null || !player.active)
-							continue;
-						for (int j = 0; j < player.inventory.Length; j++)
-							player.inventory[j].ForceUpdateDisplayName();
-						for (int j = 0; j < player.armor.Length; j++)
-							player.armor[j].ForceUpdateDisplayName();
-						for (int j = 0; j < player.bank.item.Length; j++)
-							player.bank.item[j].ForceUpdateDisplayName();
-						for (int j = 0; j < player.bank2.item.Length; j++)
-							player.bank2.item[j].ForceUpdateDisplayName();
-						for (int j = 0; j < player.bank3.item.Length; j++)
-							player.bank3.item[j].ForceUpdateDisplayName();
-						for (int j = 0; j < player.bank4.item.Length; j++)
-							player.bank4.item[j].ForceUpdateDisplayName();
-					}
-					for (int i = 0; i < Main.item.Length; i++)
-					{
-						if (Main.item[i] != null && Main.item[i].active)
-							Main.item[i].ForceUpdateDisplayName();
-					}
-					for (int i = 0; i < Main.npc.Length; i++)
-					{
-						if (Main.npc[i] != null && Main.npc[i].active)
-						{
-							Main.npc[i].ForceUpdateDisplayName();
-						}
-					}
-				}
-			}
-			catch (Exception ex)
-			{
-				Logger.Warn($"Error refreshing translations: {ex.Message}");
-			}
-		}
-    
 
     public override void Close()
 		{

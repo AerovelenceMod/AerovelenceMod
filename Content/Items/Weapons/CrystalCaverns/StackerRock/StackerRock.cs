@@ -30,12 +30,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             this.AddSkillStrike(Language.Spanish, "Derriba una torre de al menos cinco rocas");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", "Throws discs that linger on the floor; More can be piled up in one stack\nHit a tower from the side to topple it, sending rocks rolling"));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

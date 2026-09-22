@@ -28,12 +28,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             base.SetStaticDefaults();
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
 
         public override void SetDefaults()
         {
@@ -137,17 +131,28 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 if (Projectile.oldPos[i] == Vector2.Zero)
                     continue;
                 float fade = 1f - i / (float)Projectile.oldPos.Length;
-                RockRumblerVFX.Glow(Projectile.oldPos[i] + Projectile.Size * 0.5f, new Vector2(26f * fade), RockRumblerVFX.Aqua, fade * 0.35f * powered);
+                RockRumblerVFX.Glow(Projectile.oldPos[i] + Projectile.Size * 0.5f, new Vector2(38f * fade), Color.White, fade * 0.85f * powered);
             }
             RockRumblerVFX.Glow(Projectile.Center, new Vector2(65f), RockRumblerVFX.Aqua, 0.3f + powered * 0.25f);
-            RockRumblerVFX.Rock(Projectile.Center, Projectile.rotation, 27f, lightColor);
+            RockRumblerVFX.Rock(Projectile.Center, Projectile.rotation, 27f, Color.Lerp(lightColor, Color.White, powered));
+            if (powered > 0f)
+            {
+                Texture2D hotRock = ModContent.Request<Texture2D>(RockRumblerVFX.RockTexture).Value;
+                Main.EntitySpriteDraw(hotRock, Projectile.Center - Main.screenPosition, RockRumblerVFX.RockFrame,
+                    RockRumblerVFX.Additive(Color.White, powered), Projectile.rotation, RockRumblerVFX.RockFrame.Size() * 0.5f,
+                    27f / RockRumblerVFX.RockFrame.Width, SpriteEffects.None);
+                RockRumblerVFX.Glow(Projectile.Center, new Vector2(64f), Color.White, powered);
+            }
             for (int i = 0; i < 4; i++)
             {
                 float angle = Projectile.rotation + i * MathHelper.PiOver2;
                 RockRumblerVFX.Crystal(Projectile.Center + angle.ToRotationVector2() * 8f, angle + MathHelper.PiOver2, new Vector2(5f, 12f), 1f, 0.25f + powered * 0.5f);
             }
             if (powered > 0f)
-                RockRumblerVFX.Flare(Projectile.Center, 48f, powered * 0.8f, Projectile.velocity.ToRotation() + MathHelper.PiOver2);
+                {
+                RockRumblerVFX.Glow(Projectile.Center, new Vector2(30f), Color.White, powered);
+                RockRumblerVFX.Flare(Projectile.Center, 62f, powered, Projectile.velocity.ToRotation() + MathHelper.PiOver2);
+            }
             return false;
         }
     }

@@ -30,12 +30,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             base.SetStaticDefaults();
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
 
         public override void SetDefaults()
         {

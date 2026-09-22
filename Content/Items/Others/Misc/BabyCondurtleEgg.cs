@@ -22,12 +22,6 @@ namespace AerovelenceMod.Content.Items.Others.Misc
             Item.ResearchUnlockCount = 1;
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

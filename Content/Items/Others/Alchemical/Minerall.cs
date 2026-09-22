@@ -29,12 +29,6 @@ namespace AerovelenceMod.Content.Items.Others.Alchemical
             
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", "Increases mining speed by 15%, movement speed by 10%, and mining reach by 1\nLasts 5 minutes and stacks with Mining Potion"));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

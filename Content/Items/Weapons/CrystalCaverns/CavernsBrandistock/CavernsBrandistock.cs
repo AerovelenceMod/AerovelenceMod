@@ -19,21 +19,15 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class CavernsBrandistock : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/CavernsBrandistock/CavernsBrandistock";
-        private const string EnglishTooltip = "Successful thrusts build blade stress\nAt 40% stress, three hidden crystal blades extend out\nAt maximum stress, the blades shatter and reform after 4 seconds\nStress is relieved over time when weapon is not in use";
+        private const string EnglishTooltip = "Successful thrusts build blade stress\nAt 40% stress, three hidden crystal blades extend out and deal triple damage\nAt maximum stress, the blades shatter and reform after 4 seconds\nStress is relieved over time when weapon is not in use";
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Cavern's Brandistock", EnglishTooltip)
                 .AddSkillStrike(Language.Default, "Hit with the crystal blades to Skill Strike")
                 .AddName(Language.Spanish, "Brandistock de las Cavernas")
-                .AddTooltip(Language.Spanish, "Los impactos acumulan tensión en las hojas\nAl 40% de tensión, tres hojas de cristal se extienden y asestan Golpes de Habilidad\nAl alcanzar el máximo, las hojas se rompen y retraen durante 4 segundos\nPuedes seguir atacando en modo bastón mientras se recupera el mecanismo\nHaz pausas entre ataques para reducir la tensión")
+                .AddTooltip(Language.Spanish, "Los impactos acumulan tensión en las hojas\nAl 40% de tensión, tres hojas de cristal se extienden y asestan Golpes de Habilidad de daño triple\nAl alcanzar el máximo, las hojas se rompen y retraen durante 4 segundos\nPuedes seguir atacando en modo bastón mientras se recupera el mecanismo\nHaz pausas entre ataques para reducir la tensión")
                 .AddSkillStrike(Language.Spanish, "Golpea con las hojas de cristal completamente extendidas");
             base.SetStaticDefaults();
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
         }
         public override void SetDefaults()
         {
@@ -286,7 +280,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             bool blades = Projectile.owner == Main.myPlayer ? Main.player[Projectile.owner].GetModPlayer<BrandistockPlayer>().Blades : Projectile.ai[2] == 1f;
             Projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = false;
             if (BrandistockMechanism.CanSkillStrike(blades, extension))
-                SkillStrikeUtil.setSkillStrike(Projectile, 1.65f, 1, 0.3f, 0.55f);
+                SkillStrikeUtil.setSkillStrike(Projectile, 3f, 1, 0.3f, 0.55f);
             modifiers.HitDirectionOverride = Axis.X < 0f ? -1 : 1;
         }
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -369,7 +363,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             }
             bool extended = Blades;
             if (++sinceHit > 30)
-                Stress = Math.Max(0f, Stress - 0.6f);
+                Stress = Math.Max(0f, Stress - 0.3f);
             return extended && !Blades ? BrandistockChange.Retract : BrandistockChange.None;
         }
 
@@ -378,7 +372,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             if (Cooldown > 0)
                 return BrandistockChange.None;
             bool extended = Blades;
-            Stress = Math.Min(100f, Stress + 14f);
+            Stress = Math.Min(100f, Stress + 8f);
             sinceHit = 0;
             if (Stress >= 100f)
             {

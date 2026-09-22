@@ -55,12 +55,6 @@ namespace AerovelenceMod.Content.Items.Ammo
             Item.consumable = true;
             Item.maxStack = Item.CommonMaxStack;
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
 
 
     }

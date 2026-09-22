@@ -1,3 +1,4 @@
+using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Projectiles;
@@ -87,7 +88,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
             TileObjectData.addTile(Type);*/
 
-            AddMapEntry(new Color(200, 200, 200), CreateMapEntryName());
+            AddMapEntry(new Color(200, 200, 200), this.MapNameFromItem(ModContent.ItemType<LightningTrapItem>()));
 
             DustType = DustID.BlueCrystalShard;
         }

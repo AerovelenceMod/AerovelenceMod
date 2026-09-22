@@ -29,12 +29,6 @@ namespace AerovelenceMod.Content.Items.Potions
             //.AddName(Language.ChineseSimplified, "石上").AddTooltip(Language.ChineseSimplified, "'石器时代'");
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
         public override bool? UseItem(Player player)
         {
             player.AddBuff(BuffID.Tipsy, 18000);
