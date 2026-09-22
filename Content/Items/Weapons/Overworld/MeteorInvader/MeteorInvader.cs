@@ -422,25 +422,56 @@ internal static class MeteorInvaderArt
 {
     private const string InvaderTexture = "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorInvader/MeteorInvaderInvaders";
 	
+    private static Color[] cachedPixels;
+
     internal static void DrawInvader(Vector2 center, int variant, int frame, float scale, float fade, bool golden)
     {
         Texture2D texture = ModContent.Request<Texture2D>(InvaderTexture).Value;
+        Texture2D pixel = TextureAssets.MagicPixel.Value;
         Texture2D bloom = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow").Value;
-        int frameIndex = Math.Abs(frame) % 2;
-        Rectangle source = new(0, frameIndex * 18, 16, 16);
         Color glow = golden ? new Color(255, 235, 110, 0) : new Color(255, 110, 45, 0);
+        int frameIndex = Math.Abs(frame) % 2;
+        CachePixels(texture);
+
         Main.EntitySpriteDraw(bloom, center, null, glow * (.23f * fade), 0f, bloom.Size() * .5f, 50f * scale / bloom.Width, SpriteEffects.None);
-        Main.EntitySpriteDraw(texture, center, source, Color.White * fade, 0f, source.Size() * .5f, scale, SpriteEffects.None);
-        if (golden)
-            Main.EntitySpriteDraw(texture, center, source, glow * (.28f * fade), 0f, source.Size() * .5f, scale, SpriteEffects.None);
+
+        for (int y = 0; y < 8; y++)
+            for (int x = 0; x < 8; x++)
+            {
+                if (!CellFilled(texture, frameIndex, x, y)) continue;
+                Vector2 position = center + new Vector2((x - 3.5f) * 3f, (y - 3.5f) * 3f) * scale;
+                Color body = Color.Lerp(new Color(120, 55, 83), new Color(245, 148, 88), 1f - y / 9f);
+                Main.EntitySpriteDraw(pixel, position, new Rectangle(0, 0, 1, 1), body * fade, 0f, new Vector2(.5f), new Vector2(3f * scale), SpriteEffects.None);
+                Main.EntitySpriteDraw(pixel, position, new Rectangle(0, 0, 1, 1), glow * (.4f * fade), 0f, new Vector2(.5f), new Vector2(2f * scale), SpriteEffects.None);
+            }
     }
 	
+
+    private static void CachePixels(Texture2D texture)
+    {
+        if (ReferenceEquals(cachedTexture, texture) && cachedPixels != null) return;
+        cachedTexture = texture;
+        cachedPixels = new Color[texture.Width * texture.Height];
+        texture.GetData(cachedPixels);
+    }
+
+    private static bool CellFilled(Texture2D texture, int frame, int cellX, int cellY)
+    {
+        int startX = cellX * 2;
+        int startY = frame * 18 + cellY * 2;
+        for (int y = 0; y < 2; y++)
+            for (int x = 0; x < 2; x++)
+                if (cachedPixels[(startY + y) * texture.Width + startX + x].A > 16) return true;
+        return false;
+    }
+
     internal static void Line(Vector2 start, Vector2 end, Color color, float width)
     {
         Vector2 delta = end - start;
         Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, start, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0f, .5f), new Vector2(delta.Length() + 1f, width), SpriteEffects.None);
     }
 	
+
     internal static void Spark(Vector2 position, Vector2 velocity, bool golden)
     {
         if (Main.dedServ) return;
