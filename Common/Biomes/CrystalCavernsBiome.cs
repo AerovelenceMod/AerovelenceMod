@@ -12,8 +12,8 @@ namespace AerovelenceMod.Content.Biomes
     public class CrystalCavernsBiome : ModBiome
     {
         public override ModWaterStyle WaterStyle => ModContent.Find<ModWaterStyle>("AerovelenceMod/CrystalCavernsWaterStyle");
-		public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("AerovelenceMod/CrystalCavernsBgStyle");
-        //public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.GetInstance<CrystalCavernsConceptBackgroundStyle>();
+		//public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("AerovelenceMod/CrystalCavernsBgStyle");
+        public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.GetInstance<CrystalCavernsConceptBackgroundStyle>();
 		//uncomment the above and comment the previous line to see the new open background
         public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Mushroom;
 
