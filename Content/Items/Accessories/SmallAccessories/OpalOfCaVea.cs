@@ -1,4 +1,5 @@
-﻿using Terraria;
+using Terraria.Audio;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -54,25 +55,44 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         public bool hasOpalVisibility;
         public int crystalCount;
         private int crystalTimer;
+        internal readonly int[] CrystalAge = new int[3];
 
-        public override void ResetEffects()
+        public override void ResetEffects() => hasOpal = hasOpalVisibility = false;
+
+        public override void UpdateDead()
         {
-            if (!hasOpal)
-            {
-                crystalCount = crystalTimer = 0;
-            }
-            hasOpal = false;
+            crystalCount = crystalTimer = 0;
+            Array.Clear(CrystalAge);
         }
 
         public override void PostUpdate()
         {
+            if (!hasOpal || Player.dead)
+            {
+                crystalCount = crystalTimer = 0;
+                Array.Clear(CrystalAge);
+                return;
+            }
+            for (int i = 0; i < crystalCount; i++)
+                CrystalAge[i] = Math.Min(24, CrystalAge[i] + 1);
             if (hasOpal)
             {
                 crystalTimer++;
                 if (crystalCount < 3 && crystalTimer >= 300)
                 {
-                    crystalCount++;
+                    CrystalAge[crystalCount++] = 0;
                     crystalTimer = 0;
+                    if (hasOpalVisibility && !Main.dedServ)
+                    {
+                        SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.3f, Pitch = 0.3f + crystalCount * 0.1f }, Player.Center);
+                        for (int i = 0; i < 8; i++)
+                        {
+                            Dust spark = Dust.NewDustPerfect(Player.Center + new Vector2(-14f * Player.direction, -8f), ModContent.DustType<GlowPixelCross>(),
+                                Main.rand.NextVector2Circular(2f, 2f), newColor: Color.SkyBlue, Scale: 0.2f);
+                            spark.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.1f, timeBeforeSlow: 4,
+                                preSlowPower: 0.9f, postSlowPower: 0.85f, velToBeginShrink: 1f, fadePower: 0.85f, shouldFadeColor: false);
+                        }
+                    }
                 }
                 float intensity = crystalCount / 3f;
                 Lighting.AddLight(Player.Center, new Vector3(0.0f, 0.3f, 0.7f) * intensity);
@@ -121,15 +141,10 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
     {
         public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.BackAcc);
 
-        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
-        {
-            return drawInfo.drawPlayer.GetModPlayer<OpalOfCaVeaPlayer>().hasOpal;
-        }
-
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             Player player = drawInfo.drawPlayer;
-            if (player.dead) return;
+            if (player.dead || player.invis || drawInfo.shadow != 0f) return;
 
             var modPlayer = player.GetModPlayer<OpalOfCaVeaPlayer>();
             if (!modPlayer.hasOpal) return;
@@ -137,7 +152,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             if (modPlayer.hasOpalVisibility)
             {
                 Texture2D crystalTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CavernCrystalItem").Value;
-                Vector2 basePosition = player.MountedCenter;
+                Vector2 basePosition = drawInfo.Position + player.Size * 0.5f + new Vector2(0f, player.gfxOffY);
                 Vector2 screenPos = Main.screenPosition;
                 float heightFactor = player.mount.Active ? 0.8f : 1f;
                 Vector2 offset1 = new(-14 * player.direction, -player.height * 0.5f * heightFactor);
@@ -156,8 +171,15 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                     float dynamicSway = player.velocity.X * 0.05f;
                     rotation -= dynamicSway;
                     SpriteEffects effects = (player.direction == -1) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-                    DrawData data = new(crystalTexture, drawPos, null, Color.White, rotation, crystalTexture.Size() * 0.5f, 1f, effects, 0);
+                    float progress = modPlayer.CrystalAge[i] / 24f;
+                    float growth = progress >= 1f ? 1f : 1f + 2.7f * MathF.Pow(progress - 1f, 3f) + 1.7f * MathF.Pow(progress - 1f, 2f);
+                    drawPos += new Vector2(player.direction * 8f, 5f * player.gravDir) * (1f - progress);
+                    DrawData data = new(crystalTexture, drawPos, null, Color.White * Math.Min(1f, progress * 4f), rotation,
+                        crystalTexture.Size() * 0.5f, Math.Max(0.01f, growth), effects, 0);
                     drawInfo.DrawDataCache.Add(data);
+                    if (progress < 1f)
+                        drawInfo.DrawDataCache.Add(new DrawData(crystalTexture, drawPos, null, new Color(170, 225, 255, 0) * (1f - progress), rotation,
+                            crystalTexture.Size() * 0.5f, Math.Max(0.01f, growth), effects));
                 }
             }
         }
