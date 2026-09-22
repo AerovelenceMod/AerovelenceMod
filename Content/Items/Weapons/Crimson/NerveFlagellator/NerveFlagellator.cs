@@ -12,7 +12,7 @@ using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems.Language;
 
-namespace AerovelenceMod.Content.Items.Weapons.Crimson
+namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
 {
     public class NerveFlagellator : TranslatableModItem
     {
@@ -232,7 +232,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson
 
             else
             {
-                texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Crimson/NerveFlagellatorProjectileMini").Value;
+                texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Crimson/NerveFlagellator/NerveFlagellatorProjectileMini").Value;
             }
 
             SpriteEffects flip = SpriteEffects.None;
