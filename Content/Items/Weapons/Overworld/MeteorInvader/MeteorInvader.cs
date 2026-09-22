@@ -424,6 +424,8 @@ internal static class MeteorInvaderArt
 	
     private static Texture2D cachedTexture;
     private static Color[] cachedPixels;
+    private static int cachedWidth;
+    private static int cachedHeight;
 
     internal static void DrawInvader(Vector2 center, int variant, int frame, float scale, float fade, bool golden)
     {
@@ -450,19 +452,31 @@ internal static class MeteorInvaderArt
 
     private static void CachePixels(Texture2D texture)
     {
-        if (ReferenceEquals(cachedTexture, texture) && cachedPixels != null) return;
+        int width = texture.Width;
+        int height = texture.Height;
+        int size = width * height;
+        if (ReferenceEquals(cachedTexture, texture) && cachedPixels != null && cachedPixels.Length == size && cachedWidth == width && cachedHeight == height) return;
         cachedTexture = texture;
-        cachedPixels = new Color[texture.Width * texture.Height];
+        cachedWidth = width;
+        cachedHeight = height;
+        cachedPixels = new Color[size];
         texture.GetData(cachedPixels);
     }
 
     private static bool CellFilled(Texture2D texture, int frame, int cellX, int cellY)
     {
+        if (cachedPixels == null || cachedPixels.Length != texture.Width * texture.Height) CachePixels(texture);
         int startX = cellX * 2;
         int startY = frame * 18 + cellY * 2;
         for (int y = 0; y < 2; y++)
             for (int x = 0; x < 2; x++)
-                if (cachedPixels[(startY + y) * texture.Width + startX + x].A > 16) return true;
+            {
+                int px = startX + x;
+                int py = startY + y;
+                if (px < 0 || py < 0 || px >= texture.Width || py >= texture.Height) continue;
+                int index = py * texture.Width + px;
+                if (index >= 0 && index < cachedPixels.Length && cachedPixels[index].A > 16) return true;
+            }
         return false;
     }
 
