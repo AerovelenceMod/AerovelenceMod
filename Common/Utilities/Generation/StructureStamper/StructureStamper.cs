@@ -17,6 +17,10 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
     {
         public static StructureStamper Instance { get; private set; }
 
+        public override void PreWorldGen() => AeroStructure.ProtectedStructures.Clear();
+
+        public override void OnWorldUnload() => AeroStructure.ProtectedStructures.Clear();
+
         public override void Load()
         {
             Instance = this;

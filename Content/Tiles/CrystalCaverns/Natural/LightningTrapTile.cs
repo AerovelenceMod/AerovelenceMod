@@ -137,7 +137,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 if (!WorldGen.InWorld(checkX, checkY))
                     break;
                 Tile checkTile = Main.tile[checkX, checkY];
-                if (checkTile.TileType == Type)
+                if (checkTile.HasTile && checkTile.TileType == Type)
                 {
                     int checkDirection = checkTile.TileFrameY / FRAME_HEIGHT;
                     bool canPair = (direction == 0 && checkDirection == 1) ||
@@ -219,7 +219,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                             int checkY = j + (!isHorizontal ? distance * searchDirection : 0);
                             if (!WorldGen.InWorld(checkX, checkY)) break;
                             Tile checkTile = Main.tile[checkX, checkY];
-                            if (checkTile.TileType == Type)
+                            if (checkTile.HasTile && checkTile.TileType == Type)
                             {
                                 int checkDirection = checkTile.TileFrameY / FRAME_HEIGHT;
                                 if ((direction == 0 && checkDirection == 1) ||
@@ -257,7 +257,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 if (!WorldGen.InWorld(checkX, checkY)) break;
 
                 Tile checkTile = Main.tile[checkX, checkY];
-                if (checkTile.TileType == Type)
+                if (checkTile.HasTile && checkTile.TileType == Type)
                 {
                     int checkDirection = checkTile.TileFrameY / FRAME_HEIGHT;
                     bool isPaired = (direction == 0 && checkDirection == 1) ||
@@ -306,6 +306,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
         public override void NearbyEffects(int i, int j, bool closer)
         {
+            if (closer) return;
             Tile tile = Main.tile[i, j];
             if (!tile.HasTile) return;
             bool isDetectorMode = IsInDetectorMode(i, j, tile);
@@ -348,6 +349,9 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 int checkX = i + (isHorizontal ? distance * searchDirection : 0);
                 int checkY = j + (!isHorizontal ? distance * searchDirection : 0);
                 if (!WorldGen.InWorld(checkX, checkY))
+                    break;
+                Tile checkTile = Main.tile[checkX, checkY];
+                if (checkTile.HasTile && checkTile.TileType == Type)
                     break;
                 Rectangle checkArea = new(
                     checkX * 16,
@@ -415,6 +419,12 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) return;
             int direction = tile.TileFrameY / FRAME_HEIGHT;
+            if (direction != 0 && direction != 2) return;
+            Vector2 origin = new(i * 16 + 8, j * 16 + 8);
+            int projectileType = ModContent.ProjectileType<LightningProjectile2>();
+            foreach (Projectile projectile in Main.ActiveProjectiles)
+                if (projectile.type == projectileType && Vector2.DistanceSquared(projectile.Center, origin) < 1f)
+                    return;
             Vector2 velocity = Vector2.Zero;
             switch (direction)
             {
@@ -425,9 +435,9 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             }
             Projectile.NewProjectile(
                 Wiring.GetProjectileSource(i, j),
-                new Vector2(i * 16 + 8, j * 16 + 8),
+                origin,
                 velocity,
-                ModContent.ProjectileType<LightningProjectile2>(),
+                projectileType,
                 50,
                 2f,
                 Main.myPlayer
@@ -482,7 +492,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 if (!WorldGen.InWorld(checkX, checkY))
                     break;
                 Tile checkTile = Main.tile[checkX, checkY];
-                if (checkTile.TileType == Type)
+                if (checkTile.HasTile && checkTile.TileType == Type)
                 {
                     int checkDirection = checkTile.TileFrameY / FRAME_HEIGHT;
                     bool isPaired = (direction == 0 && checkDirection == 1) || //right faces left
@@ -972,7 +982,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 if (!WorldGen.InWorld(checkX, checkY)) break;
 
                 Tile checkTile = Main.tile[checkX, checkY];
-                if (checkTile.TileType == ModContent.TileType<LightningTrapTile>())
+                if (checkTile.HasTile && checkTile.TileType == ModContent.TileType<LightningTrapTile>())
                 {
                     targetPosition = new Vector2(checkX * 16 + 8, checkY * 16 + 8);
                     return;
@@ -990,6 +1000,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
         private Vector2 targetPosition;
 
+        public override bool ShouldUpdatePosition() => false;
+
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -999,8 +1011,19 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Projectile.penetrate = -1;
             Projectile.timeLeft = 30;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.light = 0.8f;
+            Projectile.trap = true;
+            Projectile.usesLocalNPCImmunity = true;
+            Projectile.localNPCHitCooldown = 30;
+        }
+
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            if (lightningData == null || !lightningData.Initialized) return false;
+            float distance = 0;
+            return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(),
+                Projectile.Center, targetPosition, 8f, ref distance);
         }
 
         public override void AI()
@@ -1008,13 +1031,14 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             if (lightningData == null || !lightningData.Initialized)
             {
                 FindTargetPosition();
-                lightningData = new LightningData(Projectile, LightningStyle.Smooth);
-                LightningUtils.InitializeBetweenPoints(
-                    lightningData,
-                    Projectile.Center,
-                    targetPosition
-                );
+                lightningData = new LightningData(Projectile, LightningStyle.Smooth)
+                {
+                    DisplacementIntensity = 0.22f,
+                    MaxBranches = 1,
+                    BranchChance = 0.08f
+                };
             }
+            LightningUtils.InitializeBetweenPoints(lightningData, Projectile.Center, targetPosition, LightningStyle.Smooth);
             LightningUtils.UpdateSegments(lightningData);
             LightningUtils.UpdateBranches(lightningData);
             LightningUtils.SpawnDust(lightningData);
@@ -1045,7 +1069,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 if (!WorldGen.InWorld(checkX, checkY)) break;
 
                 Tile checkTile = Main.tile[checkX, checkY];
-                if (checkTile.TileType == ModContent.TileType<LightningTrapTile>())
+                if (checkTile.HasTile && checkTile.TileType == ModContent.TileType<LightningTrapTile>())
                 {
                     targetPosition = new Vector2(checkX * 16 + 8, checkY * 16 + 8);
                     return;

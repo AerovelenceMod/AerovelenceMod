@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Systems;
+using AerovelenceMod.Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -193,41 +194,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         private static void Draw(LightningPath path, float scale = 0.5f, bool alphaBlend = false)
         {
-            SpriteBatch spriteBatch = Main.spriteBatch;
-            float width = Math.Max(2f, path.Width) * scale;
-            float pulse = 0.85f + 0.15f * MathF.Sin(Main.GameUpdateCount * 0.2f);
-            Color core = Color.Lerp(path.Color, Color.White, 0.9f) * path.Opacity;
-            Color middle = path.Color * (path.Opacity * 0.55f);
-            Color outer = path.Color * (path.Opacity * 0.26f);
-            Color bloom = path.Color * (path.Opacity * 0.1f * pulse * path.Bloom);
-            if (alphaBlend)
-            {
-                core.A = middle.A = outer.A = bloom.A = 0;
-            }
-            else
-            {
-                core.A = middle.A = outer.A = bloom.A = 255;
-            }
-            for (int i = 1; i < path.Points.Length; i++)
-            {
-                Vector2 start = (path.Points[i - 1] - Main.screenPosition) * scale;
-                Vector2 end = (path.Points[i] - Main.screenPosition) * scale;
-                if (path.Bloom > 0f)
-                {
-                    for (int halo = 4; halo >= 1; halo--)
-                    {
-                        Color haloColor = bloom * ((5f - halo) / 5f);
-                        haloColor.A = alphaBlend ? (byte)0 : (byte)255;
-                        TumblerVFX.DrawLine(spriteBatch, start, end, haloColor, width + halo * 4f * scale);
-                    }
-                }
-                TumblerVFX.DrawLine(spriteBatch, start, end, outer, width + 6f * scale);
-                TumblerVFX.DrawLine(spriteBatch, start, end, middle, width + 3f * scale);
-                TumblerVFX.DrawLine(spriteBatch, start, end, core, width);
-            }
+            LightningStrokeRenderer.DrawPath(Main.spriteBatch, path.Points, path.Color, path.Opacity,
+                Math.Max(1f, path.Width), Math.Max(1f, path.Width), path.Bloom, scale, !alphaBlend);
         }
     }
-
     public class TumblerActorVisuals : GlobalNPC
     {
         public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => entity.ModNPC is TumblerCrystalBud or TumblerConductiveCrystal or TumblerCarapaceShard;

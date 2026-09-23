@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.GameContent;
 using AerovelenceMod.Common.Systems;
+using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 
 namespace AerovelenceMod.Content.Projectiles
@@ -16,6 +17,7 @@ namespace AerovelenceMod.Content.Projectiles
     {
         public class LightningData
         {
+            internal LightningStrokeRenderer StrokeRenderer;
             public int MaxSegments = 12;
             public float BranchChance = 1f;
             public int MaxBranches = 2;
@@ -55,6 +57,7 @@ namespace AerovelenceMod.Content.Projectiles
             public float EndThickness = 0.6f;
             public float BranchThicknessMultiplier = 0.55f;
             public float BranchTipThicknessMultiplier = 0.08f;
+            public int GeometryVersion;
 
             public float ThicknessAt(float progress) => MathHelper.Lerp(
                 StartThickness, EndThickness, MathHelper.Clamp(progress, 0f, 1f));
@@ -234,6 +237,7 @@ namespace AerovelenceMod.Content.Projectiles
 
         public static void UpdateSegments(LightningData data)
         {
+            data.GeometryVersion++;
             if (data.Style == LightningStyle.Static)
             {
                 data.StaticTimer++;
@@ -389,6 +393,7 @@ namespace AerovelenceMod.Content.Projectiles
 
         public static void UpdateBranches(LightningData data)
         {
+            data.GeometryVersion++;
             for (int i = data.Branches.Count - 1; i >= 0; i--)
             {
                 Branch branch = data.Branches[i];
@@ -478,390 +483,16 @@ namespace AerovelenceMod.Content.Projectiles
 
         public static void DrawLightning(LightningData data, SpriteBatch spriteBatch)
         {
-            if (data.SegmentPositions == null)
-                return;
-
-            PixellationSystem.QueuePixelationAction(() =>
-            {
-                Texture2D lineTexture = TextureAssets.MagicPixel.Value;
-                Rectangle sourceRect = new(0, 0, 1, 1);
-
-                float flashIntensity = 0f;
-                int flashDuration = 50;
-
-                if (data.Style != LightningStyle.Static && data.Projectile != null)
-                {
-                    float spawnProgress = 1f - (data.Projectile.timeLeft / 30f);
-                    flashIntensity = (float)Math.Pow(1f - spawnProgress, 2);
-                }
-                else
-                {
-                    float frac = (float)data.StaticTimer / flashDuration;
-                    frac = MathHelper.Clamp(frac, 0f, 1f);
-                    flashIntensity = (float)Math.Pow(1f - frac, 2);
-                }
-
-                float energyPulse = (float)Math.Sin(Main.GameUpdateCount * 0.2f) * 0.3f + 0.7f;
-
-                Color coreColor = (data.CoreColorOverride ?? Color.Yellow) * data.Alpha * 0.8f;
-                Color midColor = (data.MidColorOverride ?? new Color(150, 220, 255)) * (data.Alpha * 0.5f * 0.8f);
-                Color outerColor = (data.OuterColorOverride ?? new Color(100, 180, 255)) * (data.Alpha * 0.3f * 0.8f);
-                Color distColor = (data.DistColorOverride ?? new Color(200, 230, 255)) * (data.Alpha * 0.2f * 0.8f);
-                Color flashColor = data.FlashColorOverride ?? Color.Aqua;
-
-                for (int i = 0; i < data.MaxSegments - 1; i++)
-                {
-                    Vector2 start = (data.SegmentPositions[i] - Main.screenPosition) / 2;
-                    Vector2 end = (data.SegmentPositions[i + 1] - Main.screenPosition) / 2;
-                    Vector2 direction = end - start;
-                    float distance = direction.Length();
-                    float rotation = direction.ToRotation();
-
-                    if (flashIntensity > 0f)
-                    {
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            flashColor * flashIntensity,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 3f),
-                            SpriteEffects.None,
-                            0
-                        );
-                    }
-
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        coreColor,
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 1f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        midColor,
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 2f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        outerColor,
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 3f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    float distortionOffset = (float)Math.Sin(Main.GameUpdateCount * 0.8f + i * 0.5f);
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start + new Vector2(0, distortionOffset),
-                        sourceRect,
-                        distColor,
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 1.5f),
-                        SpriteEffects.None,
-                        0
-                    );
-                }
-                Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/feather_circle").Value;
-                Vector2 origin = new Vector2(glowTexture.Width / 2f, glowTexture.Height / 2f);
-
-                for (int i = 0; i < data.MaxSegments; i++)
-                {
-                    Vector2 position = (data.SegmentPositions[i] - Main.screenPosition) / 2;
-                    Color trailColor = outerColor * data.GlowIntensity * 0.7f;
-
-                    for (int g = 0; g < 2; g++)
-                    {
-                        float offsetAngle = g * MathHelper.PiOver2;
-                        Vector2 offset = new Vector2(
-                            (float)Math.Cos(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f,
-                            (float)Math.Sin(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f
-                        );
-
-                        spriteBatch.Draw(
-                            glowTexture,
-                            position + offset,
-                            null,
-                            trailColor * (1f - g * 0.3f),
-                            0f,
-                            origin,
-                            data.GlowScale,
-                            SpriteEffects.None,
-                            0f
-                        );
-                    }
-                }
-
-
-
-
-                DrawImpactPoint(data.SegmentPositions[0], 4f, data, spriteBatch);
-                DrawImpactPoint(data.SegmentPositions[data.MaxSegments - 1], 4f, data, spriteBatch);
-
-                foreach (Branch branch in data.Branches)
-                {
-                    for (int i = 0; i < data.MaxSegments - 1; i++)
-                    {
-                        Vector2 position = (data.SegmentPositions[i] - Main.screenPosition) / 2;
-                        Color trailColor = outerColor * data.GlowIntensity;
-                        for (int g = 0; g < 2; g++)
-                        {
-                            float offsetAngle = g * MathHelper.PiOver2;
-                            Vector2 offset = new Vector2(
-                                (float)Math.Cos(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f,
-                                (float)Math.Sin(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f
-                            );
-
-                            spriteBatch.Draw(
-                                glowTexture,
-                                position + offset,
-                                null,
-                                trailColor * (1f - g * 0.3f),
-                                0f,
-                                origin,
-                                data.GlowScale,
-                                SpriteEffects.None,
-                                0f
-                            );
-                        }
-                    }
-
-                    for (int i = 0; i < branch.Positions.Length - 1; i++)
-                    {
-                        Vector2 start = (branch.Positions[i] - Main.screenPosition) / 2;
-                        Vector2 end = (branch.Positions[i + 1] - Main.screenPosition) / 2;
-                        Vector2 direction = end - start;
-                        float distance = direction.Length();
-                        float rotation = direction.ToRotation();
-                        if (flashIntensity > 0f)
-                        {
-                            spriteBatch.Draw(
-                                lineTexture,
-                                start,
-                                sourceRect,
-                                flashColor * flashIntensity * branch.Alpha,
-                                rotation,
-                                new Vector2(0, 0.5f),
-                                new Vector2(distance, 3f),
-                                SpriteEffects.None,
-                                0
-                            );
-                        }
-
-
-                        if (flashIntensity > 0f)
-                        {
-                            spriteBatch.Draw(
-                                lineTexture,
-                                start,
-                                sourceRect,
-                                flashColor * flashIntensity,
-                                rotation,
-                                new Vector2(0, 0.5f),
-                                new Vector2(distance, 3f),
-                                SpriteEffects.None,
-                                0
-                            );
-                        }
-
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            coreColor,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 1f),
-                            SpriteEffects.None,
-                            0
-                        );
-
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            midColor,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 2f),
-                            SpriteEffects.None,
-                            0
-                        );
-
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            outerColor,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 3f),
-                            SpriteEffects.None,
-                            0
-                        );
-
-                        float distortionOffset = (float)Math.Sin(Main.GameUpdateCount * 0.8f + i * 0.5f);
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start + new Vector2(0, distortionOffset),
-                            sourceRect,
-                            distColor,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 1.5f),
-                            SpriteEffects.None,
-                            0
-                        );
-
-                        Vector2 lastPosition = (data.SegmentPositions[data.MaxSegments - 1] - Main.screenPosition) / 2;
-                        Color lastTrailColor = outerColor * data.GlowIntensity;
-
-
-                        for (int g = 0; g < 2; g++)
-                        {
-                            float offsetAngle = g * MathHelper.PiOver2;
-                            Vector2 offset = new Vector2(
-                                (float)Math.Cos(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f,
-                                (float)Math.Sin(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f
-                            );
-
-                            spriteBatch.Draw(
-                                glowTexture,
-                                lastPosition + offset,
-                                null,
-                                lastTrailColor * (1f - g * 0.3f),
-                                0f,
-                                origin,
-                                data.GlowScale,
-                                SpriteEffects.None,
-                                0f
-                            );
-                        }
-                    }
-                }
-            }, PixellationSystem.RenderType.Additive);
+            if (Main.dedServ || data?.SegmentPositions == null || data.Alpha <= 0) return;
+            data.StrokeRenderer ??= new LightningStrokeRenderer();
+            data.StrokeRenderer.Draw(data, data.Alpha, layer: RenderLayer.UnderProjectiles);
         }
-
 
         public static void DrawTaperedLightning(LightningData data, SpriteBatch spriteBatch)
         {
-            if (data.SegmentPositions == null || data.Alpha <= 0f)
-                return;
-
-            DrawPath(data.SegmentPositions, data.StartThickness, data.EndThickness, data.Alpha);
-            foreach (Branch branch in data.Branches)
-            {
-                float root = data.ThicknessAt(branch.ParentProgress) * data.BranchThicknessMultiplier;
-                DrawPath(branch.Positions, root, root * data.BranchTipThicknessMultiplier,
-                    data.Alpha * branch.Alpha);
-            }
-
-            void DrawPath(Vector2[] points, float startWidth, float endWidth, float opacity)
-            {
-                for (int i = 0; i < points.Length - 1; i++)
-                {
-                    Vector2 delta = points[i + 1] - points[i];
-                    float width = Math.Max(0.05f, MathHelper.Lerp(startWidth, endWidth,
-                        (i + 0.5f) / (points.Length - 1)));
-                    Color glow = (data.OuterColorOverride ?? new Color(120, 170, 255)) with { A = 0 };
-                    Color core = (data.CoreColorOverride ?? Color.White) with { A = 0 };
-                    for (int pass = 0; pass < 3; pass++)
-                    {
-                        float scale = pass == 0 ? 5f : pass == 1 ? 2f : 1f;
-                        Color color = pass == 2 ? core : glow;
-                        spriteBatch.Draw(TextureAssets.MagicPixel.Value, points[i] - Main.screenPosition,
-                            new Rectangle(0, 0, 1, 1), color * opacity * (pass == 0 ? 0.12f : pass == 1 ? 0.3f : 1f),
-                            delta.ToRotation(), new Vector2(0f, 0.5f),
-                            new Vector2(delta.Length() + 0.5f, width * scale), SpriteEffects.None, 0f);
-                    }
-                }
-            }
-        }
-
-        private static void DrawImpactPoint(Vector2 position, float size, LightningData data, SpriteBatch spriteBatch)
-        {
-            Texture2D lineTexture = TextureAssets.MagicPixel.Value;
-            Rectangle sourceRect = new(0, 0, 1, 1);
-
-            position = (position - Main.screenPosition) / 2;
-            float time = Main.GameUpdateCount * 0.1f;
-            float pulseSize = 1f + (float)Math.Sin(time) * 0.2f;
-
-            for (int i = 0; i < 4; i++)
-            {
-                float angle = i * MathHelper.PiOver2 + time;
-                Vector2 offset = new Vector2(
-                    (float)Math.Cos(angle),
-                    (float)Math.Sin(angle)
-                ) * size * pulseSize;
-
-                spriteBatch.Draw(
-                    lineTexture,
-                    position + offset,
-                    sourceRect,
-                    new Color(150, 220, 255) * (data.Alpha * 0.5f),
-                    angle,
-                    new Vector2(0.5f),
-                    new Vector2(size * 0.25f, 1f),
-                    SpriteEffects.None,
-                    0
-                );
-            }
-
-            Texture2D starTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/CrispStarPMA").Value;
-
-            Color color1 = Color.Lerp(
-                new Color(0, 236, 255),
-                Color.White,
-                0.5f + (float)Math.Sin(time) * 0.2f
-            );
-            spriteBatch.Draw(
-                starTexture,
-                position,
-                null,
-                color1 * data.Alpha,
-                time * 0.5f,
-                starTexture.Size() / 2f,
-                0.2f * pulseSize,
-                SpriteEffects.None,
-                0
-            );
-
-            Color color2 = Color.Lerp(
-                new Color(0, 255, 191),
-                Color.White,
-                0.3f + (float)Math.Sin(time * 1.5f) * 0.2f
-            );
-            spriteBatch.Draw(
-                starTexture,
-                position,
-                null,
-                color2 * data.Alpha,
-                -time * 0.7f,
-                starTexture.Size() / 2f,
-                0.125f * pulseSize,
-                SpriteEffects.None,
-                0
-            );
+            if (Main.dedServ || data?.SegmentPositions == null || data.Alpha <= 0) return;
+            data.StrokeRenderer ??= new LightningStrokeRenderer();
+            data.StrokeRenderer.DrawImmediate(data, spriteBatch, data.Alpha);
         }
     }
 }

@@ -36,8 +36,15 @@ namespace AerovelenceMod.Common.Systems
 
             foreach (var data in expiredLightning)
             {
+                data.StrokeRenderer?.Dispose();
                 LightningLifetimes.Remove(data);
             }
+        }
+
+        public override void OnWorldUnload()
+        {
+            foreach (LightningData data in LightningLifetimes.Keys) data.StrokeRenderer?.Dispose();
+            LightningLifetimes.Clear();
         }
 
         public override void PostDrawTiles()

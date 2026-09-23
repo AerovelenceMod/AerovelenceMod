@@ -12,7 +12,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 
         private static readonly object chestLock = new object();
         private static bool isConfiguringChest = false;
-        private static UnifiedRandom rand = WorldGen.genRand;
+        private static UnifiedRandom rand => WorldGen.genRand;
         /// <summary>
         /// 
         /// </summary>
