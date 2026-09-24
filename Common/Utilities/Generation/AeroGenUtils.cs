@@ -1,12 +1,10 @@
-﻿using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using System;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
 using Terraria.WorldBuilding;
-using static Terraria.Collision;
 
 namespace AerovelenceMod.Common.Utilities.Generation
 {
