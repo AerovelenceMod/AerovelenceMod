@@ -57,7 +57,6 @@ namespace AerovelenceMod.Content.Projectiles
             public float EndThickness = 0.6f;
             public float BranchThicknessMultiplier = 0.55f;
             public float BranchTipThicknessMultiplier = 0.08f;
-            public int GeometryVersion;
 
             public float ThicknessAt(float progress) => MathHelper.Lerp(
                 StartThickness, EndThickness, MathHelper.Clamp(progress, 0f, 1f));
@@ -237,7 +236,6 @@ namespace AerovelenceMod.Content.Projectiles
 
         public static void UpdateSegments(LightningData data)
         {
-            data.GeometryVersion++;
             if (data.Style == LightningStyle.Static)
             {
                 data.StaticTimer++;
@@ -393,7 +391,6 @@ namespace AerovelenceMod.Content.Projectiles
 
         public static void UpdateBranches(LightningData data)
         {
-            data.GeometryVersion++;
             for (int i = data.Branches.Count - 1; i >= 0; i--)
             {
                 Branch branch = data.Branches[i];

@@ -5,6 +5,7 @@ using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
+using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -100,6 +102,64 @@ public class MjolnirHeldHammerLayer : PlayerDrawLayer
     }
 }
 
+public class MjolnirChannelSystem : ModSystem
+{
+    private const string SkyKey = "AerovelenceMod:MjolnirChannel";
+    private MjolnirChannelSky sky;
+
+    public override void Load()
+    {
+        if (Main.dedServ) return;
+        sky = new MjolnirChannelSky();
+        SkyManager.Instance[SkyKey] = sky;
+    }
+
+    public override void PostUpdateEverything()
+    {
+        if (Main.dedServ || sky == null) return;
+        Player player = Main.LocalPlayer;
+        MjolnirHammer hammer = player.GetModPlayer<MjolnirPlayer>().Hammer;
+        sky.Charge = !Main.gameMenu && player.active && !player.dead && player.HeldItem.type == ModContent.ItemType<Mjolnir>() &&
+            hammer != null && hammer.Projectile.active ? hammer.SkyCharge : 0;
+        player.ManageSpecialBiomeVisuals(SkyKey, sky.Charge > 0);
+    }
+
+    public override void OnWorldUnload() => sky?.Reset();
+    public override void Unload()
+    {
+        sky?.Reset();
+        sky = null;
+    }
+}
+
+public class MjolnirChannelSky : CustomSky
+{
+    internal float Charge;
+    private bool active;
+    private float opacity;
+
+    public override void Activate(Vector2 position, params object[] args) => active = true;
+    public override void Deactivate(params object[] args) => active = false;
+    public override bool IsActive() => active || opacity > 0;
+    public override void Reset() { active = false; opacity = Charge = 0; }
+    public override float GetCloudAlpha() => 1 - opacity * .65f;
+
+    public override void Update(GameTime gameTime)
+    {
+        float target = active && !Main.gameMenu ? Charge : 0;
+        opacity += MathHelper.Clamp(target - opacity, -.025f, .04f);
+        if (opacity < .001f) opacity = 0;
+    }
+
+    public override void Draw(SpriteBatch spriteBatch, float minDepth, float maxDepth)
+    {
+        if (opacity <= 0 || minDepth >= 0 || maxDepth < 0) return;
+        Texture2D gradient = ModContent.Request<Texture2D>("AerovelenceMod/Assets/BlackGradient").Value;
+        spriteBatch.Draw(gradient, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null,
+            Color.White * opacity * .85f, 0, Vector2.Zero, SpriteEffects.FlipVertically, 0);
+    }
+}
+
 public class MjolnirHammer : ModProjectile
 {
     private enum HammerState { Ready, Spinning, Throwing, Thrown, Lodged, Recalling, Catching, Sweeping, Charging, Flying, Recovering, RightWindup, Slamming, GroundImpact }
@@ -151,6 +211,8 @@ public class MjolnirHammer : ModProjectile
     internal int SweepDirection => sweepDirection;
     internal Vector2 Head => Projectile.Center - new Vector2(0, 12).RotatedBy(Projectile.rotation);
     internal bool ReceivingCharge => State == HammerState.Charging && Timer >= ChargeTime;
+    internal float SkyCharge => State == HammerState.Charging ? MjolnirEffects.Ease(Timer / ChargeTime) : 0;
+    private bool Powered => empowered || empoweredAttack || pulseEmpowered;
     private bool InHand => State is HammerState.Ready or HammerState.Spinning or HammerState.Throwing or HammerState.Charging or HammerState.Catching or HammerState.Flying or HammerState.Sweeping or HammerState.Recovering or HammerState.RightWindup or HammerState.Slamming or HammerState.GroundImpact;
 	
     private float HeldRotation(float arm)
@@ -260,7 +322,7 @@ public class MjolnirHammer : ModProjectile
         float transition = State == HammerState.Spinning ? 1f - MjolnirEffects.Ease(Timer / 10f) : 1f;
         Vector2 center = Projectile.Center - Main.screenPosition + new Vector2(0f, Owner.gfxOffY);
         float scale = MathHelper.Lerp(.82f, 1f, transition);
-        MjolnirEffects.AddHeldHammer(ref drawInfo, center, Projectile.rotation, scale, power, Color.White * transition, Owner.direction);
+        MjolnirEffects.AddHeldHammer(ref drawInfo, center, Projectile.rotation, scale, power, Color.White * transition, Owner.direction, Powered);
     }
 
     internal void PosePlayer()
@@ -279,6 +341,7 @@ public class MjolnirHammer : ModProjectile
     private void ReadyInput()
     {
         if (!IsOwner || bufferTime <= 0) return;
+        empoweredAttack = false;
         if (bufferedInput == 1) ChangeState(HammerState.Spinning);
         else if (bufferedInput == 2) ChangeState(HammerState.RightWindup);
         bufferedInput = bufferTime = 0;
@@ -289,7 +352,7 @@ public class MjolnirHammer : ModProjectile
         float progress = MathHelper.Clamp(time / SweepTime, 0, 1);
         float angle = sweepStartAngle + MjolnirEffects.Ease(progress) * MathHelper.TwoPi * sweepDirection;
         float reach = MjolnirEffects.Ease(time / 9f) * MjolnirEffects.Ease((SweepTime - time) / 10f);
-        float radius = MathHelper.Lerp(sweepStartRadius, 56, reach);
+        float radius = MathHelper.Lerp(sweepStartRadius, empoweredAttack ? 84 : 56, reach);
         return Owner.MountedCenter + new Vector2(MathF.Cos(angle), MathF.Sin(angle) * .36f) * radius;
     }
 
@@ -399,7 +462,7 @@ public class MjolnirHammer : ModProjectile
                 if (Timer >= SpinThreshold && Timer % 3 == 0)
                 {
                     Vector2 rim = new Vector2(MathF.Cos(Timer * .6f) * 12, MathF.Sin(Timer * .6f) * 38).RotatedBy(aim.ToRotation());
-                    MjolnirEffects.Spark(Projectile.Center + rim, aim * Main.rand.NextFloat(2, 5));
+                    MjolnirEffects.Spark(Projectile.Center + rim, aim * Main.rand.NextFloat(2, 5), Powered);
                 }
                 if (IsOwner && !left)
                 {
@@ -413,7 +476,7 @@ public class MjolnirHammer : ModProjectile
                         BeginAttack();
                         ChangeState(HammerState.Flying);
                         player.GetModPlayer<MjolnirPlayer>().FlightCooldown = 150;
-                        MjolnirEffects.Burst(Projectile.Center, 16);
+                        MjolnirEffects.Burst(Projectile.Center, 16, Powered);
                     }
                     else ChangeState(HammerState.Recovering);
                 }
@@ -427,8 +490,15 @@ public class MjolnirHammer : ModProjectile
                     BeginAttack();
                     ChangeState(HammerState.Slamming);
                 }
-                else if (IsOwner && Timer >= RightHoldThreshold && !empowered)
-                    ChangeState(HammerState.Charging);
+                else if (IsOwner && Timer >= RightHoldThreshold)
+                {
+                    if (empowered)
+                    {
+                        BeginAttack();
+                        ChangeState(HammerState.Sweeping);
+                    }
+                    else ChangeState(HammerState.Charging);
+                }
 				// #empower #society #burgerking
                 break;
 
@@ -440,7 +510,7 @@ public class MjolnirHammer : ModProjectile
                 if (Timer == 12) SoundEngine.PlaySound(SoundID.Item1 with { Volume = .8f, Pitch = -.5f }, Head);
                 if (slamProgress >= .38f && slamProgress <= .74f)
                 {
-                    if (Timer % 2 == 0) MjolnirEffects.Spark(Head, (Head - previousHead) * .2f);
+                    if (Timer % 2 == 0) MjolnirEffects.Spark(Head, (Head - previousHead) * .2f, Powered);
                     if (IsOwner)
                         for (int sample = 1; sample <= 6; sample++)
                         {
@@ -461,7 +531,7 @@ public class MjolnirHammer : ModProjectile
                 armAngle = poseStartArm;
                 if (Timer == 1)
                 {
-                    MjolnirEffects.Burst(Head, empoweredAttack ? 32 : 20);
+                    MjolnirEffects.Burst(Head, empoweredAttack ? 32 : 20, Powered);
                     MjolnirEffects.Shake(Head, empoweredAttack ? 6 : 4);
                     SoundEngine.PlaySound(SoundID.Item14 with { Volume = .65f, Pitch = -.5f }, Head);
                     SoundEngine.PlaySound(SoundID.Item122 with { Volume = .6f, Pitch = -.4f }, Head);
@@ -510,7 +580,7 @@ public class MjolnirHammer : ModProjectile
                 HeldPose(aim.ToRotation() - player.direction * .24f, -player.direction * .35f, 8);
                 if (Timer == 1)
                 {
-                    MjolnirEffects.Burst(Head, 16);
+                    MjolnirEffects.Burst(Head, 16, Powered);
                     MjolnirEffects.Shake(Head, 2.4f);
                     SoundEngine.PlaySound(SoundID.Item37 with { Volume = .6f, Pitch = -.3f }, Head);
                 }
@@ -519,18 +589,34 @@ public class MjolnirHammer : ModProjectile
                     if (recallHeld && rightHeldTicks >= 18)
                     {
                         ChangeState(HammerState.Sweeping);
-                        SoundEngine.PlaySound(SoundID.Item71 with { Volume = .7f, Pitch = -.35f }, Projectile.Center);
                     }
                     else if (!recallHeld) ChangeState(HammerState.Recovering);
                 }
                 break;
 
             case HammerState.Sweeping:
+                if (Timer == 1)
+                    SoundEngine.PlaySound(SoundID.Item71 with { Volume = empoweredAttack ? 1f : .7f, Pitch = empoweredAttack ? -.65f : -.35f }, Projectile.Center);
                 float turn = MjolnirEffects.Ease(SweepProgress) * MathHelper.TwoPi;
                 player.ChangeDir(MathF.Cos(turn) >= 0 ? sweepDirection : -sweepDirection);
                 Projectile.Center = SweepPosition(Timer);
                 Projectile.rotation = poseStartRotation + turn * sweepDirection;
-                if (Timer % 3 == 0) MjolnirEffects.Spark(Projectile.Center, -Projectile.rotation.ToRotationVector2() * 3f);
+                if (Timer % 3 == 0) MjolnirEffects.Spark(Projectile.Center, -Projectile.rotation.ToRotationVector2() * 3f, Powered);
+                if (empoweredAttack && Timer == 28)
+                {
+                    MjolnirEffects.Burst(Head, 32, true);
+                    MjolnirEffects.Shake(Owner.Center, 8);
+                    SoundEngine.PlaySound(SoundID.Item122 with { Volume = .9f, Pitch = -.55f }, Head);
+                    if (IsOwner)
+                    {
+                        ChainFromHammer(4, 1.2f);
+                        if (MjolnirGroundPulse.TrySurface(Owner.Center.X, Owner.Bottom.Y, out Vector2 sweepGround))
+                        {
+                            Bolt(Head, sweepGround - Vector2.UnitY * 4, .8f, true);
+                            ReleaseGroundElectricity(sweepGround);
+                        }
+                    }
+                }
                 if (IsOwner && Timer >= SweepTime) ChangeState(HammerState.Recovering);
                 break;
 
@@ -539,7 +625,7 @@ public class MjolnirHammer : ModProjectile
                 if (!Main.dedServ && Timer < ChargeTime && Timer % 3 == 0)
                 {
                     Vector2 offset = Main.rand.NextVector2CircularEdge(65, 90);
-                    MjolnirEffects.Spark(Head + offset, -offset * .09f);
+                    MjolnirEffects.Spark(Head + offset, -offset * .09f, true);
                     if (Timer >= 30)
                         MjolnirEffects.UpdateLightning(skyLeader, Head - new Vector2(24 * MathF.Sin(Timer * .12f), 650), Head);
                 }
@@ -578,7 +664,7 @@ public class MjolnirHammer : ModProjectile
                         player.fallStart = (int)(player.position.Y / 16f);
                     }
                 }
-                if (Timer % 2 == 0) MjolnirEffects.Spark(player.Center + Main.rand.NextVector2Circular(12, 18), -aim * 4);
+                if (Timer % 2 == 0) MjolnirEffects.Spark(player.Center + Main.rand.NextVector2Circular(12, 18), -aim * 4, Powered);
                 break;
         }
 
@@ -598,9 +684,9 @@ public class MjolnirHammer : ModProjectile
 
         if (!Main.dedServ)
         {
-            Lighting.AddLight(Projectile.Center, .18f, .45f, .8f);
+            Lighting.AddLight(Projectile.Center, MjolnirEffects.EnergyColor(Powered).ToVector3() * .8f);
             if ((empowered || empoweredAttack) && Main.GameUpdateCount % 4 == 0)
-                MjolnirEffects.Spark(Projectile.Center + Main.rand.NextVector2Circular(18, 18), Main.rand.NextVector2Circular(1.5f, 1.5f));
+                MjolnirEffects.Spark(Projectile.Center + Main.rand.NextVector2Circular(18, 18), Main.rand.NextVector2Circular(1.5f, 1.5f), Powered);
             if ((pulseDelay > 0 || State == HammerState.Recalling || State == HammerState.Flying) && Main.GameUpdateCount % 3 == 0)
                 MjolnirEffects.UpdateLightning(tether, player.MountedCenter, Head);
         }
@@ -638,25 +724,32 @@ public class MjolnirHammer : ModProjectile
     private void Recall(bool held)
     {
         recallHeld = held;
+        if (pulseDelay > 0) empoweredAttack |= pulseEmpowered;
         pulseDelay = 0;
+        pulseEmpowered = false;
         ChangeState(HammerState.Recalling);
-        Bolt(Owner.MountedCenter, Head, .55f, empoweredAttack);
-        MjolnirEffects.Burst(Head, 18);
+        Bolt(Owner.MountedCenter, Head, empoweredAttack ? 1.1f : .55f, empoweredAttack);
+        MjolnirEffects.Burst(Head, 18, Powered);
     }
 
     private void StopFlight()
     {
         Owner.velocity *= .15f;
         Owner.fallStart = (int)(Owner.position.Y / 16f);
-        MjolnirEffects.Burst(Projectile.Center, 22);
-        MjolnirEffects.Shake(Projectile.Center, 4);
-        ChainFromHammer(empoweredAttack ? 4 : 2, .7f);
+        MjolnirEffects.Burst(Projectile.Center, 22, Powered);
+        MjolnirEffects.Shake(Projectile.Center, empoweredAttack ? 7 : 4);
+        ChainFromHammer(empoweredAttack ? 4 : 2, empoweredAttack ? 1.05f : .7f);
         ChangeState(HammerState.Recovering);
     }
 
     private void SlamGround(Vector2 ground)
     {
         ChangeState(HammerState.GroundImpact);
+        ReleaseGroundElectricity(ground);
+    }
+
+    private void ReleaseGroundElectricity(Vector2 ground)
+    {
         int damage = (int)Owner.GetTotalDamage(DamageClass.Magic).ApplyTo(empoweredAttack ? 100 : 64);
         for (int direction = -1; direction <= 1; direction += 2)
         {
@@ -677,7 +770,7 @@ public class MjolnirHammer : ModProjectile
             hostile.Kill();
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), origin, reflectedVelocity, ModContent.ProjectileType<MjolnirDeflection>(), reflectedDamage, 3, Projectile.owner);
             reflectedCooldown = 6;
-            MjolnirEffects.Burst(origin, 8);
+            MjolnirEffects.Burst(origin, 8, Powered);
             SoundEngine.PlaySound(SoundID.Item37 with { Volume = .6f, Pitch = .3f }, origin);
             break;
         }
@@ -721,7 +814,7 @@ public class MjolnirHammer : ModProjectile
     {
         if (IsOwner) ChangeState(HammerState.Lodged);
         Projectile.velocity = Vector2.Zero;
-        MjolnirEffects.Burst(Projectile.Center, 16);
+        MjolnirEffects.Burst(Projectile.Center, 16, Powered);
         MjolnirEffects.Shake(Projectile.Center, 2);
         SoundEngine.PlaySound(SoundID.Dig with { Pitch = -.6f }, Projectile.Center);
         return false;
@@ -760,7 +853,7 @@ public class MjolnirHammer : ModProjectile
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         target.AddBuff(BuffID.Electrified, empoweredAttack ? 240 : 90);
-        MjolnirEffects.Burst(Projectile.Center, 8);
+        MjolnirEffects.Burst(Projectile.Center, 8, Powered);
         if (IsOwner && State == HammerState.Flying) StopFlight();
     }
 
@@ -775,13 +868,15 @@ public class MjolnirHammer : ModProjectile
     public override bool PreDraw(ref Color lightColor)
     {
         float power = empowered || empoweredAttack ? 1f : .15f;
+        bool boosted = Powered;
         if (pulseDelay > 0 || State is HammerState.Recalling or HammerState.Flying)
         {
             float opacity = pulseDelay > 0 ? .12f + (12 - pulseDelay) / 22f : .85f;
-            tetherRenderer.Draw(tether, opacity);
+            MjolnirEffects.ColorLightning(tether, boosted);
+            tetherRenderer.Draw(tether, opacity, boosted ? 1.35f : 1);
         }
         if (spinVisual > 0)
-            MjolnirEffects.Vortex(Projectile.Center, aim.ToRotation(), spinPhase, spinVisual, power);
+            MjolnirEffects.Vortex(Projectile.Center, aim.ToRotation(), spinPhase, spinVisual, power, boosted);
         if (State is HammerState.Thrown or HammerState.Recalling or HammerState.Flying)
         {
             Vector2[] trail = new Vector2[Projectile.oldPos.Length + 1];
@@ -793,8 +888,8 @@ public class MjolnirHammer : ModProjectile
                 {
                     if (Vector2.DistanceSquared(trail[i - 1], trail[i]) > 180 * 180) break;
                     float fade = 1 - i / (float)trail.Length;
-                    MjolnirEffects.Line(trail[i - 1], trail[i], new Color(40, 110, 255, 0) * fade * .28f, 16 * fade);
-                    MjolnirEffects.Line(trail[i - 1], trail[i], new Color(125, 220, 255, 0) * fade * .75f, 3 * fade);
+                    MjolnirEffects.Line(trail[i - 1], trail[i], MjolnirEffects.Additive(MjolnirEffects.EnergyColor(boosted)) * fade * .28f, 16 * fade);
+                    MjolnirEffects.Line(trail[i - 1], trail[i], MjolnirEffects.Additive(MjolnirEffects.CoreColor(boosted)) * fade * .75f, 3 * fade);
                 }
             });
         }
@@ -802,7 +897,7 @@ public class MjolnirHammer : ModProjectile
         {
             Vector2[] arc = new Vector2[28];
             for (int i = 0; i < arc.Length; i++) arc[i] = SweepPosition(Math.Max(0, Timer - i * .4f));
-            MjolnirEffects.SweepArc(arc, Owner.MountedCenter.Y);
+            MjolnirEffects.SweepArc(arc, Owner.MountedCenter.Y, boosted);
         }
         if (State == HammerState.Slamming && Timer >= SlamTime * .3f)
         {
@@ -813,25 +908,29 @@ public class MjolnirHammer : ModProjectile
                 Vector2 hand = Owner.GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, angle - MathHelper.PiOver2);
                 arc[i] = hand + angle.ToRotationVector2() * 30;
             }
-            MjolnirEffects.SweepArc(arc, Owner.MountedCenter.Y);
+            MjolnirEffects.SweepArc(arc, Owner.MountedCenter.Y, boosted);
         }
         if (State == HammerState.GroundImpact)
-            MjolnirEffects.Impact(Head, Timer, 1 - Timer / 10f, empoweredAttack ? 1.2f : .8f);
+            MjolnirEffects.Impact(Head, Timer, 1 - Timer / 10f, empoweredAttack ? 1.2f : .8f, boosted);
         if (State == HammerState.Charging)
         {
             Vector2 head = Head;
             float progress = Math.Min(1, Timer / ChargeTime);
-            if (Timer < ChargeTime) skyRenderer.Draw(skyLeader, (progress - .5f) * .5f);
+            if (Timer < ChargeTime)
+            {
+                MjolnirEffects.ColorLightning(skyLeader, true);
+                skyRenderer.Draw(skyLeader, (progress - .5f) * .5f);
+            }
             MjolnirEffects.Queue(() =>
             {
-                MjolnirEffects.Glow(head, new Vector2(35 + progress * 50), .18f + progress * .45f);
+                MjolnirEffects.Glow(head, new Vector2(35 + progress * 50), .18f + progress * .45f, boosted: true);
             });
         }
-        if (empowered)
+        if (boosted)
         {
             Vector2 head = Head;
             float pulse = .3f + .08f * MathF.Sin(Main.GlobalTimeWrappedHourly * 6);
-            MjolnirEffects.Queue(() => MjolnirEffects.Glow(head, new Vector2(52), pulse));
+            MjolnirEffects.Queue(() => MjolnirEffects.Glow(head, new Vector2(64), pulse, boosted: true));
         }
         if (Owner.GetModPlayer<MjolnirPlayer>().FlightCooldown > 0 && IsOwner)
         {
@@ -843,7 +942,7 @@ public class MjolnirHammer : ModProjectile
         float visibility = 1 - spinVisual * .97f;
         Vector2 drawCenter = Projectile.Center - Main.screenPosition + new Vector2(0, InHand ? Owner.gfxOffY : 0);
         if (!DrawHeldLayer && State != HammerState.Spinning)
-            MjolnirEffects.DrawHammer(drawCenter, Projectile.rotation, depth, power, Color.White * visibility);
+            MjolnirEffects.DrawHammer(drawCenter, Projectile.rotation, depth, power, Color.White * visibility, boosted);
         return false;
     }
 }
@@ -854,6 +953,7 @@ public class MjolnirLightning : ModProjectile
     private readonly LightningStrokeRenderer renderer = new();
     private int age;
     private bool FromHeavens => Projectile.ai[2] == 2;
+    private bool Boosted => Projectile.ai[2] > 0;
     private Vector2 Start => new(Projectile.ai[0], Projectile.ai[1]);
     private Vector2 End => Projectile.Center;
     public override string Texture => "AerovelenceMod/Assets/Pixel/CrispStarPMA";
@@ -884,22 +984,24 @@ public class MjolnirLightning : ModProjectile
         if (lightning == null)
         {
             lightning = MjolnirEffects.Lightning(Math.Clamp((int)(Vector2.Distance(Start, End) / 18), 12, 72), FromHeavens ? 9 : Projectile.ai[2] > 0 ? 5.5f : 3.5f);
+            MjolnirEffects.ColorLightning(lightning, Boosted);
             lightning.DisplacementIntensity = FromHeavens ? 2.3f : 1.1f;
             lightning.EndThickness = FromHeavens ? 2 : 1.5f;
             lightning.MaxBranches = FromHeavens ? 8 : 4;
             SoundEngine.PlaySound(SoundID.Item122 with { Volume = FromHeavens ? .95f : .5f, Pitch = FromHeavens ? -.55f : -.15f, MaxInstances = 4 }, End);
-            MjolnirEffects.Burst(End, FromHeavens ? 38 : 16);
-            MjolnirEffects.Shake(End, FromHeavens ? 7 : Projectile.ai[2] > 0 ? 4 : 1.6f);
+            MjolnirEffects.Burst(End, FromHeavens ? 38 : Boosted ? 24 : 16, Boosted);
+            Vector2 shakeCenter = Vector2.DistanceSquared(Main.LocalPlayer.Center, Start) < Vector2.DistanceSquared(Main.LocalPlayer.Center, End) ? Start : End;
+            MjolnirEffects.Shake(shakeCenter, FromHeavens ? 7 : Boosted ? 6 : 1.6f);
             if (FromHeavens)
             {
                 SoundEngine.PlaySound(SoundID.Item14 with { Volume = .5f, Pitch = -.7f }, End);
                 for (int i = 1; i < 12; i++)
-                    MjolnirEffects.Spark(Vector2.Lerp(End, Start, i / 12f), Main.rand.NextVector2Circular(4, 2));
+                    MjolnirEffects.Spark(Vector2.Lerp(End, Start, i / 12f), Main.rand.NextVector2Circular(4, 2), Boosted);
             }
         }
         if (age % 3 == 1 || !lightning.Initialized)
             MjolnirEffects.UpdateLightning(lightning, Start, End);
-        for (int i = 0; i < 8; i++) Lighting.AddLight(Vector2.Lerp(End, Start, i / 8f), .25f, .5f, .85f);
+        for (int i = 0; i < 8; i++) Lighting.AddLight(Vector2.Lerp(End, Start, i / 8f), MjolnirEffects.EnergyColor(Boosted).ToVector3() * .85f);
     }
 
     public override bool? CanDamage() => Projectile.damage > 0 && age <= 4 ? null : false;
@@ -909,7 +1011,7 @@ public class MjolnirLightning : ModProjectile
         float distance = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Start, End, Projectile.ai[2] > 0 ? 22 : 12, ref distance);
     }
-    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.Electrified, 180);
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => target.AddBuff(BuffID.Electrified, Boosted ? 300 : 180);
     public override void OnKill(int timeLeft) => renderer.Dispose();
 	
     public override bool PreDraw(ref Color lightColor)
@@ -918,7 +1020,7 @@ public class MjolnirLightning : ModProjectile
         float fade = MathF.Pow(MathHelper.Clamp(Projectile.timeLeft / (FromHeavens ? 36f : 22f), 0, 1), .65f);
         float flicker = age < 10 ? .85f + .15f * MathF.Cos(age * 2.4f) : 1;
         renderer.Draw(lightning, fade * flicker, FromHeavens && age < 5 ? 1.5f : 1);
-        MjolnirEffects.Impact(End, age, fade, FromHeavens ? 1.6f : .8f);
+        MjolnirEffects.Impact(End, age, fade, FromHeavens ? 1.6f : Boosted ? 1.2f : .8f, Boosted);
         return false;
     }
 }
@@ -962,6 +1064,7 @@ public class MjolnirGroundPulse : ModProjectile
             path.Add(Projectile.Center - Vector2.UnitY * 3);
             lightning.Branches = new();
             lightning.EndThickness = 1.2f;
+            MjolnirEffects.ColorLightning(lightning, Charged);
         }
         if (!stopped)
         {
@@ -979,11 +1082,10 @@ public class MjolnirGroundPulse : ModProjectile
                 path.Add(next - new Vector2(0, 3 + (age % 3 == 0 ? 4 : 0)));
                 lightning.SegmentPositions = path.ToArray();
                 lightning.MaxSegments = path.Count;
-                lightning.GeometryVersion++;
                 if (!Main.dedServ)
                 {
-                    MjolnirEffects.Spark(next - Vector2.UnitY * 4, new Vector2(Projectile.ai[0] * 2, -Main.rand.NextFloat(1, 4)));
-                    Lighting.AddLight(next, .2f, .5f, .9f);
+                    MjolnirEffects.Spark(next - Vector2.UnitY * 4, new Vector2(Projectile.ai[0] * 2, -Main.rand.NextFloat(1, 4)), Charged);
+                    Lighting.AddLight(next, MjolnirEffects.EnergyColor(Charged).ToVector3() * .9f);
                 }
                 if (Charged && age % 14 == 0 && Projectile.owner == Main.myPlayer)
                 {
@@ -997,7 +1099,10 @@ public class MjolnirGroundPulse : ModProjectile
                         target = npc;
                     }
                     if (target != null)
-                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<MjolnirLightning>(), Projectile.damage / 2, 2, Projectile.owner, next.X, next.Y - 6, 0);
+                    {
+                        int index = Projectile.NewProjectile(Projectile.GetSource_FromAI(), target.Center, Vector2.Zero, ModContent.ProjectileType<MjolnirLightning>(), Projectile.damage / 2, 2, Projectile.owner, next.X, next.Y - 6, 1);
+                        if (index < Main.maxProjectiles) Main.projectile[index].CritChance = Projectile.CritChance;
+                    }
                 }
             }
         }
@@ -1043,7 +1148,7 @@ public class MjolnirGroundPulse : ModProjectile
         if (!stopped)
         {
             Vector2 center = Projectile.Center - Vector2.UnitY * 5;
-            MjolnirEffects.Queue(() => MjolnirEffects.Glow(center, new Vector2(42, 20), opacity * .7f));
+            MjolnirEffects.Queue(() => MjolnirEffects.Glow(center, new Vector2(42, 20), opacity * .7f, boosted: Charged));
         }
         return false;
     }
@@ -1085,6 +1190,17 @@ public class MjolnirDeflection : ModProjectile
 
 internal static class MjolnirEffects
 {
+    internal static Color EnergyColor(bool boosted) => boosted ? TumblerVFX.PhaseColor(1f) : new Color(55, 145, 255);
+    internal static Color CoreColor(bool boosted) => boosted ? new Color(255, 247, 180) : new Color(225, 250, 255);
+    internal static Color Additive(Color color) => new(color.R, color.G, color.B, 0);
+
+    internal static void ColorLightning(LightningUtils.LightningData data, bool boosted)
+    {
+        data.CoreColorOverride = boosted ? new Color(255, 252, 222) : Color.White;
+        data.MidColorOverride = boosted ? new Color(255, 222, 90) : new Color(140, 225, 255);
+        data.OuterColorOverride = EnergyColor(boosted);
+    }
+
     internal static float Ease(float progress) => MathHelper.SmoothStep(0, 1, MathHelper.Clamp(progress, 0, 1));
 
     internal static Vector2 CurveFlight(Vector2 direction, Vector2 target)
@@ -1126,29 +1242,29 @@ internal static class MjolnirEffects
         LightningUtils.UpdateBranches(data);
     }
 
-    internal static void Glow(Vector2 center, Vector2 size, float opacity, float rotation = 0)
+    internal static void Glow(Vector2 center, Vector2 size, float opacity, float rotation = 0, bool boosted = false)
     {
         Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/feather_circle128PMA").Value;
-        Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, new Color(35, 110, 255, 0) * opacity, rotation, texture.Size() * .5f, size / texture.Size(), SpriteEffects.None, 0);
-        Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, new Color(140, 225, 255, 0) * opacity * .65f,rotation, texture.Size() * .5f, size / texture.Size() * .42f, SpriteEffects.None, 0);
+        Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, Additive(EnergyColor(boosted)) * opacity, rotation, texture.Size() * .5f, size / texture.Size(), SpriteEffects.None, 0);
+        Main.spriteBatch.Draw(texture, center - Main.screenPosition, null, Additive(CoreColor(boosted)) * opacity * .65f, rotation, texture.Size() * .5f, size / texture.Size() * .42f, SpriteEffects.None, 0);
     }
 
-    internal static void Impact(Vector2 center, float age, float opacity, float power)
+    internal static void Impact(Vector2 center, float age, float opacity, float power, bool boosted = false)
     {
         Queue(() =>
         {
             float flash = MathF.Exp(-age / 6f);
-            Glow(center, new Vector2(145 * power), opacity * (.4f + flash));
-            Glow(center, new Vector2(38 * power), flash * 1.4f);
+            Glow(center, new Vector2(145 * power), opacity * (.4f + flash), boosted: boosted);
+            Glow(center, new Vector2(38 * power), flash * 1.4f, boosted: boosted);
         });
     }
 
-    internal static void Vortex(Vector2 center, float aimAngle, float phase, float strength, float power)
+    internal static void Vortex(Vector2 center, float aimAngle, float phase, float strength, float power, bool boosted = false)
     {
         if (strength <= 0) return;
         Queue(() =>
         {
-            Glow(center, new Vector2(58, 108) * strength, strength * .7f, aimAngle);
+            Glow(center, new Vector2(58, 108) * strength, strength * .7f, aimAngle, boosted);
             for (int ribbon = 0; ribbon < 3; ribbon++)
             {
                 float radius = 28 + ribbon * 6;
@@ -1161,9 +1277,9 @@ internal static class MjolnirEffects
                     Vector2 start = center + new Vector2(MathF.Cos(angle) * radius * .3f, MathF.Sin(angle) * radius).RotatedBy(aimAngle) * strength;
                     Vector2 end = center + new Vector2(MathF.Cos(nextAngle) * radius * .3f, MathF.Sin(nextAngle) * radius).RotatedBy(aimAngle) * strength;
                     float alpha = strength * wake * depth;
-                    Line(start, end, new Color(40, 105, 255, 0) * alpha * .32f, 12 + power * 3);
-                    Line(start, end, new Color(80, 185, 255, 0) * alpha * .8f, 5);
-                    Line(start, end, new Color(225, 250, 255, 0) * alpha, 2);
+                    Line(start, end, Additive(EnergyColor(boosted)) * alpha * .32f, 12 + power * 3);
+                    Line(start, end, Additive(Color.Lerp(EnergyColor(boosted), CoreColor(boosted), .35f)) * alpha * .8f, 5);
+                    Line(start, end, Additive(CoreColor(boosted)) * alpha, 2);
                 }
             }
             for (int i = 0; i < 5; i++)
@@ -1172,12 +1288,12 @@ internal static class MjolnirEffects
                 if (streak < 0) streak += 1;
                 Vector2 offset = new Vector2(-24 + streak * 64, MathF.Sin(i * 2.4f + phase * .3f) * 24).RotatedBy(aimAngle);
                 Vector2 direction = aimAngle.ToRotationVector2();
-                Line(center + offset, center + offset - direction * 14, new Color(145, 225, 255, 0) * strength * MathF.Sin(streak * MathHelper.Pi) * .65f, 2);
+                Line(center + offset, center + offset - direction * 14, Additive(CoreColor(boosted)) * strength * MathF.Sin(streak * MathHelper.Pi) * .65f, 2);
             }
         });
     }
 
-    internal static void SweepArc(Vector2[] points, float centerY)
+    internal static void SweepArc(Vector2[] points, float centerY, bool boosted = false)
     {
         Queue(() => DrawHalf(false), RenderLayer.UnderNPCs);
         Queue(() => DrawHalf(true));
@@ -1187,24 +1303,24 @@ internal static class MjolnirEffects
             {
                 if ((points[i].Y >= centerY) != front) continue;
                 float fade = 1 - i / (float)points.Length;
-                Line(points[i - 1], points[i], new Color(50, 120, 255, 0) * fade * .28f, 18 * fade);
-                Line(points[i - 1], points[i], new Color(85, 200, 255, 0) * fade * .8f, 7 * fade);
-                Line(points[i - 1], points[i], new Color(235, 255, 255, 0) * fade, 2);
+                Line(points[i - 1], points[i], Additive(EnergyColor(boosted)) * fade * .28f, (boosted ? 26 : 18) * fade);
+                Line(points[i - 1], points[i], Additive(Color.Lerp(EnergyColor(boosted), CoreColor(boosted), .35f)) * fade * .8f, 7 * fade);
+                Line(points[i - 1], points[i], Additive(CoreColor(boosted)) * fade, 2);
             }
         }
     }
 
-    internal static void Spark(Vector2 position, Vector2 velocity)
+    internal static void Spark(Vector2 position, Vector2 velocity, bool boosted = false)
     {
         if (Main.dedServ) return;
-        Dust spark = Dust.NewDustPerfect(position, ModContent.DustType<ElectricSparkGlow>(), velocity, 0, new Color(85, 180, 255), .22f);
+        Dust spark = Dust.NewDustPerfect(position, ModContent.DustType<ElectricSparkGlow>(), velocity, 0, EnergyColor(boosted), .22f);
         spark.customData = new ElectricSparkBehavior(FadeAlphaPower: .88f, FadeScalePower: .98f, FadeVelPower: .94f, TimeBetweenFrames: 3, KillEarlyTime: 22, Pixelize: true, UnderGlowPower: 1.5f, WhiteLayerPower: .9f);
     }
 
-    internal static void Burst(Vector2 center, int count)
+    internal static void Burst(Vector2 center, int count, bool boosted = false)
     {
         if (Main.dedServ) return;
-        for (int i = 0; i < count; i++) Spark(center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 7));
+        for (int i = 0; i < count; i++) Spark(center, Main.rand.NextVector2CircularEdge(1, 1) * Main.rand.NextFloat(2, 7), boosted);
     }
 
     internal static void Line(Vector2 start, Vector2 end, Color color, float width)
@@ -1213,7 +1329,7 @@ internal static class MjolnirEffects
         Main.spriteBatch.Draw(TextureAssets.MagicPixel.Value, start - Main.screenPosition, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0, .5f), new Vector2(delta.Length(), width), SpriteEffects.None, 0);
     }
 
-    internal static void AddHeldHammer(ref PlayerDrawSet drawInfo, Vector2 center, float rotation, float scale, float power, Color tint, int direction)
+    internal static void AddHeldHammer(ref PlayerDrawSet drawInfo, Vector2 center, float rotation, float scale, float power, Color tint, int direction, bool boosted = false)
     {
         Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Mjolnir/Mjolnir").Value;
         Vector2 origin = direction < 0 ? new Vector2(texture.Width - 21f, 34f) : new Vector2(21f, 34f);
@@ -1222,10 +1338,10 @@ internal static class MjolnirEffects
         SpriteEffects effects = direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         drawInfo.DrawDataCache.Add(new DrawData(texture, grip, null, tint, drawRotation, origin, scale, effects));
         if (power > 0)
-            drawInfo.DrawDataCache.Add(new DrawData(texture, grip, null, new Color(125, 225, 255, 0) * power * .32f * (tint.A / 255f), drawRotation, origin, scale, effects));
+            drawInfo.DrawDataCache.Add(new DrawData(texture, grip, null, Additive(EnergyColor(boosted)) * power * (boosted ? .7f : .32f) * (tint.A / 255f), drawRotation, origin, scale, effects));
     }
 
-    internal static void DrawHammer(Vector2 center, float rotation, float scale, float power, Color tint)
+    internal static void DrawHammer(Vector2 center, float rotation, float scale, float power, Color tint, bool boosted = false)
     {
         Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Mjolnir/Mjolnir").Value;
         Vector2 origin = new(17f, 38f);
@@ -1233,6 +1349,6 @@ internal static class MjolnirEffects
         float drawRotation = rotation - .72f;
         Main.spriteBatch.Draw(texture, grip, null, tint, drawRotation, origin, scale, SpriteEffects.None, 0);
         if (power > 0)
-            Main.spriteBatch.Draw(texture, grip, null, new Color(125, 225, 255, 0) * power * .32f, drawRotation, origin, scale, SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(texture, grip, null, Additive(EnergyColor(boosted)) * power * (boosted ? .7f : .32f), drawRotation, origin, scale, SpriteEffects.None, 0);
     }
 }
