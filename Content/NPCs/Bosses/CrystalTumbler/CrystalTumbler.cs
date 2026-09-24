@@ -229,6 +229,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
             }
+            RecoverArenaFloor();
 
             contactDamage = false;
             spinTarget = null;
@@ -924,6 +925,12 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             if (!ArenaData.Valid || State is TumblerState.Despawn or TumblerState.Death)
                 return;
+            RecoverArenaFloor();
+            if (NPC.noTileCollide && NPC.velocity.Y >= 0f && NPC.Bottom.Y + NPC.velocity.Y >= FloorY)
+            {
+                NPC.velocity.Y = Math.Max(0f, FloorY - NPC.Bottom.Y);
+                NPC.noGravity = true;
+            }
             float margin = NPC.width * 0.5f + 4f;
             float leftEdge = LeftOuter + margin;
             float rightEdge = RightOuter - margin;
@@ -936,6 +943,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             else if (!NPC.noTileCollide && NPC.collideX && Math.Abs(NPC.oldVelocity.X) > 1f && Math.Sign(NPC.velocity.X) == Math.Sign(NPC.oldVelocity.X))
                 Rebound(Math.Sign(NPC.oldVelocity.X), Math.Abs(NPC.oldVelocity.X) * 0.6f, 2f);
+        }
+
+        private void RecoverArenaFloor()
+        {
+            if (!ArenaData.Valid || State is TumblerState.Despawn or TumblerState.Death || NPC.Bottom.Y <= FloorY)
+                return;
+            NPC.Bottom = new Vector2(NPC.Center.X, FloorY);
+            NPC.velocity.Y = Math.Min(0f, NPC.velocity.Y);
+            NPC.noGravity = true;
+            NPC.collideY = NPC.velocity.Y == 0f;
+            if (IsServer)
+                NPC.netUpdate = true;
         }
 
         private void SelectNextAttack()
