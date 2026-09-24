@@ -121,12 +121,21 @@ public class MjolnirChannelSystem : ModSystem
         MjolnirHammer hammer = player.GetModPlayer<MjolnirPlayer>().Hammer;
         sky.Charge = !Main.gameMenu && player.active && !player.dead && player.HeldItem.type == ModContent.ItemType<Mjolnir>() &&
             hammer != null && hammer.Projectile.active ? hammer.SkyCharge : 0;
-        player.ManageSpecialBiomeVisuals(SkyKey, sky.Charge > 0);
+        if (sky.Charge > 0)
+            SkyManager.Instance.Activate(SkyKey, player.Center);
+        else
+            SkyManager.Instance.Deactivate(SkyKey);
     }
 
-    public override void OnWorldUnload() => sky?.Reset();
+    public override void OnWorldUnload()
+    {
+        if (!Main.dedServ) SkyManager.Instance.Deactivate(SkyKey);
+        sky?.Reset();
+    }
+
     public override void Unload()
     {
+        if (!Main.dedServ) SkyManager.Instance.Deactivate(SkyKey);
         sky?.Reset();
         sky = null;
     }
