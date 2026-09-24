@@ -18,22 +18,16 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class SaplingCane : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/SaplingCane/SaplingCane";
-        private const string EnglishTooltip = "Plants three baby sappers at once\nHold right click to guide them to your cursor\nThe sap-lings target the nearest enemy to your cursor when guided";
+        private const string EnglishTooltip = "Summons a sentry\nPlants three baby sappers at once\nHold right click to guide them to your cursor\nThe sap-lings target the nearest enemy to your cursor when guided";
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Sap-ling Cane", EnglishTooltip)
                 .AddSkillStrike(Language.Default, "Skill Strikes when hitting your targetted enemy")
                 .AddName(Language.Spanish, "Bastón de Brotes")
-                .AddTooltip(Language.Spanish, "Planta tres pequeños Sappers usando un espacio de centinela\nMantén pulsado el botón derecho para guiarlos con pequeños saltos y designar enemigos\nMuerden a los enemigos cercanos y regresan a su sitio al dejarlos solos\nLos mordiscos contra el objetivo designado para tus invocaciones causan Golpes de Habilidad")
+                .AddTooltip(Language.Spanish, "Invoca un centinela\nPlanta tres pequeños Sappers usando un espacio de centinela\nMantén pulsado el botón derecho para guiarlos con pequeños saltos y designar enemigos\nMuerden a los enemigos cercanos y regresan a su sitio al dejarlos solos\nLos mordiscos contra el objetivo designado para tus invocaciones causan Golpes de Habilidad")
                 .AddSkillStrike(Language.Spanish, "Muerde al enemigo designado como objetivo de tus invocaciones");
             Item.staff[Type] = true;
             base.SetStaticDefaults();
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
         }
         public override void SetDefaults()
         {
@@ -166,6 +160,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         private bool retiring;
         private int retireAge;
         private int orphanTicks;
+        private int blockedTicks;
+        private int embeddedTicks;
         private int age;
         private int hopAge = 60;
         private int landingAge = 60;
@@ -335,7 +331,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             int cooldown = (command ? 22 : target != null ? 32 : 36) + ((int)Projectile.ai[1] + 1) * 3;
             if (Projectile.owner == Main.myPlayer && windup == 0 && grounded && Projectile.ai[2] >= cooldown && SaplingMotion.NeedsHop(distance, height, target != null))
             {
-                jumpVelocity = new Vector2(SaplingMotion.HopX(distance, height), SaplingMotion.HopY(height));
+                bool wallAhead = Math.Abs(distance) > 16f && Collision.TileCollision(Projectile.position,
+                    new Vector2(Math.Sign(distance) * 20f, 0f), Projectile.width, Projectile.height).X != Math.Sign(distance) * 20f;
+                jumpVelocity = new Vector2(SaplingMotion.HopX(distance, height), wallAhead ? -8f : SaplingMotion.HopY(height));
                 windup = 6;
                 Projectile.netUpdate = true;
             }
@@ -381,8 +379,10 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             bool fall = parent != null && parent.ai[0] == 1f && parent.ai[2] > Projectile.Bottom.Y + 24f;
             if (Projectile.velocity.Y >= 0f)
                 Collision.StepUp(ref Projectile.position, ref Projectile.velocity, Projectile.width, Projectile.height, ref Projectile.stepSpeed, ref Projectile.gfxOffY);
+            Vector2 previousPosition = Projectile.position;
             Vector2 oldVelocity = Projectile.velocity;
             Vector4 downhill = Collision.WalkDownSlope(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height, 0.3f);
+            Projectile.position = new Vector2(downhill.X, downhill.Y);
             Projectile.velocity = new Vector2(downhill.Z, downhill.W);
             Projectile.velocity = Collision.TileCollision(Projectile.position, Projectile.velocity, Projectile.width, Projectile.height, fall, fall);
             Projectile.position += Projectile.velocity;
@@ -391,8 +391,46 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Projectile.velocity = new Vector2(slope.Z, slope.W);
             if (Projectile.velocity != oldVelocity)
                 OnTileCollide(oldVelocity);
-            if (!fall && oldVelocity.Y >= 0f && Math.Abs(Projectile.velocity.Y) < 0.01f)
+            if (!fall && oldVelocity.Y >= 0f && (Math.Abs(Projectile.velocity.Y) < 0.01f
+                || Collision.TileCollision(Projectile.position, Vector2.UnitY * 2f, Projectile.width, Projectile.height).Y < 2f))
                 onGround = true;
+            bool embedded = Collision.SolidCollision(Projectile.Center - new Vector2(2f, 6f), 4, 4);
+            embeddedTicks = embedded ? embeddedTicks + 1 : 0;
+            blockedTicks = Math.Abs(oldVelocity.X) > 0.5f && Math.Abs(Projectile.position.X - previousPosition.X) < 0.1f ? blockedTicks + 1 : 0;
+            if (blockedTicks >= 6 && onGround && Projectile.owner == Main.myPlayer)
+            {
+                Projectile.velocity = new Vector2(oldVelocity.X, -8f);
+                windup = 0;
+                hopAge = 0;
+                onGround = false;
+                blockedTicks = 0;
+                Projectile.netUpdate = true;
+            }
+            if (embeddedTicks >= 12 && Projectile.owner == Main.myPlayer)
+            {
+                for (int radius = 8; radius <= 96; radius += 8)
+                {
+                    bool freed = false;
+                    for (int direction = 0; direction < 8; direction++)
+                    {
+                        Vector2 candidate = Projectile.position + (-MathHelper.PiOver2 + direction * MathHelper.PiOver4).ToRotationVector2() * radius;
+                        if (candidate.X < 16f || candidate.Y < 16f || candidate.X + Projectile.width > Main.maxTilesX * 16f - 16f
+                            || candidate.Y + Projectile.height > Main.maxTilesY * 16f - 16f
+                            || Collision.SolidCollision(candidate, Projectile.width, Projectile.height)) continue;
+                        SaplingCaneVFX.Burst(Projectile.Center, 6, 2f);
+                        Projectile.position = candidate;
+                        Projectile.velocity = new Vector2(0f, -2f);
+                        idleAnchor = Projectile.Center;
+                        anchorOnLanding = true;
+                        embeddedTicks = windup = 0;
+                        hopAge = 0;
+                        Projectile.netUpdate = true;
+                        freed = true;
+                        break;
+                    }
+                    if (freed) break;
+                }
+            }
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)

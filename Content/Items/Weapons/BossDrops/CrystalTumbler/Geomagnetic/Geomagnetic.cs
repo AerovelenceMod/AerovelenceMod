@@ -29,12 +29,6 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             this.ModifyLocalization("Geomagnetic", Description).AddSkillStrike(Language.Default, "Strike an enemy with the sphere itself");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

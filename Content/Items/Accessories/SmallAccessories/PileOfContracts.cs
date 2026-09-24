@@ -9,7 +9,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Pile of Contracts", "+4% summon damage\nYour minions are contractually obligated to crit\nMinion critical strikes now deal 5% more than base damage");
+            this.ModifyLocalization("Pile of Contracts", "+4% summon damage\nYour minions are contractually obligated to crit\nMinion critical strikes now deal 5% additional damage instead of double");
             base.SetStaticDefaults();
         }
 

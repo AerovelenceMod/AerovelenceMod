@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
@@ -14,7 +14,9 @@ using static Terraria.WorldGen;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Building;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
-using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
+using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
+using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
+using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 
 namespace AerovelenceMod.Common.Utilities.Generation
@@ -51,89 +53,47 @@ namespace AerovelenceMod.Common.Utilities.Generation
             }
         }
 
-        #region Loot Pool Configuration
-        public class PrimaryItemConfiguration
+        public static List<PrimaryItemConfiguration> CreatePrimaryLootPool() => new()
         {
-            public int ItemID;
-            public int MinAmount;
-            public int MaxAmount;
-            public float Chance;
-            public PrimaryItemConfiguration(int itemID, int min, int max, float chance)
-            {
-                ItemID = itemID;
-                MinAmount = min;
-                MaxAmount = max;
-                Chance = chance;
-            }
-        }
-        public class ItemConfiguration
-        {
-            public List<int> ItemIDs;
-            public int MinAmount;
-            public int MaxAmount;
-            public ItemConfiguration(int itemID, int min, int max)
-            {
-                ItemIDs = new List<int>() { itemID };
-                MinAmount = min;
-                MaxAmount = max;
-            }
-            public ItemConfiguration(List<int> itemIDs, int min, int max)
-            {
-                ItemIDs = itemIDs;
-                MinAmount = min;
-                MaxAmount = max;
-            }
-        }
-
-        //primary
-        private static readonly List<PrimaryItemConfiguration> crystalShrinePrimary = new()
-        {
-            new PrimaryItemConfiguration(ItemID.BandofRegeneration, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.MagicMirror, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.CloudinaBottle, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.HermesBoots, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.EnchantedBoomerang, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.ShoeSpikes, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.FlareGun, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.Extractinator, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.LavaCharm, 1, 1, 1f),
-            new PrimaryItemConfiguration(ItemID.LuckyHorseshoe, 1, 1, 1f),
-            new PrimaryItemConfiguration(ModContent.ItemType<Eos>(), 1, 1, 1f)
+            new(ModContent.ItemType<CrystalCrescent>(), 1, 1, 1f),
+            new(ModContent.ItemType<RockRumbler>(), 1, 1, 1f),
+            new(ModContent.ItemType<SpikesInABottle>(), 1, 1, 1f),
+            new(ModContent.ItemType<BandOfCrystallization>(), 1, 1, 1f),
+            new(ModContent.ItemType<SilkenScarf>(), 1, 1, 1f),
+            new(ModContent.ItemType<CavernousRampart>(), 1, 1, 1f),
+            new(ModContent.ItemType<TumblerCommander>(), 1, 1, 1f),
+            new(ModContent.ItemType<SaplingCane>(), 1, 1, 1f)
         };
 
-        //secondary
-        private static readonly List<ItemConfiguration> crystalShrineSecondary = new()
+        public static List<ItemConfiguration> CreateSecondaryLootPool() => new()
         {
-            new ItemConfiguration(ItemID.SuspiciousLookingEye, 1, 1),
-            new ItemConfiguration(ItemID.Dynamite, 1, 1),
-            new ItemConfiguration(ItemID.JestersArrow, 25, 50),
-            new ItemConfiguration(new List<int> { ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar }, 3, 10),
-            new ItemConfiguration(new List<int> { ItemID.FlamingArrow, ItemID.ThrowingKnife }, 25, 50),
-            new ItemConfiguration(ItemID.HealingPotion, 3, 5),
-            new ItemConfiguration(new List<int>
+            new(ItemID.SuspiciousLookingEye, 1, 1, .5f),
+            new(ItemID.Dynamite, 1, 1, .5f),
+            new(ItemID.JestersArrow, 25, 50, .5f),
+            new(new List<int> { ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar }, 3, 10, .5f),
+            new(new List<int> { ItemID.FlamingArrow, ItemID.ThrowingKnife }, 25, 50, .5f),
+            new(ItemID.HealingPotion, 3, 5, .5f),
+            new(new List<int>
             {
                 ItemID.SpelunkerPotion, ItemID.FeatherfallPotion, ItemID.NightOwlPotion, ItemID.WaterWalkingPotion,
                 ItemID.ArcheryPotion, ItemID.GravitationPotion, ItemID.ThornsPotion, ItemID.InvisibilityPotion,
                 ItemID.HunterPotion, ItemID.BattlePotion, ItemID.TeleportationPotion
-            }, 1, 2),
-            new ItemConfiguration(ItemID.RecallPotion, 1, 2),
-            new ItemConfiguration(new List<int> { ItemID.Torch, ItemID.Glowstick }, 15, 29),
-            new ItemConfiguration(ItemID.GoldCoin, 1, 2)
+            }, 1, 2, .5f),
+            new(ItemID.RecallPotion, 1, 2, .5f),
+            new(new List<int> { ItemID.Torch, ItemID.Glowstick }, 15, 29, .5f),
+            new(ItemID.GoldCoin, 1, 2, .5f)
         };
-
-        #endregion
-
-
-        public static void GenerateCaveHouse(int startX, int startY, bool checkIfProtected = false)
+        public static bool GenerateCaveHouse(int startX, int startY, bool checkIfProtected = true,
+            List<PrimaryItemConfiguration> primaryItems = null, List<ItemConfiguration> secondaryItems = null)
         {
-            int houseCount = Main.rand.Next(1, 4);
+            int houseCount = WorldGen.genRand.Next(1, 4);
             HouseInfo[] houses = new HouseInfo[houseCount];
             int currentBottom = startY;
             for (int i = 0; i < houseCount; i++)
             {
-                int w = Main.rand.Next(20, 31);
-                int h = Main.rand.Next(7, 9);
-                int randomOffset = Main.rand.Next(-8, 9);
+                int w = WorldGen.genRand.Next(20, 31);
+                int h = WorldGen.genRand.Next(7, 9);
+                int randomOffset = WorldGen.genRand.Next(-8, 9);
 
                 int bottomRow = currentBottom;
                 int topRow = bottomRow - (h - 1);
@@ -149,25 +109,20 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 currentBottom = topRow;
             }
 
-            if (checkIfProtected)
-            {
-                Rectangle houseRectangles = Rectangle.Empty;
-                foreach (var house in houses)
-                {
-                    if (AeroStructure.ProtectedStructures.Any(x => x.Intersects(house.ToRectangle())))
-                    {
-                        return;
-                    }
-                }
-            }
-
+            var (minX, maxX, minY, maxY) = GetBoundingBox(houses);
+            Rectangle bounds = new(minX - 2, minY - 2, maxX - minX + 5, maxY - minY + 5);
+            if (!InWorld(bounds.Left, bounds.Top, 10) || !InWorld(bounds.Right, bounds.Bottom, 10))
+                return false;
+            AeroStructure structure = new(new Vector2(bounds.X, bounds.Y), bounds.Width, bounds.Height, "cavehouse");
+            if (checkIfProtected && !structure.CanPlace())
+                return false;
             foreach (var h in houses)
                 ClearHouseRegion(h);
 
-            bool connectionDirection = Main.rand.NextBool();
+            bool connectionDirection = WorldGen.genRand.NextBool();
             for (int i = 0; i < houseCount; i++)
             {
-                bool withAirGaps = Main.rand.NextBool();
+                bool withAirGaps = WorldGen.genRand.NextBool();
                 GenerateRoom(houses[i].X, houses[i].Y, houses[i].Width, houses[i].Height, withAirGaps);
                 foreach (var house in houses)
                 {
@@ -192,7 +147,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
             {
                 PlaceChainLinesInHouse(house);
             }
-            ApplyPerlinWallRemoval(houses, 0.5f, 0.2f, Main.rand.Next(2000));
+            ApplyPerlinWallRemoval(houses, 0.5f, 0.2f, WorldGen.genRand.Next(2000));
             ReplaceLargeAirBlobsWithCrystalGrassWall(houses, 13);
             PlaceBeamsUnderHouse(houses[0]);
 
@@ -205,8 +160,19 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 PlaceCobwebBlobsNearBorder(h);
             }
             RandomlyRemoveSomeWalls(houses, 0.30f);
-            PlaceTopPlatformPassage(houses[houseCount - 1]);
+            PlaceTopPlatformPassage(houses);
+            TryPlaceDoor(houses);
             FrameGeneratedArea(houses);
+            primaryItems ??= CreatePrimaryLootPool();
+            if (secondaryItems == null)
+            {
+                secondaryItems = CreateSecondaryLootPool();
+                if (startY > Main.maxTilesY / 2)
+                    secondaryItems.Add(new ItemConfiguration(ItemID.GoldCoin, 10, 49, 1f));
+            }
+            structure.ApplyItemConfigurationsToAll(WorldGen.genRand, primaryItems, secondaryItems);
+            structure.ProtectStructure();
+            return true;
         }
 
         #region Crystal Placement
@@ -217,17 +183,17 @@ namespace AerovelenceMod.Common.Utilities.Generation
         /// </summary>
         private static void PlaceFloorCrystals(HouseInfo house)
         {
-            int clusterCount = Main.rand.Next(1, 2);
+            int clusterCount = WorldGen.genRand.Next(1, 2);
             for (int i = 0; i < clusterCount; i++)
             {
-                bool useLarge = Main.rand.NextBool();
-                bool flipHorizontally = Main.rand.NextBool();
+                bool useLarge = WorldGen.genRand.NextBool();
+                bool flipHorizontally = WorldGen.genRand.NextBool();
                 int formationWidth = useLarge ? 3 : 2;
                 int minX = house.X + 1;
                 int maxX = house.X + house.Width - formationWidth - 1;
                 if (maxX < minX) continue;
 
-                int x = Main.rand.Next(minX, maxX + 1);
+                int x = WorldGen.genRand.Next(minX, maxX + 1);
                 int floorY = house.Y + house.Height - 1;
 
                 if (useLarge)
@@ -290,17 +256,17 @@ namespace AerovelenceMod.Common.Utilities.Generation
         /// </summary>
         private static void PlaceCeilingCrystals(HouseInfo house)
         {
-            int clusterCount = Main.rand.Next(1, 2);
+            int clusterCount = WorldGen.genRand.Next(1, 2);
             for (int i = 0; i < clusterCount; i++)
             {
-                bool useLarge = Main.rand.NextBool();
-                bool flipHorizontally = Main.rand.NextBool();
+                bool useLarge = WorldGen.genRand.NextBool();
+                bool flipHorizontally = WorldGen.genRand.NextBool();
 
                 int formationWidth = useLarge ? 3 : 2;
                 int minX = house.X + 1;
                 int maxX = house.X + house.Width - formationWidth - 1;
                 if (maxX < minX) continue;
-                int x = Main.rand.Next(minX, maxX + 1);
+                int x = WorldGen.genRand.Next(minX, maxX + 1);
                 int ceilingY = house.Y;
 
                 if (useLarge)
@@ -385,15 +351,15 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 ring.Add(new Point(right, y));
 
             //shuffles ring
-            ring = [.. ring.OrderBy(_ => Main.rand.Next())];
+            ring = [.. ring.OrderBy(_ => WorldGen.genRand.Next())];
 
             //places a few BFS lumps
-            int lumps = Main.rand.Next(2, 5); // 2–4 lumps
+            int lumps = WorldGen.genRand.Next(2, 5); // 2–4 lumps
             for (int i = 0; i < lumps && ring.Count > 0; i++)
             {
                 Point start = ring[0];
                 ring.RemoveAt(0);
-                int size = Main.rand.Next(6, 10);
+                int size = WorldGen.genRand.Next(6, 10);
                 PlaceCobwebBlob(house, start.X, start.Y, size);
             }
         }
@@ -451,7 +417,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 {
                     for (int y = top; y <= bottom; y++)
                     {
-                        if (Main.tile[x, y].WallType != 0 && Main.rand.NextFloat() < removeChance)
+                        if (Main.tile[x, y].WallType != 0 && WorldGen.genRand.NextFloat() < removeChance)
                         {
                             Main.tile[x, y].WallType = 0;
                         }
@@ -486,7 +452,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
                     {
                         KillTile(i, j, false, false, true);
                         Main.tile[i, j].WallType = 0;
-                        if (Main.rand.NextFloat() < 0.15f)
+                        if (WorldGen.genRand.NextFloat() < 0.15f)
                         {
                             PlaceTile(i, j, ModContent.TileType<CrackedCavernBrickTile>(), mute: true, forced: true);
                         }
@@ -656,8 +622,8 @@ namespace AerovelenceMod.Common.Utilities.Generation
 
             for (int i = 0; i < attempts; i++)
             {
-                int x = Main.rand.Next(left, right + 1);
-                int y = Main.rand.Next(top, bottom + 1);
+                int x = WorldGen.genRand.Next(left, right + 1);
+                int y = WorldGen.genRand.Next(top, bottom + 1);
 
                 if (CheckMultiTileSpace(x, y, shelfWidth, shelfHeight))
                 {
@@ -680,7 +646,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
         private static void PlaceSingleChestWithPadding(HouseInfo[] houses)
         {
             //Main.NewText("begin", 255, 200, 50);
-            var shuffled = houses.OrderBy(_ => Main.rand.Next()).ToList();
+            var shuffled = houses.OrderBy(_ => WorldGen.genRand.Next()).ToList();
             foreach (var house in shuffled)
             {
                 if (TryPlaceChestOnHouseFloor(house))
@@ -702,13 +668,13 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 return false;
             for (int attempt = 1; attempt <= 50; attempt++)
             {
-                int x = Main.rand.Next(left, right + 1);
+                int x = WorldGen.genRand.Next(left, right + 1);
                 if (CheckFloorChestSpot(x, floorY))
                 {
                     int chestIndex = WorldGen.PlaceChest(x, floorY - 1, (ushort)ModContent.TileType<CavernChestTile>(), false);
                     if (chestIndex != -1)
                     {
-                        ConfigureChestLoot(chestIndex, house);
+
                         return true;
                     }
                 }
@@ -728,12 +694,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
             Tile below2 = Main.tile[x + 1, floorY];
             if (!IsSolidBlock(below1) || !IsSolidBlock(below2))
                 return false;
-            Tile chestTile1 = Main.tile[x, floorY - 1];
-            Tile chestTile2 = Main.tile[x + 1, floorY - 1];
-            if (chestTile1.HasTile || chestTile2.HasTile)
-                return false;
-
-            return true;
+            return CheckMultiTileSpace(x, floorY - 2, 2, 2);
         }
 
         /// <summary>
@@ -743,83 +704,28 @@ namespace AerovelenceMod.Common.Utilities.Generation
         {
             int x = house.X + house.Width / 2;
             int floorY = house.Y + house.Height - 1;
-            KillTile(x, floorY - 1, false, false, true);
-            KillTile(x + 1, floorY - 1, false, false, true);
-            int chestIndex = WorldGen.PlaceChest(x, floorY - 1, TileID.Containers, false, style: 1);
-            if (chestIndex != -1)
+            for (int column = x; column <= x + 1; column++)
             {
-                ConfigureChestLoot(chestIndex, house);
+                for (int y = floorY - 2; y < floorY; y++)
+                    KillTile(column, y, false, false, true);
+                Main.tile[column, floorY].ClearTile();
+                PlaceTile(column, floorY, ModContent.TileType<CavernBrickTile>(), mute: true, forced: true);
             }
+            WorldGen.PlaceChest(x, floorY - 1, (ushort)ModContent.TileType<CavernChestTile>(), false);
         }
         #endregion
-
-        #region Loot Generation
-
-        /// <summary>
-        /// Configures the loot of a placed chest using a primary pool, secondary pool,
-        /// and optionally adds common loot based on the house’s depth.
-        /// </summary>
-        private static void ConfigureChestLoot(int chestIndex, HouseInfo house)
-        {
-            Chest chest = Main.chest[chestIndex];
-            if (chest == null)
-                return;
-            for (int i = 0; i < chest.item.Length; i++)
-            {
-                chest.item[i].TurnToAir();
-            }
-
-            //primary loot: Always add one item from the primary pool in slot 0.
-            var primaryChoice = crystalShrinePrimary[Main.rand.Next(crystalShrinePrimary.Count)];
-            int primaryAmount = Main.rand.Next(primaryChoice.MinAmount, primaryChoice.MaxAmount + 1);
-            chest.item[0] = new Item();
-            chest.item[0].SetDefaults(primaryChoice.ItemID);
-            chest.item[0].stack = primaryAmount;
-
-            //secondary loot: For each secondary item, add it with a 50% chance.
-            int chestSlot = 1;
-            foreach (var config in crystalShrineSecondary)
-            {
-                if (Main.rand.NextFloat() < 0.5f)
-                {
-                    int selectedItem = config.ItemIDs.Count > 1
-                        ? config.ItemIDs[Main.rand.Next(config.ItemIDs.Count)]
-                        : config.ItemIDs[0];
-                    int amount = Main.rand.Next(config.MinAmount, config.MaxAmount + 1);
-                    if (chestSlot < chest.item.Length)
-                    {
-                        chest.item[chestSlot] = new Item();
-                        chest.item[chestSlot].SetDefaults(selectedItem);
-                        chest.item[chestSlot].stack = amount;
-                        chestSlot++;
-                    }
-                }
-            }
-
-            //common loot: Example—if the house is deep underground, add extra gold coins.
-            if (house.Y > Main.maxTilesY / 2 && chestSlot < chest.item.Length)
-            {
-                int coinAmount = Main.rand.Next(10, 50);
-                chest.item[chestSlot] = new Item();
-                chest.item[chestSlot].SetDefaults(ItemID.GoldCoin);
-                chest.item[chestSlot].stack = coinAmount;
-            }
-        }
-
-        #endregion
-
 
         #region Pots & Cobwebs
         private static void PlaceRandomPots(HouseInfo[] houses)
         {
-            int potCount = Main.rand.Next(1, 14);
+            int potCount = WorldGen.genRand.Next(1, 14);
             for (int i = 0; i < potCount; i++)
                 TryPlaceOnePot(houses);
         }
 
         private static void TryPlaceOnePot(HouseInfo[] houses)
         {
-            var house = houses[Main.rand.Next(houses.Length)];
+            var house = houses[WorldGen.genRand.Next(houses.Length)];
             int left = house.X + 1;
             int right = house.X + house.Width - 2;
             int top = house.Y + 1;
@@ -827,8 +733,8 @@ namespace AerovelenceMod.Common.Utilities.Generation
 
             for (int attempt = 0; attempt < 50; attempt++)
             {
-                int x = Main.rand.Next(left, right + 1);
-                int y = Main.rand.Next(top, bottom + 1);
+                int x = WorldGen.genRand.Next(left, right + 1);
+                int y = WorldGen.genRand.Next(top, bottom + 1);
                 if (!Main.tile[x, y].HasTile)
                 {
                     KillTile(x, y, false, false, true);
@@ -840,23 +746,79 @@ namespace AerovelenceMod.Common.Utilities.Generation
         #endregion
 
         #region Top Passage & Doors
-        private static void PlaceTopPlatformPassage(HouseInfo topHouse)
+        private static void TryPlaceDoor(HouseInfo[] houses)
         {
-            int passageWidth = Main.rand.Next(4, 7);
-            int maxStart = topHouse.Width - passageWidth;
-            if (maxStart < 0) return;
-            int passageX = topHouse.X + Main.rand.Next(0, maxStart + 1);
-            int passageRow = topHouse.Y;
-            int checkRow = passageRow - 1;
-            for (int x = passageX; x < passageX + passageWidth; x++)
+            bool leftFirst = WorldGen.genRand.NextBool();
+            foreach (HouseInfo house in houses)
             {
-                if (Main.tile[x, checkRow].HasTile || Main.tile[x, checkRow].WallType != 0)
-                    return;
+                int floor = house.Y + house.Height - 1;
+                for (int side = 0; side < 2; side++)
+                {
+                    int direction = (side == 0) == leftFirst ? -1 : 1;
+                    int x = direction < 0 ? house.X : house.X + house.Width - 1;
+                    bool safe = IsSolidBlock(Main.tile[x, floor]) && IsSolidBlock(Main.tile[x, floor - 4]);
+                    for (int y = floor - 3; y < floor && safe; y++)
+                    {
+                        Tile wall = Main.tile[x, y];
+                        safe = wall.HasTile && (wall.TileType == ModContent.TileType<CavernBrickTile>() ||
+                            wall.TileType == ModContent.TileType<CrackedCavernBrickTile>());
+                        for (int offset = -2; offset <= 2 && safe; offset++)
+                            if (offset != 0)
+                            {
+                                Tile clearance = Main.tile[x + offset, y];
+                                safe = !clearance.HasTile && clearance.LiquidAmount == 0;
+                            }
+                    }
+                    if (!safe) continue;
+                    ushort[] originalTypes = new ushort[3];
+                    for (int y = floor - 3; y < floor; y++)
+                    {
+                        originalTypes[y - floor + 3] = Main.tile[x, y].TileType;
+                        Main.tile[x, y].ClearTile();
+                    }
+                    PlaceTile(x, floor - 2, ModContent.TileType<GlimmerwoodDoorTileClosed>(), mute: true);
+                    if (Main.tile[x, floor - 2].HasTile &&
+                        Main.tile[x, floor - 2].TileType == ModContent.TileType<GlimmerwoodDoorTileClosed>())
+                        return;
+                    for (int y = floor - 3; y < floor; y++)
+                        PlaceTile(x, y, originalTypes[y - floor + 3], mute: true, forced: true);
+                }
             }
-            for (int x = passageX; x < passageX + passageWidth; x++)
+        }
+
+        private static void PlaceTopPlatformPassage(HouseInfo[] houses)
+        {
+            List<Rectangle> openings = new();
+            foreach (HouseInfo house in houses)
             {
-                KillTile(x, passageRow, false, false, true);
-                PlaceTile(x, passageRow, ModContent.TileType<GlimmerwoodPlatformTile>(), mute: true, forced: true);
+                for (int start = house.X + 1; start < house.X + house.Width - 2; start++)
+                {
+                    int clearWidth = 0;
+                    for (int x = start; x < Math.Min(start + 4, house.X + house.Width - 1); x++)
+                    {
+                        Tile roof = Main.tile[x, house.Y];
+                        bool clear = roof.HasTile && (roof.TileType == ModContent.TileType<CavernBrickTile>() ||
+                            roof.TileType == ModContent.TileType<CrackedCavernBrickTile>());
+                        for (int y = house.Y - 3; y <= house.Y + 3 && clear; y++)
+                        {
+                            if (y == house.Y) continue;
+                            Tile tile = Main.tile[x, y];
+                            clear = !tile.HasTile && tile.LiquidAmount == 0;
+                        }
+                        if (!clear) break;
+                        clearWidth++;
+                    }
+                    if (clearWidth >= 2)
+                        openings.Add(new Rectangle(start, house.Y, clearWidth, 1));
+                }
+            }
+            if (openings.Count == 0) return;
+            Rectangle opening = openings[WorldGen.genRand.Next(openings.Count)];
+            int passageWidth = WorldGen.genRand.Next(2, opening.Width + 1);
+            for (int x = opening.X; x < opening.X + passageWidth; x++)
+            {
+                Main.tile[x, opening.Y].ClearTile();
+                PlaceTile(x, opening.Y, ModContent.TileType<GlimmerwoodPlatformTile>(), mute: true, forced: true);
             }
         }
 
@@ -866,19 +828,34 @@ namespace AerovelenceMod.Common.Utilities.Generation
 
         private static void PlaceBeamsUnderHouse(HouseInfo bottomHouse)
         {
-            List<int> beamColumns = GetBeamColumns(bottomHouse.X, bottomHouse.Width);
-            int houseBottom = bottomHouse.Y + bottomHouse.Height - 1;
-            foreach (int x in beamColumns)
-            {
-                int y = houseBottom + 1;
-                while (y < Main.maxTilesY && !Main.tile[x, y].HasTile)
-                {
-                    PlaceTile(x, y, ModContent.TileType<GlimmerwoodBeamTile>(), mute: true, forced: true);
-                    y++;
-                }
-            }
+            PlaceSupportBeams(bottomHouse.ToRectangle());
         }
 
+        public static void PlaceSupportBeams(Rectangle bounds)
+        {
+            int beamType = ModContent.TileType<GlimmerwoodBeamTile>();
+            int brickType = ModContent.TileType<CavernBrickTile>();
+            int crackedBrickType = ModContent.TileType<CrackedCavernBrickTile>();
+            foreach (int x in GetBeamColumns(bounds.Left, bounds.Width))
+            {
+                int floor = bounds.Bottom - 1;
+                while (floor >= bounds.Top && (!Main.tile[x, floor].HasTile ||
+                    Main.tile[x, floor].TileType != brickType && Main.tile[x, floor].TileType != crackedBrickType))
+                    floor--;
+                if (floor < bounds.Top) continue;
+                int y = floor + 1;
+                int firstBeam = y;
+                while (InWorld(x, y, 10) && !Main.tile[x, y].HasTile &&
+                    !AeroStructure.ProtectedStructures.Any(area => area.Contains(x, y)))
+                {
+                    PlaceTile(x, y, beamType, mute: true, forced: true);
+                    WorldGen.SquareTileFrame(x, y);
+                    y++;
+                }
+                if (y > firstBeam)
+                    new AeroStructure(new Vector2(x, firstBeam), 1, y - firstBeam, "glimmerwoodsupport").ProtectStructure();
+            }
+        }
         private static List<int> GetBeamColumns(int left, int width)
         {
             int totalBeams = 4 + (width - 20) / 5;
@@ -925,12 +902,12 @@ namespace AerovelenceMod.Common.Utilities.Generation
         #region Chains
         private static void PlaceChainLinesInHouse(HouseInfo house)
         {
-            int lineCount = Main.rand.Next(1, 4);
+            int lineCount = WorldGen.genRand.Next(1, 4);
             for (int i = 0; i < lineCount; i++)
             {
-                int x = Main.rand.Next(house.X + 1, house.X + house.Width - 1);
+                int x = WorldGen.genRand.Next(house.X + 1, house.X + house.Width - 1);
                 int startY = house.Y + 1;
-                int chainLength = Main.rand.Next(2, 6);
+                int chainLength = WorldGen.genRand.Next(2, 6);
                 for (int y = startY; y < startY + chainLength && y < house.Y + house.Height; y++)
                 {
                     KillTile(x, y, false, false, true);
@@ -963,7 +940,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
                                 continue;
                             if (Main.tile[nx, ny].HasTile && Main.tile[nx, ny].TileType == TileID.Platforms)
                                 continue;
-                            if (!Main.tile[nx, ny].HasTile && Main.rand.NextFloat() < chancePerTile)
+                            if (!Main.tile[nx, ny].HasTile && WorldGen.genRand.NextFloat() < chancePerTile)
                             {
                                 KillTile(nx, ny, false, false, true);
                                 PlaceTile(nx, ny, ModContent.TileType<CrystalGrowthTile>(), mute: true, forced: true);
@@ -1025,6 +1002,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
         {
             if (tile == null) return false;
             if (!tile.HasTile) return false;
+            if (!Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType]) return false;
             if (tile.Slope != SlopeType.Solid) return false;
             if (tile.IsHalfBlock) return false;
             return true;

@@ -53,9 +53,6 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
             if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<PetrifiedShacklesPlayer>().Equipped)
             {
                 int defense = Main.LocalPlayer.GetModPlayer<PetrifiedShacklesPlayer>().Defense;

@@ -10,8 +10,9 @@ namespace AerovelenceMod.Content.Items.TreasureBags
 {
     public class CrystalTumblerBag : TranslatableModItem
     {
+        public static int[] Weapons => new[] { ModContent.ItemType<Geomagnetic>(), ModContent.ItemType<FenceSitter>(), ModContent.ItemType<TumblerAccelerator>(), ModContent.ItemType<ConductorWand>(), ModContent.ItemType<DarkCrystalStaff>(), ModContent.ItemType<Staticstring>(), ModContent.ItemType<Rubbleswarm>(), ModContent.ItemType<BatteryBackpack>() };
         private const string Description = "Right click to open";
-        public static int[] Weapons => new[] { ModContent.ItemType<Geomagnetic>(), ModContent.ItemType<FenceSitter>(), ModContent.ItemType<TumblerAccelerator>(), ModContent.ItemType<ConductorWand>(), ModContent.ItemType<DarkCrystalStaff>() };
+		
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Treasure Bag (Crystal Tumbler)", Description);
@@ -19,12 +20,6 @@ namespace AerovelenceMod.Content.Items.TreasureBags
             ItemID.Sets.BossBag[Type] = true;
             ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
             Item.ResearchUnlockCount = 3;
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
         }
         public override void SetDefaults()
         {

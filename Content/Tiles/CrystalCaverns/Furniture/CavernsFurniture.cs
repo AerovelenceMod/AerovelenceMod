@@ -47,7 +47,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodCandleTile : ModTile
     {
         private bool isOn = true;
-        public override void SetStaticDefaults() => CommonTileHelper.SetupCandle(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodPlatformItem>(), DustID.BlueCrystalShard, true, true, true);
+        public override void SetStaticDefaults() => CommonTileHelper.SetupCandle(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodCandleItem>(), DustID.BlueCrystalShard, true, true, true);
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
@@ -177,7 +177,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         public override void SetStaticDefaults()
         {
             flameTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/GlimmerwoodChandelierTile_Flame");
-            CommonTileHelper.SetupChandelier(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodPlatformItem>(), DustID.BlueCrystalShard, true, true, false);
+            CommonTileHelper.SetupChandelier(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodChandelierItem>(), DustID.BlueCrystalShard, true, true, false);
         }
 
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
@@ -452,7 +452,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     #region Chests
     public class GlimmerwoodChestTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), "Glimmerwood Chest", ModContent.ItemType<GlimmerwoodChestItem>(), DustID.BlueCrystalShard,false);
+        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodChestItem>(), DustID.BlueCrystalShard,false);
         public override bool RightClick(int i, int j) { return CommonTileHelper.HandleRightClick(this, i, j, Main.LocalPlayer, ItemID.GoldenKey); }
         public override void MouseOver(int i, int j) => CommonTileHelper.HandleMouseOver(this, i, j, ModContent.ItemType<GlimmerwoodChestItem>(), ItemID.GoldenKey);
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -466,7 +466,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 
     public class CavernChestTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), "Glimmerwood Chest", ModContent.ItemType<CavernChestItem>(), DustID.BlueCrystalShard, false);
+        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), ModContent.ItemType<CavernChestItem>(), DustID.BlueCrystalShard, false);
         public override bool RightClick(int i, int j) { return CommonTileHelper.HandleRightClick(this, i, j, Main.LocalPlayer, ItemID.GoldenKey); }
         public override void MouseOver(int i, int j) => CommonTileHelper.HandleMouseOver(this, i, j, ModContent.ItemType<CavernChestItem>(), ItemID.GoldenKey);
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -480,7 +480,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 
     public class CitadelChestTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), "Glimmerwood Chest", ModContent.ItemType<CitadelChestItem>(), DustID.BlueCrystalShard, false);
+        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), ModContent.ItemType<CitadelChestItem>(), DustID.BlueCrystalShard, false);
         public override bool RightClick(int i, int j) { return CommonTileHelper.HandleRightClick(this, i, j, Main.LocalPlayer, ModContent.ItemType<CitadelChestKey>()); }
         public override void MouseOver(int i, int j) => CommonTileHelper.HandleMouseOver(this, i, j, ModContent.ItemType<CitadelChestItem>(), ModContent.ItemType<CitadelChestKey>());
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -544,7 +544,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 
     public class GlimmerwoodPipeOrganTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupDecorativeMultiTile(this, "MapObject.PipeOrgan", new Color(123, 123, 123), 3, 2, ModContent.ItemType<GlimmerwoodPipeOrganItem>());
+        public override void SetStaticDefaults() => CommonTileHelper.SetupDecorativeMultiTile(this, new Color(123, 123, 123), 3, 2, ModContent.ItemType<GlimmerwoodPipeOrganItem>());
     }
 
     public class GlimmerwoodPipeOrganItem : ModItem
@@ -639,7 +639,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     #region Sink
     public class GlimmerwoodSinkTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupDecorativeMultiTile(this, "MapObject.Sink", new Color(123, 123, 123), 2, 2, ModContent.ItemType<GlimmerwoodSinkItem>());
+        public override void SetStaticDefaults() => CommonTileHelper.SetupDecorativeMultiTile(this, new Color(123, 123, 123), 2, 2, ModContent.ItemType<GlimmerwoodSinkItem>());
     }
 
     public class GlimmerwoodSinkItem : ModItem

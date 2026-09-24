@@ -17,19 +17,16 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
     public class BandOfCrystallization : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Accessories/SmallAccessories/BandOfCrystallization";
-        private const string EnglishTooltip = "Grows 1 defense every 10 seconds in combat, up to 10\nOutside combat, grows 1 defense every 5 seconds, up to 20\nEntering combat sheds defense above 10; bosses keep you in combat\nGlowing crystals show your growing protection\nRemoving the band sheds its crystals";
+        private const string EnglishTooltip = "Grows 1 defense every 10 seconds in combat, up to 10\nOutside combat, grows 1 defense every 5 seconds, up to 20\nEntering combat sheds defense above 10; bosses keep you in combat\nTaking damage sheds 2 defense and resets growth\nGlowing crystals show your growing protection\nRemoving the band sheds its crystals";
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Band of Crystallization", EnglishTooltip)
                 .AddName(Language.Spanish, "Banda de Cristalización")
-                .AddTooltip(Language.Spanish, "Gana 1 de defensa cada 10 segundos en combate, hasta 10\nFuera de combate, gana 1 cada 5 segundos, hasta 20\nEntrar en combate elimina la defensa que supere 10; los jefes mantienen el combate\nLos cristales luminosos muestran tu protección acumulada\nQuitarte la banda elimina sus cristales");
+                .AddTooltip(Language.Spanish, "Gana 1 de defensa cada 10 segundos en combate, hasta 10\nFuera de combate, gana 1 cada 5 segundos, hasta 20\nEntrar en combate elimina la defensa que supere 10; los jefes mantienen el combate\nRecibir daño elimina 2 de defensa y reinicia el crecimiento\nLos cristales luminosos muestran tu protección acumulada\nQuitarte la banda elimina sus cristales");
             base.SetStaticDefaults();
         }
         public override void ModifyTooltips(List<TooltipLine> tooltips)
         {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
             if (!Main.gameMenu && Main.LocalPlayer.GetModPlayer<BandOfCrystallizationPlayer>().Equipped)
             {
                 var state = Main.LocalPlayer.GetModPlayer<BandOfCrystallizationPlayer>();
@@ -76,7 +73,18 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             combatTicks = 0;
             DisplayDefense = VisualOpacity = GrowthFlash = 0f;
         }
-        public override void OnHurt(Player.HurtInfo info) => combatTicks = 600;
+        public override void OnHurt(Player.HurtInfo info)
+        {
+            combatTicks = 600;
+            if (!Equipped) return;
+            int lost = growth.Shed(2);
+            Player.statDefense -= lost;
+            if (lost > 0 && !Main.dedServ)
+            {
+                BandOfCrystallizationVFX.Burst(Player.Center, lost * 5, 3.5f);
+                SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.35f, Pitch = 0.3f }, Player.Center);
+            }
+        }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!target.friendly && target.type != NPCID.TargetDummy && damageDone > 0)
@@ -121,7 +129,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
     public class CrystallizationLayer : PlayerDrawLayer
     {
-        public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.BackAcc);
+        public override Position GetDefaultPosition() => new AfterParent(ModContent.GetInstance<OpalOfCaVeaCrystalLayer>());
         protected override void Draw(ref PlayerDrawSet drawInfo)
         {
             Player player = drawInfo.drawPlayer;
@@ -137,7 +145,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 float growth = MathHelper.Clamp((state.DisplayDefense - i * 4f) / 4f, 0f, 1f);
                 if (growth <= 0f)
                     continue;
-                Vector2 offset = new(-player.direction * (12f + MathF.Sin(i * 0.8f) * 7f), (-18f + i * 8f + MathF.Sin(time * 2f + i) * 1.5f) * player.gravDir);
+                Vector2 offset = new(-player.direction * ((player.GetModPlayer<OpalOfCaVeaPlayer>().hasOpalVisibility ? 27f : 12f) + MathF.Sin(i * 0.8f) * 7f), (-18f + i * 8f + MathF.Sin(time * 2f + i) * 1.5f) * player.gravDir);
                 float angle = -player.direction * (0.3f + i * 0.12f);
                 float scale = (0.2f + growth * 0.35f);
                 float opacity = growth * state.VisualOpacity;
@@ -154,6 +162,14 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         internal int Defense { get; private set; }
         internal int Ticks { get; private set; }
         internal bool InCombat { get; private set; }
+
+        internal int Shed(int amount)
+        {
+            int lost = Math.Min(Defense, amount);
+            Defense -= lost;
+            Ticks = 0;
+            return lost;
+        }
 
         internal int Update(bool equipped, bool combat, int combatCap = 10, int idleCap = 20, int combatInterval = 600, int idleInterval = 300)
         {

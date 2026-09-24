@@ -286,13 +286,17 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 return;
 
             int houseCount = WorldGen.genRand.Next(5, 11);
-            for (int i = 0; i < houseCount; i++)
+            var primaryItems = HouseGenerator.CreatePrimaryLootPool();
+            int placed = 0;
+            for (int attempt = 0; attempt < houseCount * 100 && placed < houseCount; attempt++)
             {
                 if (_validPoints.Count == 0) break;
                 int pickIndex = WorldGen.genRand.Next(_validPoints.Count);
                 Point chosen = _validPoints[pickIndex];
                 _validPoints.RemoveAt(pickIndex);
-                HouseGenerator.GenerateCaveHouse(chosen.X, chosen.Y, checkIfProtected: true);
+                if (HouseGenerator.GenerateCaveHouse(chosen.X, chosen.Y, checkIfProtected: true,
+                    primaryItems: primaryItems))
+                    placed++;
             }
         }
 
@@ -412,6 +416,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                 if (structure != AeroStructure.Empty)
                 {
+                    if (name.StartsWith("library", StringComparison.Ordinal))
+                        HouseGenerator.PlaceSupportBeams(structure.ToRectangle());
                     //logger?.Info($"Successfully placed structure at ({position.X}, {position.Y}) on attempt {i + 1}");
                     return structure;
                 }

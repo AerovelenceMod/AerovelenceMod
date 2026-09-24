@@ -21,20 +21,15 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class CavernousRampart : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/CavernousRampart/CavernousRampart";
+		
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Cavernous Rampart", "Hold to guard toward the cursor\nGuarding reduces damage taken, but taking too much damage breaks the rampart temporarily\nRun into enemies to cause shield bashes")
                 .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Baluarte Cavernoso")
-                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Mantén pulsado para protegerte hacia el cursor; no se puede usar sobre una montura\nLos golpes contra el escudo reciben 12 de defensa adicional\nUn golpe bloqueado superior al 20% de tu vida máxima lo rompe durante 6 segundos\nEl movimiento rápido embiste a los enemigos y concede una breve invulnerabilidad");
-
+				.AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Mantén presionado para defenderte hacia el cursorLa defensa reduce el daño recibido, pero recibir demasiado daño rompe el baluarte temporalmenteArremete contra los enemigos para realizar golpes de escudo");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", "Hold to guard toward the cursor; cannot be used while mounted\nHits against the shield receive 12 additional defense\nA guarded hit exceeding 20% of maximum life shatters it for 6 seconds\nFast movement bashes enemies and grants a brief moment of invulnerability"));
-            base.ModifyTooltips(tooltips);
-        }
+		
         public override void SetDefaults()
         {
             base.SetDefaults();
@@ -60,6 +55,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public int Cooldown, ImpactCooldown;
         private bool guardedHit;
         internal float GuardFlash;
+        internal const float BashSpeed = 1.5f;
         public override void PostUpdate()
         {
             if (Cooldown > 0 && --Cooldown == 0 && Player.HeldItem.type == ModContent.ItemType<CavernousRampart>())
@@ -89,6 +85,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 Vector2 incoming = (source.Center - Player.Center).SafeNormalize(direction);
                 if (Vector2.Dot(direction, incoming) < .35f) return;
                 guardedHit = true;
+                modifiers.FinalDamage *= 0.65f;
                 modifiers.FinalDamage.Base -= 12 * Player.DefenseEffectiveness.Value;
                 modifiers.Knockback *= .7f;
                 break;
@@ -144,7 +141,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool? CanDamage()
         {
             Player player = Main.player[Projectile.owner];
-            return !retiring && player.GetModPlayer<RampartPlayer>().ImpactCooldown == 0 && Vector2.Dot(player.velocity, Projectile.rotation.ToRotationVector2()) > 5 ? null : false;
+            return !retiring && player.GetModPlayer<RampartPlayer>().ImpactCooldown == 0 && Vector2.Dot(player.velocity, Projectile.rotation.ToRotationVector2()) >= RampartPlayer.BashSpeed ? null : false;
         }
         public override void AI()
         {
@@ -175,12 +172,12 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             }
             Projectile.rotation = Projectile.ai[0];
             Projectile.Center = player.MountedCenter + Projectile.rotation.ToRotationVector2() * 23;
-            if (!retiring && player.velocity.Length() > 5 && Main.GameUpdateCount % 4 == 0) CavernousRampartVFX.Spark(Projectile.Center, -player.velocity * .1f);
+            if (!retiring && Vector2.Dot(player.velocity, Projectile.rotation.ToRotationVector2()) >= RampartPlayer.BashSpeed && Main.GameUpdateCount % 4 == 0) CavernousRampartVFX.Spark(Projectile.Center, -player.velocity * .1f);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             float speed = Main.player[Projectile.owner].velocity.Length();
-            modifiers.SourceDamage *= MathHelper.Clamp(1 + (speed - 5) / 5, 1, 3);
+            modifiers.SourceDamage *= MathHelper.Clamp(1.5f + (speed - RampartPlayer.BashSpeed) / 4f, 1.5f, 3f);
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
@@ -210,7 +207,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Texture2D shield = ModContent.Request<Texture2D>(Texture).Value;
             Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glowmask").Value;
             float speed = Math.Max(0f, Vector2.Dot(player.velocity, Projectile.rotation.ToRotationVector2()));
-            float power = Math.Clamp((speed - 3f) / 5f, 0f, 1f);
+            float power = Math.Clamp((speed - RampartPlayer.BashSpeed) / 4f, 0f, 1f);
             float flash = player.GetModPlayer<RampartPlayer>().GuardFlash;
             Vector2 center = Projectile.Center - Main.screenPosition;
             SpriteEffects facing = MathF.Cos(Projectile.rotation) < 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;

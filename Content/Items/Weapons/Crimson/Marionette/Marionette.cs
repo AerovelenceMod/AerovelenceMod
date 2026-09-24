@@ -23,7 +23,7 @@ using Terraria.ModLoader;
 using static Basic.Reference.Assemblies.Net80;
 using static Terraria.ModLoader.PlayerDrawLayer;
 
-namespace AerovelenceMod.Content.Items.Weapons.Crimson
+namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
 {
     public class Marionette : TranslatableModItem
     {
@@ -419,14 +419,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson
         #region PreDraw
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D tex = ModContent.Request<Texture2D>(Mod.Name + "/Content/Items/Weapons/Crimson/MarionetteStringless").Value;
+            Texture2D tex = ModContent.Request<Texture2D>(Mod.Name + "/Content/Items/Weapons/Crimson/Marionette/MarionetteStringless").Value;
             Rectangle sourceRect = new Rectangle(0, 0, tex.Width, tex.Height);
 
             Main.EntitySpriteDraw(tex, Projectile.Center - Main.screenPosition, sourceRect, Color.White * Appearance, Projectile.rotation, sourceRect.Size() / 2, AppearScale, Projectile.direction == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None);
 
 
             Vector2 barsLoc = BarsCenter - Main.screenPosition;
-            tex = ModContent.Request<Texture2D>(Mod.Name + "/Content/Items/Weapons/Crimson/MarionetteBar").Value;
+            tex = ModContent.Request<Texture2D>(Mod.Name + "/Content/Items/Weapons/Crimson/Marionette/MarionetteBar").Value;
             sourceRect = new Rectangle(0, 0, tex.Width, tex.Height);
             if (age < 24)
             {

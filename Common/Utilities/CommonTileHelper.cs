@@ -1,3 +1,4 @@
+using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -12,6 +13,7 @@ using Terraria.GameContent.Drawing;
 using Terraria.ID;
 using Terraria.IO;
 using Terraria.Localization;
+using Language = Terraria.Localization.Language;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -419,7 +421,7 @@ namespace AerovelenceMod.Common.Utilities
             lightG = 0.75f;
             lightB = 1f;
 
-            modTile.AddMapEntry(mapColor, Language.GetText("ItemName.Campfire"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
 
             flameTexture = ModContent.Request<Texture2D>(flameTexturePath);
         }
@@ -561,7 +563,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupPlatform(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Platform"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
             modTile.AdjTiles = [TileID.Platforms];
             Main.tileLighted[modTile.Type] = true;
@@ -583,7 +585,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupWorkbench(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.WorkBench"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             modTile.AdjTiles = [TileID.WorkBenches];
             Main.tileTable[modTile.Type] = true;
@@ -597,7 +599,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupCandle(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("ItemName.Candle"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = [TileID.Candles];
             Main.tileLighted[modTile.Type] = true;
@@ -612,7 +614,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupLantern(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(new Color(251, 235, 127), Language.GetText("MapObject.Lantern"));
+            modTile.AddMapEntry(new Color(251, 235, 127), modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = [TileID.HangingLanterns];
             Main.tileLighted[modTile.Type] = true;
@@ -629,7 +631,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupLamp(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.FloorLamp"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = [TileID.Lamps];
             Main.tileLighted[modTile.Type] = true;
@@ -641,7 +643,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupCandelabra(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(new Color(253, 221, 3), Language.GetText("MapObject.Candelabra"));
+            modTile.AddMapEntry(new Color(253, 221, 3), modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = [TileID.Candelabras];
             Main.tileLighted[modTile.Type] = true;
@@ -653,7 +655,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupChandelier(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Chandelier"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = [TileID.Chandeliers];
             Main.tileLighted[modTile.Type] = true;
@@ -704,7 +706,7 @@ namespace AerovelenceMod.Common.Utilities
 
             TileObjectData.addTile(modTile.Type);
 
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Torch"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
             modTile.AdjTiles = new int[] { TileID.Torches };
             Main.tileLighted[modTile.Type] = true;
@@ -724,7 +726,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupChair(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Chair"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
             modTile.AdjTiles = [TileID.Chairs];
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
@@ -742,7 +744,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupToilet(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Toilet"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
             modTile.AdjTiles = [TileID.Chairs];
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2);
@@ -760,7 +762,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupSofa(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal, bool isBench)
         {
-            modTile.AddMapEntry(mapColor, isBench ? Language.GetText("ItemName.Bench") : Language.GetText("ItemName.Sofa"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
             Main.tileLighted[modTile.Type] = true;
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
@@ -768,10 +770,10 @@ namespace AerovelenceMod.Common.Utilities
         }
 
 
-        public static void SetupChest(ModTile modTile, Color mapColor, string chestName, int itemDropType, int dustType, bool styleHorizontal)
+        public static void SetupChest(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool styleHorizontal)
         {
             SetTileProtection(modTile);
-            modTile.AddMapEntry(mapColor, Language.GetText(chestName));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AdjTiles = [TileID.Containers];
             Main.tileSpelunker[modTile.Type] = true;
             Main.tileContainer[modTile.Type] = true;
@@ -797,7 +799,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupDresser(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, modTile.CreateMapEntryName(), MapDresserName);
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType), MapDresserName);
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             modTile.AdjTiles = [TileID.Dressers];
             Main.tileSolidTop[modTile.Type] = true;
@@ -818,7 +820,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupPiano(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Piano"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AdjTiles = [TileID.Pianos];
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             Main.tileTable[modTile.Type] = true;
@@ -830,7 +832,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupClock(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("ItemName.GrandfatherClock"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AdjTiles = [TileID.GrandfatherClocks];
             TileID.Sets.HasOutlines[modTile.Type] = true;
             TileID.Sets.Clock[modTile.Type] = true;
@@ -842,7 +844,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupBed(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("ItemName.Bed"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsChair);
             modTile.AdjTiles = [TileID.Beds];
             TileID.Sets.HasOutlines[modTile.Type] = true;
@@ -858,7 +860,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupClosedDoor(ModTile modTile, int openDoorType, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Door"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsDoor);
             modTile.AdjTiles = [TileID.ClosedDoor];
             Main.tileBlockLight[modTile.Type] = true;
@@ -888,7 +890,7 @@ namespace AerovelenceMod.Common.Utilities
             modTile.AdjTiles = [TileID.OpenDoor];
             modTile.RegisterItemDrop(itemDropType);
 
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Door"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
 
             TileObjectData.newTile.Width = 2;
             TileObjectData.newTile.Height = 3;
@@ -938,7 +940,7 @@ namespace AerovelenceMod.Common.Utilities
         }
         public static void SetupSink(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal, bool water = false, bool honey = false, bool lava = false)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Sink"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AdjTiles = [TileID.Sinks];
             Main.tileLighted[modTile.Type] = true;
             TileID.Sets.CountsAsWaterSource[modTile.Type] = water;
@@ -950,7 +952,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupBookcase(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Bookcase"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.AdjTiles = [TileID.Bookcases];
             TileObjectData.newTile.CopyFrom(TileObjectData.Style3x4);
             TileObjectData.newTile.CoordinateHeights = [16, 16, 16, 16];
@@ -959,7 +961,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupTable(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(new Color(200, 200, 200), Language.GetText("MapObject.Table"));
+            modTile.AddMapEntry(new Color(200, 200, 200), modTile.MapNameFromItem(itemDropType));
             modTile.AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTable);
             modTile.AdjTiles = [TileID.Tables];
             Main.tileTable[modTile.Type] = true;
@@ -974,7 +976,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupBathtub(ModTile modTile, Color mapColor, int itemType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Bathtub"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemType));
             modTile.AdjTiles = [TileID.Bathtubs];
             TileObjectData.newTile.CopyFrom(TileObjectData.Style4x2);
             TileObjectData.newTile.CoordinateHeights = [16, 16];
@@ -983,7 +985,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SetupBossRelic(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
         {
-            modTile.AddMapEntry(mapColor, Language.GetText("MapObject.Relic"));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             Main.tileShine[modTile.Type] = 400;
             TileID.Sets.InteractibleByNPCs[modTile.Type] = true;
 
@@ -1246,7 +1248,7 @@ namespace AerovelenceMod.Common.Utilities
         }
 
 
-        public static void SetupDecorativeMultiTile(ModTile modTile, string mapEntryKey, Color mapColor, int widthInTiles, int heightInTiles, int itemDropType, int dustType = DustID.Smoke)
+        public static void SetupDecorativeMultiTile(ModTile modTile, Color mapColor, int widthInTiles, int heightInTiles, int itemDropType, int dustType = DustID.Smoke)
         {
             Main.tileFrameImportant[modTile.Type] = true;
             Main.tileNoAttach[modTile.Type] = true;
@@ -1261,7 +1263,7 @@ namespace AerovelenceMod.Common.Utilities
                 TileObjectData.newTile.CoordinateHeights[i] = 16;
             }
             TileObjectData.addTile(modTile.Type);
-            modTile.AddMapEntry(mapColor, Language.GetText(mapEntryKey));
+            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
             modTile.RegisterItemDrop(itemDropType);
         }
 

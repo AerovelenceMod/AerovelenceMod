@@ -31,12 +31,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             base.SetStaticDefaults();
         }
 
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
 
         public override void SetDefaults()
         {
@@ -140,7 +134,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         {
             released = true;
             Projectile.netUpdate = true;
-            Vector2 tangent = (Projectile.ai[0] + spinDirection * MathHelper.PiOver2).ToRotationVector2();
+            Vector2 tangent = releaseReady ? aimAngle.ToRotationVector2() : (Projectile.ai[0] + spinDirection * MathHelper.PiOver2).ToRotationVector2();
             Vector2 muzzle = Projectile.Center;
             if (!Collision.CanHitLine(player.Center, 1, 1, muzzle, 1, 1))
                 muzzle = player.Center;
@@ -261,7 +255,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         internal static float Radius(float age) => 24f + 22f * Charge(age);
         internal static float AngularSpeed(float age, float angle) => 0.062f + 0.05f * Charge(age);
         internal static bool Ready(float age, float angle, float aim, float spin = 1f)
-            => age >= 28f && AngularSpeed(age, angle) >= 0.075f && MathF.Cos(angle + spin * MathF.PI * 0.5f - aim) >= 0.9f;
+            => age >= 22f && AngularSpeed(age, angle) >= 0.075f && MathF.Cos(angle + spin * MathF.PI * 0.5f - aim) >= 0.78f;
         internal static float ReleaseSpeed(float age, float angle, bool ready)
             => (5f + AngularSpeed(age, angle) * 75f) * (0.6f + Charge(age) * 0.4f) * (ready ? 1.22f : 1f);
     }

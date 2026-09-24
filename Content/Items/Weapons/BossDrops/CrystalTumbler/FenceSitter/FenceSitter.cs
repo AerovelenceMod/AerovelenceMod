@@ -28,12 +28,6 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             this.ModifyLocalization("Fence Sitter", Description).AddSkillStrike(Language.Default, "The fifth swing's beams Skill Strike");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

@@ -24,12 +24,6 @@ namespace AerovelenceMod.Content.Items.Ammo
                 .AddTooltip(Language.Spanish, "Perfora una sección continua de terreno de hasta 12 bloques de grosor\nSale con la punta de cristal energizada y causa un 15% más de daño\nEl taladro desgastado se rompe contra la siguiente pared");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

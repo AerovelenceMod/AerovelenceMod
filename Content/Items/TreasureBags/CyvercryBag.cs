@@ -23,12 +23,6 @@ namespace AerovelenceMod.Content.Items.TreasureBags
             ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
             Item.ResearchUnlockCount = 3;
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

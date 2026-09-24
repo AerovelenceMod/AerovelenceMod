@@ -184,14 +184,25 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             if (!FullyCharged || fullChargePlayed)
                 return;
             fullChargePlayed = true;
-            GlowFlash = 0.45f;
-            GlowTime = 12;
+            GlowFlash = 1f;
+            GlowTime = 20;
             Vector2 hand = GetHandPosition();
             if (!Main.dedServ)
             {
-                SoundEngine.PlaySound(SoundID.MaxMana with { Volume = 0.045f, Pitch = 0.55f, PitchVariance = 0.04f, MaxInstances = 1 }, hand);
+                SoundEngine.PlaySound(SoundID.MaxMana with { Volume = 0.55f, Pitch = 0.55f, PitchVariance = 0.04f, MaxInstances = 1 }, hand);
                 if (Visible)
-                    RepurposedWinchVFX.Burst(hand, 4, 1.2f);
+                {
+                    RepurposedWinchVFX.Burst(hand, 14, 3.2f);
+                    if (Player.whoAmI == Main.myPlayer)
+                    {
+                        Vector2 cue = Main.MouseWorld;
+                        if (Vector2.Distance(cue, Player.Center) > 900f)
+                            cue = Player.Center + (cue - Player.Center).SafeNormalize(Vector2.UnitX) * 900f;
+                        RepurposedWinchVFX.Burst(cue, 12, 3f);
+                        Dust star = Dust.NewDustPerfect(cue, ModContent.DustType<GlowStarSharp>(), Vector2.Zero, newColor: Color.White, Scale: 0.65f);
+                        star.noGravity = true;
+                    }
+                }
             }
         }
 
@@ -209,7 +220,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             if (intensity <= 0.01f || !Visible || Main.dedServ)
                 return;
             Vector2 hand = GetHandPosition();
-            Lighting.AddLight(hand, Vector3.One * (0.02f + intensity * 0.08f));
+            Lighting.AddLight(hand, Vector3.One * (0.12f + intensity * 0.35f));
             int dustChance = FullyCharged && charging ? 5 : ChargeTicks > ChargeDuration / 2 && charging ? 8 : 12;
             if (charging && Main.rand.NextBool(dustChance))
             {
@@ -246,7 +257,8 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
             releaseEffectCooldown = 5;
             if (Visible)
-                RepurposedWinchVFX.Burst(GetHandPosition(), 3, 1.35f);
+                RepurposedWinchVFX.Burst(GetHandPosition(), 6 + (int)(AttackCharge * 8f), 3f);
+            SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.3f + AttackCharge * 0.35f, Pitch = -0.3f + AttackCharge * 0.6f }, Player.Center);
         }
 
         internal Vector2 GetHandPosition()
@@ -315,10 +327,10 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             Texture2D glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow").Value;
             Vector2 position = state.GetHandPosition() - Main.screenPosition;
             float pulse = 0.96f + MathF.Sin(Main.GlobalTimeWrappedHourly * 10f) * 0.04f;
-            float scale = MathHelper.Lerp(0.055f, 0.13f, intensity) * pulse;
-            Color outer = RepurposedWinchVFX.Additive(Color.White, 0.02f + intensity * 0.045f + state.GlowFlash * 0.035f);
-            Color inner = RepurposedWinchVFX.Additive(new Color(245, 250, 255), 0.035f + intensity * 0.075f + state.GlowFlash * 0.05f);
-            drawInfo.DrawDataCache.Add(new DrawData(glow, position, null, outer, 0f, glow.Size() * 0.5f, scale * 1.8f, SpriteEffects.None));
+            float scale = MathHelper.Lerp(0.07f, 0.13f, intensity) * pulse;
+            Color outer = RepurposedWinchVFX.Additive(Color.White, 0.04f + intensity * 0.12f + state.GlowFlash * 0.08f);
+            Color inner = RepurposedWinchVFX.Additive(new Color(245, 250, 255), 0.1f + intensity * 0.28f + state.GlowFlash * 0.15f);
+            drawInfo.DrawDataCache.Add(new DrawData(glow, position, null, outer, 0f, glow.Size() * 0.5f, scale * 1.25f, SpriteEffects.None));
             drawInfo.DrawDataCache.Add(new DrawData(glow, position, null, inner, 0f, glow.Size() * 0.5f, scale, SpriteEffects.None));
         }
     }
@@ -348,7 +360,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 return;
 
             for (int i = 0; i < count; i++)
-                Spark(position + Main.rand.NextVector2Circular(2f, 2f), Main.rand.NextVector2CircularEdge(speed, speed) * Main.rand.NextFloat(0.3f, 0.85f), Main.rand.NextFloat(0.07f, 0.12f));
+                Spark(position + Main.rand.NextVector2Circular(2f, 2f), Main.rand.NextVector2CircularEdge(speed, speed) * Main.rand.NextFloat(0.3f, 0.85f), Main.rand.NextFloat(0.16f, 0.27f));
         }
     }
 }

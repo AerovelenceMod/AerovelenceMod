@@ -1,10 +1,11 @@
+using AerovelenceMod.Common.Systems.Language;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
-using Terraria.Localization;
+
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture.Items;
@@ -25,7 +26,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             TileObjectData.newTile.CoordinateHeights = [16, 16, 16];
             TileObjectData.addTile(Type);
 
-            AddMapEntry(new Color(123, 123, 123), Language.GetText("MapObject.CrystallineFabricator"));
+            AddMapEntry(new Color(123, 123, 123), this.MapNameFromItem(ModContent.ItemType<CrystallineFabricatorItem>()));
 
             DustType = DustID.BlueCrystalShard;
             AnimationFrameHeight = 54;

@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems;
@@ -21,12 +22,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Mimiko's Mirror", "Reflects magical light to banish evil\nHold to scatter five rays of demonite light\nThe rays periodically align, flash three times, then scatter again\nConsumes 10 mana per second while channeling")
+            this.ModifyLocalization("Mimiko's Mirror", "Reflects magical light to banish evil\nMoving the cursor scatters the light")
+				.AddSkillStrike(Language.Default, "Focused beam Skill Strikes")
                 .AddName(Language.Spanish, "Espejo de Mimiko")
-                .AddTooltip(Language.Spanish, "Refleja luz mágica para desterrar el mal\nMantén pulsado para dispersar cinco rayos de luz de demonita\nLos rayos se alinean periódicamente, destellan tres veces y vuelven a dispersarse\nConsume 10 de maná por segundo mientras se canaliza")
-                .AddSkillStrike(Language.Default, "Strike enemies with the focused flashes")
-                .AddSkillStrike(Language.Spanish, "Golpea a los enemigos con los destellos enfocados");
-            base.SetStaticDefaults();
+                .AddTooltip(Language.Spanish, "Refleja luz mágica para desterrar el mal\nAl mover el cursor, la luz se dispersa")
+				.AddSkillStrike(Language.Spanish, "Ataques de Habilidad con rayo concentrado");
         }
 
         public override void SetDefaults()
@@ -58,20 +58,21 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
             .AddIngredient(ItemID.PurificationPowder, 20).AddTile(TileID.Anvils).Register();
     }
 
-    internal static class MimikoCycle
+    internal sealed class MimikoFocus
     {
-        internal const int Duration = 150;
-        internal static int Phase(int age) => age % Duration;
-        internal static bool Focused(int age) => Phase(age) >= 108 && Phase(age) < 132;
-        internal static bool Flash(int age) => Focused(age) && (Phase(age) - 108) % 8 < 2;
-        internal static float Alignment(int age)
+        internal float Charge;
+        internal int Pulse = -1;
+        internal bool Focused => Charge >= 0.9999f;
+        internal bool Flash => Focused && Pulse >= 0 && Pulse < 2;
+        internal float Alignment => MathHelper.SmoothStep(0f, 1f, Charge);
+        internal void Update(float turn)
         {
-            int phase = Phase(age);
-            if (phase < 72) return 0f;
-            if (phase < 108) return MathHelper.SmoothStep(0f, 1f, (phase - 72f) / 36f);
-            if (phase < 132) return 1f;
-            return 1f - MathHelper.SmoothStep(0f, 1f, (phase - 132f) / 18f);
+            turn = Math.Abs(turn);
+            Charge = turn <= 0.0015f ? Math.Min(1f, Charge + 1f / 90f)
+                : Math.Max(0f, Charge - Math.Clamp((turn - 0.0015f) * 8f, 0.012f, 0.09f));
+            AdvancePulse();
         }
+        internal void AdvancePulse() => Pulse = Focused ? (Pulse + 1) % 8 : -1;
     }
 
     public class MimikosMirrorHeld : ModProjectile
@@ -84,11 +85,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
         private bool blocked;
         private bool exitPlayed;
         private int evaluatedAge;
+        private readonly MimikoFocus focus = new();
+        private Vector2 lastMousePosition;
+        private bool hasDesiredAngle;
         private int Age => evaluatedAge;
         private bool Retiring => Projectile.ai[2] != 0f;
         private float Opacity => Math.Min(1f, Age / 10f) * (Retiring ? Projectile.timeLeft / 18f : 1f);
-        private float Alignment => MimikoCycle.Alignment(Age);
-        private float Flash => MimikoCycle.Focused(Age) ? MathF.Pow(1f - ((MimikoCycle.Phase(Age) - 108) % 8) / 8f, 3f) : 0f;
+        private float Alignment => focus.Alignment;
+        private float Flash => focus.Focused ? MathF.Pow(1f - Math.Max(0, focus.Pulse) / 8f, 3f) : 0f;
         private static readonly Color Violet = new(145, 70, 255);
         private static readonly Color Pearl = new(230, 205, 255);
         public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = 420;
@@ -106,7 +110,18 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
             Projectile.netImportant = true;
         }
         public override bool ShouldUpdatePosition() => false;
-        public override bool? CanDamage() => !Retiring && !blocked && Age > 8 && (!MimikoCycle.Focused(Age) || MimikoCycle.Flash(Age)) ? null : false;
+        public override bool? CanDamage() => !Retiring && !blocked && Age > 8 && (!focus.Focused || focus.Flash) ? null : false;
+
+        public override void SendExtraAI(BinaryWriter writer)
+        {
+            writer.Write(focus.Charge);
+            writer.Write(focus.Pulse);
+        }
+        public override void ReceiveExtraAI(BinaryReader reader)
+        {
+            focus.Charge = Math.Clamp(reader.ReadSingle(), 0f, 1f);
+            focus.Pulse = Math.Clamp(reader.ReadInt32(), -1, 7);
+        }
 
         private void Retire()
         {
@@ -120,6 +135,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
         public override void AI()
         {
             evaluatedAge = (int)Projectile.ai[1];
+            float previousAlignment = Alignment;
             Player player = Main.player[Projectile.owner];
             if (!player.active || player.dead)
             {
@@ -134,11 +150,21 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
                 else
                 {
                     Vector2 desired = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Projectile.ai[0].ToRotationVector2());
-                    float turn = MathHelper.WrapAngle(desired.ToRotation() - Projectile.ai[0]);
+                    float desiredAngle = desired.ToRotation();
+                    float turn = MathHelper.WrapAngle(desiredAngle - Projectile.ai[0]);
+                    Vector2 mousePosition = new(Main.mouseX, Main.mouseY);
+                    float inputTurn = hasDesiredAngle ? Vector2.Distance(mousePosition, lastMousePosition) / 500f : 0f;
+                    lastMousePosition = mousePosition;
+                    hasDesiredAngle = true;
+                    bool wasFocused = focus.Focused;
+                    float previousCharge = focus.Charge;
+                    focus.Update(inputTurn);
                     Projectile.ai[0] = MathHelper.WrapAngle(Projectile.ai[0] + turn * 0.2f);
-                    if (Age % 6 == 0 && Math.Abs(turn) > 0.005f) Projectile.netUpdate = true;
+                    if (wasFocused != focus.Focused || (previousCharge > 0f && focus.Charge == 0f) || (Age % 6 == 0 && (Math.Abs(turn) > 0.005f || focus.Charge > 0f)))
+                        Projectile.netUpdate = true;
                 }
             }
+            if (Projectile.owner != Main.myPlayer && !Retiring) focus.AdvancePulse();
             Vector2 aim = Projectile.ai[0].ToRotationVector2();
             Projectile.rotation = Projectile.ai[0] + (aim.X < 0f ? MathHelper.Pi : 0f);
             if (!Retiring)
@@ -168,19 +194,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
                         Lighting.AddLight(path[i], beamLight.ToVector3() * (0.55f + Flash * 0.35f) * Opacity);
                 }
             }
-            Projectile.localNPCHitCooldown = MimikoCycle.Focused(Age) ? 7 : 16;
+            Projectile.localNPCHitCooldown = focus.Focused ? 7 : 16;
             var skill = Projectile.GetGlobalProjectile<SkillStrikeGProj>();
             skill.SkillStrike = false;
-            if (!Retiring && MimikoCycle.Flash(Age))
+            if (!Retiring && focus.Flash)
                 SkillStrikeUtil.setSkillStrike(Projectile, 1.5f, 100, 0.12f, 0.3f);
-            if (!Retiring && MimikoCycle.Focused(Age) && (MimikoCycle.Phase(Age) - 108) % 8 == 0)
+            if (!Retiring && focus.Focused && focus.Pulse == 0)
             {
                 Array.Clear(Projectile.localNPCImmunity, 0, Projectile.localNPCImmunity.Length);
-                SoundEngine.PlaySound(SoundID.Item9 with { Volume = 0.32f, Pitch = 0.25f + (MimikoCycle.Phase(Age) - 108) * 0.018f, MaxInstances = 3 }, face);
+                SoundEngine.PlaySound(SoundID.Item9 with { Volume = 0.32f, Pitch = 0.35f, MaxInstances = 3 }, face);
                 EmitBurst(face, 8, 2f);
                 if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
-            if (Age == 0 || (!Retiring && MimikoCycle.Phase(Age) == 72))
+            if (Age == 0 || (!Retiring && previousAlignment < 0.5f && Alignment >= 0.5f))
                 SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.22f, Pitch = Alignment * 0.2f + 0.3f, MaxInstances = 2 }, face);
             if (!Main.dedServ)
             {
@@ -240,20 +266,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
                 for (int i = Math.Max(2, path.Length / 12); i < path.Length; i++)
                 {
                     float collision = 0f;
-                    if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), path[i - 1], path[i], MimikoCycle.Focused(Age) ? 8f : 4f, ref collision)) return true;
+                    if (Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), path[i - 1], path[i], focus.Focused ? 8f : 4f, ref collision)) return true;
                 }
             }
             return false;
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (MimikoCycle.Flash(Age)) modifiers.SourceDamage *= 1.2f;
+            if (focus.Flash) modifiers.SourceDamage *= 1.2f;
             modifiers.HitDirectionOverride = target.Center.X >= Projectile.Center.X ? 1 : -1;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Vector2 point = Vector2.Clamp(face + Projectile.ai[0].ToRotationVector2() * 100f, target.Hitbox.TopLeft(), target.Hitbox.BottomRight());
-            EmitBurst(point, MimikoCycle.Focused(Age) ? 7 : 3, MimikoCycle.Focused(Age) ? 2.5f : 1.3f);
+            EmitBurst(point, focus.Focused ? 7 : 3, focus.Focused ? 2.5f : 1.3f);
         }
         public override void OnKill(int timeLeft) => EmitBurst(face, 6, 1.2f);
 

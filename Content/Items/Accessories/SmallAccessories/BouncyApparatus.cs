@@ -1,3 +1,4 @@
+using AerovelenceMod.Common.Systems.Language;
 using System;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using Microsoft.Xna.Framework;
@@ -14,10 +15,9 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
     {
         private const string EnglishTooltip = "Boing bong bing bong boing bouncy bouncy boing boing boing heheheheheheeehe";
 
-        public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
+        public override void SetStaticDefaults()
         {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
+            this.ModifyLocalization("Bouncy Apparatus", EnglishTooltip);
         }
 
         public override void SetDefaults()

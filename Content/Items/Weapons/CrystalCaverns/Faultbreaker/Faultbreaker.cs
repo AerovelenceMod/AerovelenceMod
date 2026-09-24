@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using System;
+using System.IO;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -20,19 +21,15 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class Faultbreaker : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Faultbreaker/Faultbreaker";
-        private const string EnglishTooltip = "A weighty sledgehammer with a crushing overhead swing";
+        private const string EnglishTooltip = "Briefly stuns ordinary enemies\nEach successful stun grows the crystal and slightly extends the next stun\nAfter five stuns, the next swing shatters the crystal for a devastating Skill Strike\nThe crystal regrows over four seconds; cannot stun during this cooldown";
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Faultbreaker", EnglishTooltip)
-                .AddSkillStrike(Language.Default, "Skill Strikes against Crystal Caverns enemies (this is sort of boring)")
-                .AddName(Language.Spanish, "Rompefallas");
+                .AddSkillStrike(Language.Default, "Shatter a fully grown crystal with the empowered swing")
+                .AddName(Language.Spanish, "Rompefallas")
+                .AddTooltip(Language.Spanish, "Aturde brevemente a enemigos normales\nCada aturdimiento hace crecer el cristal y prolonga ligeramente el siguiente\nTras cinco aturdimientos, el siguiente golpe rompe el cristal con gran potencia\nEl cristal tarda cuatro segundos en regenerarse; no puede aturdir durante ese tiempo")
+                .AddSkillStrike(Language.Spanish, "Rompe un cristal completamente cargado con el golpe potenciado");
             base.SetStaticDefaults();
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
         }
         public override void SetDefaults()
         {
@@ -53,10 +50,46 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int direction = velocity.X < 0f ? -1 : 1;
-            Projectile.NewProjectile(source, player.MountedCenter, new Vector2(direction, 0f), type, damage, knockback, player.whoAmI, 0f, Math.Max(12, player.itemAnimationMax));
+            var crystal = player.GetModPlayer<FaultbreakerPlayer>();
+            bool shatter = crystal.Cooldown == 0 && crystal.Charges >= 5;
+            int growth = crystal.Cooldown > 0 ? -1 : shatter ? 6 : crystal.Charges;
+            Projectile.NewProjectile(source, player.MountedCenter, new Vector2(direction, growth), type, damage, knockback,
+                player.whoAmI, 0f, Math.Max(12, player.itemAnimationMax) * (shatter ? 1.3f : 1f));
+            if (shatter) { crystal.Charges = 0; crystal.Cooldown = 240; }
             return false;
         }
         public override void AddRecipes() => CreateRecipe().AddIngredient<CavernStoneItem>(40).AddIngredient<CavernCrystalItem>(8).AddRecipeGroup(RecipeGroupID.IronBar, 6).AddTile(TileID.Anvils).Register();
+    }
+
+    public class FaultbreakerPlayer : ModPlayer
+    {
+        internal int Charges;
+        internal int Cooldown;
+        public override void PostUpdate() { if (Cooldown > 0) Cooldown--; }
+        public override void UpdateDead() { Charges = 0; Cooldown = 0; }
+    }
+
+    public class FaultbreakerStun : ModBuff
+    {
+        public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Faultbreaker/Faultbreaker";
+        public override void SetStaticDefaults()
+        {
+            Main.debuff[Type] = true;
+            Main.buffNoSave[Type] = true;
+        }
+    }
+
+    public class FaultbreakerStunnedNPC : GlobalNPC
+    {
+        public static bool CanStun(NPC npc) => !npc.boss && npc.realLife < 0 && !npc.immortal && npc.type != NPCID.TargetDummy;
+        public override bool PreAI(NPC npc)
+        {
+            if (!npc.HasBuff(ModContent.BuffType<FaultbreakerStun>())) return true;
+            npc.velocity = Vector2.Zero;
+            if (!Main.dedServ && Main.GameUpdateCount % 6 == 0)
+                FaultbreakerVFX.Spark(npc.Top + Main.rand.NextVector2Circular(10f, 3f), -Vector2.UnitY, 0.15f);
+            return false;
+        }
     }
 
     public class FaultbreakerSwing : ModProjectile
@@ -68,12 +101,16 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         private float previousAngle;
         private bool impactPauseUsed;
         private bool terrainImpact;
+        private bool shattered;
+        private bool Empowered => Projectile.velocity.Y >= 6f;
+        public override void SendExtraAI(BinaryWriter writer) { writer.Write(shattered); }
+        public override void ReceiveExtraAI(BinaryReader reader) { shattered = reader.ReadBoolean(); }
         private float impactGlow;
         private int Direction => Projectile.velocity.X < 0f ? -1 : 1;
         private float Duration => Math.Max(12f, Projectile.ai[1]);
         private float Progress => Projectile.ai[0] / Duration;
         private Vector2 Hand => Main.player[Projectile.owner].RotatedRelativePoint(Main.player[Projectile.owner].MountedCenter);
-        private float Reach => 52f * Main.player[Projectile.owner].GetAdjustedItemScale(Main.player[Projectile.owner].HeldItem);
+        private float Reach => (Empowered ? 64f : 52f) * Main.player[Projectile.owner].GetAdjustedItemScale(Main.player[Projectile.owner].HeldItem);
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Faultbreaker/Faultbreaker";
         public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = 100;
         public override void SetDefaults()
@@ -152,6 +189,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 FaultbreakerVFX.Smoke(Projectile.Center, -Vector2.UnitY, 70f, new Color(135, 150, 175));
                 SoundEngine.PlaySound(SoundID.Tink with { Volume = 0.35f, Pitch = -0.4f }, Projectile.Center);
             }
+            if (Empowered && !shattered && Progress >= 0.58f) Shatter();
             if (Progress >= 1f)
             {
                 player.itemTime = player.itemAnimation = 0;
@@ -191,22 +229,47 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             trail.trailRotations.RemoveRange(0, count);
             trail.trailCurrentLength = trail.CalculateLength();
         }
-        private static bool IsCrystal(NPC target) => target.ModNPC is
-            global::AerovelenceMod.Content.NPCs.CrystalCaverns.CrystalSlime
-            or global::AerovelenceMod.Content.NPCs.CrystalCaverns.CrystalBat
-            or global::AerovelenceMod.Content.NPCs.CrystalCaverns.TumblerockSmall
-            or global::AerovelenceMod.Content.NPCs.CrystalCaverns.TumblerockMedium
-            or global::AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler.CrystalTumbler;
+        private void Shatter()
+        {
+            if (shattered) return;
+            shattered = true;
+            if (Projectile.owner == Main.myPlayer) Main.player[Projectile.owner].GetModPlayer<FaultbreakerPlayer>().Cooldown = 240;
+            Projectile.netUpdate = true;
+            FaultbreakerVFX.Burst(Projectile.Center, 24, 5f);
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.7f, Pitch = -0.3f }, Projectile.Center);
+            if (Projectile.owner == Main.myPlayer)
+                for (int i = 0; i < 9; i++)
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center,
+                        new Vector2(Direction * Main.rand.NextFloat(1f, 5f), Main.rand.NextFloat(-5f, -1.5f)),
+                        ModContent.ProjectileType<FaultbreakerSplinter>(), (int)(Projectile.damage * 0.45f), 1f, Projectile.owner);
+        }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
             Projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = false;
-            if (IsCrystal(target))
-                SkillStrikeUtil.setSkillStrike(Projectile, 1.5f, 1, 0.4f, 0.7f);
+            if (Empowered)
+                SkillStrikeUtil.setSkillStrike(Projectile, 4f, 1, 0.5f, 1f);
             modifiers.HitDirectionOverride = Direction;
         }
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            bool crystal = IsCrystal(target);
+            bool crystal = Empowered;
+            var state = Main.player[Projectile.owner].GetModPlayer<FaultbreakerPlayer>();
+            int stun = ModContent.BuffType<FaultbreakerStun>();
+            if (!Empowered && Projectile.velocity.Y >= 0f && state.Cooldown == 0
+                && target.active && target.life > 0 && !target.immortal && target.type != NPCID.TargetDummy
+                && FaultbreakerStunnedNPC.CanStun(target) && !target.buffImmune[stun] && !target.HasBuff(stun))
+            {
+                target.AddBuff(stun, 14 + Math.Clamp((int)Projectile.velocity.Y, 0, 4) * 2);
+                target.velocity = Vector2.Zero;
+                target.netUpdate = true;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    state.Charges = Math.Min(5, state.Charges + 1);
+                    Projectile.velocity.Y = state.Charges;
+                }
+                Projectile.netUpdate = true;
+            }
+            if (Empowered) Shatter();
             Vector2 point = Vector2.Clamp(Projectile.Center, target.Hitbox.TopLeft(), target.Hitbox.BottomRight());
             impactGlow = 1f;
             if (!impactPauseUsed)
@@ -250,12 +313,48 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Vector2 grip = new(5f, 55f);
             Vector2 head = new(39f, 23f);
             float drawScale = Reach / Vector2.Distance(grip, head);
+            SpriteEffects effects = Direction < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+            if (Direction < 0) { grip.X = hammer.Width - grip.X; head.X = hammer.Width - head.X; }
             float rotation = angle - (head - grip).ToRotation();
-            Main.EntitySpriteDraw(hammer, Hand - Main.screenPosition, null, lightColor, rotation, grip, drawScale, SpriteEffects.None);
-            Main.EntitySpriteDraw(hammer, Hand - Main.screenPosition, null, FaultbreakerVFX.Additive(Color.White, impactGlow * 0.55f), rotation, grip, drawScale, SpriteEffects.None);
+            Rectangle body = new(0, 16, hammer.Width, hammer.Height - 16);
+            Vector2 bodyGrip = grip - new Vector2(0f, 16f);
+            Main.EntitySpriteDraw(hammer, Hand - Main.screenPosition, body, lightColor, rotation, bodyGrip, drawScale, effects);
+            Main.EntitySpriteDraw(hammer, Hand - Main.screenPosition, body, FaultbreakerVFX.Additive(Color.White, impactGlow * 0.55f), rotation, bodyGrip, drawScale, effects);
+            if (Projectile.velocity.Y >= 0f && !shattered)
+            {
+                Vector2 crystalRoot = new(Direction < 0 ? hammer.Width - 33f : 33f, 16f);
+                Vector2 crystalPosition = Hand + ((crystalRoot - grip) * drawScale).RotatedBy(rotation);
+                float growth = 0.8f + Math.Clamp(Projectile.velocity.Y, 0f, 5f) * 0.15f;
+                Rectangle crystalFrame = new(0, 0, hammer.Width, 16);
+                Main.EntitySpriteDraw(hammer, crystalPosition - Main.screenPosition, crystalFrame, Color.White, rotation, crystalRoot, drawScale * growth, effects);
+                Main.EntitySpriteDraw(hammer, crystalPosition - Main.screenPosition, crystalFrame, FaultbreakerVFX.Additive(FaultbreakerVFX.Aqua, 0.12f + Projectile.velocity.Y * 0.09f), rotation, crystalRoot, drawScale * growth, effects);
+            }
             FaultbreakerVFX.Glow(Projectile.Center, new Vector2(55f * size), FaultbreakerVFX.Aqua, 0.12f + impactGlow * 0.6f);
             return false;
         }
+    }
+
+    public class FaultbreakerSplinter : ModProjectile
+    {
+        public override string Texture => "AerovelenceMod/Content/NPCs/CrystalCaverns/CondurtleConductor";
+        public override void SetDefaults()
+        {
+            Projectile.width = Projectile.height = 8;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Melee;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 70;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 15;
+        }
+        public override void AI()
+        {
+            Projectile.velocity.Y += 0.25f;
+            Projectile.rotation += Projectile.velocity.X * 0.08f;
+            Projectile.alpha = (int)(255f * (1f - Math.Min(1f, Projectile.timeLeft / 15f)));
+            Lighting.AddLight(Projectile.Center, 0.1f, 0.25f, 0.3f);
+        }
+        public override void OnKill(int timeLeft) => FaultbreakerVFX.Burst(Projectile.Center, 3, 1.5f);
     }
 
     internal static class FaultbreakerWeaponMotion

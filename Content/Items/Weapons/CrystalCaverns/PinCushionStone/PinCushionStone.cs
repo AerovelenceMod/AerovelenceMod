@@ -23,18 +23,12 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/PinCushionStone/PinCushionStone";
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Pin-Cushion Stone", "First throw launches a floating stone\nFurther throws fire darts that can lodge into the stone\nThe stone can be moved by darts, and inflicts damage on hitting enemies\nAfter 10 seconds without action, the stone dissolves and releases its pins")
+            this.ModifyLocalization("Pincushion Stone", "First throw launches a gently falling pincushion stone\nFurther throws fire darts that pierce one enemy\nDarts lodge in the stone and nudge it, empowering its next impacts\nEvery third empowered collision rebounds much harder\nAfter 10 seconds without a dart, the stone dissolves and releases its pins")
                 .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Piedra Alfiletero")
-                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "El primer lanzamiento crea una piedra flotante\nLos siguientes lanzan dardos que atraviesan a un enemigo\nLos dardos se incrustan en la piedra y la empujan, potenciando sus impactos\nCada tercer impacto potenciado rebota con más fuerza\nTras 10 segundos sin recibir dardos, la piedra libera sus púas");
+                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "El primer lanzamiento crea una piedra que cae lentamente\nLos siguientes lanzan dardos que atraviesan a un enemigo\nLos dardos se incrustan en la piedra y la empujan, potenciando sus impactos\nCada tercer impacto potenciado rebota con más fuerza\nTras 10 segundos sin recibir dardos, la piedra libera sus púas");
             this.AddSkillStrike(Language.Default, "Strike enemies with the stone shortly after pushing it with a dart to Skill Strike");
             this.AddSkillStrike(Language.Spanish, "Golpea a los enemigos con la piedra poco después de empujarla con un dardo");
             base.SetStaticDefaults();
-        }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", "First throw launches a floating pin-cushion stone\nFurther throws fire darts that pierce one enemy\nDarts lodge in the stone and nudge it, empowering its next impacts\nEvery third empowered collision rebounds much harder\nAfter 10 seconds without a dart, the stone dissolves and releases its pins"));
-            base.ModifyTooltips(tooltips);
         }
         public override void SetDefaults()
         {
@@ -45,14 +39,12 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.damage = 19;
             Item.DamageType = DamageClass.Ranged;
             Item.useTime = Item.useAnimation = 22;
-            Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<PinCushionBall>();
             Item.shootSpeed = 8;
             Item.knockBack = 3;
-            Item.noUseGraphic = false;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.UseSound = SoundID.Item1;
         }
@@ -138,6 +130,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Projectile.ai[1] = Math.Max(0, Projectile.ai[1] - 1);
             Projectile.ai[2] *= 0.88f;
             Projectile.velocity *= .994f;
+            if (Projectile.ai[0] < 600f) Projectile.velocity.Y = Math.Min(4f, Projectile.velocity.Y + 0.07f);
             Projectile.rotation += Projectile.velocity.X * .025f;
             if (Projectile.ai[0] >= 600) { Projectile.velocity *= .9f; Projectile.tileCollide = false; }
             if (Projectile.ai[1] <= 0) consecutive = 0;
@@ -149,7 +142,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             if (Projectile.velocity.X != oldVelocity.X) Projectile.velocity.X = -oldVelocity.X * .85f;
-            if (Projectile.velocity.Y != oldVelocity.Y) Projectile.velocity.Y = -oldVelocity.Y * .85f;
+            if (Projectile.velocity.Y != oldVelocity.Y) Projectile.velocity.Y = oldVelocity.Y > 0f && oldVelocity.Y < 0.8f ? 0f : -oldVelocity.Y * .55f;
             PinCushionStoneVFX.Burst(Projectile.Center, 4, 1.5f);
             return false;
         }

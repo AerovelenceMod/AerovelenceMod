@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -103,7 +103,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 float currentAngle = startAngle + (angleStep * i);
                 Vector2 perturbedSpeed = velocity.RotatedBy(MathHelper.ToRadians(currentAngle));
                 perturbedSpeed = perturbedSpeed.RotatedByRandom(MathHelper.ToRadians(3));
-                float speedMultiplier = Main.rand.NextFloat(1.8f, 2.2f);
+                perturbedSpeed = perturbedSpeed.SafeNormalize(Vector2.UnitX * player.direction) * 7f;
+                float speedMultiplier = Main.rand.NextFloat(0.9f, 1.1f);
                 int proj = Projectile.NewProjectile(
                     null,
                     position.X + perturbedSpeed.X * 0.5f,
@@ -256,47 +257,47 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
         //ai[3] used as a timer
 
         private float targetScale = 1f;
-        private bool hasTriggeredSkillStrike = false;
+        public static float BubbleScale(float mass) => .25f * Math.Clamp(mass, 1f, 6f);
         private const int MAX_GROWTH_LEVEL = 6;
 
         public override void SetDefaults()
         {
-            Projectile.width = 14;
-            Projectile.height = 14;
+            Projectile.width = 5;
+            Projectile.height = 5;
             Projectile.aiStyle = -1;
             Projectile.friendly = true;
             Projectile.penetrate = 1;
-            Projectile.alpha = 150;
-            Projectile.timeLeft = 360;
+            Projectile.alpha = 128;
+            Projectile.scale = .25f;
+            Projectile.DamageType = DamageClass.Ranged;
+            Projectile.timeLeft = 180;
             Projectile.noEnchantments = true;
             Projectile.ai[2] = 1;
         }
 
+        public override bool? CanDamage() => Projectile.timeLeft <= 10 ? false : null;
+
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+            Texture2D glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow").Value;
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
-            Vector2 origin = texture.Size() / 2;
-            Color bubbleColor = lightColor * ((255 - Projectile.alpha) / 255f);
-            Main.spriteBatch.Draw(texture, drawPos, null, bubbleColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
-            if (Projectile.ai[2] >= 2)
-            {
-                float glowIntensity = (Projectile.ai[2] - 1) / 5f;
-                Color glowColor = Color.Aqua * glowIntensity * 0.5f * ((255 - Projectile.alpha) / 255f);
-                glowColor.A = 0;
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.PointClamp, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-                float glowScale = Projectile.scale * 1.2f;
-                Main.spriteBatch.Draw(texture, drawPos, null, glowColor, Projectile.rotation, origin, glowScale, SpriteEffects.None, 0f);
-                Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            }
-
+            Vector2 origin = texture.Size() * 0.5f;
+            float fade = MathHelper.Clamp(Projectile.timeLeft / 20f, 0f, 1f);
+            float charge = (Projectile.ai[2] - 1f) / 5f;
+            Color rim = new Color(105, 235, 255, 0) * fade;
+            Main.EntitySpriteDraw(glow, drawPos, null, rim * (0.035f + charge * 0.08f), 0f, glow.Size() * 0.5f,
+                42f * Projectile.scale / glow.Width, SpriteEffects.None);
+            Main.EntitySpriteDraw(texture, drawPos, null, Color.Lerp(lightColor, Color.White, 0.65f) * (fade * .5f),
+                Projectile.rotation, origin, Projectile.scale, SpriteEffects.None);
+            Main.EntitySpriteDraw(texture, drawPos, null, rim * (0.07f + charge * 0.1f),
+                Projectile.rotation, origin, Projectile.scale * 1.08f, SpriteEffects.None);
             return false;
         }
 
         public override void OnKill(int timeLeft)
         {
+            if (Projectile.ai[1] == -1f || Main.dedServ) return;
             SoundEngine.PlaySound(SoundID.Item54, Projectile.position);
             for (int i = 0; i < 15; i++)
             {
@@ -316,7 +317,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
             {
                 int dustIndex = Dust.NewDust(center - Vector2.One * radius, radius * 2, radius * 2, DustID.BubbleBurst_Blue);
                 Dust bubbleDust = Main.dust[dustIndex];
-                Vector2 direction = Vector2.Normalize(bubbleDust.position - center);
+                Vector2 direction = (bubbleDust.position - center).SafeNormalize(Vector2.UnitY);
                 bubbleDust.position = center + direction * radius * Projectile.scale;
                 bubbleDust.velocity = direction * Main.rand.NextFloat(2f, 5f);
                 bubbleDust.color = Color.Lerp(Color.Aquamarine, Color.White, Main.rand.NextFloat(0.3f));
@@ -342,85 +343,41 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
 
         public override void AI()
         {
-            targetScale = Projectile.ai[2] * 0.3f;
-            if (Projectile.scale != targetScale)
+            Projectile.ai[0]++;
+            targetScale = BubbleScale(Projectile.ai[2]);
+            Projectile.scale = MathHelper.Lerp(Projectile.scale, targetScale, .3f);
+            Vector2 center = Projectile.Center;
+            Projectile.width = Projectile.height = Math.Max(5, (int)(20f * Projectile.scale));
+            Projectile.Center = center;
+            if (Projectile.owner == Main.myPlayer && Projectile.ai[2] < MAX_GROWTH_LEVEL && Projectile.ai[0] > 18f)
             {
-                Projectile.scale = MathHelper.Lerp(Projectile.scale, targetScale, 0.5f);
-                int newSize = (int)(20 * Projectile.scale);
-                Projectile.width = newSize;
-                Projectile.height = newSize;
-                Projectile.position.X = Projectile.Center.X - (Projectile.width / 2);
-                Projectile.position.Y = Projectile.Center.Y - (Projectile.height / 2);
-            }
-
-            if (Projectile.ai[2] < MAX_GROWTH_LEVEL && Projectile.ai[0] > 10)
-            {
-                for (int i = 0; i < Main.maxProjectiles; i++)
+                foreach (Projectile other in Main.ActiveProjectiles)
                 {
-                    Projectile other = Main.projectile[i];
-
-                    if (i == Projectile.whoAmI || !other.active || other.type != Projectile.type || other.owner != Projectile.owner)
-                        continue;
-                    if (other.ai[0] <= 2)
-                        continue;
-
-                    float distanceBetween = Vector2.Distance(Projectile.Center, other.Center);
-                    float combinedRadius = (Projectile.width + other.width) * 0.6f;
-
-                    if (distanceBetween < combinedRadius && other.ai[2] < MAX_GROWTH_LEVEL)
-                    {
-                        float combinedSize = Projectile.ai[2] + other.ai[2];
-                        Projectile.ai[2] = Math.Min(combinedSize, MAX_GROWTH_LEVEL);
-                        targetScale = Projectile.ai[2] * 0.3f;
-                        Projectile.scale = MathHelper.Lerp(Projectile.scale, targetScale, 0.8f);
-                        other.Kill();
-
-                        SoundEngine.PlaySound(SoundID.Item54 with { Volume = 0.5f, Pitch = 0.2f }, Projectile.position);
-                        for (int d = 0; d < 10; d++)
-                        {
-                            int dustIndex = Dust.NewDust(Projectile.Center, 4, 4, DustID.BubbleBurst_White);
-                            Main.dust[dustIndex].velocity = Main.rand.NextVector2Circular(3f, 3f);
-                            Main.dust[dustIndex].noGravity = true;
-                            Main.dust[dustIndex].scale = 0.7f;
-                        }
-
-                        if (Projectile.ai[2] >= MAX_GROWTH_LEVEL && !hasTriggeredSkillStrike)
-                        {
-                            int baseDamage = Projectile.damage;
-                            if (Projectile.ai[2] > 1)
-                                baseDamage = (int)(baseDamage / (1f + ((Projectile.ai[2] - 1) * 0.15f)));
-                            SkillStrikeUtil.setSkillStrike(Projectile, 1.5f);
-                            hasTriggeredSkillStrike = true;
-                            for (int j = 0; j < 30; j++)
-                            {
-                                int dustIndex = Dust.NewDust(Projectile.Center, 8, 8, DustID.Frost);
-                                Main.dust[dustIndex].velocity = Main.rand.NextVector2Circular(5f, 5f);
-                                Main.dust[dustIndex].noGravity = true;
-                                Main.dust[dustIndex].scale = 1.2f;
-                                Main.dust[dustIndex].color = Color.Aquamarine;
-                            }
-                        }
-
-                        break;
-                    }
+                    if (other.whoAmI == Projectile.whoAmI || other.type != Type || other.owner != Projectile.owner || other.ai[0] <= 18f || other.ai[2] >= MAX_GROWTH_LEVEL || other.ai[1] == -1f) continue;
+                    if (other.ai[2] > Projectile.ai[2] || other.ai[2] == Projectile.ai[2] && other.identity < Projectile.identity) continue;
+                    float distance = (Projectile.width + other.width) * .5f + 5f;
+                    if (Vector2.DistanceSquared(Projectile.Center, other.Center) > distance * distance) continue;
+                    float mass = Projectile.ai[2] + other.ai[2];
+                    Projectile.velocity = (Projectile.velocity * Projectile.ai[2] + other.velocity * other.ai[2]) / mass;
+                    Projectile.ai[2] = Math.Min(MAX_GROWTH_LEVEL, mass);
+                    Projectile.timeLeft = Math.Max(Projectile.timeLeft, other.timeLeft);
+                    other.ai[1] = -1f;
+                    other.netUpdate = true;
+                    other.Kill();
+                    Projectile.netUpdate = true;
+                    SoundEngine.PlaySound(SoundID.Item54 with { Volume = .25f, Pitch = .4f }, Projectile.Center);
+                    break;
                 }
             }
-            Projectile.ai[0]++;
-            float speedMultiplier = 1f - (Projectile.ai[2] * 0.05f);
-            Projectile.velocity *= 0.99f * speedMultiplier;
-            float bobAmount = (float)Math.Sin(Projectile.ai[0] / 10f) * 0.1f * Projectile.ai[2];
-            Projectile.velocity.Y += bobAmount;
-            if (Projectile.ai[1] == 0f)
-            {
-                Projectile.ai[1] = Main.rand.Next(80, 121) / 100f;
-                Projectile.netUpdate = true;
-            }
+            Projectile.velocity *= .97f - (Projectile.ai[2] - 1f) * .012f;
+            Projectile.velocity.Y += MathF.Sin(Projectile.ai[0] / 14f) * .025f;
+            Lighting.AddLight(Projectile.Center, new Vector3(.025f, .07f, .09f));
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if (!hasTriggeredSkillStrike)
-                modifiers.SourceDamage *= 1f + ((Projectile.ai[2] - 1) * 0.15f);
+            modifiers.SourceDamage *= 1f + ((Projectile.ai[2] - 1) * 0.15f);
+            if (Projectile.ai[2] >= MAX_GROWTH_LEVEL) SkillStrikeUtil.setSkillStrike(Projectile, 1.5f);
 
             if (Projectile.ai[2] >= MAX_GROWTH_LEVEL)
             {

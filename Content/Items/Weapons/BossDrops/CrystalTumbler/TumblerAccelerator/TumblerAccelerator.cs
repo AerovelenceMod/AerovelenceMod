@@ -29,12 +29,6 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             this.ModifyLocalization("Tumbler Accelerator", Description).AddSkillStrike(Language.Default, "Hitting the same enemy with two different tumblers quickly Skill Strikes");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(t => t.Mod == "Terraria" && t.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

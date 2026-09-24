@@ -81,14 +81,8 @@ namespace AerovelenceMod.Content.Items.Tools
                 return true;
 
             Texture2D texture = TextureAssets.Item[ItemID.Dynamite].Value;
-            float time = Main.GlobalTimeWrappedHourly;
-            float pulse = 0.7f + MathF.Sin(time * 5f) * 0.12f;
-            Vector2 drift = new Vector2(MathF.Cos(time * 3.2f), MathF.Sin(time * 4.1f)) * 1.2f;
-            Color ghostOuter = new Color(85, 205, 255, 0) * (0.18f * pulse);
-            Color ghostInner = new Color(215, 245, 255, 120) * (0.48f + pulse * 0.12f);
-            spriteBatch.Draw(texture, position + drift, frame, ghostOuter, 0f, origin, scale * 1.08f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(texture, position - drift * 0.45f, frame, ghostOuter, 0f, origin, scale * 0.98f, SpriteEffects.None, 0f);
-            spriteBatch.Draw(texture, position, frame, ghostInner, 0f, origin, scale, SpriteEffects.None, 0f);
+            Color ghost = new Color(130, 190, 220, 110) * 0.4f;
+            spriteBatch.Draw(texture, position, frame, ghost, 0f, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -100,10 +94,17 @@ namespace AerovelenceMod.Content.Items.Tools
             int cooldown = Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
             if (cooldown <= 0)
                 return;
-            Texture2D glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow").Value;
-            float pulse = 0.75f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.15f;
-            Color color = CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.08f * pulse);
-            spriteBatch.Draw(glow, position, null, color, 0f, glow.Size() * 0.5f, 0.18f * scale, SpriteEffects.None, 0f);
+            Texture2D texture = TextureAssets.Item[ItemID.Dynamite].Value;
+            float progress = CrystallineDynamitePlayer.RegenerationProgress(cooldown);
+            int height = Math.Clamp((int)MathF.Ceiling(frame.Height * progress), 0, frame.Height);
+            if (height == 0) return;
+            int offset = frame.Height - height;
+            Rectangle fill = new(frame.X, frame.Y + offset, frame.Width, height);
+            Vector2 fillOrigin = origin - new Vector2(0f, offset);
+            float pulse = 0.8f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.12f;
+            spriteBatch.Draw(texture, position, fill, Color.White * (0.4f + progress * 0.5f), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(texture, position, fill, CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.6f * pulse),
+                0f, fillOrigin, scale, SpriteEffects.None, 0f);
         }
     }
 
@@ -111,6 +112,7 @@ namespace AerovelenceMod.Content.Items.Tools
     {
         internal const int CooldownDuration = 1800;
         internal int Cooldown;
+        internal static float RegenerationProgress(int cooldown) => MathHelper.Clamp(1f - cooldown / (float)CooldownDuration, 0f, 1f);
 
         public override void PostUpdate()
         {

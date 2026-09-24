@@ -24,12 +24,6 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 .AddTooltip(Language.Spanish, "Reduce ligeramente la agresividad de los enemigos\nRestaura 1 de maná por segundo por cada esbirro invocado\nUna antigua bufanda de seda de polilla de cristal, entretejida con fibras de cristal\nLas polillas se niegan a comérsela. ¡Aparte del polvo, está como nueva!");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", EnglishTooltip));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();

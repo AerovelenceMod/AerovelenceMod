@@ -21,12 +21,6 @@ namespace AerovelenceMod.Content.Items.Misc
                 .AddTooltip(Language.Spanish, "Hace nacer a un Condurtle Bebé como mascota del pueblo\nLo acoge permanentemente en este mundo; puede compartir casa con un habitante\nLos Condurtles vivos ponen estos huevos de vez en cuando");
             base.SetStaticDefaults();
         }
-        public override void ModifyTooltips(List<TooltipLine> tooltips)
-        {
-            tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
-            tooltips.Add(new TooltipLine(Mod, "Tooltip0", Description));
-            base.ModifyTooltips(tooltips);
-        }
         public override void SetDefaults()
         {
             base.SetDefaults();
