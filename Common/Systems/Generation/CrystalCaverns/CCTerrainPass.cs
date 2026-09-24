@@ -1,4 +1,4 @@
-﻿using Terraria;
+using Terraria;
 using Terraria.ModLoader;
 using Terraria.ID;
 using Terraria.WorldBuilding;
@@ -6,6 +6,7 @@ using Terraria.IO;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using Microsoft.Xna.Framework;
 using System;
+using System.Collections.Generic;
 using AerovelenceMod.Content.Walls.CrystalCaverns.Natural;
 using ReLogic.Utilities;
 using System.Linq;
@@ -153,6 +154,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             if (!Origin.Equals(Point.Zero)) 
             {
                 Origin = new Point(Origin.X, Origin.Y + SurfaceHeight);
+                RemoveLivingTrees();
                 TumblerTunnelEnd = Point.Zero;
                 TumblerArenaPolarity = 1;
                 //ShapeData surfaceRectShapeData = new ShapeData();
@@ -618,12 +620,129 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             }
 		}
 
+        private sealed class TerrainWithoutLivingTrees : GenCondition
+        {
+            protected override bool CheckValidity(int x, int y) => WorldGen.SolidTile(x, y) && _tiles[x, y].TileType != TileID.LivingWood && _tiles[x, y].TileType != TileID.LeafBlock;
+        }
+
+        private void RemoveLivingTrees()
+        {
+            HashSet<Point> treeTiles = new();
+            Queue<Point> pending = new();
+            int left = Math.Max(10, Origin.X - BiomeWidth / 2);
+            int right = Math.Min(Main.maxTilesX - 10, left + BiomeWidth);
+            int bottom = Math.Min(Main.maxTilesY - 10, Origin.Y + UndergroundHeight);
+            for (int x = left; x < right; x++)
+                for (int y = 10; y < bottom; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && (tile.TileType == TileID.LivingWood || tile.TileType == TileID.LeafBlock))
+                        Visit(x, y);
+                }
+
+            while (pending.Count > 0)
+            {
+                Point point = pending.Dequeue();
+                for (int dx = -1; dx <= 1; dx++)
+                    for (int dy = -1; dy <= 1; dy++)
+                        Visit(point.X + dx, point.Y + dy);
+            }
+
+            if (treeTiles.Count == 0) return;
+            int[] treeColumns = treeTiles.Select(point => point.X).Distinct().OrderBy(x => x).ToArray();
+            Dictionary<int, int> groundHeights = new();
+            for (int start = 0; start < treeColumns.Length;)
+            {
+                int end = start;
+                while (end + 1 < treeColumns.Length && treeColumns[end + 1] == treeColumns[end] + 1)
+                    end++;
+                int leftGround = FindGround(treeColumns[start] - 2);
+                int rightGround = FindGround(treeColumns[end] + 2);
+                for (int index = start; index <= end; index++)
+                    groundHeights[treeColumns[index]] = (int)MathHelper.Lerp(leftGround, rightGround,
+                        (index - start) / (float)Math.Max(1, end - start));
+                start = end + 1;
+            }
+
+            for (int index = 0; index < Main.maxChests; index++)
+            {
+                Chest chest = Main.chest[index];
+                if (chest == null || !treeTiles.Contains(new Point(chest.x, chest.y))) continue;
+                foreach (Item item in chest.item)
+                    item?.TurnToAir();
+                WorldGen.KillTile(chest.x, chest.y, noItem: true);
+                Chest.DestroyChest(chest.x, chest.y);
+            }
+
+            foreach (Point point in treeTiles)
+            {
+                Tile tile = Main.tile[point.X, point.Y];
+                if (tile.HasTile && Main.tileFrameImportant[tile.TileType] && IsTreeWall(tile.WallType))
+                    WorldGen.KillTile(point.X, point.Y, noItem: true);
+            }
+            foreach (Point point in treeTiles)
+            {
+                Tile tile = Main.tile[point.X, point.Y];
+                if (tile.HasTile && (tile.TileType == TileID.LivingWood || tile.TileType == TileID.LeafBlock))
+                    tile.ClearTile();
+                if (IsTreeWall(tile.WallType))
+                    tile.WallType = WallID.None;
+                int ground = groundHeights[point.X];
+                if (point.Y >= ground)
+                {
+                    tile.ClearTile();
+                    tile.HasTile = true;
+                    tile.TileType = point.Y == ground ? TileID.Grass : point.Y < Main.rockLayer ? TileID.Dirt : TileID.Stone;
+                    tile.WallType = point.Y > ground + 2 ? (point.Y < Main.rockLayer ? WallID.DirtUnsafe : WallID.Stone) : WallID.None;
+                    tile.LiquidAmount = 0;
+                }
+            }
+            foreach (Point point in treeTiles)
+            {
+                WorldGen.SquareTileFrame(point.X, point.Y);
+                WorldGen.SquareWallFrame(point.X, point.Y);
+            }
+
+            void Visit(int x, int y)
+            {
+                if (!WorldGen.InWorld(x, y, 10)) return;
+                Tile tile = Main.tile[x, y];
+                if (!IsTreeWall(tile.WallType) && (!tile.HasTile ||
+                    tile.TileType != TileID.LivingWood && tile.TileType != TileID.LeafBlock)) return;
+                Point point = new(x, y);
+                if (treeTiles.Add(point)) pending.Enqueue(point);
+            }
+
+            static bool IsTreeWall(ushort wall) => wall == WallID.LivingWood ||
+                wall == WallID.LivingWoodUnsafe || wall == WallID.LivingLeaf;
+
+            int FindGround(int x)
+            {
+                x = Math.Clamp(x, 10, Main.maxTilesX - 11);
+                int y = Math.Clamp(Origin.Y - SurfaceHeight, 10, Main.maxTilesY - 11);
+                if (IsGround(y))
+                {
+                    while (y > 10 && IsGround(y - 1)) y--;
+                }
+                else
+                {
+                    while (y < Main.maxTilesY - 11 && !IsGround(y)) y++;
+                }
+                return y;
+
+                bool IsGround(int row)
+                {
+                    Tile tile = Main.tile[x, row];
+                    return WorldGen.SolidTile(x, row) && !Main.tileFrameImportant[tile.TileType] && tile.TileType != TileID.LivingWood && tile.TileType != TileID.LeafBlock && tile.TileType != TileID.Cloud && tile.TileType != TileID.RainCloud;
+                }
+            }
+        }
+
 		private Point DetermineOrigin(int biomeWidth, int undergroundHeight, int surfaceHeight, int biomeHeight)
         {
             int[] biomeOverlapDegrees = new int[5];
             Point[] surfacePoints = new Point[5];
             Point surfacePoint = Point.Zero;
-
             for (int attempts = 0; attempts < 10000; attempts++)
 			{
                 int x = WorldGen.genRand.Next((int)(500 * WorldSizeScale), Main.maxTilesX - (int)(500 * WorldSizeScale));
@@ -635,11 +754,9 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                 Point initialPoint = new Point(x, (int)Main.worldSurface);
 
-                // Don't center the biome on a living tree (it'd cover the lightning cave)
-				bool flag = WorldUtils.Find(initialPoint, Searches.Chain(new Searches.Up((int)(200 * WorldSizeScale)), new Conditions.IsTile(TileID.LivingWood, TileID.LeafBlock).AreaOr(1, 50)), out Point _);
-				if (flag) continue;
+                // Living trees are removed after placement so they do not cover the lightning cave.
                 // Find a point with 50 tiles of air above it
-                flag = WorldUtils.Find(initialPoint, Searches.Chain(new Searches.Up(1000), new Conditions.IsSolid().AreaOr(1, 50).Not()), out surfacePoint);
+                bool flag = WorldUtils.Find(initialPoint, Searches.Chain(new Searches.Up(1000), new TerrainWithoutLivingTrees().AreaOr(1, 50).Not()), out surfacePoint);
                 if (!flag) continue;
 
                 // Adjust result to point to surface, not 50 tiles above 
@@ -682,6 +799,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
             // Nonideal point handling
             int firstPointIndex = Array.FindIndex(surfacePoints, point => point != Point.Zero);
+            if (firstPointIndex < 0)
+                throw new InvalidOperationException("Could not find a Crystal Caverns location.");
 
             switch (firstPointIndex)
             {
@@ -743,10 +862,10 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             Point rightPoint = new Point(surfacePoint.X + xOffset, (int)Main.worldSurface);
             for (int attempts = -4; attempts < 6; attempts += 2) // This for loop is meant to solve corruption chasms dragging the average very far down
 			{
-                WorldUtils.Find(leftPoint, Searches.Chain(new Searches.Up(1000), new Conditions.IsSolid().AreaOr(1, 25).Not()), out leftPoint);
+                WorldUtils.Find(leftPoint, Searches.Chain(new Searches.Up(1000), new TerrainWithoutLivingTrees().AreaOr(1, 25).Not()), out leftPoint);
                 leftPoint.Y += 25; // Adjust result to point to surface, not 50 tiles above 
 
-                WorldUtils.Find(rightPoint, Searches.Chain(new Searches.Up(1000), new Conditions.IsSolid().AreaOr(1, 25).Not()), out rightPoint);
+                WorldUtils.Find(rightPoint, Searches.Chain(new Searches.Up(1000), new TerrainWithoutLivingTrees().AreaOr(1, 25).Not()), out rightPoint);
                 rightPoint.Y += 25; // Adjust result to point to surface, not 50 tiles above 
 
                 leftPoint = new Point(surfacePoint.X - xOffset + attempts, leftPoint.Y);
