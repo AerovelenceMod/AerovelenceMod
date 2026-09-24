@@ -81,9 +81,9 @@ namespace AerovelenceMod.Backgrounds.Skies
         {
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Cyvercry2>())
+                if (Main.npc[i].active && Main.npc[i].type == ModContent.NPCType<Cyvercry>())
                 {
-                    if (Main.npc[i].ModNPC is Cyvercry2 Cyver)
+                    if (Main.npc[i].ModNPC is Cyvercry Cyver)
                     {
                         whichAttack(Cyver.GetAttack());
                         bigShotTimer = Cyver.bigShotTimer;

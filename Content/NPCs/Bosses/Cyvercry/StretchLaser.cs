@@ -336,8 +336,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         bool isMaster = false;
         public override void AI()
         {
-            isExpert = (Main.npc[CyverIndex].ModNPC as Cyvercry2).isExpert;
-            isMaster = (Main.npc[CyverIndex].ModNPC as Cyvercry2).isMaster;
+            isExpert = (Main.npc[CyverIndex].ModNPC as Cyvercry).isExpert;
+            isMaster = (Main.npc[CyverIndex].ModNPC as Cyvercry).isMaster;
 
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
             Projectile.spriteDirection = Projectile.direction;
@@ -352,7 +352,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             if (shotTimer > 0 && shotTimer % timerMod == 0) //10
             {
                 NPC cyver = Main.npc[CyverIndex];
-                int damage = (cyver.ModNPC as Cyvercry2).GetDamage("SplitLaserShard");
+                int damage = (cyver.ModNPC as Cyvercry).GetDamage("SplitLaserShard");
 
                 int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverLaserBomb>(), damage, 0);
                 Main.projectile[a].rotation = Projectile.rotation;

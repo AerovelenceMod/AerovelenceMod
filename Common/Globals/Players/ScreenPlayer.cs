@@ -56,7 +56,7 @@ namespace AerovelenceMod.Common.Globals.Players
                 {
                     NPC npc = Main.npc[i];
 
-                    if (npc.type == ModContent.NPCType<Cyvercry2>() || npc.type == ModContent.NPCType<CrystalTumbler>() && npc.ai[0] == (float)TumblerState.Spawn)
+                    if (npc.type == ModContent.NPCType<Cyvercry>() || npc.type == ModContent.NPCType<CrystalTumbler>() && npc.ai[0] == (float)TumblerState.Spawn)
                     {
                         if (npc.active == true)
                             foundNPC = true;

@@ -208,7 +208,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                         Projectile.ai[0] = player.MountedCenter.X > npc.Center.X ? -1 : 1;
 
                     //Manually offset position for Cyvercry so it looks a bit better
-                    if (npc.type == ModContent.NPCType<Cyvercry2>())
+                    if (npc.type == ModContent.NPCType<Cyvercry>())
                         npcPos = npc.Center + new Vector2(-25, 0).RotatedBy(npc.rotation) - new Vector2(0f, player.gfxOffY);
 
                     endPoint = npcPos;

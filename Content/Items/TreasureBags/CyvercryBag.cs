@@ -43,7 +43,7 @@ namespace AerovelenceMod.Content.Items.TreasureBags
         {
             itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<EnergyShield>()));
             itemLoot.Add(ItemDropRule.OneFromOptions(1, Weapons));
-            itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Content.NPCs.Bosses.Cyvercry.Cyvercry2>()));
+            itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Content.NPCs.Bosses.Cyvercry.Cyvercry>()));
         }
     }
 }

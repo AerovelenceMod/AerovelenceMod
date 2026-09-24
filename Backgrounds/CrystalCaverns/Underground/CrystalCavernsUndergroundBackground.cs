@@ -72,7 +72,7 @@ namespace AerovelenceMod.Backgrounds.CrystalCaverns.Underground
             {
                 int cavernTiles = ModContent
                     .GetInstance<global::AerovelenceMod.Content.Biomes.CrystalCavernsTileCount>()
-                    .CavernTiles;
+                    .CrystalTiles;
                 bool underground = player.ZoneDirtLayerHeight || player.ZoneRockLayerHeight;
                 int requiredTiles = visualTargetActive ? 500 : 1000;
                 SetVisualTarget(underground && cavernTiles >= requiredTiles);

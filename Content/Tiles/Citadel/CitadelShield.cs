@@ -3,6 +3,7 @@
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -46,7 +47,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Tiles
             ///
 
             TileObjectData.addTile(Type);
-            ModTranslation name = CreateMapEntryName();
+            LocalizedText name = CreateMapEntryName();
         }
         public override bool CanExplode(int i, int j)
         {

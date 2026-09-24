@@ -1,4 +1,4 @@
-using AerovelenceMod.Content.Items.Others.Quest;
+using AerovelenceMod.Content.Items.Quest;
 using AerovelenceMod.Content.Items.Sets.Phantic;
 using Terraria;
 using Terraria.DataStructures;

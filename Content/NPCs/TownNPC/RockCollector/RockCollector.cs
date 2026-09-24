@@ -1,6 +1,6 @@
 using AerovelenceMod.Content.Biomes;
 using AerovelenceMod.Common.Globals.Worlds;
-using AerovelenceMod.Content.Items.Others.Quest;
+using AerovelenceMod.Content.Items.Quest;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.EmoteBubbles;
@@ -34,7 +34,7 @@ using AerovelenceMod.Content.Items.Tools.Drills;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar;
-using AerovelenceMod.Content.Items.Others.Pets;
+using AerovelenceMod.Content.Items.Pets;
 
 namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 {

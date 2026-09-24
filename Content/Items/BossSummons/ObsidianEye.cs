@@ -38,11 +38,11 @@ namespace AerovelenceMod.Content.Items.BossSummons
 			Item.rare = ItemRarityID.Cyan;
 		}
 
-		public override bool CanUseItem(Player player) => !Main.dayTime;// && !NPC.AnyNPCs(ModContent.NPCType<Cyvercry2>());
+		public override bool CanUseItem(Player player) => !Main.dayTime;// && !NPC.AnyNPCs(ModContent.NPCType<Cyvercry>());
 
 		public override bool? UseItem(Player player)
 		{
-			NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Cyvercry2>());
+			NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Cyvercry>());
 
 			return true;
 		}

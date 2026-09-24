@@ -64,10 +64,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 Vector2 offset = new Vector2(24f, 0f).RotatedBy(Projectile.rotation);
 
                 NPC cyver = Main.npc[CyverIndex];
-                int damage = (cyver.ModNPC as Cyvercry2).GetDamage("ChaseShard");
+                int damage = (cyver.ModNPC as Cyvercry).GetDamage("ChaseShard");
 
                 if (fromSplitLaser)
-                    damage = (cyver.ModNPC as Cyvercry2).GetDamage("SplitLaserShard");
+                    damage = (cyver.ModNPC as Cyvercry).GetDamage("SplitLaserShard");
 
 
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + offset,

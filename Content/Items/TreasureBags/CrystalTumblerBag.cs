@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Content.Items.Mounts;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
 using Terraria;
 using Terraria.GameContent.ItemDropRules;
@@ -39,7 +38,7 @@ namespace AerovelenceMod.Content.Items.TreasureBags
         public override bool CanRightClick() => true;
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<TumblingHarness>()));
+            //itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<>()));
             itemLoot.Add(ItemDropRule.OneFromOptions(1, Weapons));
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Content.NPCs.Bosses.CrystalTumbler.CrystalTumbler>()));
         }

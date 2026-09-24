@@ -35,8 +35,8 @@ namespace AerovelenceMod
         public override void HandlePacket(System.IO.BinaryReader reader, int whoAmI)
         {
             byte packet = reader.ReadByte();
-            if (packet == Content.Items.Others.Misc.BabyCondurtleEgg.HatchPacket)
-                Content.Items.Others.Misc.BabyCondurtleEgg.ReceiveHatch(whoAmI);
+            if (packet == Content.Items.Misc.BabyCondurtleEgg.HatchPacket)
+                Content.Items.Misc.BabyCondurtleEgg.ReceiveHatch(whoAmI);
             else if (packet == Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.RequestPacket)
                 Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.TurnIn(whoAmI, reader.ReadInt16(), reader.ReadByte(), reader.ReadInt32());
             else if (packet == Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.ResultPacket && Main.netMode == NetmodeID.MultiplayerClient)
@@ -87,13 +87,13 @@ namespace AerovelenceMod
 				string cyvercryInternalName = "Cyvercry";
 				float cyvercryWeight = 12.3f;
 				Func<bool> cyvercryDowned = () => DownedWorld.DownedCyvercry;
-				int cyvercryBossType = ModContent.NPCType<Content.NPCs.Bosses.Cyvercry.Cyvercry2>();
+				int cyvercryBossType = ModContent.NPCType<Content.NPCs.Bosses.Cyvercry.Cyvercry>();
 				int cyvercrySpawnItem = ModContent.ItemType<Content.Items.BossSummons.ObsidianEye>();
 				List<int> cyvercryCollectibles = new List<int>()
 				{
 					ModContent.ItemType<Content.Items.Weapons.Aurora.Eos.Eos>()
 				};
-                LocalizedText cyvercrySpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.Cyvercry2.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<ObsidianEye>() + "]");
+                LocalizedText cyvercrySpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.Cyvercry.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<ObsidianEye>() + "]");
                 bossChecklistMod.Call(
 					"LogBoss",
 					Instance,
@@ -241,7 +241,7 @@ namespace AerovelenceMod
 			Filters.Scene["AerovelenceMod:DarkNights"] =
                 new Filter(new DarkNightScreenShaderData("FilterBloodMoon").UseColor(0.0f, 0.2f, 0.2f), EffectPriority.Medium);
 
-			SkyManager.Instance["AerovelenceMod:Cyvercry2"] = new CyverSky();
+			SkyManager.Instance["AerovelenceMod:Cyvercry"] = new CyverSky();
 			SkyManager.Instance["AerovelenceMod:CrystalCavernsSurface"] = new CrystalCavernsSky();
             SkyManager.Instance["AerovelenceMod:CrystalCaverns"] = new CrystalCavernsSky();
 

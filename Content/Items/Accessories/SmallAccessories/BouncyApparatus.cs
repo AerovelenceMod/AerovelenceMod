@@ -14,11 +14,6 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
     {
         private const string EnglishTooltip = "Boing bong bing bong boing bouncy bouncy boing boing boing heheheheheheeehe";
 
-        public override void SetStaticDefaults()
-        {
-            Item.ResearchUnlockCount = 1;
-        }
-
         public override void ModifyTooltips(System.Collections.Generic.List<TooltipLine> tooltips)
         {
             tooltips.RemoveAll(line => line.Mod == "Terraria" && line.Name.StartsWith("Tooltip"));
