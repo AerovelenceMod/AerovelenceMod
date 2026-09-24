@@ -1,11 +1,11 @@
 using AerovelenceMod.Content.Items.Ammo;
-using AerovelenceMod.Content.Items.Others.Alchemical;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using AerovelenceMod.Content.Items.BossSummons;
+using AerovelenceMod.Content.Items.Potions;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;

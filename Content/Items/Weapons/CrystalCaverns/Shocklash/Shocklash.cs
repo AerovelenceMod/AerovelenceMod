@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 		public override void AddRecipes()
 		{
 			//CreateRecipe()
-				//.AddIngredient<Items.Others.Crafting.BurnshockBar>(10)
+				//.AddIngredient<Items.Crafting.BurnshockBar>(10)
 				//.AddTile(TileID.WorkBenches)
 				//.Register();
 		}

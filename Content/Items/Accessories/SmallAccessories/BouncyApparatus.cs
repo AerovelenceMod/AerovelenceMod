@@ -17,10 +17,8 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 1;
             this.ModifyLocalization("Bouncy Apparatus", EnglishTooltip);
         }
-
 
         public override void SetDefaults()
         {

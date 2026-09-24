@@ -5,6 +5,7 @@ using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Buffs;
 using AerovelenceMod.Content.Items.BossSummons;
+using AerovelenceMod.Content.Items.Mounts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -1246,8 +1247,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<Content.Items.Weapons.BossDrops.CrystalTumbler.TumblerEnrichmentScepter>(), 4));
 			npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Content.Tiles.Relics.CrystalTumblerRelicItem>()));
+			npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<TumblingHarness>(), 4));
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Content.Items.TreasureBags.CrystalTumblerBag>()));
+			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Content.Tiles.Trophies.CrystalTumblerTrophy>(), 10));
             LeadingConditionRule normal = new LeadingConditionRule(new Conditions.NotExpert());
+			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Content.Items.Armor.Vanity.CrystalTumblerMask>(), 7));
             normal.OnSuccess(ItemDropRule.OneFromOptions(1, Content.Items.TreasureBags.CrystalTumblerBag.Weapons));
             npcLoot.Add(normal);
         }

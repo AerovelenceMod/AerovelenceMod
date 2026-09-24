@@ -231,8 +231,8 @@ namespace AerovelenceMod.Backgrounds.CrystalCaverns.Underground
             if (!player.dead)
             {
                 int cavernTiles = ModContent
-                    .GetInstance<global::AerovelenceMod.Content.Biomes.CrystalCavernsTileCount>()
-                    .CavernTiles;
+                    .GetInstance<AerovelenceMod.Content.Biomes.CrystalCavernsTileCount>()
+                    .CrystalTiles;
 
                 bool underground =
                     player.ZoneDirtLayerHeight ||

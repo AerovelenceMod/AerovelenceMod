@@ -26,16 +26,14 @@ namespace AerovelenceMod.Content.Items.Mounts
             Item.noMelee = true;
             Item.UseSound = SoundID.Item79;
             Item.value = Item.sellPrice(gold: 2);
-            Item.rare = ItemRarityID.Expert;
-            Item.expert = true;
+            Item.rare = ItemRarityID.Master;
+            Item.master = true;
             Item.mountType = ModContent.MountType<TumblingMount>();
         }
     }
 
     public class TumblingMountBuff : ModBuff
     {
-        public override string Texture => "AerovelenceMod/Content/Items/Mounts/TumblingHarness";
-
         public override void SetStaticDefaults()
         {
             Main.buffNoTimeDisplay[Type] = true;

@@ -102,17 +102,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
             return false;
         }
-
-        public override void AddRecipes()
-        {
-            CreateRecipe()
-                .AddIngredient(ItemID.Marble, 25)
-                .AddRecipeGroup("AerovelenceMod:GoldOrPlatinum", 5)
-                .AddIngredient(ItemID.FlintlockPistol, 1)
-                .AddTile(TileID.Anvils)
-                .Register();
-        }
-
     }
     public class MarbleMusketHeldProjectile : ModProjectile
     {

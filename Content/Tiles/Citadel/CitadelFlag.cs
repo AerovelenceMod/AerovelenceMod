@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -11,7 +12,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Tiles
     {
 		public override void SetStaticDefaults()
 		{
-			ModTranslation name = CreateMapEntryName();
+			LocalizedText name = CreateMapEntryName();
 			name.SetDefault("Citadel Flag");
 			Main.tileFrameImportant[Type] = true;
 			Main.tileNoAttach[Type] = true;

@@ -37,6 +37,8 @@ NPCs: {
 		SpawnInfo: Use {0} at night.
 	}
 
+	Cyvercry.DisplayName: Cyvercry
+
 	CrystalTumbler: {
 		DisplayName: Crystal Tumbler
 		SpawnInfo: Use {0} at the mysterious gate in the Crystal Caverns. Recommended after the Eye of Cthulhu, before the Eater of Worlds or Brain of Cthulhu.
@@ -1778,6 +1780,56 @@ Items: {
 		DisplayName: Friend Of The Caverns
 		Tooltip: ""
 	}
+
+	CyvercryBag: {
+		Tooltip: Right click to open
+		DisplayName: Treasure Bag (Cyvercry)
+	}
+
+	GlimmerwoodHammer: {
+		Tooltip: ""
+		DisplayName: Glimmerwood Hammer
+	}
+
+	CrystalTumblerMask: {
+		DisplayName: Crystal Tumbler Mask
+		Tooltip: ""
+	}
+
+	CyvercryMask: {
+		DisplayName: Cyvercry Mask
+		Tooltip: ""
+	}
+
+	CrystalCavernsBoxItem: {
+		DisplayName: Crystal Caverns Box Item
+		Tooltip: ""
+	}
+
+	CrystalTumblerBoxItem: {
+		DisplayName: Crystal Tumbler Box Item
+		Tooltip: ""
+	}
+
+	CyvercryBoxItem: {
+		DisplayName: Cyvercry Box Item
+		Tooltip: ""
+	}
+
+	CrystalCavernsPylon: {
+		DisplayName: Crystal Caverns Pylon
+		Tooltip: ""
+	}
+
+	CrystalTumblerTrophy: {
+		DisplayName: Crystal Tumbler Trophy
+		Tooltip: ""
+	}
+
+	CyvercryTrophy: {
+		DisplayName: Cyvercry Trophy
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
@@ -2342,6 +2394,12 @@ Tiles: {
 	GlimmerwoodDresser.MapEntry: Glimmerwood Dresser
 	GlimmerwoodDresserTile.MapEntry: Glimmerwood Dresser Tile
 	LightningTrapTile.MapEntry: Lightning Trap Tile
+	CyvercryTrophyPlaced.MapEntry: Cyvercry Trophy Placed
+	CrystalTumblerTrophyPlaced.MapEntry: Crystal Tumbler Trophy Placed
+	CrystalCavernsPylonTile.MapEntry: Crystal Caverns Pylon Tile
+	CyvercryBox.MapEntry: Cyvercry Box
+	CrystalTumblerBox.MapEntry: Crystal Tumbler Box
+	CrystalCavernsBox.MapEntry: Crystal Caverns Box
 }
 
 Emotes: {
@@ -2480,6 +2538,12 @@ ItemName: {
 	HellfireBullet: Hellfire Bullet
 	CrystallineDynamite: Crystalline Dynamite
 	MimikosMirror: Mimiko's Mirror
+	CyvercryBoxItem: Music Box (Cyvercry)
+	CrystalTumblerBoxItem: Music Box (Crystal Tumbler)
+	CrystalCavernsBoxItem: Music Box (Crystal Caverns)
+	CavernSword: Crystallized Blade
+	CyvercryBag: Treasure Bag (Cyvercry)
+	GlimmerwoodHammer: Glimmerwood Hammer
 }
 
 ItemTooltip: {
@@ -3001,6 +3065,12 @@ ItemTooltip: {
 		The rays periodically align, flash three times, then scatter again
 		Consumes 10 mana per second while channeling
 		'''
+	CyvercryBoxItem: Composed by A44
+	CrystalTumblerBoxItem: Composed by A44
+	CrystalCavernsBoxItem: Composed by A44
+	CavernSword: ""
+	CyvercryBag: Right click to open
+	GlimmerwoodHammer: ""
 }
 
 NPCName: {
@@ -4068,3 +4138,35 @@ MimikosMirror: {
 		'''
 	SkillStrike: "[i:75] Strike enemies with the focused flashes [i:75]"
 }
+
+CavernSword: {
+	Tooltip: ""
+	DisplayName: Crystallized Blade
+}
+
+CyvercryBag: {
+	Tooltip: Right click to open
+	DisplayName: Treasure Bag (Cyvercry)
+}
+
+GlimmerwoodHammer: {
+	Tooltip: ""
+	DisplayName: Glimmerwood Hammer
+}
+
+CrystalCavernsBoxItem: {
+	DisplayName: Music Box (Crystal Caverns)
+	Tooltip: Composed by A44
+}
+
+CrystalTumblerBoxItem: {
+	DisplayName: Music Box (Crystal Tumbler)
+	Tooltip: Composed by A44
+}
+
+CyvercryBoxItem: {
+	DisplayName: Music Box (Cyvercry)
+	Tooltip: Composed by A44
+}
+
+Conditions.InCrystalCaverns: Mods.AerovelenceMod.Conditions.InCrystalCaverns

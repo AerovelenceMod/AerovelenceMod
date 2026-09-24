@@ -1,3 +1,4 @@
+using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -12,11 +13,11 @@ namespace AerovelenceMod.Common.Systems
 				.AddIngredient(ItemID.IceMirror, 1)
 				.AddTile(TileID.Anvils)
 				.Register();
-			//Recipe.Create(ItemID.WormholePotion, 1)
-				//.AddIngredient(ModContent.ItemType<CavernCrystal>(), 2)
-				//.AddIngredient(ItemID.Bottle, 1)
-				//.AddTile(TileID.Bottles)
-				//.Register();
+			Recipe.Create(ItemID.WormholePotion, 1)
+				.AddIngredient(ModContent.ItemType<CavernCrystalItem>(), 2)
+				.AddIngredient(ItemID.Bottle, 1)
+				.AddTile(TileID.Bottles)
+				.Register();
 			Recipe.Create(ItemID.LuckyHorseshoe, 1)
 				.AddRecipeGroup("AerovelenceMod:GoldBars", 5)
 				.AddIngredient(ItemID.Cloud, 5)

@@ -23,12 +23,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
     //- Balance
     //- Skill Strike
     //- Optainability
-    //- Sprite
     //- Tooltip
     public class BooyahBomb : ModItem
     {
-        public override string Texture => "Terraria/Images/Projectile_0";
-
         public override void SetDefaults()
         {
             Item.damage = 20;
@@ -54,8 +51,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
     //This projectile is the bomb while it is held in the player's hand
     public class BooyahHeldProj : ModProjectile
     {
-        public override string Texture => "Terraria/Images/Projectile_0";
-
         public override void SetDefaults()
         {
             Projectile.DamageType = DamageClass.Magic;

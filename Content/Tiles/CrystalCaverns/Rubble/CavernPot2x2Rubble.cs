@@ -77,7 +77,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble
         public override IEnumerable<Item> GetItemDrops(int i, int j)
         {
             if (Main.rand.NextBool(5))
-                yield return new Item(ModContent.ItemType<global::AerovelenceMod.Content.Items.Others.Alchemical.MineralWater>(), Main.rand.Next(1, 3));
+                yield return new Item(ModContent.ItemType<Content.Items.Potions.MineralWater>(), Main.rand.Next(1, 3));
             yield return new Item(ItemID.SuspiciousLookingEye);
             yield return new Item(ItemID.Torch, 5);
         }

@@ -14,18 +14,25 @@ using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems;
+using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Globals.Players;
-
+using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
 {
     public class CavernSword : ModItem
     {
         bool tick = false;
+
+        public override void SetStaticDefaults()
+        {
+            this.ModifyLocalization("Crystallized Blade", "");
+        }
+
         public override void SetDefaults()
         {
-            Item.damage = 89;
+            Item.damage = 21;
             Item.knockBack = 4f;// KnockbackTiers.Average;
 
             Item.width = 60;
@@ -60,6 +67,14 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (tick ? 1 : 0));
 
             return false;
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<CavernCrystalItem>(), 50)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
     public class CavernSwordProj : BaseSwingSwordProj
@@ -429,8 +444,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             Projectile.tileCollide = false;
             Projectile.ignoreWater = true;
         }
-
-        public override bool? CanDamage() => false;
 
         public override bool? CanCutTiles() => false;
 

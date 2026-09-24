@@ -14,13 +14,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 
-namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
+namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Saphead
 {
     public class Saphead : TranslatableModItem
     {
         internal const string HeadTexture = "AerovelenceMod/Content/NPCs/CrystalCaverns/Sapper";
         private const string EnglishTooltip = "Spin a sapper head toward the cursor\nRegularly spouts crystal fog; Pace quickens the closer it is to you\nConsumes 5 mana per puff";
-        public override string Texture => HeadTexture;
 
         public override void SetStaticDefaults()
         {
@@ -66,7 +65,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     {
         public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            if (npc.type == ModContent.NPCType<global::AerovelenceMod.Content.NPCs.CrystalCaverns.Sapper>())
+            if (npc.type == ModContent.NPCType<Content.NPCs.CrystalCaverns.Sapper>())
                 npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Saphead>(), 20));
         }
     }
