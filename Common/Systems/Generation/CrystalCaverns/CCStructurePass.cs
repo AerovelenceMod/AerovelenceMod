@@ -1,22 +1,16 @@
 using AerovelenceMod.Content.Items.Ammo;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
-using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.Items.Potions;
-using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using AerovelenceMod.Content.Walls.CrystalCaverns.Natural;
 using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
-using System.Drawing.Printing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Terraria;
 using Terraria.ID;
 using Terraria.IO;
@@ -48,12 +42,12 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 #region CC Gen Cleanup
                 Point surfaceRectOrigin = new(
                     mainPass.Origin.X - mainPass.BiomeWidth / 2,
-                    mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 1.75)
+                    mainPass.Origin.Y - (int)(mainPass.SurfaceDepth * 1.75)
                 );
                 ShapeData surfaceRectShapeData = new ShapeData();
                 WorldUtils.Gen(
                     surfaceRectOrigin,
-                    new Shapes.Rectangle(mainPass.BiomeWidth, (int)(mainPass.SurfaceHeight * 1.75)),
+                    new Shapes.Rectangle(mainPass.BiomeWidth, (int)(mainPass.SurfaceDepth * 1.75)),
                     new Actions.Blank().Output(surfaceRectShapeData)
                 );
                 WorldUtils.Gen(
@@ -363,16 +357,9 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             }
 
             //logger?.Info($"Total valid points found- {_validPoints.Count}");
-            if (_validPoints.Count > 0)
-            {
-                var xValues = _validPoints.Select(p => p.X).OrderBy(x => x).ToList();
-                var leftPoints = _validPoints.Count(p => p.X < biomeCenterX);
-                var rightPoints = _validPoints.Count(p => p.X >= biomeCenterX);
-
                 //logger?.Info($"X-coordinate range- {xValues.First()} to {xValues.Last()}");
                 //logger?.Info($"Points on left side- {leftPoints}");
                 //logger?.Info($"Points on right side- {rightPoints}");
-            }
         }
 
         private AeroStructure PlaceStructureSafely(string name, int attempts = 1000)

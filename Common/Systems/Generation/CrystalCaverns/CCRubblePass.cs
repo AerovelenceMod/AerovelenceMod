@@ -1,7 +1,5 @@
 ﻿using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
-using Iced.Intel;
 using Microsoft.Xna.Framework;
-using Steamworks;
 using System;
 using System.Linq;
 using Terraria;
@@ -16,6 +14,39 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
     {
         public CCRubblePass(string name, float loadWeight) : base(name, loadWeight) { }
 
+        internal static int DecorateCaves(Rectangle bounds, Func<int, int, bool> allowed)
+        {
+            CCTerrainPass terrain = CCTerrainPass.Instance();
+            int[] types = [ModContent.TileType<CavernStone1x1FloorRubbleNatural>(), ModContent.TileType<CavernStone1x2FloorRubbleNatural>(),
+                ModContent.TileType<CavernStone3x2FloorRubbleNatural>(), ModContent.TileType<CavernStone1x1CeilingRubbleNatural>(),
+                ModContent.TileType<CavernStone1x2CeilingRubbleNatural>(), ModContent.TileType<CavernPot2x2Rubble>()];
+            int count = 0;
+            for (int y = bounds.Top + 3; y < bounds.Bottom - 3; y++)
+                for (int x = bounds.Left + 3; x < bounds.Right - 3; x++)
+                {
+                    if (Main.tile[x, y].HasTile || Main.tile[x, y].LiquidAmount > 0 || !WorldGen.genRand.NextBool(5) || !allowed(x, y)) continue;
+                    bool floor = Natural(x, y + 1), ceiling = Natural(x, y - 1);
+                    if (!floor && !ceiling) continue;
+                    bool safe = true;
+                    for (int dx = -2; dx <= 2 && safe; dx++)
+                        for (int dy = -2; dy <= 2; dy++)
+                            if (!allowed(x + dx, y + dy)) { safe = false; break; }
+                    if (!safe) continue;
+                    int choice = floor ? (WorldGen.genRand.NextBool(7) ? 5 : WorldGen.genRand.Next(3)) : WorldGen.genRand.Next(3, 5);
+                    int style = WorldGen.genRand.Next(choice == 0 ? 12 : choice == 5 ? 9 : 6);
+                    WorldGen.PlaceTile(x, y, types[choice], mute: true, style: style);
+                    if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == types[choice]) count++;
+                }
+            return count;
+
+            bool Natural(int x, int y)
+            {
+                Tile tile = Main.tile[x, y];
+                return WorldGen.SolidTile(x, y) && (tile.TileType == terrain.StoneTile || tile.TileType == terrain.ChargedTile ||
+                    tile.TileType == terrain.LushTile || tile.TileType == terrain.DirtTile || tile.TileType == terrain.SandTile);
+            }
+        }
+
         protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
         {
             //progress.Message = WorldGenSystem.CrystalCavernsTerrainPassMessage.Value;
@@ -24,11 +55,11 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             CCTerrainPass mainPass = CCTerrainPass.Instance();
 
             // Copied from CCTerrainPass.cs
-            Point surfaceRectOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25));
+            Point surfaceRectOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y - mainPass.SurfaceHeight);
             Point upperUndergroundOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y);
-            Point lowerUndergroundOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + (int)(.5 * mainPass.UndergroundHeight));
+            Point lowerUndergroundOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight);
             Point upperUndergroundWallOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2 + 1, mainPass.Origin.Y);
-            Point lowerUndergroundWallOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + (int)(.5 * mainPass.UndergroundHeight) - 1);
+            Point lowerUndergroundWallOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight - 1); // Do not remember why the -1 is here but keeping it
 
             // Sets of rubble to be placed
             int[] potTileTypes = [ModContent.TileType<CavernPot2x2Rubble>()];
@@ -75,7 +106,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                         break;
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
-                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
@@ -123,7 +154,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                         break;
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
-                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
@@ -148,8 +179,6 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     {
                         placeStyle = WorldGen.genRand.Next(9);
                     }
-
-                    Console.WriteLine(placeStyle);
 
                     WorldGen.PlaceTile(x, y, tileType, mute: true, style: placeStyle);
                     success = Main.tile[x, y].TileType == tileType;
