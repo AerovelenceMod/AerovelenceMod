@@ -363,16 +363,9 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             }
 
             //logger?.Info($"Total valid points found- {_validPoints.Count}");
-            if (_validPoints.Count > 0)
-            {
-                var xValues = _validPoints.Select(p => p.X).OrderBy(x => x).ToList();
-                var leftPoints = _validPoints.Count(p => p.X < biomeCenterX);
-                var rightPoints = _validPoints.Count(p => p.X >= biomeCenterX);
-
                 //logger?.Info($"X-coordinate range- {xValues.First()} to {xValues.Last()}");
                 //logger?.Info($"Points on left side- {leftPoints}");
                 //logger?.Info($"Points on right side- {rightPoints}");
-            }
         }
 
         private AeroStructure PlaceStructureSafely(string name, int attempts = 1000)

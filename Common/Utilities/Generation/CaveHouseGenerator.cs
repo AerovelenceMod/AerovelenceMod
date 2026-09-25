@@ -18,6 +18,8 @@ using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
+using AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
+using AerovelenceMod.Content.Tiles.Citadel;
 
 namespace AerovelenceMod.Common.Utilities.Generation
 {
@@ -175,6 +177,101 @@ namespace AerovelenceMod.Common.Utilities.Generation
             return true;
         }
 
+        public static bool GenerateCitadelHouse(CitadelHouseStamp stamp, Point origin, bool addLoot = true)
+        {
+            Rectangle bounds = new(origin.X, origin.Y, stamp.Width, stamp.Height);
+            Rectangle protection = bounds; protection.Inflate(2, 2);
+            AeroStructure structure = new(new Vector2(protection.X, protection.Y), protection.Width, protection.Height, "silkencitadelhouse");
+            if (!InWorld(protection.Left, protection.Top, 10) || !InWorld(protection.Right, protection.Bottom, 10) || !structure.CanPlace()) return false;
+            ushort brick = (ushort)ModContent.TileType<CitadelBrickTile>(), stone = (ushort)ModContent.TileType<CavernStoneTile>();
+            ushort wall = (ushort)ModContent.WallType<CitadelBrickWallUnsafe>(), glassA = (ushort)ModContent.WallType<CitadelWindowWall>();
+            ushort glassB = (ushort)ModContent.WallType<CitadelRoseWindowWall>(), platform = (ushort)ModContent.TileType<GlimmerwoodPlatformTile>();
+            int lantern = GlimmerwoodFurniture(TileID.HangingLanterns, "Lantern", "Lamp");
+            int workbench = GlimmerwoodFurniture(TileID.WorkBenches, "Workbench", "WorkBench", "Table");
+            int chair = GlimmerwoodFurniture(TileID.Chairs, "Chair");
+            int bookcase = GlimmerwoodFurniture(TileID.Bookcases, "Bookcase", "Bookshelf");
+            for (int y = 0; y < stamp.Height; y++)
+                for (int x = 0; x < stamp.Width; x++)
+                {
+                    char cell = stamp.Cell(x, y);
+                    if (cell == '.') continue;
+                    Tile tile = Main.tile[origin.X + x, origin.Y + y];
+                    tile.ClearEverything();
+                    tile.WallType = wall;
+                    switch (cell)
+                    {
+                        case 'B': tile.ResetToType(brick); break;
+                        case 's': tile.ResetToType(stone); tile.WallType = (ushort)ModContent.WallType<CavernStoneWallUnsafe>(); break;
+                        case 'P': tile.ResetToType(platform); break;
+                        case '>': tile.ResetToType(platform); break;
+                        case '<': tile.ResetToType(platform); break;
+                        case 'a': tile.WallType = glassA; break;
+                        case 'b': tile.WallType = glassB; tile.WallColor = PaintID.PinkPaint; break;
+                        case 'u': tile.WallType = (ushort)ModContent.WallType<CitadelBrickWallUnsafe>(); break;
+                        case 'v': tile.ResetToType(TileID.Cobweb); break;
+                        case 'o': tile.ResetToType((ushort)ModContent.TileType<GlimmerwoodTile>()); break;
+                        case 'I': tile.ResetToType((ushort)ModContent.TileType<GlimmerwoodBeamTile>()); break;
+                        case 'L': tile.ResetToType(TileID.Chain); break;
+                        case '~': tile.LiquidAmount = 255; tile.LiquidType = LiquidID.Water; break;
+                        case 'n':
+                        case 't':
+                        case 'c':
+                        case 'k': break;
+                    }
+                }
+            for (int y = 0; y < stamp.Height; y++)
+                for (int x = 0; x < stamp.Width; x++)
+                {
+                    int wx = origin.X + x, wy = origin.Y + y;
+                    if (stamp.CompleteDoor(x, y)) PlaceTile(wx, wy + 1, ModContent.TileType<GlimmerwoodDoorTileClosed>(), mute: true, forced: true);
+                    switch (stamp.Cell(x, y))
+                    {
+                        case '>': PlaceDiagonalPlatform(wx, wy, true, stamp.StairTop(x, y)); break;
+                        case '<': PlaceDiagonalPlatform(wx, wy, false, stamp.StairTop(x, y)); break;
+                        case 'n': PlaceObject(wx, wy, lantern, false, 0); break;
+                        case 't': PlaceObject(wx, wy, workbench, false, 0); break;
+                        case 'c': PlaceObject(wx, wy, chair, false, 0); break;
+                        case 'k': PlaceObject(wx, wy, bookcase, false, 0); break;
+                    }
+                }
+            if (addLoot)
+            {
+                List<Point> candidates = new();
+                for (int y = 0; y < stamp.Height - 2; y++)
+                    for (int x = 0; x < stamp.Width - 1; x++)
+                        if (stamp.Cell(x, y) == 'w' && stamp.Cell(x + 1, y) == 'w' &&
+                            stamp.Cell(x, y + 1) == 'w' && stamp.Cell(x + 1, y + 1) == 'w' &&
+                            stamp.Cell(x, y + 2) == 'B' && stamp.Cell(x + 1, y + 2) == 'B') candidates.Add(new Point(x, y));
+                while (candidates.Count > 0)
+                {
+                    int index = WorldGen.genRand.Next(candidates.Count);
+                    Point spot = candidates[index]; candidates.RemoveAt(index);
+                    if (PlaceChest(origin.X + spot.X, origin.Y + spot.Y + 1, (ushort)ModContent.TileType<CavernChestTile>(), false) >= 0) break;
+                }
+                structure.ApplyItemConfigurationsToAll(WorldGen.genRand, CreatePrimaryLootPool(), CreateSecondaryLootPool());
+            }
+            for (int y = 0; y < stamp.Height; y++)
+                for (int x = 0; x < stamp.Width; x++)
+                    if (stamp.Cell(x, y) != '.')
+                    { SquareTileFrame(origin.X + x, origin.Y + y, true); SquareWallFrame(origin.X + x, origin.Y + y, true); }
+            structure.ProtectStructure();
+            return true;
+        }
+
+        private static int GlimmerwoodFurniture(int fallback, params string[] names)
+        {
+            List<ModTile> matches = new();
+            foreach (ModTile tile in ModContent.GetInstance<AerovelenceMod>().GetContent<ModTile>())
+                foreach (string name in names)
+                    if (tile.Name.Contains(name, StringComparison.OrdinalIgnoreCase) || tile.Texture.Contains(name, StringComparison.OrdinalIgnoreCase))
+                    { matches.Add(tile); break; }
+            foreach (ModTile tile in matches)
+                if (tile.Name.Contains("Glimmerwood", StringComparison.OrdinalIgnoreCase) || tile.Texture.Contains("Glimmerwood", StringComparison.OrdinalIgnoreCase)) return tile.Type;
+            foreach (ModTile tile in matches)
+                if (tile.GetType().Namespace?.Contains("CrystalCaverns", StringComparison.OrdinalIgnoreCase) == true) return tile.Type;
+            return fallback;
+        }
+
         #region Crystal Placement
 
         /// <summary>
@@ -198,8 +295,8 @@ namespace AerovelenceMod.Common.Utilities.Generation
 
                 if (useLarge)
                     PlaceLargeFloorCrystal(x, floorY, flipHorizontally);
-               // else
-                    //Main.NewText("is");
+                // else
+                //Main.NewText("is");
                 //PlaceSmallFloorCrystal(x, floorY, flipHorizontally);
             }
         }
@@ -272,7 +369,7 @@ namespace AerovelenceMod.Common.Utilities.Generation
                 if (useLarge)
                     PlaceLargeCeilingCrystal(x, ceilingY, flipHorizontally);
                 //else
-                   // Main.NewText("is");
+                // Main.NewText("is");
                 //PlaceSmallCeilingCrystal(x, ceilingY, flipHorizontally);
             }
         }
@@ -596,11 +693,6 @@ namespace AerovelenceMod.Common.Utilities.Generation
             {
                 tile.Slope = bottomLeftToTopRight ? SlopeType.SlopeDownLeft : SlopeType.SlopeDownRight;
                 tile.IsHalfBlock = false;
-                tile.TileFrameY = 0;
-                int frameIndex = isTop
-                    ? (bottomLeftToTopRight ? 25 : 26)
-                    : (bottomLeftToTopRight ? 8 : 10);
-                tile.TileFrameX = (short)(frameIndex * 18);
                 SquareTileFrame(x, y, true);
             }
         }

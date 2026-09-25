@@ -61,7 +61,8 @@ namespace AerovelenceMod.Common.Utilities
         }
 
         public static void SimpleFrameImportantTile(this ModTile tile, int width, int height, SoundStyle soundType, int dustType, Color mapColor,
-             bool solid = false, bool solidTop = true, AnchorData anchorBottom = default, AnchorData anchorTop = default)
+             bool solid = false, bool solidTop = true, AnchorData anchorBottom = default, AnchorData anchorTop = default,
+             Action<TileObjectData> configure = null, LocalizedText mapName = null)
         {
             Main.tileFrameImportant[tile.Type] = true;
             Main.tileBlockLight[tile.Type] = true;
@@ -82,8 +83,9 @@ namespace AerovelenceMod.Common.Utilities
                 TileObjectData.newTile.AnchorBottom = anchorBottom;
             if (anchorTop != default)
                 TileObjectData.newTile.AnchorTop = anchorTop;
+            configure?.Invoke(TileObjectData.newTile);
             TileObjectData.addTile(tile.Type);
-            tile.AddMapEntry(mapColor);
+            tile.AddMapEntry(mapColor, mapName);
             tile.HitSound = soundType;
             tile.DustType = dustType;
         }

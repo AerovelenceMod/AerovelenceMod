@@ -10,32 +10,37 @@ namespace AerovelenceMod.Common.Systems.Generation
     {
         public static LocalizedText CrystalCavernsTerrainPassMessage { get; private set; }
         public static LocalizedText CrystalCavernsStructurePassMessage { get; private set; }
+        public static LocalizedText LivingTreeIslandsPassMessage { get; private set; }
 		public static LocalizedText CrystalCavernsRubblePassMessage { get; private set; }
 
         public override void SetStaticDefaults()
 		{
+            LivingTreeIslandsPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(LivingTreeIslandsPassMessage)}"),
+                () => "Growing living tree sky islands");
 			CrystalCavernsTerrainPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsTerrainPassMessage)}"));
             CrystalCavernsStructurePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsStructurePassMessage)}"));
 			CrystalCavernsRubblePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsRubblePassMessage)}"));
 		}
 
-		public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
-		{
-			int CCTerrainIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Jungle Chests"));
-			if (CCTerrainIndex != -1)
-			{
-				tasks.Insert(CCTerrainIndex + 1, CCTerrainPass.Instance("Crystal Caverns Terrain", 100f));
-			}
-			int CCPolishIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Final Cleanup"));
-			if (CCPolishIndex != -1)
-			{
-				tasks.Insert(CCPolishIndex + 1, new CCStructurePass("Crystal Caverns Polish", 101f));
-			}
-			int CCRubbleIndex = tasks.FindIndex(genpass => genpass.Name.Equals("Tile Cleanup"));
-            if (CCRubbleIndex != -1)
-			{
-				tasks.Insert(CCRubbleIndex + 1, new CCRubblePass("Crystal Caverns Rubble", 102f));
-			}
+        public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
+        {
+            totalWeight += InsertAfter(tasks, "Jungle Chests", CCTerrainPass.Instance("Crystal Caverns Terrain", 100f));
+            totalWeight += InsertAfter(tasks, "Tile Cleanup", new CCRubblePass("Crystal Caverns Rubble", 102f));
+            totalWeight += InsertAfter(tasks, "Final Cleanup",
+                new SilkenCitadelPass(),
+                new CCStructurePass("Crystal Caverns Polish", 101f),
+                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass(),
+                new LivingTreeIslandPass());
         }
-	}
+
+        private static double InsertAfter(List<GenPass> tasks, string name, params GenPass[] passes)
+        {
+            int index = tasks.FindIndex(pass => pass.Name == name);
+            if (index < 0) return 0;
+            tasks.InsertRange(index + 1, passes);
+            double weight = 0;
+            foreach (GenPass pass in passes) weight += pass.Weight;
+            return weight;
+        }
+    }
 }

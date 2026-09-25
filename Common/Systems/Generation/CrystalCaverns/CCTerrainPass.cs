@@ -620,6 +620,15 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             }
 		}
 
+        public ushort UndergroundMaterial(ushort tile)
+        {
+            if (tile == DirtTile || tile == GrassTile || ReplaceWithDirtTiles.Contains(tile)) return DirtTile;
+            if (tile == SandTile || ReplaceWithSandTiles.Contains(tile)) return SandTile;
+            if (tile == ChargedTile || ReplaceWithChargedTiles.Contains(tile)) return ChargedTile;
+            if (tile == LushTile || TileID.Sets.Ore[tile]) return tile;
+            return StoneTile;
+        }
+
         private sealed class TerrainWithoutLivingTrees : GenCondition
         {
             protected override bool CheckValidity(int x, int y) => WorldGen.SolidTile(x, y) && _tiles[x, y].TileType != TileID.LivingWood && _tiles[x, y].TileType != TileID.LeafBlock;
