@@ -21,13 +21,14 @@ using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
 {
-    public class CavernSword : ModItem
+    public class CavernSword : TranslatableModItem
     {
         bool tick = false;
 
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Crystallized Blade", "");
+            base.SetStaticDefaults();
         }
 
         public override void SetDefaults()

@@ -1,4 +1,6 @@
 using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +10,6 @@ using Terraria.DataStructures;
 
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
-using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture.Items;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {
@@ -69,6 +70,28 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             Color color = new(255, 255, 255, 0);
             Rectangle frame = new(tile.TileFrameX, tile.TileFrameY, 16, 16);
             spriteBatch.Draw(glowTexture.Value, position, frame, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+        }
+    }
+
+    public class CrystallineFabricatorItem : ModItem
+    {
+        public override void SetStaticDefaults()
+        {
+            this.ModifyLocalization("Crystalline Fabricator")
+                .AddName(Language.Spanish, "Fabricador cristalino");
+        }
+
+        public override void SetDefaults()
+        {
+            CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<CrystallineFabricator>());
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8)
+                .AddTile(TileID.WorkBenches)
+                .Register();
         }
     }
 }

@@ -169,6 +169,15 @@ namespace AerovelenceMod
         private List<IOrderedLoadable> loadCache;
         public override void Load()
 		{
+			if (Main.netMode != NetmodeID.Server)
+			{
+				string shaderName = "AerovelenceMod:CavernCrystalShine";
+				string shaderPath = "Effects/CavernCrystalShine";
+
+				var shaderRef = new Ref<Effect>(Instance.Assets.Request<Effect>(shaderPath).Value);
+				(Filters.Scene[shaderName] = new Filter(new ScreenShaderData(shaderRef, shaderName + "Pass"), EffectPriority.High)).Load();
+
+			}
             // Literally ripped from SLR
             #region IOrderedLoadable Loading
             loadCache = new List<IOrderedLoadable>();
@@ -342,16 +351,6 @@ namespace AerovelenceMod
         [Obsolete]
         public override void AddRecipeGroups()/* tModPorter Note: Removed. Use ModSystem.AddRecipeGroups */
         {
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Iron Bars", new int[]
-                {
-                    ItemID.IronBar,
-                    ItemID.LeadBar
-                });
-                RecipeGroup.RegisterGroup("AerovelenceMod:IronBars", group);
-
-            }
-
             {
                 RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Silver Bars", new int[]
                 {

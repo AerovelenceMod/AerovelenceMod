@@ -16,25 +16,6 @@ using static Terraria.ID.ContentSamples.CreativeHelper;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
-    public class CrystalGrassDevItem : ModItem
-    {
-        public override void SetDefaults()
-        {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = 999;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<CrystalGrassTile>();
-            Item.rare = ItemRarityID.White;
-            Item.value = 5;
-        }
-    }
-
     [LegacyName("CrystalGrass")]
     public class CrystalGrassTile : ModTile
     {
@@ -156,7 +137,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
             // Pulsating color for glowmask
             Color maskColor = Color.White
-                * MathHelper.Lerp(0.1f, 0.7f, ((float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.02f, j * 0.02f), Main.GlobalTimeWrappedHourly * 0.25f)), 2)));
+                * MathHelper.Lerp(0.1f, 0.7f, (float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.02f, j * 0.02f), Main.GlobalTimeWrappedHourly * 0.25f)), 2));
 
             DrawUtils.DrawSlopedTile(glowTexture.Value, position, tile, maskColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }

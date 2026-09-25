@@ -46,11 +46,11 @@ namespace AerovelenceMod.Common.Systems
 				.AddTile(TileID.SkyMill)
 				.Register();
 			Recipe.Create(ItemID.Aglet, 1)
-				.AddRecipeGroup("IronBar", 5)
+				.AddRecipeGroup(RecipeGroupID.IronBar, 5)
 				.AddTile(TileID.Anvils)
 				.Register();
 			Recipe.Create(ItemID.AnkletoftheWind, 1)
-				.AddRecipeGroup("IronBar", 4)
+				.AddRecipeGroup(RecipeGroupID.IronBar, 4)
 				.AddIngredient(ItemID.Stinger, 10)
 				.AddTile(TileID.Anvils)
 				.Register();

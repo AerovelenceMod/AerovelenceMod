@@ -1,5 +1,6 @@
 using AerovelenceMod.Backgrounds.CrystalCaverns.Underground;
 using AerovelenceMod.Common.Systems;
+using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -26,7 +27,8 @@ namespace AerovelenceMod.Content.Biomes
         public override Color? BackgroundColor => base.BackgroundColor;
         public override string MapBackground => "AerovelenceMod/Backgrounds/CrystalCaverns/CrystalCavernsMapBg";
 
-        //public override int BiomeTorchItemType => ModContent.ItemType<GlimmerwoodTorch>();
+        public override int BiomeTorchItemType => ModContent.ItemType<CrystalTorchItem>();
+		public override int BiomeCampfireItemType => ModContent.ItemType<CrystalCampfireItem>();
 
         public override void SetStaticDefaults()
         {

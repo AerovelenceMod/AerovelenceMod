@@ -1,4 +1,4 @@
-/*
+using AerovelenceMod.Common.Systems.Language;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -9,13 +9,14 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Patreon
 {
-    public class EvilLightbulb : ModItem
+    public class EvilLightbulb : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Evil Lightbulb");
-            // Tooltip.SetDefault("Left-click to shoot a small laser\nRight-click to conjure a protective aura");
+            this.ModifyLocalization("Evil Lightbulb", "Left-click to shoot a small laser\nRight-click to conjure a protective aura");
+            base.SetStaticDefaults();
         }
+
         public override void SetDefaults()
         {
             Item.crit = 7;
@@ -87,17 +88,12 @@ namespace AerovelenceMod.Content.Items.Patreon
 
     public class EvilAura : ModProjectile
     {
-
+        public override string Texture => $"Terraria/Images/Projectile_0";
 
         float colorLerp = 0f;
         float Glow = 0f;
         public Vector2 DrawPos;
         float cos1 = 0;
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Evil Aura");
-        }
 
         public override void SetDefaults()
         {
@@ -162,10 +158,8 @@ namespace AerovelenceMod.Content.Items.Patreon
 
     public class EvilRay : ModProjectile
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Evil Ray");
-        }
+        public override string Texture => $"Terraria/Images/Projectile_0";
+
         public override void SetDefaults()
         {
 
@@ -201,4 +195,3 @@ namespace AerovelenceMod.Content.Items.Patreon
         }
     }
 }
-*/

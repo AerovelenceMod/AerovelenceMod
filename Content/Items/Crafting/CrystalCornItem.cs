@@ -1,12 +1,19 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Terraria.ID;
+﻿using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Utilities;
 using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Crafting
 {
-    public class CrystalCorn : ModItem
+    public class CrystalCornItem : TranslatableModItem
     {
+        public override void SetStaticDefaults()
+        {
+            this.ModifyLocalization("Crystal Corn", "");
+            base.SetStaticDefaults();
+        }
+
         public override void SetDefaults()
         {
             Item.maxStack = 9999;

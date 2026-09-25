@@ -22,8 +22,6 @@ namespace AerovelenceMod.Content.Items.Tools
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Crystalline Dynamite", "A reusable stick of dynamite\nThe blast scatters crystal fragments that remagnetize toward you\nReforms 30 seconds after being thrown")
-                .AddName(Language.Default, "Crystalline Dynamite")
-                .AddTooltip(Language.Default, "A reusable stick of dynamite\nThe blast scatters crystal fragments that remagnetize toward you\nReforms 30 seconds after being thrown")
                 .AddName(Language.Spanish, "Dinamita Cristalina")
                 .AddTooltip(Language.Spanish, "Una dinamita reutilizable\nLa explosión dispersa fragmentos que vuelven a magnetizarse hacia ti\nSe reforma 30 segundos después de lanzarse");
             base.SetStaticDefaults();

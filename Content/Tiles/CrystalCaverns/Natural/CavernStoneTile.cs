@@ -1,4 +1,3 @@
-
 using AerovelenceMod.Common.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,6 +61,39 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             return false;
         }
 
+        public override void RandomUpdate(int i, int j)
+        {
+            Tile tile = Framing.GetTileSafely(i, j);
+            Tile tileBelow = Framing.GetTileSafely(i, j + 1);
+            Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+            if (WorldGen.genRand.NextBool(25) && tileAbove.LiquidAmount > 250 && !tileAbove.HasTile && tile.LiquidType != LiquidID.Lava)
+            {
+                if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope)
+                {
+                    tileAbove.TileType = (ushort)ModContent.TileType<Flora.LuminVines>();
+                    tileAbove.HasTile = true;
+                    WorldGen.SquareTileFrame(i, j - 1, true);
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
+                    }
+                }
+            }
+            if (WorldGen.genRand.NextBool(15) && tileBelow.LiquidAmount > 250 && !tileBelow.HasTile && tile.LiquidType != LiquidID.Lava)
+            {
+                if (!tile.BottomSlope)
+                {
+                    tileBelow.TileType = (ushort)ModContent.TileType<Flora.LuminVines>();
+                    tileBelow.HasTile = true;
+                    WorldGen.SquareTileFrame(i, j + 1, true);
+                    if (Main.netMode == NetmodeID.Server)
+                    {
+                        NetMessage.SendTileSquare(-1, i, j + 1, 3, TileChangeType.None);
+                    }
+                }
+            }
+        }
+
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
         {
             Tile tile = Main.tile[i, j];
@@ -70,7 +102,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
             // Pulsating color for glowmask
             Color maskColor = Color.White
-                * MathHelper.Lerp(0.0f, 2f, ((float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.05f, j * 0.05f), Main.GlobalTimeWrappedHourly * 0.1f)), 8)));
+                * MathHelper.Lerp(0.0f, 2f, (float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.05f, j * 0.05f), Main.GlobalTimeWrappedHourly * 0.1f)), 8));
 
             DrawUtils.DrawSlopedTile(glowTexture.Value, position, tile, maskColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
         }

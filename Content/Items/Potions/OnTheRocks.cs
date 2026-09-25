@@ -52,7 +52,6 @@ namespace AerovelenceMod.Content.Items.Potions
     }
     public class OnTheRocksBuff : ModBuff
     {
-        public override string Texture => "AerovelenceMod/Content/Items/Potions/OnTheRocks";
         public override LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.OnTheRocksBuff.DisplayName", () => "On the Rocks");
         public override LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.OnTheRocksBuff.Description", () => "4% increased melee Skill Strike damage");
         public override void Update(Player player, ref int buffIndex) => player.GetModPlayer<OnTheRocksPlayer>().Active = true;

@@ -46,6 +46,7 @@ namespace AerovelenceMod.Content.Items.Tools
 
     public class ElectricBlueSolutionProjectile : ModProjectile
     {
+        public override string Texture => $"Terraria/Images/Projectile_0";
 
         public static int ConversionType;
 

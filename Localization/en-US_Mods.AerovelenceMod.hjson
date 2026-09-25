@@ -95,8 +95,17 @@ NPCs: {
 	MiniMoth.DisplayName: Mini Moth
 	CaveSlime.DisplayName: Cave Slime
 	CrystalSlime.DisplayName: Crystal Slime
-	TumblerockMedium.DisplayName: Tumblerock Medium
-	TumblerockSmall.DisplayName: Tumblerock Small
+
+	TumblerockMedium: {
+		DisplayName: Tumblerock Medium
+		BestiaryFlavor: These smaller tumblers come in many different shapes and sizes. They can grow to enormous sizes, and exhibit magnetic properties.
+	}
+
+	TumblerockSmall: {
+		DisplayName: Tumblerock Small
+		BestiaryFlavor: These smaller tumblers come in many different shapes and sizes. They can grow to enormous sizes, and exhibit magnetic properties.
+	}
+
 	Sapper.DisplayName: Sapper
 	Condurtle.DisplayName: Condurtle
 	Charger.DisplayName: Charger
@@ -108,7 +117,11 @@ NPCs: {
 	TumblerConductiveCrystal.DisplayName: Tumbler Conductive Crystal
 	TumblerCrystalBud.DisplayName: Tumbler Crystal Bud
 	TumblerCarapaceShard.DisplayName: Tumbler Carapace Crystal
-	BabyCondurtle.DisplayName: Baby Condurtle
+
+	BabyCondurtle: {
+		DisplayName: Baby Condurtle
+		BestiaryFlavor: A tiny, humming bundle of crystal and shell. Gentle petting keeps its little sparks happy.
+	}
 }
 
 Buffs: {
@@ -216,6 +229,31 @@ Buffs: {
 		DisplayName: Friend Of The Caverns Buff
 		Description: Mods.AerovelenceMod.Buffs.FriendOfTheCavernsBuff.Description
 	}
+
+	MeteorInvaderBuff: {
+		Description: The invaders are coming
+		DisplayName: Meteor Invader
+	}
+
+	AmmoniteCompanion: {
+		Description: A little life from a distant sea fihghts for you
+		DisplayName: Resurrected Ammonite
+	}
+
+	RubbleboundBuff: {
+		Description: Magnetized rubble fights for you
+		DisplayName: Rubbleswarm
+	}
+
+	BatteryCharge: {
+		Description: +2% movement speed per battery charge while holding the backpack
+		DisplayName: Charged battery
+	}
+
+	FaultbreakerStun: {
+		DisplayName: Faultbreaker Stun
+		Description: Mods.AerovelenceMod.Buffs.FaultbreakerStun.Description
+	}
 }
 
 Items: {
@@ -282,31 +320,37 @@ Items: {
 	ElementalShift: {
 		DisplayName: Elemental Shift
 		Tooltip: ""
+		SkillStrike: "[i:75] Ball Skill Strikes after bouncing off an enemy twice [i:75]"
 	}
 
 	Solsear: {
 		DisplayName: Solsear
 		Tooltip: ""
+		SkillStrike: "[i:75] Bomb Skill Strikes at maximum size [i:75]"
 	}
 
 	FlareGun: {
 		DisplayName: Combat Flare Gun
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes at long range [i:75]"
 	}
 
 	DeepFreeze: {
 		DisplayName: Deep Freeze
 		Tooltip: "'Is it cold in here, or is it just me?'"
+		SkillStrike: "[i:75] Skill Strikes under 25% mana [i:75]"
 	}
 
 	TetraBlades: {
 		DisplayName: Tetra Blades
 		Tooltip: Right-Click to dash up to 4 times
+		SkillStrike: "[i:75] Skill Strikes when all 4 dashes are used [i:75]"
 	}
 
 	ClockworkLazinator: {
 		DisplayName: Clockwork Lazinator
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes after firing for long enough [i:75]"
 	}
 
 	CthulhusWrath: {
@@ -317,21 +361,25 @@ Items: {
 	TheBeacon: {
 		DisplayName: The Beacon
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes after locking onto the same enemy for a while [i:75]"
 	}
 
 	TheFlashlight: {
 		DisplayName: The Flashlight
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes after locking onto the same enemy for a while [i:75]"
 	}
 
 	TheLaserPointer: {
 		DisplayName: The Laser Pointer
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes after locking onto the same enemy for a while [i:75]"
 	}
 
 	WandOfExploding: {
 		DisplayName: Wand Of Exploding
 		Tooltip: ""
+		SkillStrike: "[i:75] Explosion Skill Strikes under 50% mana [i:75]"
 	}
 
 	EntourageCrusher: {
@@ -342,16 +390,19 @@ Items: {
 	TheSahara: {
 		DisplayName: The Sahara
 		Tooltip: ""
+		SkillStrike: "[i:75] The Fire Vortex Skill Strikes [i:75]"
 	}
 
 	WarBow: {
 		DisplayName: War Bow
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes by releasing with perfect timing [i:75]"
 	}
 
 	GraniteCannon: {
 		DisplayName: Granite Cannon
 		Tooltip: ""
+		SkillStrike: "[i:75] The Energy Cores Skill Strike [i:75]"
 	}
 
 	AdamantitePulsar: {
@@ -362,16 +413,19 @@ Items: {
 	ShotgunAxe: {
 		DisplayName: Shotgun Axe
 		Tooltip: ""
+		SkillStrike: "[i:75] Bullets Skill Strike gouged enemies [i:75]"
 	}
 
 	TitaniumRocketLauncher: {
 		DisplayName: Titanium Rocket Launcher
 		Tooltip: ""
+		SkillStrike: "[i:75] Big Rocket Skill Strikes after a second [i:75]"
 	}
 
 	OceanMist: {
 		DisplayName: Ocean Mist
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes at Full Mana [i:75]"
 	}
 
 	CitadelBrickItem: {
@@ -427,6 +481,7 @@ Items: {
 	Skylight: {
 		DisplayName: Skylight
 		Tooltip: ""
+		SkillStrike: "[i:75] Lightning Bolt Skill Strikes on a direct hit [i:75]"
 	}
 
 	StormRazor: {
@@ -437,26 +492,31 @@ Items: {
 	Eos: {
 		DisplayName: Eos
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes when bashing [i:75]"
 	}
 
 	CrystalGlade: {
 		DisplayName: Crystal Glade
 		Tooltip: ""
+		SkillStrike: "[i:75] Shots from the portal Skill Strike [i:75]"
 	}
 
 	PoundOfFeathers: {
 		DisplayName: Pound Of Feathers
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes at close range [i:75]"
 	}
 
 	CerobaStaffItem: {
 		DisplayName: Devotion
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes marked enemies [i:75]"
 	}
 
 	MarbleMusket: {
 		DisplayName: Marble Musket
 		Tooltip: ""
+		SkillStrike: "[i:75] The Stars Skill Strike [i:75]"
 	}
 
 	CyvercryThumbnailHelper: {
@@ -840,6 +900,7 @@ Items: {
 	PouchOfRocks: {
 		DisplayName: Pouch Of Magnets
 		Tooltip: Throws 2 magnetic stones which can collide and explode
+		SkillStrike: "[i:75] The explosions Skill Strike [i:75]"
 	}
 
 	TheItem: {
@@ -870,6 +931,7 @@ Items: {
 	H2OCaliber: {
 		DisplayName: H2 O Caliber
 		Tooltip: ""
+		SkillStrike: "[i:75] Fully merged bubbles Skill Strike [i:75]"
 	}
 
 	CrystalTumblerRelicItem: {
@@ -940,6 +1002,7 @@ Items: {
 	Specter: {
 		DisplayName: Specter
 		Tooltip: ""
+		SkillStrike: "[i:75] Stabbing wounded enemies Skill Strikes [i:75]"
 	}
 
 	PhanticWhip: {
@@ -985,21 +1048,25 @@ Items: {
 	NerveFlagellator: {
 		DisplayName: Nerve Flagellator
 		Tooltip: ""
+		SkillStrike: "[i:75] The small nerve tendrils Skill Strike [i:75]"
 	}
 
 	MeteorCrossbow: {
 		DisplayName: Meteor Crossbow
 		Tooltip: ""
+		SkillStrike: "[i:75] The Arrow at full velocity Skill Strikes [i:75]"
 	}
 
 	ExtinguishedDynamite: {
 		DisplayName: Extinguished Dynamite
 		Tooltip: ""
+		SkillStrike: "[i:75] Every second hit Skill Strikes with an explosion [i:75]"
 	}
 
 	LightOfTheAncients: {
 		DisplayName: Light Of The Ancients
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes just as it's about to overheat [i:75]"
 	}
 
 	ElectricBlueSolution: {
@@ -1020,6 +1087,7 @@ Items: {
 	CrystalCrescent: {
 		DisplayName: Crystal Crescent
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes while in hand [i:75]"
 	}
 
 	GlimmerwoodPlankedWallItem: {
@@ -1055,11 +1123,13 @@ Items: {
 	RedundantFibber: {
 		DisplayName: Redundant Fibber
 		Tooltip: ""
+		SkillStrike: "[i:75] Ricochet bullets may or may not Skill Strike [i:75]"
 	}
 
 	TheInfinity: {
 		DisplayName: The Infinity
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes below 50 defense [i:75]"
 	}
 
 	BurningJealousy: {
@@ -1170,11 +1240,13 @@ Items: {
 	BishopsStaff: {
 		DisplayName: Bishops Staff
 		Tooltip: ""
+		SkillStrike: "[i:75] Large stars Skill Strike [i:75]"
 	}
 
 	Marionette: {
 		DisplayName: Marionette
 		Tooltip: ""
+		SkillStrike: "[i:75] Skill Strikes when all strings are attached [i:75]"
 	}
 
 	GaussShotgun: {
@@ -1195,6 +1267,7 @@ Items: {
 	Shocklash: {
 		DisplayName: Shocklash
 		Tooltip: ""
+		SkillStrike: "[i:75] Strike with the tip to Skill Strike [i:75]"
 	}
 
 	CavernSword: {
@@ -1348,6 +1421,7 @@ Items: {
 			Release to free your summons; start a new bubble to shock again
 			Alternatively carries one sentry; falling sentries release a landing shock
 			'''
+		SkillStrike: "[i:75] Capturing 3 minions unleashes a plasma globe at the cost of 50 mana [i:75]"
 	}
 
 	FenceSitter: {
@@ -1359,6 +1433,7 @@ Items: {
 			Each fence stops at terrain and strikes each enemy twice
 			Missing or changing weapons breaks the streak
 			'''
+		SkillStrike: "[i:75] The fifth swing's beams Skill Strike [i:75]"
 	}
 
 	Geomagnetic: {
@@ -1369,6 +1444,7 @@ Items: {
 			At or below 25% mana, casts a hovering sphere that releases three bolts
 			The sphere electrifies enemies on contact
 			'''
+		SkillStrike: "[i:75] Strike an enemy with the sphere itself [i:75]"
 	}
 
 	TumblerAccelerator: {
@@ -1379,11 +1455,13 @@ Items: {
 			Right click to suspend airborne tumblers, charge them, and launch them toward your cursor
 			Paired impacts electrify enemies
 			'''
+		SkillStrike: "[i:75] Hitting the same enemy with two different tumblers quickly Skill Strikes [i:75]"
 	}
 
 	BluntJavelin: {
 		DisplayName: Blunt Javelin
 		Tooltip: A heavy cavern-stone javelin that breaks apart on impact
+		SkillStrike: "[i:75] Skill Strikes while falling steeply downwards [i:75]"
 	}
 
 	CavernousRampart: {
@@ -1407,11 +1485,13 @@ Items: {
 			You can still thrust in staff mode while the mechanism recovers
 			Pause between attacks to let the stress fall
 			'''
+		SkillStrike: "[i:75] Hit with the crystal blades to Skill Strike [i:75]"
 	}
 
 	Faultbreaker: {
 		DisplayName: Faultbreaker
 		Tooltip: A weighty sledgehammer with a crushing overhead swing
+		SkillStrike: "[i:75] Shatter a fully grown crystal with the empowered swing [i:75]"
 	}
 
 	GlimmerwoodBow: {
@@ -1438,6 +1518,7 @@ Items: {
 			Every third empowered collision rebounds much harder
 			After 10 seconds without a dart, the stone dissolves and releases its pins
 			'''
+		SkillStrike: "[i:75] Strike enemies with the stone shortly after pushing it with a dart to Skill Strike [i:75]"
 	}
 
 	RockRumbler: {
@@ -1449,6 +1530,7 @@ Items: {
 			Bombs lose their thrust and drop heavily after the burst
 			Does not consume ammo
 			'''
+		SkillStrike: "[i:75] Fired bombs glow white-hot upon being shot; Direct white-hot impacts cause Skill Strikes [i:75]"
 	}
 
 	Saphead: {
@@ -1462,6 +1544,7 @@ Items: {
 			Release to coil the stem back into your hand
 			'A severed sapper stem, improbably still alive'
 			'''
+		SkillStrike: "[i:75] Crystal fog skill strikes [i:75]"
 	}
 
 	SaplingCane: {
@@ -1473,6 +1556,7 @@ Items: {
 			They snap at nearby foes and return to their patch when left alone
 			Bites against your designated summon target deal Skill Strikes
 			'''
+		SkillStrike: "[i:75] Skill Strikes when hitting your targetted enemy [i:75]"
 	}
 
 	Shattershot: {
@@ -1483,6 +1567,7 @@ Items: {
 			Consumes one stone block or cavern stone per blast
 			Cavern stone fires glowing gravel and sometimes an extra white-hot crystal fragment
 			'''
+		SkillStrike: "[i:75] The white-hot crystal Skill Strikes [i:75]"
 	}
 
 	SpeleothemConjurer: {
@@ -1494,6 +1579,7 @@ Items: {
 			Release to pull the sediment together and erupt a towering stalagmite
 			Gather 12 impacts for a Skill Strike; the crystal shines white when ready
 			'''
+		SkillStrike: "[i:75] Sufficiently large stalagmites Skill Strike [i:75]"
 	}
 
 	StackerRock: {
@@ -1505,6 +1591,7 @@ Items: {
 			Each added rock extends the tower’s lifetime
 			Hit a tower from the side to topple it early
 			'''
+		SkillStrike: "[i:75] Topple a tower of at least five rocks to Skill Strike [i:75]"
 	}
 
 	TheSling: {
@@ -1517,6 +1604,7 @@ Items: {
 			Stone slugs hit hard, wood flies farther, and crystal leaves splinters
 			Uses one slug per wind-up
 			'''
+		SkillStrike: "[i:75] Skill Strike by releasing at the right time, indicated by a white flash [i:75]"
 	}
 
 	TumblerCommander: {
@@ -1527,6 +1615,7 @@ Items: {
 			More distant targets make it roll faster
 			Consumes 4 mana each half-second
 			'''
+		SkillStrike: "[i:75] Skill Strikes while rolling at sufficient speed [i:75]"
 	}
 
 	TrojanForce: {
@@ -1764,6 +1853,7 @@ Items: {
 			The rays periodically align, flash three times, then scatter again
 			Consumes 10 mana per second while channeling
 			'''
+		SkillStrike: "[i:75] Focused beam Skill Strikes [i:75]"
 	}
 
 	BouncyApparatus: {
@@ -1828,6 +1918,141 @@ Items: {
 
 	CyvercryTrophy: {
 		DisplayName: Cyvercry Trophy
+		Tooltip: ""
+	}
+
+	Hellfrost: {
+		SkillStrike: "[i:75] Explosions caused by striking terrain [i:75]"
+		Tooltip:
+			'''
+			Hold to swing; release to throw
+			Impacts erupt in fire, frost, and steam
+			Has a chance to inflict Frostburn
+			'''
+		DisplayName: Hellfrost
+	}
+
+	MeteorInvader: {
+		SkillStrike: "[i:75] Sacrifice an invader by descending into an enemy [i:75]"
+		Tooltip:
+			'''
+			Summons three metoer invaders that share one minion slot
+			The fleet marches above a shared target, firing explosive lasers downward
+			Each turn brings the formation closer to its target
+			Invaders that crash into enemies explode and must be summoned again
+			'''
+		DisplayName: Meteor Invader
+	}
+
+	ResurrectedAmmonite: {
+		Tooltip: Summons a reborn ammonite to fight for you
+		DisplayName: Resurrected Ammonite
+	}
+
+	CoralClaws: {
+		SkillStrike: "[i:75] Snip enemies almost directly above you [i:75]"
+		Tooltip: Alternating coral claws reach toward your cursor and snip
+		DisplayName: Coral Claws
+	}
+
+	Mjolnir: {
+		Tooltip: '''"Meow-Meow?"'''
+		DisplayName: Mjolnir
+	}
+
+	SkinSewingNeedle: {
+		SkillStrike: "[i:75] Long-ranged attacks Skill Strike [i:75]"
+		Tooltip: Throws a needle that embeds in enemies
+		DisplayName: Skin-Sewing Needle
+	}
+
+	TumblerEnrichmentScepter: {
+		SkillStrike: "[i:75] Golden Sparks from a fast wheel Skill Strike [i:75]"
+		Tooltip:
+			'''
+			Hold to power an ethereal Tumbler's electric exercise wheel
+			Consumes mana continuously; longer spins produce farther-reaching lightning
+			'''
+		DisplayName: Tumbler Enrichment Scepter
+	}
+
+	Staticstring: {
+		SkillStrike: "[i:75] Ball lightning Skill Strikes [i:75]"
+		Tooltip:
+			'''
+			Hold to draw the bow; release to fire an arrow
+			Fully drawn shots launch ball lightning that pursues and zaps your nearest arrow
+			'''
+		DisplayName: Staticstring
+	}
+
+	Rubbleswarm: {
+		SkillStrike: "[i:75] Fragments during the first half-second after shattering Skill Strike [i:75]"
+		Tooltip: Summons a flying clump of magnetized rubbl
+		DisplayName: Rubbleswarm
+	}
+
+	BatteryBackpack: {
+		SkillStrike: "[i:75] Completing five charges Skill Strikes a random enemy on screen [i:75]"
+		Tooltip:
+			'''
+			Attach clamps to two different enemies to discharge and charge the pack
+			Each charge grants 2% movement speed
+			'''
+		DisplayName: Battery Backpack
+	}
+
+	ClockOfLife: {
+		Tooltip: Changes the time to day if the moon is up, and vice-versa
+		DisplayName: Clock of Life
+	}
+
+	EvilLightbulb: {
+		Tooltip:
+			'''
+			Left-click to shoot a small laser
+			Right-click to conjure a protective aura
+			'''
+		DisplayName: Evil Lightbulb
+	}
+
+	PrismaticAsterItem: {
+		Tooltip: ""
+		DisplayName: Prismatic Aster
+	}
+
+	CrystalCornItem: {
+		Tooltip: ""
+		DisplayName: Crystal Corn
+	}
+
+	CrystalCampfireItem: {
+		DisplayName: Crystal Campfire Item
+		Tooltip: ""
+	}
+
+	CrystalTorchItem: {
+		DisplayName: Crystal Torch Item
+		Tooltip: ""
+	}
+
+	CrystalCornSeeds: {
+		DisplayName: Crystal Corn Seeds
+		Tooltip: ""
+	}
+
+	PrismaticSeeds: {
+		DisplayName: Prismatic Seeds
+		Tooltip: ""
+	}
+
+	GlimmerwoodFenceItem: {
+		DisplayName: Glimmerwood Fence Item
+		Tooltip: ""
+	}
+
+	CrystalMugItem: {
+		DisplayName: Crystal Mug
 		Tooltip: ""
 	}
 }
@@ -2365,6 +2590,36 @@ Projectiles: {
 	FriendOfTheCavernsPet.DisplayName: Friend Of The Caverns Pet
 	CrystallineDynamiteShard.DisplayName: Crystalline Dynamite Shard
 	MimikosMirrorHeld.DisplayName: Mimikos Mirror Held
+	BatteryCircuit.DisplayName: Battery Circuit
+	BatteryClamp.DisplayName: Battery Clamp
+	BatteryDischarge.DisplayName: Battery Discharge
+	BatteryOverflowStrike.DisplayName: Battery Overflow Strike
+	EnrichmentArc.DisplayName: Enrichment Arc
+	EnrichmentSpark.DisplayName: Enrichment Spark
+	EnrichmentWheel.DisplayName: Enrichment Wheel
+	RubbleboundMinion.DisplayName: Rubblebound Minion
+	RubbleReassemblyBurst.DisplayName: Rubble Reassembly Burst
+	StaticstringBall.DisplayName: Staticstring Ball
+	StaticstringBurst.DisplayName: Staticstring Burst
+	StaticstringHeld.DisplayName: Staticstring Held
+	StaticstringZap.DisplayName: Staticstring Zap
+	NeedleBlood.DisplayName: Needle Blood
+	NeedleHit.DisplayName: Needle Hit
+	SkinSewingNeedleProj.DisplayName: Skin Sewing Needle Proj
+	FaultbreakerSplinter.DisplayName: Faultbreaker Splinter
+	MjolnirDeflection.DisplayName: Mjolnir Deflection
+	MjolnirGroundPulse.DisplayName: Mjolnir Ground Pulse
+	MjolnirHammer.DisplayName: Mjolnir Hammer
+	MjolnirLightning.DisplayName: Mjolnir Lightning
+	AmmoniteMinion.DisplayName: Ammonite Minion
+	AmmoniteSpiralBubble.DisplayName: Ammonite Spiral Bubble
+	CoralClawHand.DisplayName: Coral Claw Hand
+	MeteorInvaderBlast.DisplayName: Meteor Invader Blast
+	MeteorInvaderFleet.DisplayName: Meteor Invader Fleet
+	MeteorInvaderLaser.DisplayName: Meteor Invader Laser
+	MeteorInvaderMinion.DisplayName: Meteor Invader Minion
+	HellfrostBurst.DisplayName: Hellfrost Burst
+	HellfrostHead.DisplayName: Hellfrost Head
 }
 
 Configs: {
@@ -2400,6 +2655,32 @@ Tiles: {
 	CyvercryBox.MapEntry: Cyvercry Box
 	CrystalTumblerBox.MapEntry: Crystal Tumbler Box
 	CrystalCavernsBox.MapEntry: Crystal Caverns Box
+	CrystalSapling.MapEntry: Crystal Sapling
+	GlimmerwoodWorkbenchTile.MapEntry: ""
+	GlimmerwoodToiletTile.MapEntry: ""
+	GlimmerwoodTableTile.MapEntry: ""
+	GlimmerwoodStoolTile.MapEntry: ""
+	GlimmerwoodSofaTile.MapEntry: ""
+	GlimmerwoodSinkTile.MapEntry: ""
+	GlimmerwoodPlatformTile.MapEntry: ""
+	GlimmerwoodPipeOrganTile.MapEntry: ""
+	GlimmerwoodLanternTile.MapEntry: ""
+	GlimmerwoodLampTile.MapEntry: ""
+	GlimmerwoodDoorTileOpen.MapEntry: ""
+	GlimmerwoodDoorTileClosed.MapEntry: ""
+	GlimmerwoodClockTile.MapEntry: ""
+	GlimmerwoodChestTile.MapEntry: ""
+	GlimmerwoodChandelierTile.MapEntry: ""
+	GlimmerwoodChairTile.MapEntry: ""
+	GlimmerwoodCandleTile.MapEntry: ""
+	GlimmerwoodCandelabraTile.MapEntry: ""
+	GlimmerwoodBookcaseTile.MapEntry: ""
+	GlimmerwoodBedTile.MapEntry: ""
+	GlimmerwoodBathtubTile.MapEntry: ""
+	CrystalTorchTile.MapEntry: ""
+	CrystallineFabricator.MapEntry: ""
+	CitadelChestTile.MapEntry: ""
+	CavernChestTile.MapEntry: ""
 }
 
 Emotes: {

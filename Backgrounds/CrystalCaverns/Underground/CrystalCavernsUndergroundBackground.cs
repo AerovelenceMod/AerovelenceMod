@@ -231,7 +231,7 @@ namespace AerovelenceMod.Backgrounds.CrystalCaverns.Underground
             if (!player.dead)
             {
                 int cavernTiles = ModContent
-                    .GetInstance<AerovelenceMod.Content.Biomes.CrystalCavernsTileCount>()
+                    .GetInstance<Content.Biomes.CrystalCavernsTileCount>()
                     .CrystalTiles;
 
                 bool underground =
