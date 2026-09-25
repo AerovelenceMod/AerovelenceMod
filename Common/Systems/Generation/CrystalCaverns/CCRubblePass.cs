@@ -1,7 +1,5 @@
 ﻿using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
-using Iced.Intel;
 using Microsoft.Xna.Framework;
-using Steamworks;
 using System;
 using System.Linq;
 using Terraria;
@@ -57,11 +55,11 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             CCTerrainPass mainPass = CCTerrainPass.Instance();
 
             // Copied from CCTerrainPass.cs
-            Point surfaceRectOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25));
+            Point surfaceRectOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y - mainPass.SurfaceHeight);
             Point upperUndergroundOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y);
-            Point lowerUndergroundOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + (int)(.5 * mainPass.UndergroundHeight));
+            Point lowerUndergroundOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight);
             Point upperUndergroundWallOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2 + 1, mainPass.Origin.Y);
-            Point lowerUndergroundWallOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + (int)(.5 * mainPass.UndergroundHeight) - 1);
+            Point lowerUndergroundWallOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight - 1); // Do not remember why the -1 is here but keeping it
 
             // Sets of rubble to be placed
             int[] potTileTypes = [ModContent.TileType<CavernPot2x2Rubble>()];
@@ -108,7 +106,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                         break;
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
-                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
@@ -156,7 +154,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                         break;
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
-                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight * 2.25), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
@@ -181,8 +179,6 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     {
                         placeStyle = WorldGen.genRand.Next(9);
                     }
-
-                    Console.WriteLine(placeStyle);
 
                     WorldGen.PlaceTile(x, y, tileType, mute: true, style: placeStyle);
                     success = Main.tile[x, y].TileType == tileType;
