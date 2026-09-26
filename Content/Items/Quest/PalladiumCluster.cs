@@ -6,11 +6,11 @@ namespace AerovelenceMod.Content.Items.Quest
     {
         public override int RewardTier => 6;
         protected override int SpriteWidth => 28;
-        protected override int SpriteHeight => 28;
+        protected override int SpriteHeight => 26;
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Super Palladium", EnglishTooltip)
-                .AddName(Language.Spanish, "Superpaladio")
+            this.ModifyLocalization("Palladium Cluster", EnglishTooltip)
+                .AddName(Language.Spanish, "Cúmulo de paladio")
                 .AddTooltip(Language.Spanish, SpanishTooltip);
             base.SetStaticDefaults();
         }

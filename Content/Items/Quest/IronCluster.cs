@@ -9,8 +9,8 @@ namespace AerovelenceMod.Content.Items.Quest
         protected override int SpriteHeight => 22;
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Super Iron", EnglishTooltip)
-                .AddName(Language.Spanish, "Superhierro")
+            this.ModifyLocalization("Iron Cluster", EnglishTooltip)
+                .AddName(Language.Spanish, "Cúmulo de hierro")
                 .AddTooltip(Language.Spanish, SpanishTooltip);
             base.SetStaticDefaults();
         }
