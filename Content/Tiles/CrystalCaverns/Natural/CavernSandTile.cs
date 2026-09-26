@@ -21,7 +21,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = true;
             AddMapEntry(new Color(90, 90, 120));
-            DustType = 116;
+            DustType = DustID.Stone;
             HitSound = SoundID.Dig;
             TileID.Sets.GeneralPlacementTiles[Type] = false;
         }

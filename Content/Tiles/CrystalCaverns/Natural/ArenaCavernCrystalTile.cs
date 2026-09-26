@@ -10,6 +10,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
     [LegacyName("ArenaCavernCrystal")]
     public class ArenaCavernCrystalTile : ModTile
     {
+        public override string Texture => ModContent.GetInstance<CavernCrystalTile>().Texture;
         public override void SetStaticDefaults()
         {
             MineResist = 2.5f;
@@ -22,8 +23,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Main.tileMergeDirt[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = true;
-            AddMapEntry(new Color(102, 108, 117));
-            DustType = 116;
+            AddMapEntry(new Color(115, 230, 250));
+            DustType = DustID.BlueFairy;
             HitSound = SoundID.Tink;
         }
 
@@ -43,6 +44,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
     public class ArenaCavernCrystalItem : ModItem
     {
+        public override string Texture => ModContent.GetInstance<CavernCrystalItem>().Texture;
         public override void SetDefaults()
         {
             Item.width = 16;
