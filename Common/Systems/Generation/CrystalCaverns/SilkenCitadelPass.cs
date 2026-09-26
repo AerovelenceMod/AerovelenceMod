@@ -13,6 +13,7 @@ using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Biomes;
 using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
@@ -22,6 +23,22 @@ using Terraria.WorldBuilding;
 namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
 public sealed class SilkenCitadelWorld : ModSystem
 {
+    public override void Load() => On_DeadMansChestBiome.Place += PlaceDeadMansChest;
+    public override void Unload() => On_DeadMansChestBiome.Place -= PlaceDeadMansChest;
+
+    private static bool PlaceDeadMansChest(On_DeadMansChestBiome.orig_Place orig, DeadMansChestBiome self, Point origin, StructureMap structures)
+    {
+        if (WorldGen.gen)
+        {
+            Rectangle reserved = SilkenCitadelPass.PlannedBounds(CCTerrainPass.Instance());
+            if (!reserved.IsEmpty)
+            {
+                reserved.Inflate(80, 80);
+                if (reserved.Contains(origin)) return false;
+            }
+        }
+        return orig(self, origin, structures);
+    }
     public static Rectangle Bounds { get; internal set; }
     public static Point Altar { get; internal set; }
     public override void ClearWorld() { Bounds = Rectangle.Empty; Altar = Point.Zero; }
@@ -57,6 +74,18 @@ public sealed class SilkenCitadelPass : GenPass
 {
     public SilkenCitadelPass() : base("Moth's Nest and Silken Citadel", 180f) { }
 
+    internal static Rectangle PlannedBounds(CCTerrainPass caverns)
+    {
+        if (caverns.Origin == Point.Zero) return Rectangle.Empty;
+        double scale = caverns.BiomeWidth / (double)SilkenCitadelLayout.Width;
+        int top = caverns.Origin.Y + (int)(caverns.UndergroundHeight * .65);
+        scale = Math.Min(scale, (Main.UnderworldLayer - 35 - top) / (double)SilkenCitadelLayout.Height);
+        if (scale < .75) return Rectangle.Empty;
+        int width = (int)Math.Round(SilkenCitadelLayout.Width * scale);
+        int height = (int)Math.Round(SilkenCitadelLayout.Height * scale);
+        return new Rectangle(caverns.Origin.X - width / 2, top, width, height);
+    }
+
     protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
     {
         progress.Message = "Growing the Moth's Nest";
@@ -64,12 +93,9 @@ public sealed class SilkenCitadelPass : GenPass
         if (caverns.Origin == Point.Zero) return;
         int seed = Main.ActiveWorldFileData.Seed;
         var layout = new SilkenCitadelLayout(seed, compact: true);
-        double scale = caverns.BiomeWidth / (double)SilkenCitadelLayout.Width;
-        int top = caverns.Origin.Y + (int)(caverns.UndergroundHeight * .65);
-        scale = Math.Min(scale, (Main.UnderworldLayer - 35 - top) / (double)SilkenCitadelLayout.Height);
-        if (scale < .75) throw new InvalidOperationException("Insufficient depth beneath Crystal Caverns for the Moth's Nest baseline.");
-        int width = (int)Math.Round(SilkenCitadelLayout.Width * scale), height = (int)Math.Round(SilkenCitadelLayout.Height * scale);
-        Rectangle bounds = new(caverns.Origin.X - width / 2, top, width, height);
+        Rectangle bounds = PlannedBounds(caverns);
+        if (bounds.IsEmpty) throw new InvalidOperationException("Insufficient depth beneath Crystal Caverns for the Moth's Nest baseline.");
+        int width = bounds.Width, height = bounds.Height;
         if (!WorldGen.InWorld(bounds.Left, bounds.Top, 20) || !WorldGen.InWorld(bounds.Right, bounds.Bottom, 20))
             throw new InvalidOperationException("Moth's Nest bounds extend outside this world.");
         float[] blend = layout.CreateBlendWeights();
