@@ -19,6 +19,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {
     //Torch
     #region Torch
+	[LegacyName("GlimmerwoodTorchTile")]
     public class CrystalTorchTile : ModTile
     {
         private Asset<Texture2D> flameTexture;
