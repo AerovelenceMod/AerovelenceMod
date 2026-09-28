@@ -84,9 +84,17 @@ public class SilkenCacheTile : ModTile
     }
     public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) => CanRelease(Root(i, j));
     public override bool Slope(int i, int j) => false;
-    public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
+    internal static bool InReach(int i, int j)
+    {
+        Point root = Root(i, j);
+        Point player = Main.LocalPlayer.Center.ToTileCoordinates();
+        return Main.LocalPlayer.InInteractionRange(Math.Clamp(player.X, root.X, root.X + 1),
+            Math.Clamp(player.Y, root.Y, root.Y + 4), TileReachCheckSettings.Simple);
+    }
+    public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => InReach(i, j);
     public override bool RightClick(int i, int j)
     {
+        if (!InReach(i, j)) return false;
         Point root = Root(i, j);
         if (Container) return CommonTileHelper.HandleRightClick(this, root.X, root.Y, Main.LocalPlayer, ItemID.None);
         WorldGen.KillTile(i, j);
@@ -95,9 +103,17 @@ public class SilkenCacheTile : ModTile
     }
     public override void MouseOver(int i, int j)
     {
+        if (!InReach(i, j)) { MouseOverFar(i, j); return; }
+        Main.LocalPlayer.cursorItemIconText = string.Empty;
         Main.LocalPlayer.noThrow = 2;
         Main.LocalPlayer.cursorItemIconEnabled = true;
         Main.LocalPlayer.cursorItemIconID = Container ? ModContent.ItemType<SilkenCacheItem>() : ItemID.Silk;
+    }
+    public override void MouseOverFar(int i, int j)
+    {
+        Main.LocalPlayer.cursorItemIconEnabled = false;
+        Main.LocalPlayer.cursorItemIconID = 0;
+        Main.LocalPlayer.cursorItemIconText = string.Empty;
     }
     public override void KillMultiTile(int i, int j, int frameX, int frameY)
     {
@@ -197,6 +213,7 @@ public sealed class SilkenCachePass : GenPass
     {
         Rectangle bounds = SilkenCitadelWorld.Bounds;
         if (bounds.IsEmpty) return;
+        SilkenCitadelWorld.FinishStairs();
         progress.Message = "Weaving silken caches";
         int placed = 0, chests = 0, target = Math.Clamp(bounds.Width * bounds.Height / 6000, 16, 65);
         List<Point> anchors = new();

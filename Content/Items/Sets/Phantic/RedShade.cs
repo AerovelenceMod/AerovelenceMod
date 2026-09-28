@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
         public override void SetStaticDefaults()
         {
             CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            this.ModifyLocalization("RedShade", "Projectiles home in and possess enemies\nPossessed enemies release smaller copies of the spirit upon death")
+            this.ModifyLocalization("Red Shade", "Projectiles home in and possess enemies\nPossessed enemies release smaller copies of the spirit upon death")
             .AddName(Language.Default, "Red Shade").AddTooltip(Language.Default, "Projectiles home in and possess enemies\nPossessed enemies release smaller copies of the spirit upon death");
 
             //.AddName(Language.Spanish, "").AddSkillStrike(Language.Spanish, "")
@@ -451,4 +451,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             return new Color(lightColor.R, lightColor.G, lightColor.B, 150) * alpha;
         }
     }
-}
+}*/

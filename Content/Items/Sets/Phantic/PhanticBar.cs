@@ -1,4 +1,4 @@
-using Terraria.ID;
+/*using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using AerovelenceMod.Common.Utilities;
@@ -44,4 +44,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             AddMapEntry(new Color(110, 074, 056), Language.GetText("Phantic Bar"));
         }
     }
-}
+}*/

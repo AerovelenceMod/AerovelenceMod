@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Utilities;
+/*using AerovelenceMod.Common.Utilities;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -140,4 +140,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
 
         }
     }
-}
+}*/

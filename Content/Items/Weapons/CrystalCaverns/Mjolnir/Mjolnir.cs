@@ -1,4 +1,4 @@
-using System;
+/*using System;
 using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Systems.Language;
@@ -1360,4 +1360,4 @@ internal static class MjolnirEffects
         if (power > 0)
             Main.spriteBatch.Draw(texture, grip, null, Additive(EnergyColor(boosted)) * power * (boosted ? .7f : .32f), drawRotation, origin, scale, SpriteEffects.None, 0);
     }
-}
+}*/
