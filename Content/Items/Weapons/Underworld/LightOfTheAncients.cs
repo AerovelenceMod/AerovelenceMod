@@ -1,8 +1,7 @@
-﻿using AerovelenceMod.Common.Globals.SkillStrikes;
+using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Items.Sets.Phantic;
 using AerovelenceMod.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -113,7 +112,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
         {
             Recipe recipe = CreateRecipe();
             recipe.AddIngredient(ItemID.HellstoneBar, 10);
-            recipe.AddIngredient(ModContent.ItemType<PhanticBar>(), 10);
+            //recipe.AddIngredient(ModContent.ItemType<PhanticBar>(), 10);
             recipe.AddIngredient(ItemID.MeteoriteBar, 10);
             recipe.AddTile(TileID.Anvils);
             recipe.Register();
