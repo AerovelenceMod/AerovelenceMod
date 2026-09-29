@@ -1,4 +1,4 @@
-/*using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -245,9 +245,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.ThunderLance
         #region DrawMethods
         public void spearBackGlow()
         {
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Caverns/ThunderLance/ThunderLanceBackGlow");
+            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/ThunderLance/ThunderLanceBackGlow");
             Texture2D DiamondGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/DiamondGlow");
-            Texture2D TipGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Caverns/ThunderLance/ThunderLanceTipGlow");
+            Texture2D TipGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/ThunderLance/ThunderLanceTipGlow");
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
@@ -298,9 +298,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.ThunderLance
 
         public void spearTop()
         {
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Caverns/ThunderLance/ThunderLanceTipGlow");
+            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/ThunderLance/ThunderLanceTipGlow");
             Texture2D Star = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/flare_1");
-            Texture2D Tip = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Caverns/ThunderLance/ThunderLanceTip");
+            Texture2D Tip = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/ThunderLance/ThunderLanceTip");
 
             Vector2 tipGlowOffset = new Vector2(0, 10f).RotatedBy(Projectile.rotation);
 
@@ -369,10 +369,11 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.ThunderLance
 
     }
 
+    
     /*
     public class ThunderLanceSpin : ModProjectile
     {
 
-    }
-    */
-}*/
+    }*/
+    
+}
