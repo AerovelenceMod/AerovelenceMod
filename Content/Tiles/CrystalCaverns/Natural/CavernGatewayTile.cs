@@ -14,7 +14,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Main.tileFrameImportant[Type] = true;
             Main.tileNoAttach[Type] = true;
             Main.tileLavaDeath[Type] = false;
-            CommonTileHelper.SetupMultiTile(this, 15, 15, [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16]);
+            CommonTileHelper.SetupMultiTile(this, 15, 12, [16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16]);
             AddMapEntry(new Color(200, 200, 200));
             CommonTileHelper.SetTileProtection(this);
         }

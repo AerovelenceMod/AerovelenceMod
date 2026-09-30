@@ -28,19 +28,28 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 
         public override bool CanUseItem(Player player)
         {
+            StructureStamperSystem system = ModContent.GetInstance<StructureStamperSystem>();
+
             if (player.altFunctionUse == 2)
             {
-                //PlaceStructureWithChest(player);
+                system.ToggleStructurePicker();
             }
             else
             {
-                AeroStructure structure = StructureStamper.LoadStructure(Vector2.Zero, "librarylightright", placeStructure: false, checkIfProtected: false);
+                string structureName = system.GetSelectedStructureName();
+                if (string.IsNullOrEmpty(structureName))
+                {
+                    Main.NewText("No structures were found.");
+                    return true;
+                }
+
+                AeroStructure structure = StructureStamper.LoadStructure(Vector2.Zero, structureName, placeStructure: false, checkIfProtected: false);
                 if (structure != AeroStructure.Empty)
                 {
                     Vector2 position = player.position.ToTileCoordinates().ToVector2();
                     position.X -= structure.Width / 2;
                     position.Y -= structure.Height / 2;
-                    structure = StructureStamper.LoadStructure(position, "librarylightright", placeStructure: true, checkIfProtected: true);
+                    structure = StructureStamper.LoadStructure(position, structureName, placeStructure: true, checkIfProtected: true, ignoreTheTile: false);
                     if (structure != AeroStructure.Empty)
                     {
                         structure.ProtectStructure();

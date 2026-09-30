@@ -158,7 +158,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
             Main.NewText($"Structure '{structureName}' saved to {path} with size {width}x{height}");
         }
 
-        public static AeroStructure LoadStructure(Vector2 startPosition, string structureName, List<ChestConfiguration> chestConfigs = null, bool placeStructure = true, bool checkIfProtected = false)
+        public static AeroStructure LoadStructure(Vector2 startPosition, string structureName, List<ChestConfiguration> chestConfigs = null, bool placeStructure = true, bool checkIfProtected = false, bool ignoreTheTile = true)
         {
             string assetPath = $"Common/Utilities/Generation/StructureStamper/Structures/{structureName}.dat";
             int height = 0;
@@ -234,7 +234,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                     }
                     foreach (StructureData data in wallData)
                     {
-                        if (GetTileType(data) == ModContent.TileType<TheTile>())
+                        if (ignoreTheTile && GetTileType(data) == ModContent.TileType<TheTile>())
                             continue;
 
                         int x = (int)(startPosition.X + data.X);
@@ -250,7 +250,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                     {
                         int x = (int)(startPosition.X + data.X);
                         int y = (int)(startPosition.Y + data.Y);
-                        if (GetTileType(data) == ModContent.TileType<TheTile>())
+                        if (ignoreTheTile && GetTileType(data) == ModContent.TileType<TheTile>())
                             continue;
 
                         Tile tile = Main.tile[x, y];
@@ -282,7 +282,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                         int x = (int)(startPosition.X + data.X);
                         int y = (int)(startPosition.Y + data.Y);
                         ushort tileType = GetTileType(data);
-                        if (tileType == ModContent.TileType<TheTile>())
+                        if (ignoreTheTile && tileType == ModContent.TileType<TheTile>())
                             continue;
 
                         TileObjectData tileData = TileObjectData.GetTileData(tileType, 0);

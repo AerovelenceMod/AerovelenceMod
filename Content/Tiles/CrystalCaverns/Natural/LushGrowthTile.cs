@@ -27,6 +27,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
             AddMapEntry(new Color(50, 100, 70));
+            Main.tileMerge[Type][ModContent.TileType<CrystalDirtTile>()] = true;
+            Main.tileMerge[ModContent.TileType<CrystalDirtTile>()][Type] = true;
             TileID.Sets.Grass[Type] = true;
             TileID.Sets.NeedsGrassFraming[Type] = true;
             TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrystalDirtTile>();
@@ -65,6 +67,12 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
         {
             Tile tile = Framing.GetTileSafely(i, j);
             Tile tileAbove = Framing.GetTileSafely(i, j - 1);
+            if (tileAbove.LiquidAmount > 0)
+            {
+                if (Main.netMode != NetmodeID.MultiplayerClient && Electrakelp.Plant(i, j - 1, 4) && Main.netMode == NetmodeID.Server)
+                    NetMessage.SendTileSquare(-1, i, j - 4, 1, 4);
+                return;
+            }
             if (!tileAbove.HasTile && tile.LiquidType != LiquidID.Lava)
             {
                 if (tile.Slope == SlopeType.Solid && !tile.IsHalfBlock)
@@ -116,7 +124,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
-            Item.createTile = ModContent.TileType<CrystalGrassTile>();
+            Item.createTile = ModContent.TileType<LushGrowthTile>();
             Item.rare = ItemRarityID.White;
             Item.value = 5;
         }

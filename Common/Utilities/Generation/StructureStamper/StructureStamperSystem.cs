@@ -8,6 +8,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;
 using Terraria.GameInput;
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
 
 namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 {
@@ -17,6 +20,12 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
         private Vector2? Point2;
         private bool awaitingName = false;
         private string structureName = string.Empty;
+        private bool structurePickerOpen = false;
+        private List<string> availableStructures = new List<string>();
+        private string selectedStructureName = "tumblerarena";
+        private int structureScroll = 0;
+        private const int VisibleStructureRows = 10;
+        private const int StructureRowHeight = 32;
 
         public override void PostDrawInterface(SpriteBatch spriteBatch)
         {
@@ -36,6 +45,11 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
             {
                 DrawNameInputUI(spriteBatch);
             }
+
+            if (structurePickerOpen)
+            {
+                DrawStructurePickerUI(spriteBatch);
+            }
         }
 
         public override void UpdateUI(GameTime gameTime)
@@ -54,6 +68,12 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                     structureName = string.Empty;
                 }
 
+                PlayerInput.SetZoom_UI();
+                Main.blockInput = true;
+            }
+            else if (structurePickerOpen)
+            {
+                HandleStructurePickerInput();
                 PlayerInput.SetZoom_UI();
                 Main.blockInput = true;
             }
@@ -96,6 +116,153 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
         public Vector2? GetPoint2()
         {
             return Point2;
+        }
+
+        public void ToggleStructurePicker()
+        {
+            if (structurePickerOpen)
+            {
+                structurePickerOpen = false;
+                return;
+            }
+
+            RefreshStructureList();
+            structurePickerOpen = true;
+        }
+
+        public string GetSelectedStructureName()
+        {
+            if (availableStructures.Count == 0)
+            {
+                RefreshStructureList();
+            }
+
+            return selectedStructureName;
+        }
+
+        private void RefreshStructureList()
+        {
+            const string structurePath = "Common/Utilities/Generation/StructureStamper/Structures/";
+
+            availableStructures = Mod.GetFileNames()
+                .Where(file => file.StartsWith(structurePath, StringComparison.OrdinalIgnoreCase) && file.EndsWith(".dat", StringComparison.OrdinalIgnoreCase))
+                .Select(Path.GetFileNameWithoutExtension)
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .OrderBy(name => name, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+            if (availableStructures.Count == 0)
+            {
+                selectedStructureName = string.Empty;
+                structureScroll = 0;
+                return;
+            }
+
+            int selectedIndex = availableStructures.FindIndex(name => name.Equals(selectedStructureName, StringComparison.OrdinalIgnoreCase));
+            if (selectedIndex == -1)
+            {
+                selectedStructureName = availableStructures[0];
+                selectedIndex = 0;
+            }
+
+            structureScroll = Math.Clamp(selectedIndex - VisibleStructureRows / 2, 0, Math.Max(0, availableStructures.Count - VisibleStructureRows));
+        }
+
+        private void HandleStructurePickerInput()
+        {
+            Main.LocalPlayer.mouseInterface = true;
+
+            if (Main.keyState.IsKeyDown(Keys.Escape) && Main.oldKeyState.IsKeyUp(Keys.Escape))
+            {
+                structurePickerOpen = false;
+                return;
+            }
+
+            int maxScroll = Math.Max(0, availableStructures.Count - VisibleStructureRows);
+            if (PlayerInput.ScrollWheelDeltaForUI != 0)
+            {
+                structureScroll -= Math.Sign(PlayerInput.ScrollWheelDeltaForUI);
+                structureScroll = Math.Clamp(structureScroll, 0, maxScroll);
+            }
+
+            if (!Main.mouseLeft || !Main.mouseLeftRelease)
+            {
+                return;
+            }
+
+            Rectangle panel = GetStructurePickerRectangle();
+            int rowCount = Math.Min(VisibleStructureRows, availableStructures.Count);
+
+            for (int row = 0; row < rowCount; row++)
+            {
+                int index = structureScroll + row;
+                Rectangle rowRectangle = GetStructureRowRectangle(panel, row);
+
+                if (rowRectangle.Contains(Main.mouseX, Main.mouseY))
+                {
+                    selectedStructureName = availableStructures[index];
+                    structurePickerOpen = false;
+                    Main.mouseLeftRelease = false;
+                    Main.NewText($"Selected structure '{selectedStructureName}'.");
+                    return;
+                }
+            }
+        }
+
+        private Rectangle GetStructurePickerRectangle()
+        {
+            int rowCount = Math.Max(1, Math.Min(VisibleStructureRows, availableStructures.Count));
+            int width = 420;
+            int height = 92 + rowCount * StructureRowHeight;
+            return new Rectangle(Main.screenWidth / 2 - width / 2, Main.screenHeight / 2 - height / 2, width, height);
+        }
+
+        private Rectangle GetStructureRowRectangle(Rectangle panel, int row)
+        {
+            return new Rectangle(panel.X + 12, panel.Y + 50 + row * StructureRowHeight, panel.Width - 24, StructureRowHeight - 4);
+        }
+
+        private void DrawStructurePickerUI(SpriteBatch spriteBatch)
+        {
+            Rectangle panel = GetStructurePickerRectangle();
+            Rectangle border = new Rectangle(panel.X - 2, panel.Y - 2, panel.Width + 4, panel.Height + 4);
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, border, Color.Black * 0.9f);
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, panel, new Color(28, 32, 44) * 0.96f);
+
+            string title = "Select Structure";
+            Vector2 titleSize = FontAssets.MouseText.Value.MeasureString(title);
+            spriteBatch.DrawString(FontAssets.MouseText.Value, title, new Vector2(panel.Center.X - titleSize.X / 2, panel.Y + 14), Color.White);
+
+            if (availableStructures.Count == 0)
+            {
+                string emptyText = "No structures found";
+                Vector2 emptySize = FontAssets.MouseText.Value.MeasureString(emptyText);
+                spriteBatch.DrawString(FontAssets.MouseText.Value, emptyText, new Vector2(panel.Center.X - emptySize.X / 2, panel.Y + 58), Color.Gray);
+                return;
+            }
+
+            int rowCount = Math.Min(VisibleStructureRows, availableStructures.Count);
+            for (int row = 0; row < rowCount; row++)
+            {
+                int index = structureScroll + row;
+                string name = availableStructures[index];
+                Rectangle rowRectangle = GetStructureRowRectangle(panel, row);
+                bool selected = name.Equals(selectedStructureName, StringComparison.OrdinalIgnoreCase);
+                bool hovered = rowRectangle.Contains(Main.mouseX, Main.mouseY);
+
+                Color backgroundColor = selected ? new Color(70, 105, 150) : hovered ? new Color(55, 62, 78) : new Color(39, 44, 58);
+                Color textColor = selected ? Color.Yellow : Color.White;
+
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, rowRectangle, backgroundColor);
+                spriteBatch.DrawString(FontAssets.MouseText.Value, name, new Vector2(rowRectangle.X + 10, rowRectangle.Y + 5), textColor);
+            }
+
+            if (availableStructures.Count > VisibleStructureRows)
+            {
+                string rangeText = $"{structureScroll + 1}-{Math.Min(structureScroll + VisibleStructureRows, availableStructures.Count)} / {availableStructures.Count}";
+                Vector2 rangeSize = FontAssets.MouseText.Value.MeasureString(rangeText);
+                spriteBatch.DrawString(FontAssets.MouseText.Value, rangeText, new Vector2(panel.Right - rangeSize.X - 12, panel.Bottom - 26), Color.Gray);
+            }
         }
 
         private void HandleTextInput()
