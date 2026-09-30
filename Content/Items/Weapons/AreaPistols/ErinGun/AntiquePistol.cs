@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -53,17 +53,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
         {
             if (player.ownedProjectileCounts[ModContent.ProjectileType<ErinCircle>()] < 1)
                 Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<ErinCircle>(), 0, 0, player.whoAmI);
-
-            /*
-            if (player.ownedProjectileCounts[ModContent.ProjectileType<AmmoUI>()] < 1)
-            {
-                int a = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<AmmoUI>(), 0, 0, player.whoAmI);
-                if (Main.projectile[a].ModProjectile is AmmoUI ui)
-                {
-                    ui.whatWeapon = AmmoUI.whatWeaponEnum.ErinGun;
-                }
-            }
-            */
             //Main.NewText(player.GetModPlayer<AmmoPlayer>().ErinAmmoCount);
 
 
@@ -124,16 +113,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             //SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_dark_mage_cast_heal_1") with { Pitch = .2f, };
             //SoundEngine.PlaySound(style);
 
-            /*
-            ArmorShaderData dustShader3 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-            for (int i = 0; i < 1; i++)
-            {
-                Dust p = GlowDustHelper.DrawGlowDustPerfect(position + new Vector2(48, velocity.X > 0 ? -5 : 5).RotatedBy(velocity.ToRotation()), ModContent.DustType<GlowCircleQuadStar>(), velocity.SafeNormalize(Vector2.UnitX) * 5,
-                    Color.Orange, 0.6f, 0.35f, 0f, dustShader3);
-                p.fadeIn = 1;
-                p.noGravity = true;
-            }
-            */
             int flashIndex = Projectile.NewProjectile(source, position + new Vector2(56, velocity.X > 0 ? -10 : 10).RotatedBy(velocity.ToRotation()), Vector2.Zero, ModContent.ProjectileType<ErinGunMuzzleFlash>(), 0, 0, Main.myPlayer);
             Projectile mFlash = Main.projectile[flashIndex];
             mFlash.scale = 0.85f;
@@ -774,11 +753,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
 
                 Texture2D TextTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUIText").Value;
 
-                /*
-                Because we can't use DrawString in a draw layer, we have to get creative
-                TextTex contains a spritesheet containing letters
-                frames 1-9 are 1-9, frame 10 is 0, and frame 11 is /
-                */
                 //int maxAmmo = Player.GetModPlayer<ErinGunPlayer>().MAX_AMMO;
                 //int currentAmmo = Player.GetModPlayer<ErinGunPlayer>().AmmoCount;
 
@@ -798,88 +772,8 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                     drawInfo.DrawDataCache.Add(preLetter);
                 }
 
-                /*
-                if (currentAmmo > 0)
-                {
-                    DrawData leftBorder = new DrawData(borderTex, new Vector2((int)drawPos.X, (int)drawPos.Y) + new Vector2(8f * (-1 * halfCurrentBullets) - 1, -40),
-                        borderTex.Frame(1, 1, 0, 0), Color.Black, 0f, borderTex.Size() / 2, new Vector2(0.36f - (timeJustHeld * 0.03f), 0.66f), SpriteEffects.None, 0);
-                    drawInfo.DrawDataCache.Add(leftBorder);
-
-                    DrawData rightBorder = new DrawData(borderTex, new Vector2((int)drawPos.X, (int)drawPos.Y) + new Vector2(8f * halfCurrentBullets + 1.5f, -40),
-                        borderTex.Frame(1, 1, 0, 0), Color.Black, 0f, borderTex.Size() / 2, new Vector2(0.36f - (timeJustHeld * 0.03f), 0.66f), SpriteEffects.FlipHorizontally, 0);
-                    drawInfo.DrawDataCache.Add(rightBorder);
-                }
-                */
-
-
-
-                /*
-                String preAmmo = Player.GetModPlayer<ErinGunPlayer>().preAmmoString;
-                String postAmmo = Player.GetModPlayer<ErinGunPlayer>().postAmmoString;
-                //Left ammoCount
-                for (int i = 0; i < preAmmo.Length; i++)
-                {
-                    String character = preAmmo.Substring(i, preAmmo.Length - 1);
-                    int frameToUse = StringToFrame(character);
-
-                    DrawData preLetter = new DrawData(TextTex, new Vector2((int)drawPos.X + (20 * i) - 50, (int)drawPos.Y), 
-                        new Rectangle(0, TextTex.Height / 11 * frameToUse, TextTex.Width, TextTex.Height / 11),
-                        Color.White, 0f, TextTex.Size() / 2, 1f, SpriteEffects.None, 0);
-                    drawInfo.DrawDataCache.Add(preLetter);
-                }
-
-                //Right ammoCount
-                for (int i = 0; i < postAmmo.Length; i++)
-                {
-                    String character = postAmmo.Substring(i, postAmmo.Length - 1);
-                    int frameToUse = StringToFrame(character);
-
-                    DrawData postLetter = new DrawData(TextTex, new Vector2((int)drawPos.X + (20 * i) + 30, (int)drawPos.Y),
-                        new Rectangle(0, TextTex.Height / 11 * frameToUse, TextTex.Width, TextTex.Height / 11),
-                        Color.White, 0f, TextTex.Size() / 2, 1f, SpriteEffects.None, 0);
-                    drawInfo.DrawDataCache.Add(postLetter);
-                }
-                */
-
-                /*
-                DrawData slash = new DrawData(TextTex, new Vector2((int)drawPos.X, (int)drawPos.Y),
-                        new Rectangle(0, TextTex.Height / 11 * 11, TextTex.Width, TextTex.Height / 11),
-                        Color.White, 0f, TextTex.Size() / 2, 1f, SpriteEffects.None, 0);
-                drawInfo.DrawDataCache.Add(slash);
-                */
-
-
             }
 
-            /*
-            DrawData backdrop = new DrawData();
-
-            var value = new DrawData(
-                        barTex,
-                        new Vector2((int)drawPos.X, (int)drawPos.Y),
-                        null,
-                        Lighting.GetColor((int)(drawPos.X + Main.screenPosition.X) / 16, (int)(drawPos.Y + Main.screenPosition.Y) / 16),
-                        0f,
-                        barTex.Size() / 2,
-                        1,
-                        SpriteEffects.None,
-                        0
-                    );
-            drawInfo.DrawDataCache.Add(value);
-
-            var value2 = new DrawData(
-                        glowTex,
-                        new Vector2((int)drawPos.X, (int)drawPos.Y) - new Vector2(0, 1),
-                        new Rectangle(0, 0, (int)(glowTex.Width * (Player.GetModPlayer<JetwelderPlayer>().scrap / 20f)), glowTex.Height),
-                        Color.White,
-                        0f,
-                        glowTex.Size() / 2,
-                        1,
-                        SpriteEffects.None,
-                        0
-                    );
-            drawInfo.DrawDataCache.Add(value2);
-            */
         }
 
         public int StringToFrame(String input)
@@ -953,18 +847,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
 
             //Projectile.Center = Main.player[Projectile.owner].Center + new Vector2(0,-80);
 
-            /*
-            if (timer < 75)
-                Projectile.scale = Math.Clamp(MathHelper.Lerp(0, 1.1f, lerp1progress), 0f, 1f);
-            else
-                Projectile.scale = Math.Clamp(MathHelper.Lerp(1, -0.5f, lerp2progress), 0, 1f);
-
-            lerp1progress = Math.Clamp(lerp1progress + 0.06f, 0, 1);
-
-            if (timer >= 75)
-                lerp2progress = Math.Clamp(lerp2progress + 0.06f, 0, 1);
-            */
-            
             if (timer < 75)
             {
                 Projectile.scale = Math.Clamp(MathHelper.Lerp(0, 1.1f, lerp1progress), 0f, 1f);
@@ -983,13 +865,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                     lerp1progress = lerp1progress + 0.1f;
 
                 }
-
-                /*
-                if (timer < 20)
-                    lerp1progress = Math.Clamp(lerp1progress + 0.06f, 0, 1);
-                else
-                    lerp1progress = Math.Clamp(lerp1progress + 0.06f, 0, 1);
-                */
 
                 //lerp1progress = Math.Clamp(lerp1progress + 0.06f, 0, 1);
             }
@@ -1058,5 +933,4 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             return false;
         }
     }
-}
-
+}*/

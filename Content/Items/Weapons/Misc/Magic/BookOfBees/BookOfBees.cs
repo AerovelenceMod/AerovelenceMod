@@ -16,7 +16,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
 {
     public class BookOfBees : ModItem
     {
-        
         public override void SetDefaults()
         {
             Item.damage = 26;
@@ -43,6 +42,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-2f, 0f);
+        }
+
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddIngredient(ItemID.Book)
+                .AddIngredient(ItemID.BeeWax, 12)
+                .AddTile(TileID.Bookcases)
+                .Register();
         }
     }
 

@@ -2170,6 +2170,16 @@ Items: {
 		DisplayName: Tumbler Statue Item
 		Tooltip: ""
 	}
+
+	CrystalCrateItem: {
+		DisplayName: Crystal Crate
+		Tooltip: Right click to open
+	}
+
+	ThunderCrateItem: {
+		DisplayName: Thunder Crate
+		Tooltip: Right click to open
+	}
 }
 
 Projectiles: {
@@ -2807,6 +2817,8 @@ Tiles: {
 	CavernChestTile.MapEntry: ""
 	SilkenCocoonTile.MapEntry: Silken Cocoon Tile
 	SilkenCacheTile.MapEntry: Silken Cache Tile
+	CrystalCrateTile.MapEntry: Crystal Crate Tile
+	ThunderCrateTile.MapEntry: Thunder Crate Tile
 }
 
 Emotes: {

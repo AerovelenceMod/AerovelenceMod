@@ -187,7 +187,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
                 DrawBall(false);
             });
 
-            return false;
+            return true;
         }
 
         //This is the non-shader part of the orb, just some stacked bloom orbs

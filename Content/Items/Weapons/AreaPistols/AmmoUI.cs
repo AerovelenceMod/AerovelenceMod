@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Globals.SkillStrikes;
+/*using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun;
 using Microsoft.Xna.Framework;
@@ -79,127 +79,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 
 			Projectile.Center = owner.Center;
 
-			#region old
-			/*
-			
-			//Here we created the correct number of bullets based on the weapon
-			if (!createdBullets)
-			{
-				switch (whatWeapon)
-                {
-					case whatWeaponEnum.ErinGun:
-						MaxAmmo = 12;
-
-						break;
-					default:
-						break;
-                }
-
-				for (int i = 0; i < MaxAmmo; i++)
-				{
-					Bullet newBullet = new Bullet(Projectile.Center, Vector2.Zero);
-					Bullets.Add(newBullet);
-				}
-
-			}
-
-			//Get the amount of current bullets from the player
-			float currentAmmo = 0f;
-			switch (whatWeapon)
-            {
-				case whatWeaponEnum.ErinGun:
-
-					if (owner.inventory[owner.selectedItem].type != ModContent.ItemType<AntiquePistol>())
-					{
-						Projectile.active = false;
-					}
-
-					currentAmmo = owner.GetModPlayer<AmmoPlayer>().ErinAmmoCount;
-
-
-					int currentAmmoTemp = (int)currentAmmo;
-					foreach (Bullet b in Bullets)
-					{
-						if (currentAmmoTemp > 0)
-                        {
-							b.usedUp = false;
-                        } else
-                        {
-							b.usedUp = true;
-                        }
-						currentAmmoTemp--;
-					}
-
-					break;
-				default:
-					Main.NewText("not set"); //Debug message
-					break;
-            }
-
-
-            //Update bullet pos
-            {
-				//Get the active bullet count
-				activeBulletsCount = 0f;
-				foreach (Bullet b in Bullets)
-                {
-					if (!b.usedUp)
-						activeBulletsCount++;
-                }
-				Main.NewText("Active Bullet Count --> " + activeBulletsCount);
-
-				float halfCurrentBullets = activeBulletsCount / 2f;
-				Main.NewText("half bullet count --> " + halfCurrentBullets); //Debug message
-
-
-				//EXAMPLES OF WHAT HAPPENS BELOW
-				// 6 active bullets --> 6/2 = 3
-				// 3 * -1 + 0.5 = -2.5
-				// | -2.5 | -1.5 | -0.5 | 0.5 | 1.5 | 2.5 | 
-				// - - - - - - - - - - - - - - -
-				// 7 active bullets --> 7/2 = 3.5
-				// 3.5 * -1 + 0.5 = -3
-				// | -3 | -2 | -1 | 0 | 1 | 2 | 3 | 
-
-				int arrayIndex = 0;
-				for (float j = (-1 * halfCurrentBullets) + 0.5f; j < halfCurrentBullets; j++)
-                {
-					Bullet b = Bullets[arrayIndex];
-
-					Vector2 BulletPos = owner.Center + new Vector2(50f * j , -60);
-					if (!createdBullets)
-						Main.NewText("Bullet Pos at : " + new Vector2(50f * j, -60)); //Debug message
-					b.Update(BulletPos);
-                }
-            }
-			createdBullets = true;
-
-			
-			#endregion
-
-			#region also old
-			/*
-			Player owner = Main.player[Projectile.owner];
-			switch (whatWeapon)
-			{
-				case whatWeaponEnum.ErinGun:
-
-					if (owner.inventory[owner.selectedItem].type != ModContent.ItemType<AntiquePistol>())
-					{
-						Projectile.active = false;
-					}
-
-					currentBullets = owner.GetModPlayer<AmmoPlayer>().ErinAmmoCount;
-					halfCurrentBullets = currentBullets / 2;
-
-					break;
-				default:
-					Main.NewText("not set"); //Debug message
-					break;
-			}
-			*/
-			#endregion
-			
 			if (!createdBullets)
 			{
 				switch (whatWeapon)
@@ -259,16 +138,6 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 			Texture2D BulletOpen = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoOpen").Value;
 			Texture2D BulletUsed = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUsed").Value;
 
-
-			/*
-			foreach (Bullet b in Bullets)
-            {
-				if (!b.usedUp)
-					b.Draw(Main.spriteBatch, BulletTex, Main.player[Projectile.owner]);
-            }
-			*/
-
-			
 			for (int i = 0; i < areActive.Count; i++)
             {
 				if (areActive[i])
@@ -281,34 +150,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 				}
 			}
 			
-
-			/*
-			for (float j = (-1 * halfCurrentBullets) + 0.5f; j < halfCurrentBullets; j++)
-			{
-				Main.spriteBatch.Draw(BulletTex, Projectile.Center - Main.screenPosition + new Vector2(10f * j, -40), new Rectangle(0, 0, BulletTex.Width, BulletTex.Height), Color.White, Projectile.rotation, BulletTex.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
-
-			}
-			*/
-
-			
-
 			return false;
-
-
-			/*
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-			Vector2 drawOrigin = new Vector2(TextureAssets.Projectile[Projectile.type].Value.Width * 0.5f, TextureAssets.Projectile[Projectile.type].Value.Height * 0.5f);
-
-			Texture2D texture2 = Mod.Assets.Request<Texture2D>("Assets/Glorb").Value;
-			Main.spriteBatch.Draw(texture2, Projectile.Center - Main.screenPosition + new Vector2(0, Projectile.gfxOffY), new Rectangle(0, 0, texture2.Width, texture2.Height), Color.CornflowerBlue * 0.8f, Projectile.rotation, texture2.Size() / 2, 2f * Projectile.scale, SpriteEffects.None, 0f);
-
-
-
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-			return false;
-			*/
 		}
 	}
 
@@ -348,4 +190,4 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 				sb.Draw(tex, center - Main.screenPosition - new Vector2(0, player.gfxOffY), null, Color.White, rotation, tex.Size() / 2, scale, SpriteEffects.None, 0f);
 		}
 	}
-}
+}*/

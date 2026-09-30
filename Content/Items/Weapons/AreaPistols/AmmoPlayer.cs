@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Globals.SkillStrikes;
+/*using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -46,4 +46,4 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
             //if the player is not holding the weapon, inc
         }
     }
-}
+}*/
