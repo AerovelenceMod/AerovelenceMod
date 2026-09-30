@@ -154,7 +154,7 @@ namespace AerovelenceMod.Common.Systems
     {
         public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged)
         {
-            return !InsideArena(i, j) || TumblerArenaSystem.RemovableDecoration(type);
+            return WorldGen.destroyObject || !InsideArena(i, j) || TumblerArenaSystem.RemovableDecoration(type);
         }
 
         public override bool CanPlace(int i, int j, int type)
@@ -179,7 +179,7 @@ namespace AerovelenceMod.Common.Systems
 
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (InsideArena(i, j) && !TumblerArenaSystem.RemovableDecoration(type))
+            if (!WorldGen.destroyObject && InsideArena(i, j) && !TumblerArenaSystem.RemovableDecoration(type))
             {
                 fail = true;
                 effectOnly = false;

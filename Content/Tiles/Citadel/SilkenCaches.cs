@@ -164,13 +164,13 @@ public sealed class SilkenCacheAnchor : GlobalTile
         return below.HasTile && SilkenCacheTile.IsCache(below.TileType) && below.TileFrameY % 90 == 0 &&
             !SilkenCacheTile.CanRelease(SilkenCacheTile.Root(i, j + 1));
     }
-    public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged) => !LockedBelow(i, j);
+    public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged) => WorldGen.destroyObject || !LockedBelow(i, j);
     public override bool CanExplode(int i, int j, int type) => !LockedBelow(i, j);
     public override bool Slope(int i, int j, int type) => !LockedBelow(i, j);
     public override bool CanReplace(int i, int j, int type, int tileTypeBeingPlaced) => !LockedBelow(i, j);
     public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
     {
-        if (Main.netMode != NetmodeID.MultiplayerClient && LockedBelow(i, j)) fail = true;
+        if (!WorldGen.destroyObject && Main.netMode != NetmodeID.MultiplayerClient && LockedBelow(i, j)) fail = true;
     }
 }
 
