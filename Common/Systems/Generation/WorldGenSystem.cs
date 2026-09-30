@@ -29,7 +29,7 @@ namespace AerovelenceMod.Common.Systems.Generation
             totalWeight += InsertAfter(tasks, "Final Cleanup",
                 new SilkenCitadelPass(),
                 new CCStructurePass("Crystal Caverns Polish", 101f),
-                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass(),
+                new Content.Tiles.Citadel.SilkenCachePass(),
                 new LivingTreeIslandPass());
         }
 

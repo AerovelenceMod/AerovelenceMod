@@ -14,7 +14,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
-using AerovelenceMod.Effects.Dyes;
 using Steamworks;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using System;

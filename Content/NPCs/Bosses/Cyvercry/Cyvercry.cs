@@ -19,7 +19,8 @@ using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry;
 using AerovelenceMod.Common.Globals.Players;
 using AerovelenceMod.Content.Projectiles.Other;
 using Terraria.DataStructures;
-using AerovelenceMod.Content.Buffs.PlayerInflictedDebuffs;
+using AerovelenceMod.Content.Items.Weapons.Aurora;
+using AerovelenceMod.Content.Items.Weapons.Ember;
 using AerovelenceMod.Content.Projectiles;
 using rail;
 using static Terraria.ModLoader.PlayerDrawLayer;
@@ -28,8 +29,6 @@ using static System.Net.Mime.MediaTypeNames;
 using Terraria.GameContent.Bestiary;
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using System.Security.Policy;
-using AerovelenceMod.Content.Buffs.FlareDebuffs;
-using AerovelenceMod.Content.Buffs;
 using Terraria.Map;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry 

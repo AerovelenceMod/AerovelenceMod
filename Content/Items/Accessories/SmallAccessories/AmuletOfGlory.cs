@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Buffs;
 using AerovelenceMod.Common.Systems.Language;
 using System;
 
@@ -157,6 +156,20 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         }
     }
 
+    public class Glory : ModBuff
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.buffNoTimeDisplay[Type] = false;
+            Main.debuff[Type] = false;
+        }
+        public override void Update(Player player, ref int buffIndex)
+        {
+            player.moveSpeed += 0.2f;
+            player.pickSpeed -= 0.1f;
+        }
+    }
+    
     public class EnemyGlowEffect : ModProjectile
     {
         public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";

@@ -22,13 +22,15 @@ namespace AerovelenceMod.Content.Items.Sets.Slate.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 3;
-			player.GetCritChance(DamageClass.Ranged) += 3;
-			player.GetCritChance(DamageClass.Magic) += 3;
+            player.GetCritChance(DamageClass.Generic) += 3;
         }
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<SlateOre>(), 65)
+                .AddRecipeGroup(RecipeGroupID.Wood, 25)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 }

@@ -33,7 +33,7 @@ namespace AerovelenceMod.Common.Systems.Generation.Miscellaneous
                 int y = WorldGen.genRand.Next((int)GenVars.rockLayerLow, Main.maxTilesY);
 
                 //WorldGen.OreRunner(x, y, WorldGen.genRand.Next(3, 15), WorldGen.genRand.Next(2, 15),
-                //(ushort)ModContent.TileType<SlateOreBlock>());
+                //(ushort)ModContent.TileType<SlateOreTile>());
             }
         }
     }

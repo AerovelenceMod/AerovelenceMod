@@ -419,7 +419,7 @@ public sealed class SilkenCitadelPass : GenPass
                     WorldGen.PlaceTile(wx + 1, floor - 1, TileID.Campfire, mute: true);
                     Tile fire = Main.tile[wx + 1, floor - 1];
                     if (!fire.HasTile || fire.TileType != TileID.Campfire) continue;
-                    global::AerovelenceMod.Common.Utilities.CommonTileHelper.ToggleTile(wx + 1, floor - 1);
+                    Common.Utilities.CommonTileHelper.ToggleTile(wx + 1, floor - 1);
                     fires++; placed = true;
                 }
         }

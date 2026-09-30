@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.newTile.LavaDeath = false;
             TileObjectData.addTile(Type);
-            AddMapEntry(new Color(110, 074, 056), Language.GetText("Phantic Bar"));
+            AddMapEntry(new Color(110, 074, 056),Terraria.Localization.Language.GetText("Phantic Bar"));
         }
     }
 }

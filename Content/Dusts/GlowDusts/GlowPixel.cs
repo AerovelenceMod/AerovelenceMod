@@ -1,4 +1,4 @@
-﻿   using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
 using System;
@@ -16,7 +16,6 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
-using AerovelenceMod.Effects.Dyes;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {

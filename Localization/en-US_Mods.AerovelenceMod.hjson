@@ -122,6 +122,8 @@ NPCs: {
 		DisplayName: Baby Condurtle
 		BestiaryFlavor: A tiny, humming bundle of crystal and shell. Gentle petting keeps its little sparks happy.
 	}
+
+	SilkenCacheMoth.DisplayName: Silken Cache Moth
 }
 
 Buffs: {
@@ -253,6 +255,16 @@ Buffs: {
 	FaultbreakerStun: {
 		DisplayName: Faultbreaker Stun
 		Description: Mods.AerovelenceMod.Buffs.FaultbreakerStun.Description
+	}
+
+	PrismaticSoulBuff: {
+		Description: Mods.AerovelenceMod.Buffs.PrismaticSoulBuff.Description
+		DisplayName: Prismatic Soul Buff
+	}
+
+	LightningFishBuff: {
+		Description: "'I now pronounce you Terrarian and Fish'"
+		DisplayName: Fish Partner
 	}
 }
 
@@ -2055,6 +2067,102 @@ Items: {
 		DisplayName: Crystal Mug
 		Tooltip: ""
 	}
+
+	SilkenCacheItem: {
+		DisplayName: Silken Cache Item
+		Tooltip: ""
+	}
+
+	Glowberry: {
+		Tooltip: Minor improvements to all stats
+		DisplayName: Glowberry
+	}
+
+	CrystalApple: {
+		Tooltip: Minor improvements to all stats
+		DisplayName: Crystal Apple
+	}
+
+	MothSilk: {
+		Tooltip: ""
+		DisplayName: Moth Silk
+	}
+
+	PrismaticSoul: {
+		Tooltip:
+			'''
+			Doubles health restored from healing potions
+			Vastly reduces Potion Sickness duration
+			Healing potions now take 5 seconds to consume, preventing movement
+			Getting hit cancels your heal
+			Disables natural life regen
+			'''
+		DisplayName: Prismatic Soul
+	}
+
+	FishRing: {
+		DisplayName: Fish Ring
+		Tooltip:
+			'''
+			'You may now kiss the fish'
+			Summons an Electric Tetra to partner you in life
+			'''
+	}
+
+	CrystalKey: {
+		DisplayName: Crystal Key
+		Tooltip:
+			'''
+			Not consumable
+			Summons the Crystal Tumbler
+			Only usable in the Caverns Arena
+			'''
+	}
+
+	BurnshockBar: {
+		DisplayName: Burnshock Bar
+		Tooltip: "'Formed from the raging crystal thunderstorms'"
+	}
+
+	BurnshockOre: {
+		DisplayName: Burnshock Ore
+		Tooltip: ""
+	}
+
+	PhantomSong: {
+		DisplayName: Phantom Song
+		Tooltip: Has a chance to fire a phantom arrow
+	}
+
+	Reaper: {
+		DisplayName: Reaper
+		Tooltip: Fires lost souls when near an enemy
+	}
+
+	SlateOre: {
+		DisplayName: Slate Slab
+		Tooltip: ""
+	}
+
+	PhanticHammer: {
+		DisplayName: Phantic Hammer
+		Tooltip: ""
+	}
+
+	SlateAxe: {
+		DisplayName: Slate Axe
+		Tooltip: ""
+	}
+
+	SlateHammer: {
+		DisplayName: Slate Hammer
+		Tooltip: ""
+	}
+
+	SlatePickaxe: {
+		DisplayName: Slate Pickaxe
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
@@ -2620,6 +2728,13 @@ Projectiles: {
 	MeteorInvaderMinion.DisplayName: Meteor Invader Minion
 	HellfrostBurst.DisplayName: Hellfrost Burst
 	HellfrostHead.DisplayName: Hellfrost Head
+	PrismaticSoulVFX.DisplayName: Prismatic Soul V F X
+	LightningFish.DisplayName: Lightning Fish
+	PhantomSongArrow.DisplayName: Phantom Song Arrow
+	PhantomSongAura.DisplayName: Phantom Song Aura
+	ReaperProj.DisplayName: Reaper Proj
+	ReaperProjectile.DisplayName: Reaper Projectile
+	LumberjackAxe.DisplayName: Lumberjack Axe
 }
 
 Configs: {
@@ -2643,6 +2758,7 @@ WorldGen: {
 	CrystalCavernsTerrainPassMessage: Mods.AerovelenceMod.WorldGen.CrystalCavernsTerrainPassMessage
 	CrystalCavernsStructurePassMessage: Mods.AerovelenceMod.WorldGen.CrystalCavernsStructurePassMessage
 	CrystalCavernsRubblePassMessage: Mods.AerovelenceMod.WorldGen.CrystalCavernsRubblePassMessage
+	LivingTreeIslandsPassMessage: Growing living tree sky islands
 }
 
 Tiles: {
@@ -2681,6 +2797,8 @@ Tiles: {
 	CrystallineFabricator.MapEntry: ""
 	CitadelChestTile.MapEntry: ""
 	CavernChestTile.MapEntry: ""
+	SilkenCocoonTile.MapEntry: Silken Cocoon Tile
+	SilkenCacheTile.MapEntry: Silken Cache Tile
 }
 
 Emotes: {

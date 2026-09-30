@@ -16,7 +16,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.Creative;
 using Terraria.GameContent.Events;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -29,7 +28,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             this.ModifyLocalization("Marionette", "Continuously drain mana to summon a set of handle bars and puppet strings at the cursor\nThe ends of the strings can attach to enemies and choke their arteries\nIf the handle bars get too far from a string's attach point, or if a string stays attached for too long, it will weaken and snap\nChoke damage gains a small crit chance for every string that is attached")
             .AddName(Language.Default, "The Marionette").AddTooltip(Language.Default, "Continuously drain mana to summon a set of handle bars and puppet strings at the cursor\nThe ends of the strings can attach to enemies and choke their arteries\nIf the handle bars get too far from a string's attach point, or if a string stays attached for too long, it will weaken and snap\nChoke damage gains a small crit chance for every string that is attached")
             .AddSkillStrike(Language.Default, "Skill Strikes when all strings are attached");

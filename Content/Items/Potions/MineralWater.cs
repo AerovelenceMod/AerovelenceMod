@@ -23,8 +23,8 @@ namespace AerovelenceMod.Content.Items.Potions
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Mineral Water", "Restores 60 life with 30 seconds of potion sickness\nGrants 40 defense for 30 seconds, but inflicts mineral poisoning for 12 seconds\nPoisoning drains 10 life per second\nContains enough sediment to cause stomach or throat stones. Worse than a kidney stone.")
-                .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Agua Mineral")
-                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Restaura 60 de vida con 30 segundos de enfermedad de poción\nOtorga 40 de defensa durante 30 segundos, pero causa envenenamiento mineral durante 12 segundos\nEl veneno drena 10 de vida por segundo\nContiene suficientes sedimentos para formar piedras en el estómago o la garganta.");
+                .AddName(Common.Systems.Language.Language.Spanish, "Agua Mineral")
+                .AddTooltip(Common.Systems.Language.Language.Spanish, "Restaura 60 de vida con 30 segundos de enfermedad de poción\nOtorga 40 de defensa durante 30 segundos, pero causa envenenamiento mineral durante 12 segundos\nEl veneno drena 10 de vida por segundo\nContiene suficientes sedimentos para formar piedras en el estómago o la garganta.");
             
             base.SetStaticDefaults();
         }

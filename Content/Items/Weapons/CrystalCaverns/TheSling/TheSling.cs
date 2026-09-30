@@ -14,12 +14,11 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 
-namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
+namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TheSling
 {
     public class TheSling : TranslatableModItem
     {
         private const string EnglishTooltip = "Hold to wind up a slug\nRelease to throw in the direction the pouch is traveling\nStone slugs hit hard, wood flies farther, and crystal leaves splinters";
-        public override string Texture => SlingArt.PouchTexture;
 
         public override void SetStaticDefaults()
         {
@@ -64,8 +63,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
     internal static class SlingArt
     {
-        internal const string PouchTexture = "AerovelenceMod/Content/Items/Weapons/Misc/Ranged/PouchOfRocks";
-        private const string CordTexture = "AerovelenceMod/Content/Items/Weapons/Misc/Melee/FlailChain";
+        internal const string PouchTexture = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/TheSling/TheSlingHeld";
+        private const string CordTexture = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/TheSling/TheSlingChain";
 
         internal static void Cord(Vector2 start, Vector2 end, Vector2 bow, Color light, float opacity, float charge)
         {

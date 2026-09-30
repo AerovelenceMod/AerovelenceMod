@@ -17,8 +17,6 @@ namespace AerovelenceMod.Content.Items.Tools
 {
     public class CrystallineDynamite : TranslatableModItem
     {
-        public override string Texture => $"Terraria/Images/Item_{ItemID.Dynamite}";
-
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Crystalline Dynamite", "A reusable stick of dynamite\nThe blast scatters crystal fragments that remagnetize toward you\nReforms 30 seconds after being thrown")

@@ -65,7 +65,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
 
             tick = !tick;
 
-            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (tick ? 1 : 0));
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, tick ? 1 : 0);
 
             return false;
         }
@@ -73,7 +73,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
         public override void AddRecipes()
         {
             CreateRecipe(1)
-                .AddIngredient(ModContent.ItemType<CavernCrystalItem>(), 50)
+                .AddIngredient(ModContent.ItemType<CavernStoneItem>(), 40)
+                .AddIngredient(ModContent.ItemType<CavernCrystalItem>(), 8)
+                .AddRecipeGroup(RecipeGroupID.IronBar, 8)
                 .AddTile(TileID.Anvils)
                 .Register();
         }
@@ -447,6 +449,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
         }
 
         public override bool? CanCutTiles() => false;
+        public override bool? CanDamage() => false;
 
         //How far away the projectile will be held by the player
         float offsetAmount = 0f;
@@ -608,7 +611,6 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
         }
 
         public override bool? CanCutTiles() => false;
-        public override bool? CanDamage() => false;
 
         public Vector2 startPoint;
         public Vector2 endPoint;

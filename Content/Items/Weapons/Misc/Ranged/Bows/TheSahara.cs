@@ -337,7 +337,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             }
 
             float arrowRotation = direction.ToRotation() + MathHelper.PiOver2;
-            if (projToShootID == ModContent.ProjectileType<global::AerovelenceMod.Content.Items.Ammo.CrystalDrillrowShot>())
+            if (projToShootID == ModContent.ProjectileType<Items.Ammo.CrystalDrillrowShot>())
                 arrowRotation = direction.ToRotation() - MathHelper.PiOver2;
             if (Player.channel)
             {
@@ -602,7 +602,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         public override void PostAI(Projectile projectile)
         {
             if (!trailActive || Main.dedServ) return;
-            if (projectile.ModProjectile is global::AerovelenceMod.Content.Items.Ammo.CrystalDrillrowShot && projectile.ai[0] == 1f)
+            if (projectile.ModProjectile is Content.Items.Ammo.CrystalDrillrowShot && projectile.ai[0] == 1f)
             {
                 fireTrail = new BaseTrailInfo();
                 previousPositions.Clear();
@@ -619,7 +619,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             
             fireTrail.trailTime = (float)Main.timeForVisualEffects * 0.05f;
             fireTrail.trailRot = projectile.velocity.ToRotation();
-            fireTrail.trailPos = projectile.ModProjectile is global::AerovelenceMod.Content.Items.Ammo.CrystalDrillrowShot ? projectile.Center : projectile.Center + projectile.velocity;
+            fireTrail.trailPos = projectile.ModProjectile is Content.Items.Ammo.CrystalDrillrowShot ? projectile.Center : projectile.Center + projectile.velocity;
             fireTrail.TrailLogic();
 
             if (timer % 1 == 0)
@@ -644,7 +644,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             if (!trailActive) return base.PreDraw(projectile, ref lightColor);
 
             if (fireTrail.trailPositions != null && fireTrail.trailPositions.Count >= 2 &&
-                (projectile.ModProjectile is not global::AerovelenceMod.Content.Items.Ammo.CrystalDrillrowShot || projectile.ai[0] != 1f))
+                (projectile.ModProjectile is not Content.Items.Ammo.CrystalDrillrowShot || projectile.ai[0] != 1f))
                 fireTrail.TrailDrawing(Main.spriteBatch);
 
             return projectile.ModProjectile != null;

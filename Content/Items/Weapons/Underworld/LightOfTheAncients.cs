@@ -13,7 +13,6 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.GameContent.Creative;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -24,11 +23,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             Item.staff[Type] = true;
             this.ModifyLocalization("LightOfTheAncients", "Fires small, fast hellfire bullets\nHas a visible overheating gauge above the player that fills as you fire\nThe gun becomes more powerful as it heats up, but if you keep firing it will need to cool down")
-            .AddName(Language.Default, "Light of the Ancients")
-            .AddTooltip(Language.Default, "Fires small, fast hellfire bullets\nHas a visible overheating gauge above the player that fills as you fire\nThe gun becomes more powerful as it heats up, but if you keep firing it will need to cool down")
             .AddSkillStrike(Language.Default, "Skill Strikes just as it's about to overheat")
 
             .AddName(Language.Spanish, "Luz de los Antiguos").AddTooltip(Language.Spanish, "Dispara balas infernales pequeñas y rápidas\nTiene un indicador de sobrecalentamiento visible sobre el jugador que se llena mientras disparas\nEl arma se vuelve más poderosa a medida que se calienta, pero si sigues disparando, necesitará enfriarse").AddSkillStrike(Language.Spanish, "Realiza Golpes de Habilidad justo antes de sobrecalentarse")

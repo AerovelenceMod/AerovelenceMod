@@ -35,7 +35,10 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
 
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 12)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 
@@ -64,12 +67,15 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.02f;
+            player.GetDamage(DamageClass.Ranged) += 0.02f;
         }
 
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 12)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 
@@ -98,12 +104,15 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.02f;
+            player.GetDamage(DamageClass.Magic) += 0.02f;
         }
 
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 12)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 
@@ -132,12 +141,15 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetDamage(DamageClass.Melee) += 0.02f;
+            player.GetDamage(DamageClass.Summon) += 0.02f;
         }
 
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 12)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 }

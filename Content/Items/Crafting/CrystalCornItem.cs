@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.Items.Crafting
 
         public override void SetDefaults()
         {
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.width = 26;
             Item.height = 22;
             Item.value = 10;

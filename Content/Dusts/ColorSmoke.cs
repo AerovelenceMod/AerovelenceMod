@@ -17,7 +17,6 @@ using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
 using Terraria.ModLoader.IO;
-using AerovelenceMod.Effects.Dyes;
 
 namespace AerovelenceMod.Content.Dusts
 {

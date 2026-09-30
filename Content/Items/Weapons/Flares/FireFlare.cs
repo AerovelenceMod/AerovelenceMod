@@ -9,7 +9,6 @@ using AerovelenceMod.Common.Utilities;
 using System;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Audio;
-using AerovelenceMod.Content.Buffs.FlareDebuffs;
 
 namespace AerovelenceMod.Content.Items.Weapons.Flares
 {

@@ -73,6 +73,14 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
                 //return false;
             return base.CanUseItem(player);
         }
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<SlateOre>(), 45)
+                .AddRecipeGroup(RecipeGroupID.Wood, 15)
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
     }
 }
 */

@@ -1,20 +1,21 @@
 ﻿using AerovelenceMod.Common.Globals.SkillStrikes;
+using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Projectiles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using System.Collections.Generic;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
-using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 {
@@ -73,22 +74,17 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             }
 			return false;
         }
+    }
 
-        public override void AddRecipes()
+    public class WarBowDrop : GlobalNPC
+    {
+        public override void ModifyNPCLoot(NPC npc, NPCLoot npcLoot)
         {
-            CreateRecipe().
-                AddIngredient(ItemID.GoldBow, 1).
-                AddIngredient(ItemID.SpikyBall, 25).
-                AddTile(TileID.TinkerersWorkbench).
-                Register();
-
-            CreateRecipe().
-                AddIngredient(ItemID.PlatinumBow, 1).
-                AddIngredient(ItemID.SpikyBall, 25).
-                AddTile(TileID.TinkerersWorkbench).
-                Register();
+            if (npc.type == NPCID.GoblinArcher)
+                npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<WarBow>(), 20));
         }
     }
+
     public class WarBowHeldProj : ModProjectile
     {
 

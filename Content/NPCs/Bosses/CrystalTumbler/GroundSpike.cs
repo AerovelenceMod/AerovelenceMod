@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 using Terraria;
 using System;
 using Microsoft.Xna.Framework;
-using static AerovelenceMod.Content.Items.BossSummons.LargeGeode;
+using static AerovelenceMod.Content.Items.BossSummons.CrystalKey;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria.GameContent;

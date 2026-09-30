@@ -72,7 +72,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         public override void OnKill(int timeLeft)
         {
             SoundEngine.PlaySound(SoundID.Item93 with { Pitch = 0.35f, Volume = 0.2f, MaxInstances = 8 }, Projectile.Center);
-            if (Main.netMode != NetmodeID.MultiplayerClient && !global::AerovelenceMod.Content.Items.BossSummons.ArenaData.ClearingEncounter)
+            if (Main.netMode != NetmodeID.MultiplayerClient && !Content.Items.BossSummons.ArenaData.ClearingEncounter)
                 Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, Projectile.ai[0] >= 1f ? 34f : 24f, 16f, Projectile.ai[0]);
         }
     }

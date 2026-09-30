@@ -1,4 +1,5 @@
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria;
 using AerovelenceMod.Common.Utilities;
@@ -27,7 +28,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Main.tileMergeDirt[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = true;
-            AddMapEntry(new Color(203, 032, 087));
+            AddMapEntry(new Color(203, 032, 087),Terraria.Localization.Language.GetText("Phantic Ore"));
             DustType = 59;
             HitSound = SoundID.Tink;
         }

@@ -3,7 +3,6 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using Terraria.GameContent.Creative;
 using Terraria.Audio;
 using System;
 using AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff;
@@ -11,7 +10,6 @@ using Terraria.DataStructures;
 using Terraria.Graphics.CameraModifiers;
 using AerovelenceMod.Common.Utilities;
 using System.Collections.Generic;
-using AerovelenceMod.Content.Buffs.FlareDebuffs;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Flares;
 using ReLogic.Content;
@@ -27,7 +25,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             this.ModifyLocalization("BishopsStaff", "Hold Left Click to ground the staff and channel mana towards it\nWhile channeling, the staff generates a starry sky above itself\nThe stars fire stellar beams towards the ground and generate faster over time\nAfter some time, larger stars will generate, firing larger beams")
             .AddName(Language.Default, "Bishop's Staff").AddTooltip(Language.Default, "Hold Left Click to ground the staff and channel mana towards it\nWhile channeling, the staff generates a starry sky above itself\nThe stars fire stellar beams towards the ground and generate faster over time\nAfter some time, larger stars will generate, firing larger beams")
             .AddSkillStrike(Language.Default, "Large stars Skill Strike");

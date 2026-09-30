@@ -174,7 +174,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
 			Item.useAnimation = 15;
 			Item.rare = ItemRarityID.Pink;
 			Item.useTime = 10;
-			Item.maxStack = 99;
+			Item.maxStack = Item.CommonMaxStack;
 			Item.consumable = true;
 			Item.placeStyle = 0;
 			Item.width = 12;

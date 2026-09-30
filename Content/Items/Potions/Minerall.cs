@@ -23,8 +23,8 @@ namespace AerovelenceMod.Content.Items.Potions
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Minerall", "Increases mining speed by 15%, movement speed by 10%, and mining reach by 1\nLasts 5 minutes and stacks with Mining Potion")
-                .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Minerall")
-                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Aumenta un 15% la velocidad de minería, un 10% la velocidad de movimiento y en 1 el alcance de minería\nDura 5 minutos y se acumula con la poción de minería");
+                .AddName(Common.Systems.Language.Language.Spanish, "Minerall")
+                .AddTooltip(Common.Systems.Language.Language.Spanish, "Aumenta un 15% la velocidad de minería, un 10% la velocidad de movimiento y en 1 el alcance de minería\nDura 5 minutos y se acumula con la poción de minería");
             
             base.SetStaticDefaults();
         }

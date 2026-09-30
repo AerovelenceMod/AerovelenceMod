@@ -4,7 +4,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Tiles
+namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
     public class FieldStone : ModTile
     {
@@ -22,7 +22,6 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Tiles
             AddMapEntry(new Color(061, 079, 110));
 			DustType = 59;
 			HitSound = SoundID.Tink;
-            ItemDrop = ModContent.ItemType<Items.Placeables.Blocks.FieldStone>();
 
         }
     }

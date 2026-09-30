@@ -2,7 +2,6 @@ using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Buffs;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;

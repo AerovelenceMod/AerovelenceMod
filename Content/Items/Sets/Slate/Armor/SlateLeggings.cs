@@ -27,7 +27,11 @@ namespace AerovelenceMod.Content.Items.Sets.Slate.Armor
         }
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<SlateOre>(), 55)
+                .AddRecipeGroup(RecipeGroupID.Wood, 20)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 }

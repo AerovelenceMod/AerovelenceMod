@@ -25,8 +25,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Cavernous Rampart", "Hold to guard toward the cursor\nGuarding reduces damage taken, but taking too much damage breaks the rampart temporarily\nRun into enemies to cause shield bashes")
-                .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Baluarte Cavernoso")
-				.AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Mantén presionado para defenderte hacia el cursorLa defensa reduce el daño recibido, pero recibir demasiado daño rompe el baluarte temporalmenteArremete contra los enemigos para realizar golpes de escudo");
+                .AddName(Common.Systems.Language.Language.Spanish, "Baluarte Cavernoso")
+				.AddTooltip(Common.Systems.Language.Language.Spanish, "Mantén presionado para defenderte hacia el cursorLa defensa reduce el daño recibido, pero recibir demasiado daño rompe el baluarte temporalmenteArremete contra los enemigos para realizar golpes de escudo");
             base.SetStaticDefaults();
         }
 		
@@ -121,7 +121,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     }
     public class RampartHeld : ModProjectile
     {
-        public override string Texture => CavernousRampartRelicArt.Shield;
+        public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/CavernousRampart/CavernousRampartHeld";
         private float fade = 1;
         private bool retiring;
         public override void SetDefaults()
@@ -138,6 +138,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Projectile.localNPCHitCooldown = 30;
         }
         public override bool ShouldUpdatePosition() => false;
+        public override bool? CanCutTiles() => false;
         public override bool? CanDamage()
         {
             Player player = Main.player[Projectile.owner];
@@ -212,20 +213,15 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Vector2 center = Projectile.Center - Main.screenPosition;
             SpriteEffects facing = MathF.Cos(Projectile.rotation) < 0f ? SpriteEffects.FlipVertically : SpriteEffects.None;
             CavernousRampartVFX.Glow(Projectile.Center, new Vector2(55f), CavernousRampartVFX.Violet, (0.2f + power * 0.25f + flash * 0.3f) * fade);
-            Main.EntitySpriteDraw(shield, center, null, lightColor * fade, Projectile.rotation, shield.Size() * 0.5f, 1.7f, facing);
+            Main.EntitySpriteDraw(shield, center, null, lightColor * fade, Projectile.rotation, shield.Size() * 0.5f, 1f, facing);
             Main.EntitySpriteDraw(glow, center, null, CavernousRampartVFX.Additive(CavernousRampartVFX.Aqua, (0.4f + power * 0.5f) * fade),
-                Projectile.rotation, glow.Size() * 0.5f, 1.7f, facing);
-            Main.EntitySpriteDraw(shield, center, null, CavernousRampartVFX.Additive(Color.White, flash * fade), Projectile.rotation, shield.Size() * 0.5f, 1.7f, facing);
+                Projectile.rotation, glow.Size() * 0.5f, 1f, facing);
+            Main.EntitySpriteDraw(shield, center, null, CavernousRampartVFX.Additive(Color.White, flash * fade), Projectile.rotation, shield.Size() * 0.5f, 1f, facing);
             if (flash > 0.04f)
                 CavernousRampartVFX.Ring(Projectile.Center, new Vector2(45f + (1f - flash) * 30f, 60f), CavernousRampartVFX.Aqua, flash * fade * 0.6f, Projectile.rotation);
             return false;
         }
         public override void OnKill(int timeLeft) => CavernousRampartVFX.Burst(Projectile.Center, 6, 2);
-    }
-
-    internal static class CavernousRampartRelicArt
-    {
-        internal const string Shield = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/CavernousRampart/CavernousRampartHeld";
     }
 
     public class CavernousRampartDebris : ModDust

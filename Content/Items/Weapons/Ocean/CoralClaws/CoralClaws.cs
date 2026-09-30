@@ -246,19 +246,17 @@ internal static class CoralClawArt
     internal static void Draw(Vector2 center, float rotation, float open, float scale, float fade, Color light, bool golden)
     {
         const string path = "AerovelenceMod/Content/Items/Weapons/Ocean/CoralClaws/CoralClaws";
-        Texture2D body = ModContent.Request<Texture2D>(path + "Base").Value;
         Texture2D upper = ModContent.Request<Texture2D>(path + "Top").Value;
         Texture2D lower = ModContent.Request<Texture2D>(path + "Bottom").Value;
         Color tint = Color.Lerp(light, Color.White, .18f) * fade;
-        Vector2 origin = new(9f, 16f);
-        Vector2 topPivot = new(9f, 12f);
-        Vector2 bottomPivot = new(9f, 20f);
+        Vector2 origin = new(9f, 24f);
+        Vector2 topPivot = new(9f, 20f);
+        Vector2 bottomPivot = new(9f, 28f);
         float opening = MathHelper.Clamp(open, 0f, 1f) * .65f;
         Vector2 top = center + (topPivot - origin).RotatedBy(rotation) * scale;
         Vector2 bottom = center + (bottomPivot - origin).RotatedBy(rotation) * scale;
         Main.EntitySpriteDraw(upper, top, null, tint, rotation + .32f - opening, topPivot, scale, SpriteEffects.None);
         Main.EntitySpriteDraw(lower, bottom, null, tint, rotation - .32f + opening, bottomPivot, scale, SpriteEffects.None);
-        Main.EntitySpriteDraw(body, center, null, tint, rotation, origin, scale, SpriteEffects.None);
         if (golden)
         {
             Color glow = new Color(255, 205, 85, 0) * (.35f * fade);
