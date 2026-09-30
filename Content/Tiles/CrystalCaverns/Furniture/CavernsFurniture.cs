@@ -377,7 +377,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodPlatformItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodPlatformTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe(2).AddIngredient(ModContent.ItemType<GlimmerwoodItem>()).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -423,7 +423,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         public class GlimmerwoodCandleItem : ModItem
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodCandleTile>());
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
 
@@ -449,7 +449,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         public class GlimmerwoodLanternItem : ModItem
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 10, 20, 150, ModContent.TileType<GlimmerwoodLanternTile>());
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -475,7 +475,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 10, 26, 150, ModContent.TileType<GlimmerwoodLampTile>());
 
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 10).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 3).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -514,7 +514,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 16, 32, 150, ModContent.TileType<GlimmerwoodCandelabraTile>());
 
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 15).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 5).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -553,7 +553,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodChandelierItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChandelierTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddIngredient(ItemID.Torch, 4).AddIngredient(ItemID.Chain).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -583,7 +583,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodChairItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChairTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -611,7 +611,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodStoolItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodStoolTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -640,7 +640,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodToiletItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodToiletTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -669,7 +669,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodSofaItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodSofaTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 5).AddIngredient(ItemID.Silk, 2).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -686,7 +686,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CavernChestTile : ModTile
@@ -700,7 +700,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class CavernChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<CavernChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CitadelChestTile : ModTile
@@ -714,7 +714,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class CitadelChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<CitadelChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<CitadelChestItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<CitadelChestItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CitadelChestKey : ModItem
@@ -856,7 +856,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodDoorItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodDoorTileClosed>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -870,7 +870,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodSinkItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodSinkTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddIngredient(ItemID.WaterBucket).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -880,7 +880,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodBookcaseItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 32, 22, 150, ModContent.TileType<GlimmerwoodBookcaseTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 15).AddIngredient(ItemID.Silk, 5).AddTile(ModContent.TileType<CrystallineFabricator>()).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 20).AddIngredient(ItemID.Book, 10).AddTile(ModContent.TileType<CrystallineFabricator>()).Register();
     }
     #endregion
 
@@ -904,7 +904,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodBathtubItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodBathtubTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 14).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 }
