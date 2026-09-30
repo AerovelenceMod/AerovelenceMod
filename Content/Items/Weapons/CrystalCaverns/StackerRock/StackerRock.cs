@@ -54,9 +54,57 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.UseSound = SoundID.Item1;
         }
         public override void AddRecipes() => CreateRecipe(30).AddIngredient<CavernStoneItem>(3).AddTile(TileID.WorkBenches).Register();
+
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
+        {
+            StackerRockTower target = null;
+            float closest = 80 * 80;
+            foreach (Projectile projectile in Main.ActiveProjectiles)
+            {
+                if (projectile.owner != player.whoAmI || projectile.ModProjectile is not StackerRockTower tower || projectile.ai[2] != 0) continue;
+                Vector2 nearest = Vector2.Clamp(Main.MouseWorld, new Vector2(projectile.Center.X - 13, tower.Top), new Vector2(projectile.Center.X + 13, projectile.Center.Y));
+                float distance = Vector2.DistanceSquared(Main.MouseWorld, nearest);
+                if (distance > closest || Vector2.DistanceSquared(position, projectile.Center) > 900 * 900) continue;
+                closest = distance;
+                target = tower;
+            }
+            bool assisted = target != null && StackerRockShot.TryStackArc(position, new Vector2(target.Projectile.Center.X, target.Top - 4), out velocity);
+            if (!assisted) return true;
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, 1);
+            return false;
+        }
     }
     public class StackerRockShot : ModProjectile
     {
+        internal const float Gravity = .25f;
+
+        internal static Vector2 ArcVelocity(Vector2 start, Vector2 target, float clearance, out int ticks)
+        {
+            float apex = Math.Min(start.Y, target.Y) - clearance;
+            ticks = (int)MathF.Ceiling(MathF.Sqrt(2 * (start.Y - apex) / Gravity) + MathF.Sqrt(2 * (target.Y - apex) / Gravity));
+            return new Vector2((target.X - start.X) / ticks, (target.Y - start.Y) / ticks - Gravity * (ticks + 1) * .5f);
+        }
+
+        internal static bool TryStackArc(Vector2 start, Vector2 target, out Vector2 velocity)
+        {
+            for (int arc = 0; arc < 4; arc++)
+            {
+                velocity = ArcVelocity(start, target, 64 + arc * 48, out int ticks);
+                Vector2 point = start;
+                Vector2 step = velocity;
+                bool clear = true;
+                for (int tick = 0; tick < ticks; tick++)
+                {
+                    step.Y += Gravity;
+                    Vector2 allowed = Collision.TileCollision(point - new Vector2(7, 4), step, 14, 8);
+                    if (Vector2.DistanceSquared(allowed, step) > .01f) { clear = false; break; }
+                    point += step;
+                }
+                if (clear && ticks < 165) return true;
+            }
+            velocity = Vector2.Zero;
+            return false;
+        }
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock1";
         public override bool? CanDamage() => Projectile.timeLeft <= 15 ? false : null;
         public override void SetDefaults()
@@ -70,7 +118,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         }
         public override void AI()
         {
-            Projectile.velocity.Y = Math.Min(14, Projectile.velocity.Y + .25f);
+            Projectile.velocity.Y = Projectile.ai[0] > 0 ? Projectile.velocity.Y + Gravity : Math.Min(14, Projectile.velocity.Y + Gravity);
             Projectile.rotation = Projectile.velocity.X * .025f;
             if (Projectile.owner != Main.myPlayer) return;
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -122,7 +170,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class StackerRockTower : ModProjectile
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock1";
-        public int Count => Math.Clamp((int)Projectile.ai[0], 1, 12);
+        internal const int MaximumRocks = 7;
+        public int Count => Math.Clamp((int)Projectile.ai[0], 1, MaximumRocks);
         private const float RockHeight = 14f;
         public float Height => Count * RockHeight;
         public float Top => Projectile.Center.Y - Height;
@@ -149,12 +198,13 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 Topple(Main.player[Projectile.owner].direction);
                 return;
             }
-            if (Count >= 12) { Topple(Main.player[Projectile.owner].direction); return; }
+            if (Count >= MaximumRocks) { Topple(Main.player[Projectile.owner].direction); return; }
             Projectile.ai[0] = Count + 1;
             Projectile.ai[1] = Math.Min(900, Projectile.ai[1] + 120);
             Projectile.netUpdate = true;
             StackerRockVFX.Burst(new Vector2(Projectile.Center.X, Top), Count == 5 ? 18 : 6, 2.5f);
             SoundEngine.PlaySound(SoundID.Tink with { Volume = .4f, Pitch = Count * .04f }, Projectile.Center);
+            if (Count == MaximumRocks) Topple(Main.player[Projectile.owner].direction);
         }
         public void Topple(int direction)
         {

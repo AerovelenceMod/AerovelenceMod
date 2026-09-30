@@ -56,22 +56,24 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             if (!Main.dedServ)
                 for (int i = 0; i < 7; i++)
                     SpikesInABottleVFX.Smoke(player.Bottom + new Vector2(i * 5f - 15f, 0f), new Vector2((i - 3) * 0.55f, 1.2f), 64f, Color.LightBlue);
-            player.GetModPlayer<SpikesInABottlePlayer>().Scatter(5, false);
+            player.GetModPlayer<SpikesInABottlePlayer>().Scatter(3, false);
         }
     }
 
     public class BottleCaltrop : ModProjectile
     {
+        internal const int BaseDamage = 6;
+        internal const int MaximumActive = 12;
         public override string Texture => "AerovelenceMod/Content/Items/Accessories/SmallAccessories/SpikesInABottleCaltrops";
         public override void SetDefaults()
         {
             Projectile.width = Projectile.height = 14;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Generic;
-            Projectile.timeLeft = 240;
-            Projectile.penetrate = 2;
-            Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = 30;
+            Projectile.timeLeft = 180;
+            Projectile.penetrate = 1;
+            Projectile.usesIDStaticNPCImmunity = true;
+            Projectile.idStaticNPCHitCooldown = 30;
         }
 
         public override void AI()
@@ -162,7 +164,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 SpikesInABottleVFX.Spark(Player.Center + offset, -offset * 0.08f, 0.16f);
             }
             if (--delay == 0)
-                Scatter(9, true);
+                Scatter(6, true);
         }
 
         public void Scatter(int count, bool retaliation)
@@ -170,13 +172,13 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             if (Player.whoAmI != Main.myPlayer)
                 return;
             int active = Player.ownedProjectileCounts[ModContent.ProjectileType<BottleCaltrop>()];
-            count = Math.Min(count, Math.Max(0, 24 - active));
+            count = Math.Min(count, Math.Max(0, BottleCaltrop.MaximumActive - active));
             Vector2 origin = retaliation ? Player.Center : Player.Bottom - Vector2.UnitY * 4f;
             for (int i = 0; i < count; i++)
             {
                 float x = MathHelper.Lerp(-4.5f, 4.5f, count <= 1 ? 0.5f : i / (float)(count - 1));
                 Vector2 velocity = new(x + Player.velocity.X * 0.2f, retaliation ? -4.5f - Main.rand.NextFloat(2f) : 1f + Main.rand.NextFloat(2f));
-                Projectile.NewProjectile(Player.GetSource_FromThis(), origin, velocity, ModContent.ProjectileType<BottleCaltrop>(), 12, 2f, Player.whoAmI);
+                Projectile.NewProjectile(Player.GetSource_FromThis(), origin, velocity, ModContent.ProjectileType<BottleCaltrop>(), BottleCaltrop.BaseDamage, 2f, Player.whoAmI);
             }
             if (retaliation && count > 0)
             {

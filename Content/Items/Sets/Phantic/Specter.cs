@@ -1,4 +1,4 @@
-using Terraria.Audio;
+/*using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -463,4 +463,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             }
         }
     }
-}
+}*/

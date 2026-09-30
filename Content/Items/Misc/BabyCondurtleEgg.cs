@@ -5,6 +5,7 @@ using AerovelenceMod.Content.NPCs.CrystalCaverns;
 using AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet;
 using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -32,7 +33,7 @@ namespace AerovelenceMod.Content.Items.Misc
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useTime = Item.useAnimation = 45;
             Item.consumable = true;
-            Item.UseSound = SoundID.Item4;
+            Item.UseSound = SoundID.Dig with { Volume = .4f, Pitch = .45f };
         }
         public override bool CanUseItem(Player player) => !BabyCondurtleWorld.Unlocked;
         public override bool ConsumeItem(Player player) => Main.netMode == NetmodeID.SinglePlayer;
@@ -68,14 +69,15 @@ namespace AerovelenceMod.Content.Items.Misc
         {
             if (Main.netMode == NetmodeID.MultiplayerClient || BabyCondurtleWorld.Unlocked)
                 return false;
-            BabyCondurtleWorld.Unlocked = true;
             int type = ModContent.NPCType<BabyCondurtle>();
             if (!NPC.AnyNPCs(type))
             {
                 int index = NPC.NewNPC(player.GetSource_ItemUse(player.HeldItem), (int)player.Center.X, (int)player.Bottom.Y, type);
+                if (index >= Main.maxNPCs) return false;
                 if (index < Main.maxNPCs)
                 {
                     NPC pet = Main.npc[index];
+                    ((BabyCondurtle)pet.ModNPC).StartHatching();
                     pet.homeless = true;
                     pet.GivenName = pet.getNewNPCName();
                     pet.netUpdate = true;
@@ -83,9 +85,25 @@ namespace AerovelenceMod.Content.Items.Misc
                         NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, index);
                 }
             }
+            BabyCondurtleWorld.Unlocked = true;
             if (Main.netMode == NetmodeID.Server)
                 NetMessage.SendData(MessageID.WorldData);
             return true;
+        }
+
+        internal static void HatchEffects(NPC pet)
+        {
+            if (Main.dedServ) return;
+            SoundEngine.PlaySound(SoundID.Grass with { Volume = .65f, Pitch = .25f }, pet.Center);
+            SoundEngine.PlaySound(SoundID.Dig with { Volume = .55f, Pitch = .6f }, pet.Center);
+            for (int i = 0; i < 16; i++)
+            {
+                Vector2 velocity = new(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-3.5f, -.8f));
+                Dust dust = Dust.NewDustPerfect(pet.Bottom + new Vector2(Main.rand.NextFloat(-10, 10), -6), DustID.Bone, velocity, 30, new Color(210, 225, 235), Main.rand.NextFloat(.65f, 1.1f));
+                dust.noLight = true;
+            }
+            for (int i = 0; i < 6; i++)
+                Dust.NewDustPerfect(pet.Bottom - Vector2.UnitY * 4, DustID.Smoke, new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), -.5f), 150, Color.LightGray, .65f);
         }
     }
 

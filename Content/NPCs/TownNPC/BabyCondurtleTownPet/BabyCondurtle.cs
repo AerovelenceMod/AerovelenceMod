@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Content.Dusts;
+using AerovelenceMod.Content.Items.Crafting;
+using AerovelenceMod.Content.Items.Misc;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -18,6 +21,12 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
     [AutoloadHead]
     public class BabyCondurtle : TranslatableModNPC
     {
+        internal const byte FeedRequestPacket = 233;
+        internal const byte FeedResultPacket = 234;
+        private int feedCooldown;
+        private int hatchTime;
+        private bool hatchEffectsPlayed;
+        internal void StartHatching() { hatchTime = 30; NPC.netUpdate = true; }
         private static ITownNPCProfile profile;
         private bool frightened;
         private int fearTime;
@@ -27,6 +36,10 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
 
         public override void Load()
         {
+            LocalizationManager.RegisterTranslation("AerovelenceMod.BabyCondurtle.Feed", "Feed", "default");
+            LocalizationManager.RegisterTranslation("AerovelenceMod.BabyCondurtle.Feed", "Alimentar", "es-ES");
+            LocalizationManager.RegisterTranslation("AerovelenceMod.BabyCondurtle.Fed", "*Munch munch munch* ...prrr! This baby condurtle dropped you {0} silver coins!", "default");
+            LocalizationManager.RegisterTranslation("AerovelenceMod.BabyCondurtle.Fed", "*Ñam ñam ñam*... ¡prrr! ¡Este bebé condurtle te dio {0} monedas de plata!", "default");
             if (!Main.dedServ) On_Main.DrawNPCHeadFriendly += DrawMapHead;
         }
         public override void Unload()
@@ -92,19 +105,104 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
 
         public override bool CanTownNPCSpawn(int numTownNPCs) => BabyCondurtleWorld.Unlocked;
         public override ITownNPCProfile TownNPCProfile() => profile;
-        public override List<string> SetNPCNameList() => new() { "Pebble", "Pip", "Bubbles", "Nibbles", "Mica", "Pudding" };
+        public override List<string> SetNPCNameList() => new() { "Pebble", "Pip", "Bubbles", "Nibbles", "Mica", "Pudding", "Lil' Turty", "Semi", "Shellshock", "King Turt", "Shelly", "Shellsea", "Sparky", "Scamper", "Tessie", "Ohm", "Snap", "Gurt", "Watt", "Connie Turty" };
         public override string GetChat()
         {
+            Main.npcChatCornerItem = FindCorn(Main.LocalPlayer) >= 0 ? ModContent.ItemType<CrystalCornItem>() : 0;
             SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.15f, Pitch = -0.45f }, NPC.Center);
             return Main.rand.Next(5) switch { 0 => "Prrr...", 1 => "Mrrp!", 2 => "Chirp, chirp!", 3 => "Brrup?", _ => "Hmmm... prrr!" };
         }
         public override void SetChatButtons(ref string button, ref string button2)
-            => button = Terraria.Localization.Language.GetTextValue("UI.PetTheAnimal");
+        {
+            button = Terraria.Localization.Language.GetTextValue("UI.PetTheAnimal");
+            bool hasCorn = FindCorn(Main.LocalPlayer) >= 0;
+            button2 = hasCorn ? LocalizationManager.GetTranslation("AerovelenceMod.BabyCondurtle.Feed") : "";
+            Main.npcChatCornerItem = hasCorn ? ModContent.ItemType<CrystalCornItem>() : 0;
+        }
+
+        public override void OnChatButtonClicked(bool firstButton, ref string shop)
+        {
+            if (firstButton) return;
+            int slot = FindCorn(Main.LocalPlayer);
+            if (slot < 0) return;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket packet = Mod.GetPacket();
+                packet.Write(FeedRequestPacket);
+                packet.Write((short)NPC.whoAmI);
+                packet.Write((byte)slot);
+                packet.Send();
+            }
+            else Feed(Main.myPlayer, NPC.whoAmI, slot);
+        }
+
+        private static int FindCorn(Player player)
+        {
+            int type = ModContent.ItemType<CrystalCornItem>();
+            for (int slot = 0; slot < 50; slot++)
+                if (player.inventory[slot].type == type && player.inventory[slot].stack > 0) return slot;
+            return -1;
+        }
+
+        internal static void Feed(int sender, int npcIndex, int slot)
+        {
+            if (Main.netMode == NetmodeID.MultiplayerClient || sender < 0 || sender >= Main.maxPlayers || npcIndex < 0 || npcIndex >= Main.maxNPCs || slot < 0 || slot >= 50) return;
+            Player player = Main.player[sender];
+            NPC pet = Main.npc[npcIndex];
+            if (!player.active || player.dead || !pet.active || pet.ModNPC is not BabyCondurtle baby || baby.feedCooldown > 0 || Vector2.DistanceSquared(player.Center, pet.Center) > 240 * 240) return;
+            Item corn = player.inventory[slot];
+            if (corn.type != ModContent.ItemType<CrystalCornItem>() || corn.stack <= 0) return;
+            int silver = Main.rand.Next(50, 91);
+            int itemIndex = Item.NewItem(pet.GetSource_GiftOrReward(), pet.Hitbox, ItemID.SilverCoin, silver, noBroadcast: true);
+            if (itemIndex < 0 || itemIndex >= Main.maxItems) return;
+            baby.feedCooldown = 30;
+            if (--corn.stack == 0) corn.TurnToAir();
+            Main.item[itemIndex].playerIndexTheItemIsReservedFor = sender;
+            Main.item[itemIndex].noGrabDelay = 0;
+            if (Main.netMode == NetmodeID.Server)
+            {
+                NetMessage.SendData(MessageID.SyncItem, -1, -1, null, itemIndex);
+                NetMessage.SendData(MessageID.ItemOwner, -1, -1, null, itemIndex);
+                NetMessage.SendData(MessageID.SyncEquipment, -1, -1, null, sender, slot);
+                ModPacket packet = baby.Mod.GetPacket();
+                packet.Write(FeedResultPacket);
+                packet.Write((short)npcIndex);
+                packet.Write((byte)sender);
+                packet.Write((byte)silver);
+                packet.Send();
+            }
+            else ShowFeed(npcIndex, sender, silver);
+        }
+
+        internal static void ShowFeed(int npcIndex, int playerIndex, int silver)
+        {
+            if (Main.dedServ || npcIndex < 0 || npcIndex >= Main.maxNPCs || Main.npc[npcIndex].ModNPC is not BabyCondurtle) return;
+            NPC pet = Main.npc[npcIndex];
+            if (!pet.active) return;
+            SoundEngine.PlaySound(SoundID.Item2 with { Volume = .6f, Pitch = .5f }, pet.Center);
+            for (int i = 0; i < 6; i++)
+                Dust.NewDustPerfect(pet.Top + Main.rand.NextVector2Circular(14, 6), ModContent.DustType<GenericSparkle>(), new Vector2(Main.rand.NextFloat(-.6f, .6f), -1.2f));
+            if (playerIndex == Main.myPlayer && Main.LocalPlayer.talkNPC == npcIndex)
+                Main.npcChatText = string.Format(LocalizationManager.GetTranslation("AerovelenceMod.BabyCondurtle.Fed"), silver);
+        }
 
         public override bool PreAI()
         {
+            if (hatchTime > 0)
+            {
+                if (!hatchEffectsPlayed)
+                {
+                    BabyCondurtleEgg.HatchEffects(NPC);
+                    hatchEffectsPlayed = true;
+                }
+                hatchTime--;
+                NPC.velocity.X *= .7f;
+                if (hatchTime == 0 && Main.netMode != NetmodeID.MultiplayerClient) NPC.netUpdate = true;
+                return false;
+            }
             if (Main.netMode != NetmodeID.MultiplayerClient)
             {
+                feedCooldown = Math.Max(0, feedCooldown - 1);
                 if (fearTime > 0)
                     fearTime--;
                 if (++dangerClock >= 30)
@@ -148,8 +246,8 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
                 NPC.netUpdate = true;
             }
         }
-        public override void SendExtraAI(BinaryWriter writer) { writer.Write(frightened); writer.Write((byte)shellProgress); }
-        public override void ReceiveExtraAI(BinaryReader reader) { frightened = reader.ReadBoolean(); shellProgress = Math.Clamp((int)reader.ReadByte(), 0, 18); }
+        public override void SendExtraAI(BinaryWriter writer) { writer.Write(frightened); writer.Write((byte)shellProgress); writer.Write((byte)hatchTime); }
+        public override void ReceiveExtraAI(BinaryReader reader) { frightened = reader.ReadBoolean(); shellProgress = Math.Clamp((int)reader.ReadByte(), 0, 18); hatchTime = Math.Clamp((int)reader.ReadByte(), 0, 30); }
 
         internal static int ShellFrame(int progress, bool emerging) => emerging ? 10 : 7 + Math.Clamp((progress - 1) / 6, 0, 2);
         private float ShellDrop => NPC.IsABestiaryIconDummy ? 0f : 2f * MathHelper.Clamp((shellProgress - 6f) / 6f, 0f, 1f);
@@ -179,11 +277,15 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
             Rectangle frame = new(0, Math.Clamp(NPC.frame.Y / 30, 0, 10) * 30, 42, 30);
             Vector2 position = NPC.Bottom - screenPos + new Vector2(0f, NPC.gfxOffY + 6f + ShellDrop);
             Vector2 origin = new(21f, 30f);
+            float emergence = 1 - hatchTime / 30f;
+            Vector2 hatchScale = new(1 + MathF.Sin(emergence * MathHelper.Pi) * .12f, MathHelper.SmoothStep(.25f, 1, emergence));
+            Vector2 scale = hatchScale * NPC.scale;
+            float opacity = MathHelper.Clamp(emergence * 4, 0, 1);
             SpriteEffects flip = NPC.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(texture, position, frame, drawColor, NPC.rotation, origin, NPC.scale, flip, 0f);
+            spriteBatch.Draw(texture, position, frame, drawColor * opacity, NPC.rotation, origin, scale, flip, 0f);
             float pulse = 0.6f + MathF.Sin(Main.GlobalTimeWrappedHourly * 2f + NPC.whoAmI) * 0.15f;
-            spriteBatch.Draw(glow, position, frame, Color.White * 0.8f, NPC.rotation, origin, NPC.scale, flip, 0f);
-            spriteBatch.Draw(glow, position, frame, new Color(90, 180, 255, 0) * pulse * 0.4f, NPC.rotation, origin, NPC.scale, flip, 0f);
+            spriteBatch.Draw(glow, position, frame, Color.White * .8f * opacity, NPC.rotation, origin, scale, flip, 0f);
+            spriteBatch.Draw(glow, position, frame, new Color(90, 180, 255, 0) * pulse * .4f * opacity, NPC.rotation, origin, scale, flip, 0f);
             return false;
         }
 

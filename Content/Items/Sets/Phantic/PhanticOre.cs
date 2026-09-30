@@ -1,4 +1,4 @@
-using Terraria.ID;
+/*using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria;
@@ -33,4 +33,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             HitSound = SoundID.Tink;
         }
     }
-}
+}*/

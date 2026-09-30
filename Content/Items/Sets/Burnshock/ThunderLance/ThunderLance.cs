@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/*using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -51,4 +51,4 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 				.Register();
 		}
     }
-}
+}*/

@@ -552,9 +552,9 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
     {
         public override void Load()
         {
-            Register("TurnIn", "Turn in rare ores", "Entregar minerales raros");
-            Register("NoOre", "Bring me a super ore specimen from your mining trips! Hold the one you want to trade, or I will take your highest-tier unfavorited specimen. Favorites stay in your collection.",
-                "¡Tráeme una muestra de supermineral de tus expediciones! Sostén la que quieras entregar, o elegiré la de mayor categoría que no sea favorita. Tus favoritas se quedan contigo.");
+            Register("TurnIn", "Turn in ore clusters", "Entregar cúmulos de mineral");
+            Register("NoOre", "Bring me an ore cluster from your mining trips! Hold the one you want to trade, or I will take your highest-tier unfavorited specimen. Favorites stay in your collection.",
+                "¡Tráeme un cúmulo de mineral de tus expediciones! Sostén la que quieras entregar, o elegiré la de mayor categoría que no sea favorita. Tus favoritas se quedan contigo.");
             Register("Thanks", "Now that is a rock worth collecting! Here are {0} silver coins and {1} cavern crystals for your specimen.",
                 "¡Esta roca merece estar en mi colección! Aquí tienes {0} monedas de plata y {1} cristales de caverna por tu muestra.");
         }

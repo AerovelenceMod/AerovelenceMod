@@ -172,9 +172,9 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         private void SpawnCaltrops(Projectile pad)
         {
-            int count = 6;
+            int count = 3;
             int active = Player.ownedProjectileCounts[ModContent.ProjectileType<BottleCaltrop>()];
-            count = Math.Min(count, Math.Max(0, 24 - active));
+            count = Math.Min(count, Math.Max(0, BottleCaltrop.MaximumActive - active));
             for (int i = 0; i < count; i++)
             {
                 float spawnX = Main.rand.NextFloat(-15f, 15f);
@@ -182,7 +182,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 float outward = spawnX / 15f;
                 float x = outward * Main.rand.NextFloat(1.5f, 2.3f) + Main.rand.NextFloat(-0.75f, 0.75f) + Player.velocity.X * 0.08f;
                 float y = Player.velocity.Y * Main.rand.NextFloat(0.62f, 0.76f) - Main.rand.NextFloat(0.15f, 0.7f);
-                Projectile.NewProjectile(Player.GetSource_FromThis(), origin, new Vector2(x, y), ModContent.ProjectileType<BottleCaltrop>(), 12, 2f, Player.whoAmI);
+                Projectile.NewProjectile(Player.GetSource_FromThis(), origin, new Vector2(x, y), ModContent.ProjectileType<BottleCaltrop>(), BottleCaltrop.BaseDamage, 2f, Player.whoAmI);
             }
         }
     }

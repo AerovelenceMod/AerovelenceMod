@@ -1,5 +1,4 @@
-
-using Terraria;
+/*using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -34,4 +33,4 @@ namespace AerovelenceMod.Content.Items.Sets.Slate.Armor
                 .Register();
         }
     }
-}
+}*/

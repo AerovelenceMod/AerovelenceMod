@@ -1,4 +1,4 @@
-using Terraria.ID;
+/*using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
 using AerovelenceMod.Common.Utilities;
@@ -34,4 +34,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
                 .Register();
         }
     }
-}
+}*/

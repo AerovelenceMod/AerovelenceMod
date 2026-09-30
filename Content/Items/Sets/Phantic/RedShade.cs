@@ -1,4 +1,4 @@
-using Microsoft.Xna.Framework;
+/*using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -448,4 +448,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             return new Color(lightColor.R, lightColor.G, lightColor.B, 150) * alpha;
         }
     }
-}
+}*/

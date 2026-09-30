@@ -202,7 +202,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             bestiaryEntry.Info.AddRange([
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Caverns,
-                new FlavorTextBestiaryInfoElement("A geode given momentum and purpose, carrying a storm in every crystal seam.")
+                new FlavorTextBestiaryInfoElement("An overgrown field tumbler, seemingly overcharged by the environment around it. It appears to channel some sort of extra, uncharted energy.")
             ]);
         }
 
