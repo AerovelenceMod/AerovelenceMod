@@ -249,7 +249,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             }
         }
     }
-    public sealed class ElectrakelpSystem : ModSystem
+    /*public sealed class ElectrakelpSystem : ModSystem
     {
         private bool registered;
         public override void PostUpdateEverything()
@@ -267,5 +267,5 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             registered = false;
             Electrakelp.ClearFronds();
         }
-    }
+    }*/
 }
