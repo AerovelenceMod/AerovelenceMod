@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Systems.Language;
+/*using AerovelenceMod.Common.Systems.Language;
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -122,4 +122,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             return true;
         }
     }
-}
+}*/

@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Systems.Language;
+/*using AerovelenceMod.Common.Systems.Language;
 using System;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Item.shoot = ModContent.ProjectileType<ReaperProj>();
             Item.shootSpeed = 2f;
         }
-        public override void AddRecipes()
+        /*public override void AddRecipes()
         {
             CreateRecipe(1)
                 .AddIngredient(ModContent.ItemType<PhanticBar>(), 6)
@@ -265,4 +265,4 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             proj.velocity.Y = ((proj.velocity.Y * 20f) + closestNpcDistY) / 21f;
         }
     }
-}
+}*/
