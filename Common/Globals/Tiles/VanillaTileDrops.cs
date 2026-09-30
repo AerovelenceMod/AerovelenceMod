@@ -1,5 +1,4 @@
 using AerovelenceMod.Content.Items.Quest;
-using AerovelenceMod.Content.Items.Sets.Phantic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -29,7 +28,7 @@ namespace AerovelenceMod.Common.Globals.Tiles
                 TileID.Orichalcum => ModContent.ItemType<OrichalcumCluster>(),
                 TileID.Adamantite => ModContent.ItemType<AdamantiteCluster>(),
                 TileID.Titanium => ModContent.ItemType<TitaniumCluster>(),
-                _ => type == ModContent.TileType<PhanticOreTile>() ? ModContent.ItemType<PhanticCluster>() : 0
+                _ => ModContent.TryFind<ModTile>("AerovelenceMod/PhanticOreTile", out var phantic) && type == phantic.Type ? ModContent.ItemType<PhanticCluster>() : 0
             };
             if (item == 0) return;
             if ((type == TileID.Adamantite || type == TileID.Titanium) && Main.rand.NextBool(351))

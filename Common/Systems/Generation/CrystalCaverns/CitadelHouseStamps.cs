@@ -4,6 +4,10 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
 
 public sealed record CitadelHouseStamp(string Id, int PreviewX, int PreviewY, string[] Rows)
 {
+    public IReadOnlySet<(int X, int Y)> PassageCells { get; init; }
+    public IReadOnlyDictionary<(int X, int Y), char> ContextWalls { get; init; }
+    public bool IsPassage(int x, int y) => PassageCells?.Contains((x, y)) == true;
+    public char ContextWall(int x, int y) => ContextWalls != null && ContextWalls.TryGetValue((x, y), out char wall) ? wall : '\0';
     public int Width => Rows[0].Length;
     public int Height => Rows.Length;
     public char Cell(int x, int y) => x < 0 || y < 0 || x >= Width || y >= Height ? '.' : Rows[y][x];
@@ -51,14 +55,14 @@ public static class CitadelHouseSites
         var random = new SilkenCitadelLayout.PythonRandom((long)layout.Seed + 73129);
         var available = new List<SilkenCitadelLayout.Nest>();
         foreach (var nest in layout.Nests)
-            if (nest.Y >= 112 && nest.Y <= 278) available.Add(nest);
+            if (nest.Y >= 165 && nest.Y <= 278) available.Add(nest);
         var selected = new List<(double X, double Y)>();
-        foreach (var stamp in Houses) selected.Add((stamp.PreviewX + stamp.Width / 2.0, stamp.PreviewY + stamp.Height / 2.0));
+        foreach (var stamp in Houses) selected.Add((stamp.PreviewX + stamp.Width / 2.0, 175 + (stamp.PreviewY + stamp.Height / 2.0 - 146) * 1.2));
         while (available.Count > 0)
         {
             int index = random.Int(0, available.Count - 1);
             var nest = available[index]; available.RemoveAt(index);
-            if (selected.Exists(p => System.Math.Pow(p.X - nest.X, 2) + System.Math.Pow(p.Y - nest.Y, 2) < 29 * 29)) continue;
+            if (selected.Exists(p => System.Math.Pow(p.X - nest.X, 2) + System.Math.Pow(p.Y - nest.Y, 2) < 25 * 25)) continue;
             selected.Add((nest.X, nest.Y));
             yield return (Houses[random.Int(0, Houses.Count - 1)], nest.X, nest.Y);
         }

@@ -13,7 +13,6 @@ using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.Biomes;
 using Terraria.ID;
 using Terraria.IO;
 using Terraria.ModLoader;
@@ -23,25 +22,12 @@ using Terraria.WorldBuilding;
 namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
 public sealed class SilkenCitadelWorld : ModSystem
 {
-    public override void Load() => On_DeadMansChestBiome.Place += PlaceDeadMansChest;
-    public override void Unload() => On_DeadMansChestBiome.Place -= PlaceDeadMansChest;
-
-    private static bool PlaceDeadMansChest(On_DeadMansChestBiome.orig_Place orig, DeadMansChestBiome self, Point origin, StructureMap structures)
-    {
-        if (WorldGen.gen)
-        {
-            Rectangle reserved = SilkenCitadelPass.PlannedBounds(CCTerrainPass.Instance());
-            if (!reserved.IsEmpty)
-            {
-                reserved.Inflate(80, 80);
-                if (reserved.Contains(origin)) return false;
-            }
-        }
-        return orig(self, origin, structures);
-    }
+    internal static readonly List<Action> GeneratedFurnishings = new();
+    internal static readonly Dictionary<Point, SlopeType> GeneratedStairs = new();
     public static Rectangle Bounds { get; internal set; }
+    internal static Rectangle NestBounds { get; set; }
     public static Point Altar { get; internal set; }
-    public override void ClearWorld() { Bounds = Rectangle.Empty; Altar = Point.Zero; }
+    public override void ClearWorld() { Bounds = Rectangle.Empty; NestBounds = Rectangle.Empty; Altar = Point.Zero; GeneratedStairs.Clear(); GeneratedFurnishings.Clear(); }
     public override void PreWorldGen() => ClearWorld();
     public override void SaveWorldData(TagCompound tag)
     {
@@ -66,6 +52,22 @@ public sealed class SilkenCitadelWorld : ModSystem
     {
         Bounds = new(reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32(), reader.ReadInt32());
         Altar = new(reader.ReadInt32(), reader.ReadInt32());
+    }
+    internal static void FinishSettlement()
+    {
+        foreach (Action furnish in GeneratedFurnishings) furnish();
+        GeneratedFurnishings.Clear();
+        int type = ModContent.TileType<GlimmerwoodPlatformTile>();
+        foreach (Point point in GeneratedStairs.Keys) WorldGen.SquareTileFrame(point.X, point.Y, true);
+        foreach (var (point, slope) in GeneratedStairs)
+        {
+            Tile tile = Main.tile[point.X, point.Y];
+            if (!tile.HasTile || tile.TileType != type) continue;
+            tile.IsHalfBlock = false;
+            tile.Slope = slope;
+        }
+        foreach (Point point in GeneratedStairs.Keys) WorldGen.SquareTileFrame(point.X, point.Y, true);
+        GeneratedStairs.Clear();
     }
     public static bool Contains(Player player) => !Bounds.IsEmpty && Bounds.Contains(player.Center.ToTileCoordinates());
 }
@@ -121,9 +123,9 @@ public sealed class SilkenCitadelPass : GenPass
                     {
                         ushort oldWall = tile.WallType;
                         tile.ClearEverything();
-                        tile.WallType = material ? caverns.StoneWall : oldWall;
+                        tile.WallType = material && (weight >= .999f || oldWall != 0) ? caverns.StoneWall : oldWall;
                     }
-                    else if (weight >= .999f)
+                    else if (weight >= .999f && y > height * .32f)
                     {
                         ushort type = tile.HasTile ? caverns.UndergroundMaterial(tile.TileType) : caverns.StoneTile;
                         tile.ClearEverything(); tile.ResetToType(type); tile.WallType = caverns.StoneWall;
@@ -133,7 +135,7 @@ public sealed class SilkenCitadelPass : GenPass
                         if (!tile.HasTile) { preservedCave++; continue; }
                         if (!material || !Main.tileSolid[tile.TileType] || Main.tileFrameImportant[tile.TileType] || TileID.Sets.Ore[tile.TileType]) continue;
                         tile.TileType = caverns.UndergroundMaterial(tile.TileType);
-                        tile.WallType = caverns.StoneWall;
+                        if (tile.WallType != 0) tile.WallType = caverns.StoneWall;
                     }
                     changed.Add(x, y);
                     stamped++;
@@ -144,6 +146,9 @@ public sealed class SilkenCitadelPass : GenPass
             int entranceLength = ConnectToCaverns(entry, bounds, caverns);
             FinishTerrain(changed, bounds, caverns);
             PlaceNaturalCrystals(changed, bounds, blocked, caverns);
+            GrowNestTransition(bounds, caverns, layout);
+            TrimBoundaryWalls(changed, bounds, caverns);
+            int reservoirs = LushReservoirGenerator.GenerateCitadel(caverns, bounds, changed, blocked);
             progress.Set(.7);
             int bridges = PlaceBridges(bounds, blocked, layout);
             List<SettlementHouse> settlement = new();
@@ -167,10 +172,113 @@ public sealed class SilkenCitadelPass : GenPass
                 for (int x = 0; x < width; x += 16)
                     if (changed.Contains(x, y))
                         GenVars.structures.AddProtectedStructure(new Rectangle(bounds.X + x, bounds.Y + y, Math.Min(16, width - x), Math.Min(16, height - y)), 2);
-            ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Moth's Nest cellular terrain generated: seed={seed}, origin={bounds.X},{bounds.Y}, size={width}x{height}, stamped={stamped}, protected={skipped}, native cave cells preserved={preservedCave}, entrance={entranceLength}, houses={houses}, ruins={ruins}, extensions={extensions}, bridges={bridges}, pools={pools}, rubble={rubble}, lobes={layout.Nests.Count}, islands={layout.Islands.Count}.");
+            ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Moth's Nest cellular terrain generated: seed={seed}, origin={bounds.X},{bounds.Y}, size={width}x{height}, stamped={stamped}, protected={skipped}, native cave cells preserved={preservedCave}, entrance={entranceLength}, houses={houses}, ruins={ruins}, extensions={extensions}, bridges={bridges}, reservoirs={reservoirs}, pools={pools}, rubble={rubble}, lobes={layout.Nests.Count}, islands={layout.Islands.Count}.");
             progress.Set(1);
         }
         finally { WorldGen.noTileActions = oldNoTileActions; }
+    }
+
+    private static void TrimBoundaryWalls(ShapeData changed, Rectangle bounds, CCTerrainPass caverns)
+    {
+        List<Point> trim = new();
+        for (int y = 1; y < bounds.Height - 1; y++)
+            for (int x = 1; x < bounds.Width - 1; x++)
+            {
+                Tile tile = Main.tile[bounds.X + x, bounds.Y + y];
+                if (!changed.Contains(x, y) || tile.WallType != caverns.StoneWall) continue;
+                bool exposed = false;
+                for (int dx = -2; dx <= 2 && !exposed; dx++)
+                    for (int dy = -2; dy <= 2; dy++)
+                    {
+                        Tile neighbor = Main.tile[bounds.X + x + dx, bounds.Y + y + dy];
+                        if (!changed.Contains(x + dx, y + dy) && !neighbor.HasTile && neighbor.WallType == 0)
+                        { exposed = true; break; }
+                    }
+                if (exposed) trim.Add(new Point(bounds.X + x, bounds.Y + y));
+            }
+        foreach (Point point in trim) Main.tile[point.X, point.Y].WallType = 0;
+    }
+
+    private static void GrowNestTransition(Rectangle bounds, CCTerrainPass caverns, SilkenCitadelLayout layout)
+    {
+        List<(Point Center, int RX, int RY)> nests = new();
+        int top = caverns.Origin.Y + (int)(caverns.UndergroundHeight * .53f);
+        Rectangle region = new(bounds.Left, top, bounds.Width, bounds.Top + bounds.Height / 2 - top);
+        bool[] blocked = ProtectedMask(region);
+        bool Safe(int x, int y) => region.Contains(x, y) && !blocked[x - region.X + (y - region.Y) * region.Width] &&
+            (y >= bounds.Top || caverns.TotalUnderground.Contains(x - caverns.Origin.X, y - caverns.Origin.Y));
+        Point previous = new(bounds.X + bounds.Width * 198 / 400, bounds.Y + bounds.Height * 24 / 300);
+        for (int row = 0, y = bounds.Top - 12; y > top + 12; row++, y -= 22)
+        {
+            int spread = Math.Min(bounds.Width / 4, 28 + row * 18);
+            for (int branch = -1; branch <= 1; branch += 2)
+            {
+                Point center = new(caverns.Origin.X + branch * WorldGen.genRand.Next(12, spread + 1), y + WorldGen.genRand.Next(-4, 5));
+                int rx = WorldGen.genRand.Next(9, 16), ry = WorldGen.genRand.Next(6, 10);
+                if (!Safe(center.X - rx - 3, center.Y - ry - 3) || !Safe(center.X + rx + 3, center.Y + ry + 3)) continue;
+                Carve(center.X, center.Y, rx, ry);
+                float distance = Vector2.Distance(previous.ToVector2(), center.ToVector2());
+                for (int step = 0; step <= (int)distance; step++)
+                {
+                    float t = step / Math.Max(1f, distance);
+                    Vector2 spot = Vector2.Lerp(previous.ToVector2(), center.ToVector2(), t);
+                    spot.X += MathF.Sin(t * MathHelper.Pi) * 5;
+                    Carve((int)spot.X, (int)spot.Y, 3, 3);
+                }
+                nests.Add((center, rx, ry));
+                previous = center;
+            }
+        }
+        foreach (var nest in layout.Nests)
+            if (nest.Y < 145)
+                nests.Add((new Point(bounds.X + (int)(nest.X * bounds.Width / 400), bounds.Y + (int)(nest.Y * bounds.Height / 300)),
+                    Math.Max(5, (int)(nest.RX * bounds.Width / 400)), Math.Max(4, (int)(nest.RY * bounds.Height / 300))));
+        ushort pillarWall = (ushort)ModContent.WallType<CitadelBrickWallUnsafe>();
+        foreach (var (center, rx, ry) in nests)
+        {
+            for (int x = center.X - rx - 2; x <= center.X + rx + 2; x++)
+                for (int y = center.Y - ry - 2; y <= center.Y + ry + 2; y++)
+                {
+                    if (!Safe(x, y)) continue;
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile || tile.LiquidAmount > 0) continue;
+                    double oval = Math.Pow((x - center.X) / (double)rx, 2) + Math.Pow((y - center.Y) / (double)ry, 2);
+                    if (oval < .58 || oval > 1.25 || Math.Abs(y - center.Y) < 2) continue;
+                    bool edge = false;
+                    for (int dx = -2; dx <= 2; dx++)
+                        for (int dy = -2; dy <= 2; dy++) edge |= WorldGen.SolidTile(x + dx, y + dy);
+                    if (edge && WorldGen.genRand.NextFloat() < .68f) tile.ResetToType(TileID.Cobweb);
+                }
+            if (WorldGen.genRand.NextBool(3)) continue;
+            foreach (int direction in new[] { -1, 1 })
+            {
+                int px = center.X + direction * Math.Max(3, rx * 2 / 3);
+                int roof = center.Y, floor = center.Y;
+                while (roof > center.Y - ry - 4 && !WorldGen.SolidTile(px, roof)) roof--;
+                while (floor < center.Y + ry + 4 && !WorldGen.SolidTile(px, floor)) floor++;
+                if (!WorldGen.SolidTile(px, roof) || !WorldGen.SolidTile(px, floor) || floor - roof < 6) continue;
+                for (int y = roof; y <= floor; y++)
+                {
+                    int half = y <= roof + 1 || y >= floor - 1 ? 2 : 0;
+                    for (int x = px - half; x <= px + half; x++)
+                        if (Safe(x, y) && Main.tile[x, y].WallType != 0) Main.tile[x, y].WallType = pillarWall;
+                }
+            }
+        }
+        SilkenCitadelWorld.NestBounds = region;
+
+        void Carve(int cx, int cy, int rx, int ry)
+        {
+            for (int y = cy - ry; y <= cy + ry; y++)
+                for (int x = cx - rx; x <= cx + rx; x++)
+                {
+                    if (!Safe(x, y) || Math.Pow((x - cx) / (double)rx, 2) + Math.Pow((y - cy) / (double)ry, 2) > 1) continue;
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile && Main.tileFrameImportant[tile.TileType]) continue;
+                    tile.ClearTile();
+                    tile.LiquidAmount = 0;
+                }
+        }
     }
 
     private static bool Important(Tile tile) => (tile.LiquidAmount > 0 && tile.LiquidType == LiquidID.Shimmer) ||
@@ -442,10 +550,11 @@ public sealed class SilkenCitadelPass : GenPass
                             if (Main.tile[wx + dx, floor - dy].HasTile || !"wRH".Contains(house.Stamp.Cell(x + dx, y - dy))) room = false;
                     }
                     if (!room) continue;
-                    WorldGen.PlaceTile(wx + 1, floor - 1, TileID.Campfire, mute: true);
-                    Tile fire = Main.tile[wx + 1, floor - 1];
-                    if (!fire.HasTile || fire.TileType != TileID.Campfire) continue;
-                    global::AerovelenceMod.Common.Utilities.CommonTileHelper.ToggleTile(wx + 1, floor - 1);
+                    SilkenCitadelWorld.GeneratedFurnishings.Add(() =>
+                    {
+                        if (HouseGenerator.PlaceCitadelObject(wx, floor - 2, ModContent.TileType<CrystalCampfireTile>()))
+                            ModContent.GetInstance<CrystalCampfireTile>().ToggleTile(wx + 1, floor - 1);
+                    });
                     fires++; placed = true;
                 }
         }
@@ -528,7 +637,7 @@ public sealed class SilkenCitadelPass : GenPass
         {
             for (int y = floor.Y - 3; y < floor.Y; y++)
             { Tile tile = Main.tile[floor.X, y]; tile.ClearEverything(); tile.WallType = wall; }
-            WorldGen.PlaceTile(floor.X, floor.Y - 2, ModContent.TileType<GlimmerwoodDoorTileClosed>(), mute: true, forced: true);
+            SilkenCitadelWorld.GeneratedFurnishings.Add(() => HouseGenerator.PlaceCitadelObject(floor.X, floor.Y - 3, ModContent.TileType<GlimmerwoodDoorTileClosed>()));
             for (int step = 1; step <= 3; step++)
             {
                 Tile tile = Main.tile[floor.X - outward * step, floor.Y];
@@ -547,20 +656,23 @@ public sealed class SilkenCitadelPass : GenPass
         {
             CitadelHouseSite baseStamp = ruins ? CitadelHouseSites.Ruins[attempted % CitadelHouseSites.Ruins.Count] : original;
             attempted++;
+            if (!ruins && unchecked((original.PreviewX * 17 + original.PreviewY * 31 + (int)xCenter * 7 + Main.ActiveWorldFileData.Seed) & int.MaxValue) % 5 == 0) continue;
+            if (!ruins && settlement.Count(h => h.Stamp.Id.StartsWith("H")) >= 16) break;
+            double settlementY = layout == null ? 175 + (yCenter - 146) * 1.2 : yCenter;
             int siteWorldX = bounds.X + (int)(xCenter * bounds.Width / 400);
-            int siteWorldY = bounds.Y + (int)(yCenter * bounds.Height / 300);
+            int siteWorldY = bounds.Y + (int)(settlementY * bounds.Height / 300);
             CitadelSiteProfile profile = CitadelSiteProfile.Analyze(new Point(siteWorldX, siteWorldY));
             CitadelHouseStamp stamp = CitadelStructureGenerator.Create(baseStamp, Main.ActiveWorldFileData.Seed, (int)Math.Round(xCenter), (int)Math.Round(yCenter), profile, ruins);
             int anchorX = siteWorldX - stamp.Width / 2;
             int anchorY = siteWorldY - stamp.Height / 2;
             Point best = Point.Zero;
             double bestScore = double.MinValue;
-            List<Point> bestFoundation = null;
+            List<Point> bestFoundation = null, bestEntrance = null;
             for (int dx = -18; dx <= 18; dx++)
                 for (int dy = -16; dy <= 24; dy++)
                 {
                     Rectangle area = new(anchorX + dx - 4, anchorY + dy - 4, stamp.Width + 8, stamp.Height + 8);
-                    if (!SafeArea(area, bounds, blocked) || settlement.Any(h =>
+                    if (area.Top < bounds.Top + bounds.Height / 2 || !SafeArea(area, bounds, blocked) || settlement.Any(h =>
                     {
                         Rectangle occupied = new(h.Origin.X, h.Origin.Y, h.Stamp.Width, h.Stamp.Height);
                         occupied.Inflate(5, 4);
@@ -577,8 +689,13 @@ public sealed class SilkenCitadelPass : GenPass
                     if (interior == 0 || air < interior * .38) continue;
                     Point origin = new(anchorX + dx, anchorY + dy);
                     if (!PlanFoundation(stamp, origin, bounds, blocked, out List<Point> foundation)) continue;
-                    double score = air * 5.0 / interior - .45 * (Math.Abs(dx) + Math.Abs(dy)) - foundation.Count * .025;
-                    if (score > bestScore) { bestScore = score; best = origin; bestFoundation = foundation; }
+                    if (!PlanEntrance(stamp, origin, bounds, blocked, out List<Point> entrance))
+                    {
+                        if (!ruins) continue;
+                        entrance = new List<Point>();
+                    }
+                    double score = air * 5.0 / interior - .45 * (Math.Abs(dx) + Math.Abs(dy)) - foundation.Count * .025 - entrance.Count * .005;
+                    if (score > bestScore) { bestScore = score; best = origin; bestFoundation = foundation; bestEntrance = entrance; }
                 }
             if (best != Point.Zero && HouseGenerator.GenerateCitadelHouse(stamp, best))
             {
@@ -590,6 +707,19 @@ public sealed class SilkenCitadelPass : GenPass
                     tile.WallType = (ushort)ModContent.WallType<CavernStoneWallUnsafe>();
                     bottom = Math.Max(bottom, point.Y + 1);
                 }
+                foreach (Point point in bestEntrance)
+                {
+                    Tile entranceTile = Main.tile[point.X, point.Y];
+                    if (entranceTile.HasTile && Main.tileFrameImportant[entranceTile.TileType]) continue;
+                    entranceTile.ClearTile();
+                    entranceTile.LiquidAmount = 0;
+                }
+                if (bestEntrance.Count > 0)
+                {
+                    int left = bestEntrance.Min(p => p.X), top = bestEntrance.Min(p => p.Y);
+                    new AeroStructure(new Vector2(left, top), bestEntrance.Max(p => p.X) - left + 1,
+                        bestEntrance.Max(p => p.Y) - top + 1, "citadelentrance").ProtectStructure();
+                }
                 foreach (Point point in bestFoundation) WorldGen.SquareTileFrame(point.X, point.Y, true);
                 new AeroStructure(new Vector2(best.X, best.Y), stamp.Width, bottom - best.Y, "citadelrockfooting").ProtectStructure();
                 ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Citadel structure {stamp.Id}: grounded at {best.X},{best.Y}, size={stamp.Width}x{stamp.Height}, foundation tiles={bestFoundation.Count}.");
@@ -600,6 +730,39 @@ public sealed class SilkenCitadelPass : GenPass
         }
         return placed;
     }
+    private static bool PlanEntrance(CitadelHouseStamp stamp, Point origin, Rectangle bounds, bool[] blocked, out List<Point> entrance)
+    {
+        entrance = null;
+        for (int y = 0; y < stamp.Height - 3; y++)
+            for (int x = 0; x < stamp.Width; x++)
+            {
+                if (!stamp.CompleteDoor(x, y)) continue;
+                foreach (int direction in new[] { -1, 1 })
+                {
+                    List<Point> path = new();
+                    for (int step = 1; step <= 10; step++)
+                    {
+                        int sx = x + direction * step, wx = origin.X + sx, wy = origin.Y + y;
+                        if (!SafeArea(new Rectangle(wx, wy, 1, 3), bounds, blocked)) break;
+                        bool outside = true, open = true, obstructed = false;
+                        for (int dy = 0; dy < 3; dy++)
+                        {
+                            char cell = stamp.Cell(sx, y + dy);
+                            if ("BsoD".Contains(cell)) obstructed = true;
+                            outside &= cell == '.';
+                            open &= !WorldGen.SolidTile(wx, wy + dy);
+                            path.Add(new Point(wx, wy + dy));
+                        }
+                        if (obstructed) break;
+                        if (!outside || !open) continue;
+                        if (entrance == null || path.Count < entrance.Count) entrance = path;
+                        break;
+                    }
+                }
+            }
+        return entrance != null;
+    }
+
     private static bool PlanFoundation(CitadelHouseStamp stamp, Point origin, Rectangle bounds, bool[] blocked, out List<Point> fill)
     {
         fill = new List<Point>();
@@ -651,13 +814,13 @@ public sealed class SilkenCitadelPass : GenPass
         foreach (var nest in candidates)
         {
             if (count >= 2) break;
-            int spanWidth = random.Int(42, 66);
+            int spanWidth = random.Int(20, 30);
             int center = (int)Math.Round(nest.X + random.Range(-8, 8));
             int sourceLeft = Math.Clamp(center - spanWidth / 2, 92, 304 - spanWidth);
             int sourceRight = sourceLeft + spanWidth;
             int sourceY = Math.Clamp((int)Math.Round(nest.Y + random.Range(-7, 7)), 150, 252);
             int left = bounds.X + sourceLeft * bounds.Width / 400, right = bounds.X + sourceRight * bounds.Width / 400;
-            int width = right - left + 1, height = Math.Clamp(bounds.Height / 30, 10, 16);
+            int width = right - left + 1, height = Math.Clamp(bounds.Height / 50, 7, 10);
             int targetY = bounds.Y + sourceY * bounds.Height / 300;
             bool[] shape = CitadelBridgeShape.Create(width, height);
             List<Point> best = null, bestCarve = null;
@@ -667,13 +830,14 @@ public sealed class SilkenCitadelPass : GenPass
                 int top = targetY + offset, open = 0, anchors = 0, bottom = top + height;
                 if (!SafeArea(new Rectangle(left - 3, top - 11, width + 6, height + 28), bounds, blocked)) continue;
                 List<Point> plan = new(), carve = new();
-                int previousClearance = 6;
+                int previousClearance = 4;
                 for (int x = 0; x < width; x++)
                 {
                     if (!WorldGen.SolidTile(left + x, top - 2)) open++;
                     double broad = layout.SurfaceNoise((sourceLeft + x * 400.0 / bounds.Width) / 13.0, sourceY / 11.0);
                     double detail = layout.SurfaceNoise((sourceLeft + x * 400.0 / bounds.Width) / 5.5 + 37, sourceY / 7.0 + 19);
-                    int clearance = Math.Clamp(6 + (int)Math.Round(broad * 2.2 + detail * 1.1), 4, 9);
+                    int edgeDistance = Math.Min(x, width - 1 - x);
+                    int clearance = Math.Clamp(4 + (int)Math.Round(broad * 1.8 + detail) + Math.Min(2, edgeDistance / 5), 3, 7);
                     clearance = Math.Clamp(clearance, previousClearance - 1, previousClearance + 1);
                     if (x % 3 != 0 && Math.Abs(clearance - previousClearance) == 1) clearance = previousClearance;
                     previousClearance = clearance;
@@ -709,15 +873,31 @@ public sealed class SilkenCitadelPass : GenPass
             if (best == null) continue;
             foreach (Point point in bestCarve)
             {
-                Tile tile = Main.tile[point.X, point.Y]; tile.ClearEverything();
-                tile.WallType = (ushort)ModContent.WallType<CavernStoneWallUnsafe>();
+                Tile tile = Main.tile[point.X, point.Y]; tile.ClearTile(); tile.LiquidAmount = 0;
             }
             foreach (Point point in best)
             {
-                Tile tile = Main.tile[point.X, point.Y]; tile.ClearEverything();
+                Tile tile = Main.tile[point.X, point.Y];
+                ushort existingWall = tile.WallType;
+                tile.ClearEverything();
                 tile.ResetToType((ushort)ModContent.TileType<CitadelBrickTile>());
-                tile.WallType = (ushort)ModContent.WallType<CitadelBrickWallUnsafe>();
+                tile.WallType = existingWall;
+                if (point.Y > bestY + 1 && point.X > left + 1 && point.X < right - 1)
+                    tile.WallType = (ushort)ModContent.WallType<CitadelBrickWallUnsafe>();
             }
+            foreach (int direction in new[] { -1, 1 })
+                for (int step = 1; step <= 4; step++)
+                {
+                    int x = direction < 0 ? left - step : right + step;
+                    int depth = 5 - step;
+                    for (int y = bestY + 1; y <= bestY + depth; y++)
+                    {
+                        if (!SafeArea(new Rectangle(x, y, 1, 1), bounds, blocked)) continue;
+                        Tile tile = Main.tile[x, y];
+                        if (!tile.HasTile || tile.TileType != ModContent.TileType<CavernStoneTile>()) continue;
+                        tile.TileType = (ushort)ModContent.TileType<CitadelBrickTile>();
+                    }
+                }
             foreach (Point point in best) WorldGen.SquareTileFrame(point.X, point.Y, true);
             foreach (Point point in bestCarve)
                 for (int dy = -1; dy <= 1; dy += 2)
@@ -726,7 +906,7 @@ public sealed class SilkenCitadelPass : GenPass
                     if (edge.HasTile && edge.TileType == ModContent.TileType<CavernStoneTile>() && SafeArea(new Rectangle(point.X, point.Y + dy, 1, 1), bounds, blocked))
                         Tile.SmoothSlope(point.X, point.Y + dy, false, false);
                 }
-            new AeroStructure(new Vector2(left, bestY - 11), width, bestBottom - bestY + 12, "archedcitadelbridge").ProtectStructure();
+            new AeroStructure(new Vector2(left - 4, bestY - 8), width + 8, bestBottom - bestY + 9, "archedcitadelbridge").ProtectStructure();
             count++;
         }
         return count;

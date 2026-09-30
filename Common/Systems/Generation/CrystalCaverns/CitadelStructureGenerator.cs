@@ -86,9 +86,13 @@ public static class CitadelStructureGenerator
         AddAgeAndDamage(builder, random, ruined, archetype, band);
         AddSilkInfestation(builder, random, ruined, archetype, band);
         AddFoundations(builder, random, centerX, centerY, archetype, profile, band);
-        AddSmallDetails(builder, random, archetype, facing);
-        builder.ReplaceExposedBrickWithStone(random, ruined ? 0.32 : 0.12 + band * 0.03);
+        builder.WeatherMasonry(random, ruined ? .22 : .055 + band * .02);
         builder.AddRubbleBelowDamage(random, ruined ? 40 : 16);
+        builder.FinishPassages();
+        builder.FinishPlatformSupports();
+        builder.FurnishShelves(random);
+        builder.NormalizeInteriorBackground();
+        builder.FinishPassages();
 
         string id = source.Id + "_" + archetype;
         return builder.ToStamp(id, source.PreviewX, source.PreviewY, 2);
@@ -263,7 +267,7 @@ public static class CitadelStructureGenerator
         int width = random.Next(24, 34);
         int height = random.Next(11, 16);
         var hall = new CitadelStructureBuilder.Box(cx - width / 2, cy - height / 2, width, height);
-        b.LoomHall(hall);
+        b.LoomHall(hall, random);
         AddEntranceDoor(b, hall, facing);
         b.AddOuterButtresses(hall, random.Next(3, 6));
 
@@ -299,8 +303,7 @@ public static class CitadelStructureGenerator
         AddEntranceDoor(b, chapel, facing);
         int shrineGalleryY = chapel.Bottom - 5;
         b.PlatformLine(chapel.Left + 3, chapel.Right - 3, shrineGalleryY);
-        b.StairRun(chapel.Left + 4, shrineGalleryY, 1, Math.Max(2, chapel.Bottom - shrineGalleryY));
-        b.StairRun(chapel.Right - 4, shrineGalleryY, -1, Math.Max(2, chapel.Bottom - shrineGalleryY));
+        b.RoomStairs(chapel, shrineGalleryY, chapel.Bottom, 1);
         b.AddOuterButtresses(chapel, random.Next(4, 7));
 
         int sideWidth = random.Next(7, 10);
@@ -386,11 +389,18 @@ public static class CitadelStructureGenerator
 
         if (profile.Hanging || random.NextDouble() < 0.5)
         {
-            for (int x = nursery.Left + 3; x < nursery.Right - 2; x += 5)
+            int groups = random.Next(1, Math.Max(2, nursery.Width / 7));
+            List<int> used = new();
+            for (int i = 0; i < groups; i++)
             {
-                int length = random.Next(3, 8);
-                for (int y = nursery.Top - length; y < nursery.Top; y++)
-                    b.Set(x, y, y == nursery.Top - length ? 'B' : 'L');
+                int x;
+                int attempts = 0;
+                do x = random.Next(nursery.Left + 3, nursery.Right - 2);
+                while (used.Exists(other => Math.Abs(other - x) < 4) && ++attempts < 12);
+                used.Add(x);
+                int anchorY = nursery.Top - random.Next(4, 9);
+                b.Set(x, anchorY, 'B');
+                b.HangingChainCluster(x, anchorY + 1, random, random.Next(1, 4), Math.Max(2, nursery.Top - anchorY - 3), Math.Max(3, nursery.Top - anchorY));
             }
         }
 
@@ -440,12 +450,16 @@ public static class CitadelStructureGenerator
         FurnishResidential(b, right);
         b.VerticalWindows(left, 2);
         b.VerticalWindows(right, 2);
+        b.BookShelves(left.Left + 2, left.Top + 2, left.Bottom - 1, 2);
+        b.BookShelves(right.Right - 3, right.Top + 2, right.Bottom - 1, 2);
 
         int bridgeY = Math.Min(left.Bottom - 2, right.Bottom - 2);
         if (random.NextDouble() < 0.55)
             b.Bridge(left.Right, right.Left, bridgeY, random.NextDouble() < 0.45);
         else
             b.StoneBridge(left.Right, right.Left, bridgeY, random.Next(2, 5));
+        b.Clear(left.Right + 1, bridgeY - 4, right.Left - left.Right - 1, 4, 'e');
+        b.ReservePassage(left.Right, bridgeY - 3, right.Left - left.Right + 1, 3);
         b.PlatformLine(left.Right - 3, left.Right, bridgeY);
         b.PlatformLine(right.Left, right.Left + 3, bridgeY);
         b.Door(left.Right, bridgeY);
@@ -461,6 +475,10 @@ public static class CitadelStructureGenerator
         int height = random.Next(15, 21);
         var outer = new CitadelStructureBuilder.Box(cx - width / 2, cy - height / 2, width, height);
         b.Courtyard(outer, 2, facing);
+        b.RoofHorns(outer);
+        int galleryY = outer.Top + Math.Max(6, outer.Height / 2);
+        b.PlatformLine(outer.Left + 2, outer.Right - 2, galleryY);
+        b.VerticalWindows(new CitadelStructureBuilder.Box(outer.Left, outer.Top, outer.Width, galleryY - outer.Top + 1), Math.Max(2, width / 9));
 
         int roomWidth = random.Next(8, 12);
         int roomHeight = random.Next(7, 10);
@@ -480,6 +498,11 @@ public static class CitadelStructureGenerator
             towerHeight);
         b.Tower(tower, false, false, 2, random.NextDouble() < 0.25);
         b.AddOuterButtresses(outer, random.Next(3, 5));
+        ConnectRooms(b, left, right, facing);
+        b.RoomStairs(outer, galleryY, outer.Bottom, facing);
+        b.BookShelves(facing > 0 ? outer.Right - 5 : outer.Left + 3, outer.Top + 2, galleryY, 2);
+        if (random.NextDouble() < .45)
+            b.LavaBasin(outer.CenterX + (facing > 0 ? 3 : -5), outer.Bottom + 2, random.Next(2, 4));
     }
 
     private static void BuildGrandSanctum(CitadelStructureBuilder b, Random random, int cx, int cy, int facing, CitadelSiteProfile profile)
@@ -491,8 +514,7 @@ public static class CitadelStructureGenerator
         AddEntranceDoor(b, hall, facing);
         int sanctumGalleryY = hall.Top + hall.Height / 2 + 1;
         b.PlatformLine(hall.Left + 4, hall.Right - 4, sanctumGalleryY);
-        b.StairRun(hall.Left + 5, sanctumGalleryY, 1, Math.Max(2, hall.Bottom - sanctumGalleryY));
-        b.StairRun(hall.Right - 5, sanctumGalleryY, -1, Math.Max(2, hall.Bottom - sanctumGalleryY));
+        b.RoomStairs(hall, sanctumGalleryY, hall.Bottom, 1);
         b.AddOuterButtresses(hall, random.Next(5, 8));
 
         int towerWidth = random.Next(8, 11);
@@ -586,24 +608,11 @@ public static class CitadelStructureGenerator
             b.SilkPatch(x, y, random.Next(2, 6), random.Next(2, 5), random);
         }
 
-        int hanging = random.Next(2, 5 + band);
-        for (int i = 0; i < hanging; i++)
-        {
-            int x = random.Next(8, b.Width - 8);
-            int top = FindTopSolid(b, x);
-            if (top < 0) continue;
-            int length = random.Next(2, 7);
-            for (int y = top + 1; y <= Math.Min(b.Height - 2, top + length); y++)
-            {
-                if (b.Get(x, y) != '.' && b.Get(x, y) != 'w') break;
-                b.Set(x, y, random.NextDouble() < 0.28 ? 'L' : 'v');
-            }
-        }
     }
 
     private static void AddAgeAndDamage(CitadelStructureBuilder b, Random random, bool ruined, CitadelStructureArchetype archetype, int band)
     {
-        int hits = ruined ? random.Next(4, 8) : random.NextDouble() < 0.55 ? random.Next(1, 3) : 0;
+        int hits = ruined ? random.Next(4, 8) : random.Next(1, 3 + band);
         if (archetype == CitadelStructureArchetype.RuinedBlock) hits += random.Next(2, 5);
 
         for (int i = 0; i < hits; i++)
@@ -620,35 +629,9 @@ public static class CitadelStructureGenerator
     private static void AddFoundations(CitadelStructureBuilder b, Random random, int cx, int cy, CitadelStructureArchetype archetype, CitadelSiteProfile profile, int band)
     {
         int roots = archetype is CitadelStructureArchetype.Gatehouse or CitadelStructureArchetype.CourtyardKeep or CitadelStructureArchetype.GrandSanctum ? random.Next(4, 7) : random.Next(2, 5);
-        int minDepth = 3 + band;
-        int maxDepth = 7 + band * 2;
+        int minDepth = 2 + band;
+        int maxDepth = 5 + band;
         b.RootExistingFoundation(random, roots, minDepth, maxDepth);
-    }
-
-    private static void AddSmallDetails(CitadelStructureBuilder b, Random random, CitadelStructureArchetype archetype, int facing)
-    {
-        int chains = random.Next(2, 6);
-        for (int i = 0; i < chains; i++)
-        {
-            int x = random.Next(7, b.Width - 7);
-            int top = FindTopSolid(b, x);
-            if (top < 0) continue;
-            int length = random.Next(2, 6);
-            for (int y = top + 1; y <= Math.Min(top + length, b.Height - 2); y++)
-            {
-                char current = b.Get(x, y);
-                if (current != '.' && current != 'w' && current != 'a' && current != 'b') break;
-                b.Set(x, y, 'L');
-            }
-        }
-
-        if (archetype is CitadelStructureArchetype.Watchtower or CitadelStructureArchetype.Gatehouse or CitadelStructureArchetype.GrandSanctum)
-        {
-            int x = facing > 0 ? b.Width - 13 : 12;
-            int y = b.Height / 2;
-            for (int i = 0; i < 4; i++)
-                b.Set(x + facing * i, y, 'P', false);
-        }
     }
 
     private static void AddEntranceDoor(CitadelStructureBuilder b, CitadelStructureBuilder.Box box, int facing)
@@ -663,7 +646,7 @@ public static class CitadelStructureGenerator
         {
             b.Workbench(box.Left + 3, box.Bottom);
             b.Chair(box.Left + 6, box.Bottom);
-            if (box.Width >= 13) b.Bookcase(box.Right - 5, box.Bottom);
+            if (box.Width >= 13) b.BookShelves(box.Right - 5, box.Top + 2, box.Bottom - 1, 2);
             b.Lantern(box.CenterX, box.Top + 2);
         }
     }
@@ -678,14 +661,8 @@ public static class CitadelStructureGenerator
         int floorY = overlapBottom + 1;
         int x1 = left.Right;
         int x2 = right.Left;
-        for (int y = floorY - 3; y < floorY; y++)
-        {
-            b.Set(x1, y, 'w');
-            b.Set(x2, y, 'w');
-        }
-        b.PlatformLine(x1, x2, floorY);
-        if (x2 - x1 >= 8 && (x1 + x2 + floorY) % 3 == 0)
-            b.Bridge(x1, x2, floorY, true);
+        b.ReservePassage(Math.Min(x1, x2) - 2, floorY - 3, Math.Abs(x2 - x1) + 5, 3);
+        b.PlatformLine(Math.Min(x1, x2) - 2, Math.Max(x1, x2) + 2, floorY);
     }
 
     private static void ConnectStacked(CitadelStructureBuilder b, CitadelStructureBuilder.Box upper, CitadelStructureBuilder.Box lower, int facing)
@@ -693,27 +670,8 @@ public static class CitadelStructureGenerator
         int overlapLeft = Math.Max(upper.Left + 2, lower.Left + 3);
         int overlapRight = Math.Min(upper.Right - 2, lower.Right - 3);
         if (overlapRight - overlapLeft < 4) return;
-        int direction = facing >= 0 ? 1 : -1;
-        int topX = direction > 0 ? overlapLeft + 1 : overlapRight - 1;
-        int topY = upper.Bottom;
-        int drop = Math.Clamp(lower.Top - upper.Bottom + Math.Min(5, lower.Height - 3), 3, 8);
-        b.Clear(topX - 1, topY, 3, Math.Max(1, lower.Top - topY + 1), 'w');
-        b.StairRun(topX, topY, direction, drop);
-    }
-
-    private static int FindTopSolid(CitadelStructureBuilder b, int x)
-    {
-        for (int y = 1; y < b.Height - 1; y++)
-        {
-            char cell = b.Get(x, y);
-            if (cell is 'B' or 's' or 'o' or 'I')
-            {
-                char below = b.Get(x, y + 1);
-                if (below is '.' or 'w' or 'a' or 'b' or 'u')
-                    return y;
-            }
-        }
-        return -1;
+        var stairwell = new CitadelStructureBuilder.Box(overlapLeft - 3, upper.Bottom, overlapRight - overlapLeft + 7, lower.Bottom - upper.Bottom + 1);
+        b.RoomStairs(stairwell, upper.Bottom, lower.Bottom, facing);
     }
 
     private static CitadelStructureArchetype Weighted(Random random, params (CitadelStructureArchetype Type, int Weight)[] entries)

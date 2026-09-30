@@ -44,22 +44,22 @@ public sealed class SilkenVeilWall : ModWall
 
 public sealed class CitadelWindowWall : ModWall
 {
-    public override string Texture => "Terraria/Images/Wall_" + WallID.PurpleStainedGlass;
+    public override string Texture => "Terraria/Images/Wall_" + WallID.BlueStainedGlass;
     public override void SetStaticDefaults()
     {
         Main.wallLight[Type] = true;
-        this.SimpleWall(ItemID.None, SoundID.Shatter, DustID.BlueCrystalShard, new Color(117, 57, 157));
+        this.SimpleWall(ItemID.None, SoundID.Shatter, DustID.BlueCrystalShard, new Color(57, 122, 173));
     }
-    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) { r = .20f; g = .07f; b = .28f; }
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) { r = .07f; g = .18f; b = .28f; }
 }
 
 public sealed class CitadelRoseWindowWall : ModWall
 {
-    public override string Texture => "Terraria/Images/Wall_" + WallID.PurpleStainedGlass;
+    public override string Texture => "Terraria/Images/Wall_" + WallID.BlueStainedGlass;
     public override void SetStaticDefaults()
     {
         Main.wallLight[Type] = true;
-        this.SimpleWall(ItemID.None, SoundID.Shatter, DustID.BlueCrystalShard, new Color(206, 132, 236));
+        this.SimpleWall(ItemID.None, SoundID.Shatter, DustID.BlueCrystalShard, new Color(117, 186, 222));
     }
-    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) { r = .25f; g = .11f; b = .28f; }
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) { r = .11f; g = .23f; b = .30f; }
 }

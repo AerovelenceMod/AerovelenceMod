@@ -27,6 +27,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         }
 
         private List<Point> _validPoints;
+        private readonly List<Rectangle> libraries = new();
+        private int libraryLimit;
 
         protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
         {
@@ -38,6 +40,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 progress.Message = "Generating Crystal Caverns Structures";
 
                 CCTerrainPass mainPass = CCTerrainPass.Instance();
+                libraries.Clear();
+                libraryLimit = Main.maxTilesX < 6000 ? 2 : Main.maxTilesX < 8000 ? 3 : 4;
 
                 #region CC Gen Cleanup
                 Point surfaceRectOrigin = new(
@@ -224,36 +228,20 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                 if (mainPass.WorldSizeScale > 1.2f) // Medium or large world, 1.2f instead of 1f so floating point math doesn't screw it up
                 {
-                    PlaceStructureSafely("librarydarkleft")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarydarkright")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarylightleft")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarylightright")
+                    PlaceStructureSafely(rand.NextBool() ? "librarydarkleft" : "librarydarkright")
                         .ProtectStructure()
                         .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
                 }
                 if (mainPass.WorldSizeScale > 1.7f) // Large world, otherwise same as last if statement
                 {
-                    PlaceStructureSafely("librarydarkleft")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarydarkright")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarylightleft")
-                        .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
-                    PlaceStructureSafely("librarylightright")
+                    PlaceStructureSafely(rand.NextBool() ? "librarylightleft" : "librarylightright")
                         .ProtectStructure()
                         .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
                 }
 
                 PlaceRandomCaveHouses();
+                int reservoirs = LushReservoirGenerator.GenerateCrystalCaverns(mainPass);
+                ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Crystal Caverns lush reservoirs generated: {reservoirs}.");
 
                 /*const int TOTAL_SHRINES = 101;
                 for (int i = 0; i < TOTAL_SHRINES; i++)
@@ -288,6 +276,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 int pickIndex = WorldGen.genRand.Next(_validPoints.Count);
                 Point chosen = _validPoints[pickIndex];
                 _validPoints.RemoveAt(pickIndex);
+                if (SilkenCitadelWorld.Bounds.Contains(chosen)) continue;
                 if (HouseGenerator.GenerateCaveHouse(chosen.X, chosen.Y, checkIfProtected: true,
                     primaryItems: primaryItems))
                     placed++;
@@ -372,6 +361,9 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 return AeroStructure.Empty;
             }
 
+            bool library = name.StartsWith("library", StringComparison.Ordinal);
+            if (library && libraries.Count >= libraryLimit) return AeroStructure.Empty;
+
             AeroStructure sizeCheck = StructureStamper.LoadStructure(Vector2.Zero, name, placeStructure: false, checkIfProtected: false);
             if (sizeCheck == AeroStructure.Empty)
                 return AeroStructure.Empty;
@@ -391,6 +383,13 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 triedPositions.Add(randomPoint);
                 Vector2 position = new( randomPoint.X - structureWidth / 2, randomPoint.Y - structureHeight / 2 );
 
+                if (library)
+                {
+                    Rectangle spacing = new((int)position.X, (int)position.Y, structureWidth, structureHeight);
+                    spacing.Inflate(60, 45);
+                    if (libraries.Exists(area => area.Intersects(spacing))) continue;
+                }
+
                 WorldGen.noTileActions = false;
 
 
@@ -403,8 +402,11 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                 if (structure != AeroStructure.Empty)
                 {
-                    if (name.StartsWith("library", StringComparison.Ordinal))
+                    if (library)
+                    {
+                        libraries.Add(structure.ToRectangle());
                         HouseGenerator.PlaceSupportBeams(structure.ToRectangle());
+                    }
                     //logger?.Info($"Successfully placed structure at ({position.X}, {position.Y}) on attempt {i + 1}");
                     return structure;
                 }

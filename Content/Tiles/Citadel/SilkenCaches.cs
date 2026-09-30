@@ -213,23 +213,27 @@ public sealed class SilkenCachePass : GenPass
     {
         Rectangle bounds = SilkenCitadelWorld.Bounds;
         if (bounds.IsEmpty) return;
-        SilkenCitadelWorld.FinishStairs();
+        SilkenCitadelWorld.FinishSettlement();
         progress.Message = "Weaving silken caches";
         int placed = 0, chests = 0, target = Math.Clamp(bounds.Width * bounds.Height / 6000, 16, 65);
         List<Point> anchors = new();
+        Rectangle nursery = SilkenCitadelWorld.NestBounds;
+        int nestCaches = 0;
         for (int attempt = 0; attempt < target * 250 && placed < target; attempt++)
         {
-            int x = WorldGen.genRand.Next(bounds.Left + 10, bounds.Right - 12), y = WorldGen.genRand.Next(bounds.Top + 12, bounds.Bottom - 15);
+            Rectangle search = nestCaches < 3 && !nursery.IsEmpty && attempt < target * 100 ? nursery : bounds;
+            int x = WorldGen.genRand.Next(search.Left + 10, search.Right - 12), y = WorldGen.genRand.Next(search.Top + 12, search.Bottom - 15);
             Rectangle space = new(x - 1, y - 1, 4, 7);
             if (AeroStructure.ProtectedStructures.Any(area => area.Intersects(space)) || anchors.Any(p => Math.Abs(x - p.X) < 12 && Math.Abs(y - p.Y) < 10)) continue;
             if (!WorldGen.SolidTile(x, y - 1) || !WorldGen.SolidTile(x + 1, y - 1)) continue;
             ushort ceiling = Main.tile[x, y - 1].TileType;
             CCTerrainPass terrain = CCTerrainPass.Instance();
             if (ceiling != terrain.StoneTile && ceiling != terrain.DirtTile && ceiling != terrain.ChargedTile && ceiling != terrain.LushTile) continue;
-            if (Enumerable.Range(0, 2).Any(dx => Enumerable.Range(0, 5).Any(dy => Main.tile[x + dx, y + dy].HasTile || Main.tile[x + dx, y + dy].LiquidAmount > 0))) continue;
+            if (Enumerable.Range(0, 2).Any(dx => Enumerable.Range(0, 5).Any(dy => (Main.tile[x + dx, y + dy].HasTile && Main.tile[x + dx, y + dy].TileType != TileID.Cobweb) || Main.tile[x + dx, y + dy].LiquidAmount > 0))) continue;
             int roll = WorldGen.genRand.Next(100), kind = roll < 52 ? 0 : roll < 68 ? 1 : roll < 82 ? 2 : roll < 92 ? 3 : 4;
             if (!Place(x, y, kind, true)) continue;
             placed++; if (kind == 0) chests++;
+            if (nursery.Contains(x, y)) nestCaches++;
             anchors.Add(new Point(x, y));
             new AeroStructure(new Vector2(x - 1, y - 1), 4, 7, "silkencache").ProtectStructure();
         }

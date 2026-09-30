@@ -24,13 +24,17 @@ namespace AerovelenceMod.Common.Systems.Generation
 
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
         {
-            totalWeight += InsertAfter(tasks, "Jungle Chests", CCTerrainPass.Instance("Crystal Caverns Terrain", 100f));
-            totalWeight += InsertAfter(tasks, "Tile Cleanup", new CCRubblePass("Crystal Caverns Rubble", 102f));
-            totalWeight += InsertAfter(tasks, "Final Cleanup",
+            totalWeight += InsertAfter(tasks, "Jungle Chests",
+                CCTerrainPass.Instance("Crystal Caverns Terrain", 100f),
                 new SilkenCitadelPass(),
-                new CCStructurePass("Crystal Caverns Polish", 101f),
-                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass(),
-                new LivingTreeIslandPass());
+                new CCStructurePass("Crystal Caverns Polish", 101f));
+            totalWeight += InsertAfter(tasks, "Tile Cleanup", new CCRubblePass("Crystal Caverns Rubble", 102f));
+            LivingTreeIslandPass islands = new();
+            totalWeight += InsertAfter(tasks, "Floating Islands", islands);
+            totalWeight += InsertAfter(tasks, "Floating Island Houses",
+                new Terraria.GameContent.Generation.PassLegacy("Living Tree Island Structures", islands.Finish, 10f));
+            totalWeight += InsertAfter(tasks, "Final Cleanup",
+                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass());
         }
 
         private static double InsertAfter(List<GenPass> tasks, string name, params GenPass[] passes)

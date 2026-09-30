@@ -50,6 +50,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         /// </summary>
         public int BiomeHeight { get; private set; }
 
+        internal ShapeData LightningCave { get; private set; } = new();
+
         public ushort GrassTile { get; private set; }
         public ushort DirtTile { get; private set; }
         public ushort StoneTile { get; private set; }
@@ -192,7 +194,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             TumblerTunnelEnd = Point.Zero;
             TumblerArenaPolarity = 1;
             ShapeData surfaceExposedShapeData = new ShapeData();
-            ShapeData lightningBoltShapeData = new ShapeData();
+            ShapeData lightningBoltShapeData = LightningCave = new ShapeData();
 
             GenShape surfaceShape = new Shapes.Rectangle(BiomeWidth, SurfaceHeight);
             GenShape upperUndergroundShape = new Shapes.Rectangle(BiomeWidth, UpperUndergroundHeight);

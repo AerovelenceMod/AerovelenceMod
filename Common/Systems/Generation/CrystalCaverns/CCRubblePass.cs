@@ -24,7 +24,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             for (int y = bounds.Top + 3; y < bounds.Bottom - 3; y++)
                 for (int x = bounds.Left + 3; x < bounds.Right - 3; x++)
                 {
-                    if (Main.tile[x, y].HasTile || Main.tile[x, y].LiquidAmount > 0 || !WorldGen.genRand.NextBool(5) || !allowed(x, y)) continue;
+                    if (Main.tile[x, y].HasTile || Main.tile[x, y].LiquidAmount > 0 || LushReservoirGenerator.Contains(x, y, 2) || !WorldGen.genRand.NextBool(5) || !allowed(x, y)) continue;
                     bool floor = Natural(x, y + 1), ceiling = Natural(x, y - 1);
                     if (!floor && !ceiling) continue;
                     bool safe = true;
@@ -107,6 +107,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
                     int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    if (LushReservoirGenerator.Contains(x, y, 3)) continue;
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
@@ -155,6 +156,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
                     int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    if (LushReservoirGenerator.Contains(x, y, 3)) continue;
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
