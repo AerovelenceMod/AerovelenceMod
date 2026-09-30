@@ -19,6 +19,7 @@ internal sealed class LivingTreeIslandLayout
     internal enum Material : byte { Air, Grass, Dirt, Stone, Wood, Leaves, Platform, Door, Cloud, RainCloud }
     internal const int Width = 196;
     internal const int Height = 128;
+    internal const int IslandCenterY = 73;
     internal readonly Material[,] Tiles = new Material[Width, Height];
     internal readonly byte[,] Walls = new byte[Width, Height];
     internal readonly byte[,] Water = new byte[Width, Height];
@@ -52,7 +53,7 @@ internal sealed class LivingTreeIslandLayout
         CellarCenter = Center + cellarSide * random.Next(17, 21);
         int treeHeight = random.Next(30, 42);
         double phase = random.NextDouble() * Math.PI * 2;
-        GenerateIslandBody(random, IslandCenter, 73, out int cloudMinX, out int cloudMaxX, out int cloudMinY, out int cloudMaxY, out int dirtMinX, out int dirtMaxX);
+        GenerateIslandBody(random, IslandCenter, IslandCenterY, out int cloudMinX, out int cloudMaxX, out int cloudMinY, out int cloudMaxY, out int dirtMinX, out int dirtMaxX);
         Ground = Height - 1;
         for (int x = Center - 6; x <= Center + 6; x++)
             for (int y = 3; y < Height - 1; y++)
@@ -824,29 +825,46 @@ public sealed class LivingTreeIslandPass : GenPass
             LivingTreeIslandLayout layout = new(WorldGen.genRand.Next());
             int segmentWidth = (Main.maxTilesX - 800) / count;
             int segmentStart = 400 + island * segmentWidth;
-            int minY = Math.Max(0, 24 - layout.MinY);
-            int maxY = Math.Max(minY, (int)Main.worldSurface - layout.MaxY - 24);
             bool generated = false;
             for (int attempt = 0; attempt < 1200; attempt++)
             {
                 int x = WorldGen.genRand.Next(segmentStart, segmentStart + segmentWidth - LivingTreeIslandLayout.Width);
+                if (!TryGetVanillaYRange(layout, x, out int minY, out int maxY)) continue;
                 int y = WorldGen.genRand.Next(minY, maxY + 1);
                 if (!TryPlace(layout, x, y)) continue;
                 generated = true;
                 break;
             }
-            for (int y = minY; y <= maxY && !generated; y += 4)
-                for (int x = 200; x < Main.maxTilesX - LivingTreeIslandLayout.Width - 200; x += 16)
+            for (int x = 200; x < Main.maxTilesX - LivingTreeIslandLayout.Width - 200 && !generated; x += 16)
+            {
+                if (!TryGetVanillaYRange(layout, x, out int minY, out int maxY)) continue;
+                for (int y = minY; y <= maxY; y += 4)
                     if (TryPlace(layout, x, y))
                     {
                         generated = true;
                         break;
                     }
+            }
             if (generated) placed++;
             progress.Set((island + 1f) / count);
         }
         if (placed < count)
             ModContent.GetInstance<AerovelenceMod>().Logger.Warn($"Placed {placed}/{count} living tree sky islands; remaining sky space was occupied.");
+    }
+
+    private static bool TryGetVanillaYRange(LivingTreeIslandLayout layout, int x, out int minY, out int maxY)
+    {
+        int surfaceY = 0;
+        int centerX = x + layout.IslandCenter;
+        for (int y = 200; y < Main.worldSurface; y++)
+            if (Main.tile[centerX, y].HasTile)
+            {
+                surfaceY = y;
+                break;
+            }
+        minY = 90 - LivingTreeIslandLayout.IslandCenterY;
+        maxY = Math.Min(surfaceY - 101, (int)GenVars.worldSurfaceLow - 50) - LivingTreeIslandLayout.IslandCenterY;
+        return surfaceY > 0 && maxY >= minY;
     }
 
     private bool TryPlace(LivingTreeIslandLayout layout, int x, int y)
