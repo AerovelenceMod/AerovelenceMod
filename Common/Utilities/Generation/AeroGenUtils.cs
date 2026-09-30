@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
+using Microsoft.Xna.Framework;
 using ReLogic.Utilities;
 using System;
 using System.Linq;
@@ -10,6 +11,31 @@ namespace AerovelenceMod.Common.Utilities.Generation
 {
     public static class AeroGenUtils
     {
+        public static bool CanPlaceInEmptyArea(Rectangle bounds)
+        {
+            if (!WorldGen.InWorld(bounds.Left, bounds.Top, 10) || !WorldGen.InWorld(bounds.Right, bounds.Bottom, 10) ||
+                !GenVars.structures.CanPlace(bounds)) return false;
+            foreach (Rectangle protectedArea in AeroStructure.ProtectedStructures)
+                if (protectedArea.Intersects(bounds)) return false;
+            for (int x = bounds.Left; x < bounds.Right; x++)
+                for (int y = bounds.Top; y < bounds.Bottom; y++)
+                {
+                    Tile tile = Main.tile[x, y];
+                    if (tile.HasTile || tile.WallType != WallID.None || tile.LiquidAmount > 0) return false;
+                }
+            return true;
+        }
+
+        public static void FrameArea(Rectangle bounds)
+        {
+            for (int x = bounds.Left; x < bounds.Right; x++)
+                for (int y = bounds.Top; y < bounds.Bottom; y++)
+                {
+                    WorldGen.SquareTileFrame(x, y);
+                    WorldGen.SquareWallFrame(x, y);
+                }
+        }
+
         #region GenActions
         public class SwapSolidTileInclusive : GenAction
         {
