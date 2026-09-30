@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -47,7 +48,10 @@ namespace AerovelenceMod.Content.Items.Tools
 
             int index = Projectile.NewProjectile(source, position, velocity, ProjectileID.Dynamite, damage, knockback, player.whoAmI);
             if (index >= 0 && index < Main.maxProjectiles)
+            {
                 Main.projectile[index].GetGlobalProjectile<CrystallineDynamiteGlobalProjectile>().Crystalline = true;
+                Main.projectile[index].netUpdate = true;
+            }
 
             if (!Main.dedServ)
             {
@@ -73,12 +77,15 @@ namespace AerovelenceMod.Content.Items.Tools
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (Main.gameMenu || Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown <= 0)
-                return true;
-
-            Texture2D texture = TextureAssets.Item[ItemID.Dynamite].Value;
-            Color ghost = new Color(130, 190, 220, 110) * 0.4f;
-            spriteBatch.Draw(texture, position, frame, ghost, 0f, origin, scale, SpriteEffects.None, 0f);
+            Texture2D texture = TextureAssets.Item[Type].Value;
+            int cooldown = Main.gameMenu ? 0 : Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
+            float pulse = 0.82f + MathF.Sin(Main.GlobalTimeWrappedHourly * 4f) * 0.12f;
+            Color glow = CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, (cooldown > 0 ? 0.1f : 0.24f) * pulse);
+            float glowDistance = cooldown > 0 ? 1f : 1.75f;
+            for (int i = 0; i < 4; i++)
+                spriteBatch.Draw(texture, position + (MathHelper.PiOver2 * i).ToRotationVector2() * glowDistance * scale, frame, glow, 0f, origin, scale, SpriteEffects.None, 0f);
+            Color color = cooldown > 0 ? new Color(105, 155, 180) * 0.38f : drawColor;
+            spriteBatch.Draw(texture, position, frame, color, 0f, origin, scale, SpriteEffects.None, 0f);
             return false;
         }
 
@@ -90,17 +97,30 @@ namespace AerovelenceMod.Content.Items.Tools
             int cooldown = Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
             if (cooldown <= 0)
                 return;
-            Texture2D texture = TextureAssets.Item[ItemID.Dynamite].Value;
+            Texture2D texture = TextureAssets.Item[Type].Value;
             float progress = CrystallineDynamitePlayer.RegenerationProgress(cooldown);
             int height = Math.Clamp((int)MathF.Ceiling(frame.Height * progress), 0, frame.Height);
-            if (height == 0) return;
-            int offset = frame.Height - height;
-            Rectangle fill = new(frame.X, frame.Y + offset, frame.Width, height);
-            Vector2 fillOrigin = origin - new Vector2(0f, offset);
             float pulse = 0.8f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.12f;
-            spriteBatch.Draw(texture, position, fill, Color.White * (0.4f + progress * 0.5f), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
-            spriteBatch.Draw(texture, position, fill, CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.6f * pulse),
-                0f, fillOrigin, scale, SpriteEffects.None, 0f);
+            if (height > 0)
+            {
+                int offset = frame.Height - height;
+                Rectangle fill = new(frame.X, frame.Y + offset, frame.Width, height);
+                Vector2 fillOrigin = origin - new Vector2(0f, offset);
+                spriteBatch.Draw(texture, position, fill, Color.White * (0.45f + progress * 0.5f), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
+                spriteBatch.Draw(texture, position, fill, CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.55f * pulse), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
+            }
+            Vector2 topLeft = position - origin * scale;
+            Vector2 bottomRight = position + (frame.Size() - origin) * scale;
+            int barWidth = Math.Max(16, (int)MathF.Round(frame.Width * scale));
+            Rectangle bar = new((int)MathF.Round(topLeft.X), (int)MathF.Round(bottomRight.Y + 2f), barWidth, 3);
+            spriteBatch.Draw(TextureAssets.MagicPixel.Value, bar, new Color(7, 20, 30) * 0.9f);
+            if (progress > 0f)
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(bar.X + 1, bar.Y + 1, Math.Max(1, (int)MathF.Round((bar.Width - 2) * progress)), 1), CrystallineDynamiteVFX.CrystalBlue);
+            string timer = MathF.Ceiling(cooldown / 60f).ToString("0");
+            float timerScale = 0.65f * scale;
+            Vector2 timerSize = FontAssets.ItemStack.Value.MeasureString(timer) * timerScale;
+            Vector2 timerPosition = bottomRight - timerSize + new Vector2(1f, -2f);
+            Utils.DrawBorderStringFourWay(spriteBatch, FontAssets.ItemStack.Value, timer, timerPosition.X, timerPosition.Y, Color.White, new Color(20, 80, 115), Vector2.Zero, timerScale);
         }
     }
 
@@ -140,22 +160,55 @@ namespace AerovelenceMod.Content.Items.Tools
         public override bool InstancePerEntity => true;
         internal bool Crystalline;
 
+        public override bool AppliesToEntity(Projectile entity, bool lateInstantiation) => entity.type == ProjectileID.Dynamite;
+
         public override void AI(Projectile projectile)
         {
-            if (!Crystalline || projectile.owner != Main.myPlayer || Main.dedServ)
+            if (!Crystalline || Main.dedServ)
                 return;
 
             Lighting.AddLight(projectile.Center, CrystallineDynamiteVFX.CrystalBlue.ToVector3() * 0.22f);
-            if (Main.rand.NextBool(5))
+            Vector2 fuse = projectile.Center - Vector2.UnitY.RotatedBy(projectile.rotation) * 15f * projectile.scale;
+            if (Main.rand.NextBool(3))
             {
                 Vector2 velocity = -projectile.velocity * Main.rand.NextFloat(0.02f, 0.08f) + Main.rand.NextVector2Circular(0.25f, 0.25f);
-                CrystallineDynamiteVFX.Spark(projectile.Center + Main.rand.NextVector2Circular(5f, 5f), velocity, Main.rand.NextFloat(0.08f, 0.14f));
+                CrystallineDynamiteVFX.Spark(fuse + Main.rand.NextVector2Circular(3f, 3f), velocity, Main.rand.NextFloat(0.09f, 0.16f));
             }
+            if (Main.rand.NextBool(4))
+            {
+                Dust dust = Dust.NewDustPerfect(fuse, DustID.BlueTorch, Main.rand.NextVector2Circular(0.45f, 0.45f) - new Vector2(0f, 0.35f), 100, CrystallineDynamiteVFX.CrystalBlue, Main.rand.NextFloat(0.65f, 0.9f));
+                dust.noGravity = true;
+            }
+        }
+
+        public override bool PreDraw(Projectile projectile, ref Color lightColor)
+        {
+            if (!Crystalline)
+                return true;
+            Texture2D texture = TextureAssets.Item[ModContent.ItemType<CrystallineDynamite>()].Value;
+            Vector2 position = projectile.Center - Main.screenPosition;
+            Vector2 origin = texture.Size() * 0.5f;
+            float pulse = 0.82f + MathF.Sin(Main.GlobalTimeWrappedHourly * 7f + projectile.identity) * 0.12f;
+            Color glow = CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.22f * pulse);
+            for (int i = 0; i < 4; i++)
+                Main.EntitySpriteDraw(texture, position + (MathHelper.PiOver2 * i).ToRotationVector2() * 1.5f, null, glow, projectile.rotation, origin, projectile.scale, SpriteEffects.None);
+            Main.EntitySpriteDraw(texture, position, null, Color.Lerp(lightColor, Color.White, 0.35f), projectile.rotation, origin, projectile.scale, SpriteEffects.None);
+            return false;
+        }
+
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter binaryWriter)
+        {
+            bitWriter.WriteBit(Crystalline);
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader binaryReader)
+        {
+            Crystalline = bitReader.ReadBit();
         }
 
         public override void OnKill(Projectile projectile, int timeLeft)
         {
-            if (!Crystalline || projectile.owner != Main.myPlayer)
+            if (!Crystalline)
                 return;
 
             if (!Main.dedServ)
@@ -163,6 +216,9 @@ namespace AerovelenceMod.Content.Items.Tools
                 CrystallineDynamiteVFX.Burst(projectile.Center, 24, 5.5f);
                 SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.28f, Pitch = 0.3f, PitchVariance = 0.12f }, projectile.Center);
             }
+
+            if (projectile.owner != Main.myPlayer)
+                return;
 
             for (int i = 0; i < 18; i++)
             {

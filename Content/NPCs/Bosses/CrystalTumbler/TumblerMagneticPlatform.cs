@@ -97,7 +97,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             return found;
         }
 
-        private void BeginCollapse()
+        internal void BeginCollapse()
         {
             if (collapseTimer >= 0)
                 return;
@@ -328,7 +328,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             float warning = Math.Max(FieldCharge, crushTimer < 0 ? 0f : MathHelper.Clamp(crushTimer / (float)warningTicks, 0f, 1f));
             float opacity = Projectile.Opacity * TumblerProjectileRetirement.VisualOpacity(Projectile);
             float demagnetizing = collapseTimer < 0 ? 0f : MathHelper.Clamp(collapseTimer / 60f, 0f, 1f);
-            float magneticOpacity = opacity * (1f - demagnetizing) * (collapseTimer < 0 ? 1f : 0.45f + 0.55f * Math.Abs(MathF.Sin(collapseTimer * 0.65f)));
+            float magneticOpacity = opacity;
             Color charged = Color.Lerp(color, Color.White, collapseTimer < 0 ? 0f : 0.5f + MathF.Sin(age * 0.5f) * 0.3f);
             spriteBatch.Draw(bloom, center + new Vector2(0f, 14f), null, TumblerVFX.Glow(charged, magneticOpacity * (0.16f + warning * 0.18f)), 0f, bloom.Size() * 0.5f, new Vector2(154f, 56f) / bloom.Size(), SpriteEffects.None, 0f);
             float breath = 0.5f + MathF.Sin(age * (0.055f + instability * 0.17f) + Projectile.identity) * 0.5f;
@@ -338,7 +338,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             {
                 float fade = 1f - y / 50f;
                 Color gradient = Color.Lerp(EnergyColor(y / 50f + age * (0.01f + instability * 0.015f)), Color.White, instability * breath * 0.55f);
-                spriteBatch.Draw(Terraria.GameContent.TextureAssets.MagicPixel.Value, new Rectangle((int)artTop.X, (int)artTop.Y - y, Projectile.width, 2), TumblerVFX.Glow(gradient, fade * fade * magneticOpacity * energized * (0.25f + breath * 0.1f)));
+                spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle((int)artTop.X, (int)artTop.Y - y, Projectile.width, 2), TumblerVFX.Glow(gradient, fade * fade * magneticOpacity * energized * (0.25f + breath * 0.1f)));
             }
             DrawPlatformLayer(spriteBatch, rock, artTop, frame.Y, Color.Lerp(lightColor, Color.White, 0.2f) * opacity);
             DrawPlatformLayer(spriteBatch, mask, artTop, frame.Y, Color.White * magneticOpacity * (0.5f + breath * 0.25f));
@@ -400,17 +400,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         private void DrawPlatformLayer(SpriteBatch spriteBatch, Texture2D texture, Vector2 top, int row, Color color, int stripY = 0, int stripHeight = 28)
         {
-            float scaleX = Projectile.width / 128f;
+            float scaleX = Projectile.width / 120f;
             float scaleY = Projectile.height / 28f;
             for (int piece = 0; piece < 3; piece++)
             {
-                int sourceX = piece == 0 ? 0 : piece == 1 ? 44 : 90;
-                int sourceWidth = piece == 1 && row != 60 ? 44 : 42;
-                int destinationX = piece == 0 ? 0 : piece == 1 ? 42 : 86;
-                int destinationWidth = piece == 1 ? 44 : 42;
-                Rectangle source = new(sourceX, row + stripY, sourceWidth, stripHeight);
-                Vector2 position = top + new Vector2(destinationX * scaleX, stripY * scaleY);
-                spriteBatch.Draw(texture, position, source, color, 0f, Vector2.Zero, new Vector2(destinationWidth * scaleX / sourceWidth, scaleY), SpriteEffects.None, 0f);
+                Rectangle source = new(piece * 42, row + stripY, 40, stripHeight);
+                Vector2 position = top + new Vector2(piece * 40 * scaleX, stripY * scaleY);
+                spriteBatch.Draw(texture, position, source, color, 0f, Vector2.Zero, new Vector2(scaleX, scaleY), SpriteEffects.None, 0f);
             }
         }
     }

@@ -51,13 +51,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (boss.ai[1] >= start - 15 && boss.ai[1] < start + 55 && Math.Abs(Player.Center.X - gate.Center.X) < 38f && Player.Bottom.Y > gate.Center.Y)
                     Player.velocity.X = -Math.Sign(gate.ai[1]) * 5f;
             }
-            if (boss.ai[1] < 455)
+            if (boss.ai[1] < CrystalTumbler.FallStart)
             {
                 pushDirection = 0;
                 pushTicks = 0;
                 return;
             }
-            if (pushDirection == 0 && boss.ai[1] < 525 && boss.velocity.Y > 0f
+            if (pushDirection == 0 && boss.ai[1] < CrystalTumbler.LandingTime && boss.velocity.Y > 0f
                 && Math.Abs(Player.Center.X - boss.Center.X) < 150f
                 && boss.Bottom.Y + boss.velocity.Y * 2f >= Player.Top.Y - 64f
                 && boss.Top.Y <= Player.Bottom.Y + 32f)
@@ -127,27 +127,27 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 focus = Vector2.Lerp(left, right, Smooth((time - 150f) / 60f));
                 zoom = gateZoom;
             }
-            else if (time < 430)
+            else if (time < CrystalTumbler.SkyRevealStart)
             {
                 focus = Vector2.Lerp(right, gateway, Smooth((time - 300f) / 65f));
                 zoom = MathHelper.Lerp(gateZoom, closeZoom, Smooth((time - 300f) / 100f));
             }
-            else if (time < 455)
+            else if (time < CrystalTumbler.FallStart)
             {
-                float pan = Smooth((time - 430f) / 25f);
+                float pan = Smooth((time - CrystalTumbler.SkyRevealStart) / (CrystalTumbler.FallStart - CrystalTumbler.SkyRevealStart));
                 focus = Vector2.Lerp(gateway, reveal, pan);
                 zoom = MathHelper.Lerp(closeZoom, gateZoom, pan);
             }
-            else if (time < 525)
+            else if (time < CrystalTumbler.LandingTime)
             {
-                float fall = MathHelper.Clamp((time - 455f) / 70f, 0f, 1f);
+                float fall = MathHelper.Clamp((time - CrystalTumbler.FallStart) / (CrystalTumbler.LandingTime - CrystalTumbler.FallStart), 0f, 1f);
                 Vector2 following = boss.Center + new Vector2(0f, 100f);
                 focus = Vector2.Lerp(following, landingFocus, Smooth(fall));
                 zoom = MathHelper.Lerp(gateZoom, savedZoom, Smooth(fall));
             }
             else
             {
-                focus = Vector2.Lerp(landingFocus, Player.Center, Smooth((time - 545f) / 55f));
+                focus = Vector2.Lerp(landingFocus, Player.Center, Smooth((time - CrystalTumbler.LandingTime - 20f) / 55f));
                 zoom = savedZoom;
             }
             screen.cutscene = true;

@@ -47,13 +47,13 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun
             Item.noUseGraphic = true;
         }
 
-        public override void AddRecipes()
+        /*public override void AddRecipes()
 		{
 			CreateRecipe()
 				.AddIngredient<BurnshockBar>(20)
 				.AddTile(TileID.MythrilAnvil)
 				.Register();
-		}
+		}*/
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {

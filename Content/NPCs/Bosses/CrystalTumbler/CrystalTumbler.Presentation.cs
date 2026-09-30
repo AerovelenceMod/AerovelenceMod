@@ -1,5 +1,4 @@
 using System;
-using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Items.BossSummons;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -36,7 +35,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 TumblerLightningSystem.Release(NPC);
                 presentationState = State;
             }
-            bool visible = State != TumblerState.Spawn || StateTimer >= 430;
+            bool visible = State != TumblerState.Spawn || StateTimer >= FallStart;
             bool attacking = State is not (TumblerState.Idle or TumblerState.Spawn or TumblerState.Stunned or TumblerState.Despawn);
             float bloomTarget = visible ? MathHelper.Clamp(visualCharge * 0.85f + impactFlash * 0.6f + shieldFlash * 0.65f + (attacking ? 0.12f : 0f), 0f, 1f) : 0f;
             crystalBloom = Approach(crystalBloom, bloomTarget, bloomTarget > crystalBloom ? 0.08f : 0.035f);
@@ -100,7 +99,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             TumblerVFX.EndAdditive(spriteBatch);
         }
 
-        private void DrawFixedEye(SpriteBatch spriteBatch, Vector2 center, int frameIndex, float opacity)
+        private void DrawFixedEye(SpriteBatch spriteBatch, Vector2 center, int frameIndex, float opacity, bool backLayer)
         {
             Texture2D eye = ModContent.Request<Texture2D>(Texture + "_Eye", AssetRequestMode.ImmediateLoad).Value;
             Rectangle frame = eye.Frame(1, 2, 0, frameIndex);
@@ -121,30 +120,44 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 eyeOrigins[frameIndex] = right >= left ? new Vector2((left + right + 1f) * 0.5f, (top + bottom + 1f) * 0.5f) : frame.Size() * 0.5f;
             }
             Vector2 origin = eyeOrigins[frameIndex].Value;
-            if (NPC.IsABestiaryIconDummy)
-                DrawEyeFlame(spriteBatch, eye, center, frame, origin, opacity);
+            Vector2 bodyFrameSize = new(frame.Width, frame.Height - 2f);
+            Vector2 bodyScale = new(1f, bodyFrameSize.X / bodyFrameSize.Y);
+            Vector2 anchorOffset = (origin - bodyFrameSize * 0.5f) * bodyScale * NPC.scale;
+            Vector2 anchoredCenter = center + anchorOffset.RotatedBy(NPC.rotation);
+            if (backLayer)
+                DrawEyeBackLayer(spriteBatch, eye, anchoredCenter, frame, origin, opacity);
             else
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
-                {
-                    if (NPC.active && NPC.ModNPC == this)
-                        DrawEyeFlame(Main.spriteBatch, eye, NPC.Center - Main.screenPosition, frame, origin, opacity);
-                });
+                DrawEyeFlame(spriteBatch, eye, anchoredCenter, frame, origin, opacity);
+        }
+
+        private void DrawEyeBackLayer(SpriteBatch spriteBatch, Texture2D eye, Vector2 center, Rectangle frame, Vector2 origin, float opacity)
+        {
+            Color bright = frame.Y > 0 ? new Color(255, 190, 90) : Color.SkyBlue;
+            Color deep = frame.Y > 0 ? new Color(255, 105, 20) : Color.DeepSkyBlue;
+            for (int i = 0; i < 8; i++)
+            {
+                Color color = i == 0 ? bright with { A = 0 } : deep with { A = 0 };
+                spriteBatch.Draw(eye, center + Main.rand.NextVector2Circular(3f, 3f), frame, color * opacity, 0f, origin, NPC.scale * 1.1f, SpriteEffects.None, 0f);
+            }
         }
 
         private void DrawEyeFlame(SpriteBatch spriteBatch, Texture2D eye, Vector2 center, Rectangle frame, Vector2 origin, float opacity)
         {
-            ulong seed = Main.TileFrameSeed ^ (ulong)(NPC.whoAmI + 1) * 7919UL;
             float charge = MathHelper.Clamp(visualCharge + shieldFlash * 0.5f, 0f, 1f);
             float breath = 1f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.035f;
-            Color flame = new Color(100, 100, 100, 0) * opacity * (0.6f + charge * 0.4f);
-            for (int pass = 0; pass < 7; pass++)
-            {
-                float shakeX = Utils.RandomInt(ref seed, -10, 11) * 0.15f;
-                float shakeY = Utils.RandomInt(ref seed, -10, 1) * 0.35f;
-                Vector2 jitter = new(shakeX, shakeY);
-                spriteBatch.Draw(eye, center + jitter, frame, flame, 0f, origin, NPC.scale * breath * (1.04f + charge * 0.08f), SpriteEffects.None, 0f);
-            }
-            spriteBatch.Draw(eye, center, frame, Color.White * opacity, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
+            Color color = frame.Y > 0 ? new Color(255, 154, 38) : new Color(45, 155, 255);
+            Color outer = color * (opacity * (0.22f + charge * 0.1f));
+            Color inner = Color.Lerp(color, Color.White, 0.55f) * (opacity * (0.3f + charge * 0.12f));
+            Color core = Color.Lerp(color, Color.White, 0.9f) * (opacity * (0.8f + charge * 0.2f));
+            outer.A = inner.A = core.A = 255;
+            Texture2D bloom = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow64", AssetRequestMode.ImmediateLoad).Value;
+            float bloomScale = NPC.scale * breath * (0.25f + charge * 0.035f);
+            TumblerVFX.BeginAdditive(spriteBatch);
+            spriteBatch.Draw(bloom, center, null, outer, 0f, bloom.Size() * 0.5f, bloomScale * 1.35f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(bloom, center, null, inner, 0f, bloom.Size() * 0.5f, bloomScale * 0.68f, SpriteEffects.None, 0f);
+            spriteBatch.Draw(eye, center, frame, outer, 0f, origin, NPC.scale * breath * (1.35f + charge * 0.08f), SpriteEffects.None, 0f);
+            spriteBatch.Draw(eye, center, frame, core, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
+            TumblerVFX.EndAdditive(spriteBatch);
         }
     }
 }

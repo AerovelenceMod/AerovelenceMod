@@ -115,7 +115,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Vector2 center = player.Top - Main.screenPosition - Vector2.UnitY * 18f;
             drawInfo.DrawDataCache.Add(new DrawData(frame, center, new Rectangle(0, 24, 98, 30), Color.White, 0f, new Vector2(49f, 15f), 0.6f, SpriteEffects.None));
             float ready = 1f - cooldown / 360f;
-            drawInfo.DrawDataCache.Add(new DrawData(TextureAssets.MagicPixel.Value, center + new Vector2(-23f, 0f), new Rectangle(0, 0, 1, 1), CavernousRampartVFX.Aqua,
+            drawInfo.DrawDataCache.Add(new DrawData(TextureAssets.MagicPixel.Value, center + new Vector2(-14f, 0f), new Rectangle(0, 0, 1, 1), CavernousRampartVFX.Aqua,
                 0f, Vector2.Zero, new Vector2(46f * ready, 3f), SpriteEffects.None));
         }
     }
@@ -172,7 +172,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.ai[0] - MathHelper.PiOver2);
             }
             Projectile.rotation = Projectile.ai[0];
-            Projectile.Center = player.MountedCenter + Projectile.rotation.ToRotationVector2() * 23;
+            Projectile.Center = player.MountedCenter + Projectile.rotation.ToRotationVector2() * 14;
             if (!retiring && Vector2.Dot(player.velocity, Projectile.rotation.ToRotationVector2()) >= RampartPlayer.BashSpeed && Main.GameUpdateCount % 4 == 0) CavernousRampartVFX.Spark(Projectile.Center, -player.velocity * .1f);
         }
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)

@@ -12,6 +12,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
     public class TumblerPylonField : ModProjectile
     {
         private const float FieldHeight = 64f;
+        private const int RiseTime = 45;
         private int timer;
         private int Warning => Math.Max(60, (int)Projectile.ai[0]);
         private int Duration => Math.Max(20, (int)Projectile.ai[1]);
@@ -41,6 +42,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         public override void AI()
         {
             timer++;
+            if (!Main.dedServ && timer <= RiseTime && timer % 5 == 0)
+            {
+                Vector2 left = Projectile.Center;
+                Vector2 right = Projectile.Center + Projectile.velocity;
+                for (int i = 0; i < 2; i++)
+                {
+                    Dust.NewDustPerfect(left + new Vector2(Main.rand.NextFloat(-12f, 12f), -2f), DustID.Stone, new Vector2(Main.rand.NextFloat(-1.8f, 1.8f), Main.rand.NextFloat(-3.4f, -1.2f)), 0, default, Main.rand.NextFloat(0.8f, 1.1f));
+                    Dust.NewDustPerfect(right + new Vector2(Main.rand.NextFloat(-12f, 12f), -2f), DustID.Stone, new Vector2(Main.rand.NextFloat(-1.8f, 1.8f), Main.rand.NextFloat(-3.4f, -1.2f)), 0, default, Main.rand.NextFloat(0.8f, 1.1f));
+                }
+            }
             if (!Main.dedServ && timer < Warning && timer % (timer > Warning - 30 ? 3 : 6) == 0)
             {
                 for (int i = 0; i < 3; i++)
@@ -133,17 +144,32 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         private void DrawPylon(SpriteBatch spriteBatch, Vector2 position, Color color, Color lightColor, float opacity, float charge, bool facingRight)
         {
             Texture2D crystal = ModContent.Request<Texture2D>(Texture, ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
+            Texture2D ground = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/FencePylonGround", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             Texture2D mask = ModContent.Request<Texture2D>(Texture + "_Glowmask", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value;
             int variant = (Projectile.identity + (facingRight ? 1 : 0)) % 3;
             Rectangle frame = new(variant * 38, 0, 36, 62);
             Vector2 origin = new(frame.Width * 0.5f, frame.Height);
             Vector2 scale = new(FieldHeight / frame.Height);
             SpriteEffects effects = facingRight ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-            spriteBatch.Draw(crystal, position, frame, Color.Lerp(lightColor, Color.White, 0.2f) * opacity, 0f, origin, scale, effects, 0f);
-            spriteBatch.Draw(mask, position, frame, Color.White * opacity, 0f, origin, scale, effects, 0f);
-            spriteBatch.Draw(mask, position, frame, TumblerVFX.Glow(color, opacity * charge * 0.65f), 0f, origin, scale, effects, 0f);
-            Vector2 tip = position - new Vector2(0f, FieldHeight - 5f);
-            TumblerVFX.DrawCharge(spriteBatch, tip, color, charge, 9f, timer * 0.025f, opacity);
+            float rise = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(timer / (float)RiseTime, 0f, 1f));
+            float riseShake = (1f - rise) * 4f;
+            float activationShake = timer >= Warning ? MathHelper.Clamp((Warning + 10f - timer) / 10f, 0f, 1f) * 1.4f : 0f;
+            float shakeStrength = riseShake + activationShake;
+            float shake = MathF.Sin(timer * 1.65f + (facingRight ? 1.1f : 0f)) * shakeStrength;
+            float rotation = MathF.Sin(timer * 1.35f + (facingRight ? 0.7f : 0f)) * 0.035f * (1f - rise);
+            Vector2 pylonPosition = position + new Vector2(shake, 0f);
+            int visibleHeight = Math.Clamp((int)MathF.Round(frame.Height * rise), 0, frame.Height);
+            if (visibleHeight > 0)
+            {
+                Rectangle visibleFrame = new(frame.X, frame.Bottom - visibleHeight, frame.Width, visibleHeight);
+                Vector2 visibleOrigin = new(visibleFrame.Width * 0.5f, visibleFrame.Height);
+                spriteBatch.Draw(crystal, pylonPosition, visibleFrame, Color.Lerp(lightColor, Color.White, 0.2f) * opacity, rotation, visibleOrigin, scale, effects, 0f);
+                spriteBatch.Draw(mask, pylonPosition, visibleFrame, Color.White * opacity, rotation, visibleOrigin, scale, effects, 0f);
+                spriteBatch.Draw(mask, pylonPosition, visibleFrame, TumblerVFX.Glow(color, opacity * charge * 0.65f), rotation, visibleOrigin, scale, effects, 0f);
+                Vector2 tip = pylonPosition - new Vector2(0f, visibleHeight * scale.Y - 5f);
+                TumblerVFX.DrawCharge(spriteBatch, tip, color, charge * rise, 9f, timer * 0.025f, opacity);
+            }
+            spriteBatch.Draw(ground, pylonPosition, frame, Color.Lerp(lightColor, Color.White, 0.12f) * opacity, 0f, origin, scale, effects, 0f);
         }
     }
 }

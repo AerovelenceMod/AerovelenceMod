@@ -11,7 +11,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
     public partial class CrystalTumbler
     {
-        internal const int EntranceDuration = 600;
+        internal const int DoorFlashStart = 385;
+        internal const int DoorFlashPeak = 393;
+        internal const int DoorFlashEnd = 425;
+        internal const int DoorOpenStart = 430;
+        internal const int DoorOpenEnd = 490;
+        internal const int SkyRevealStart = 515;
+        internal const int FallStart = 550;
+        internal const int LandingTime = 620;
+        internal const int RoarTime = 650;
+        internal const int EntranceDuration = 695;
         internal Vector2 EntranceStart => new(ArenaData.ArenaCenter.X, FloorY - NPC.height * 0.5f - 850f);
         internal static Vector2 GatewayFocus => new((ArenaData.TileBounds.X + ArenaData.GatewayOffsetX + 7.5f) * 16f, (ArenaData.TileBounds.Y + ArenaData.GatewayOffsetY + 7.5f) * 16f);
 
@@ -22,14 +31,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             NPC.noTileCollide = true;
             contactDamage = false;
             Vector2 landing = new(ArenaData.ArenaCenter.X, FloorY - NPC.height * 0.5f);
-            if (StateTimer < 455)
+            if (StateTimer < FallStart)
             {
                 NPC.Center = EntranceStart;
                 NPC.velocity = Vector2.Zero;
             }
-            else if (StateTimer < 525)
+            else if (StateTimer < LandingTime)
             {
-                float progress = MathHelper.Clamp((StateTimer - 454f) / 70f, 0f, 1f);
+                float progress = MathHelper.Clamp((StateTimer - FallStart + 1f) / (LandingTime - FallStart), 0f, 1f);
                 Vector2 next = Vector2.Lerp(EntranceStart, landing, progress * progress);
                 NPC.velocity = next - NPC.Center;
                 spinTarget = MathHelper.Lerp(0.015f, 0.12f, progress);
@@ -37,20 +46,24 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             else
             {
-                float bounce = StateTimer < 551 ? MathF.Sin((StateTimer - 525f) / 26f * MathHelper.Pi) * 19f : 0f;
+                float bounce = StateTimer < LandingTime + 26 ? MathF.Sin((StateTimer - LandingTime) / 26f * MathHelper.Pi) * 19f : 0f;
                 NPC.velocity = landing - new Vector2(0f, bounce) - NPC.Center;
                 spinTarget = 0f;
-                visualCharge = MathHelper.Clamp((StateTimer - 535f) / 35f, 0f, 1f);
+                visualCharge = MathHelper.Clamp((StateTimer - LandingTime - 10f) / 35f, 0f, 1f);
             }
 
-            if (StateTimer == 330)
+            if (StateTimer == DoorFlashStart)
                 SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.4f, Pitch = -0.4f }, GatewayFocus);
-            if (StateTimer == 392 || StateTimer == 415)
+            if (StateTimer == DoorOpenStart || StateTimer == DoorOpenEnd - 10)
+                SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/RockCollideBetter") with { Volume = 0.55f, Pitch = -0.65f }, GatewayFocus);
+            if (StateTimer == SkyRevealStart - 15 || StateTimer == SkyRevealStart + 8)
                 SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/RockCollideBetter") with { Volume = 0.65f, Pitch = -0.5f }, GatewayFocus - new Vector2(0f, 260f));
-            if (StateTimer >= 390 && StateTimer < 445 && !Main.dedServ)
+            if (StateTimer >= DoorOpenStart && StateTimer < DoorOpenEnd && !Main.dedServ && ArenaData.WorldBounds.Contains(Main.LocalPlayer.Center.ToPoint()))
+                ScreenShake(1.5f + (StateTimer - DoorOpenStart) / 20f);
+            if (StateTimer >= SkyRevealStart - 15 && StateTimer < FallStart && !Main.dedServ)
             {
                 if (ArenaData.WorldBounds.Contains(Main.LocalPlayer.Center.ToPoint()))
-                    ScreenShake(2f + (StateTimer - 390f) / 18f);
+                    ScreenShake(3f + (StateTimer - SkyRevealStart + 15f) / 10f);
                 if (StateTimer % 3 == 0)
                 {
                     Vector2 source = new(GatewayFocus.X + Main.rand.NextFloat(-130f, 130f), Main.screenPosition.Y - 20f);
@@ -59,11 +72,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                     Dust.NewDustPerfect(source + new Vector2(Main.rand.NextFloat(-25f, 25f), 10f), ModContent.DustType<TumblerRollDust>(), new Vector2(Main.rand.NextFloat(-1f, 1f), 3.5f), 45, new Color(110, 114, 125), Main.rand.NextFloat(0.16f, 0.24f));
                 }
             }
-            if (StateTimer >= 455 && StateTimer < 525 && StateTimer % 4 == 0 && !Main.dedServ)
+            if (StateTimer >= FallStart && StateTimer < LandingTime && StateTimer % 4 == 0 && !Main.dedServ)
             {
                 Dust.NewDustPerfect(NPC.Top + Main.rand.NextVector2Circular(32f, 10f), ModContent.DustType<TumblerRollDust>(), new Vector2(Main.rand.NextFloat(-1f, 1f), -1.5f), 45, new Color(100, 108, 122), 0.18f);
             }
-            if (StateTimer == 525)
+            if (StateTimer == LandingTime)
             {
                 impactFlash = 1f;
                 KickUpDust(22);
@@ -78,7 +91,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 }
                 NPC.netUpdate = true;
             }
-            if (StateTimer == 555)
+            if (StateTimer == RoarTime)
             {
                 shieldFlash = 1f;
                 SpawnAuraPulse(145f, 36, false);
@@ -110,15 +123,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             if (State != TumblerState.Spawn)
                 return;
-            if (StateTimer >= 455 && StateTimer < 525)
+            if (StateTimer >= FallStart && StateTimer < LandingTime)
             {
                 Vector2 ground = new(ArenaData.ArenaCenter.X, FloorY);
-                float progress = (StateTimer - 455f) / 70f;
+                float progress = (StateTimer - FallStart) / (float)(LandingTime - FallStart);
                 TumblerVFX.DrawCharge(spriteBatch, ground - screenPos, PhaseColor, progress, 75f - progress * 20f, StateTimer * 0.025f);
             }
-            if (StateTimer >= 540)
+            if (StateTimer >= LandingTime + 15)
             {
-                float charge = MathHelper.Clamp((StateTimer - 540f) / 25f, 0f, 1f);
+                float charge = MathHelper.Clamp((StateTimer - LandingTime - 15f) / 25f, 0f, 1f);
                 TumblerVFX.DrawCorona(spriteBatch, NPC.Center - screenPos, 72f, Color.Lerp(PhaseColor, Color.White, shieldFlash), charge * 0.8f, NPC.whoAmI, 2f);
             }
         }
@@ -127,7 +140,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         public override bool CheckActive() => false;
         public override void BossHeadSlot(ref int index)
         {
-            if (State == TumblerState.Spawn && StateTimer < 430)
+            if (State == TumblerState.Spawn && StateTimer < FallStart)
                 index = -1;
         }
     }

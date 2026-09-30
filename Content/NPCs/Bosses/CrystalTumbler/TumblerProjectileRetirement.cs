@@ -40,6 +40,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 orb.Retire();
                 return;
             }
+            if (projectile.ModProjectile is TumblerMagneticPlatform platform)
+            {
+                platform.BeginCollapse();
+                return;
+            }
             fade.remaining = 36;
             fade.extent = projectile.velocity;
             fade.phase = PhaseFor(projectile);

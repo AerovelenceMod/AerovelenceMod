@@ -45,16 +45,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         private void LoopSlam()
         {
-            float centerX = ArenaData.ArenaCenter.X;
             if (substate == 0)
             {
-                MoveHorizontal(TumblerLoopRail.StartX, 9f, 0.16f);
-                if (Math.Abs(NPC.Center.X - TumblerLoopRail.StartX) < 6f && Math.Abs(NPC.velocity.X) < 2f && OnGround())
+                float startX = TumblerLoopRail.StartX(storedDirection);
+                MoveHorizontal(startX, 9f, 0.16f);
+                if (Math.Abs(NPC.Center.X - startX) < 6f && Math.Abs(NPC.velocity.X) < 2f && OnGround())
                 {
                     NPC.velocity.X *= 0.5f;
-                    storedDirection = 1;
                     rampStart = new Vector2(NPC.Center.X, FloorY - NPC.height * 0.5f);
-                    SpawnProjectile<TumblerLoopRail>(rampStart, Vector2.Zero, 0, 0f, NPC.whoAmI);
+                    SpawnProjectile<TumblerLoopRail>(rampStart, Vector2.Zero, 0, 0f, NPC.whoAmI, 0f, storedDirection);
                     substate = 1;
                     StateTimer = 0;
                     NPC.netUpdate = true;
@@ -77,9 +76,9 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             {
                 NPC.noGravity = NPC.noTileCollide = true;
                 contactDamage = true;
-                Vector2 destination = TumblerRailMotion.Advance(t => TumblerLoopRail.Point(rampStart, t), ref railProgress, ref railSpeed, railProgress < 0.2f ? 0.035f : 0f);
+                Vector2 destination = TumblerRailMotion.Advance(t => TumblerLoopRail.Point(rampStart, storedDirection, t), ref railProgress, ref railSpeed, railProgress < 0.2f ? 0.035f : 0f);
                 NPC.velocity = destination - NPC.Center;
-                spinTarget = railSpeed / 52f;
+                spinTarget = storedDirection * railSpeed / 52f;
                 visualCharge = 0.9f;
                 if (railProgress >= 1f)
                 {
@@ -146,6 +145,22 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 for (int side = -1; side <= 1; side += 2)
                     TumblerVFX.DrawTelegraph(spriteBatch, ground - screenPos, ground - screenPos + new Vector2(side * 520f, 0f), PhaseColor, charge * 0.65f, 100f);
             }
+            if (State == TumblerState.Overload && StateTimer >= 120 && StateTimer < 205)
+            {
+                int count = StateTimer < 180 ? 10 : 14;
+                float start = StateTimer < 180 ? 120f : 180f;
+                float end = StateTimer < 180 ? 180f : 205f;
+                float rotation = StateTimer < 180 ? 0f : 0.12f;
+                float charge = MathHelper.Clamp((StateTimer - start) / (end - start), 0f, 1f);
+                float radius = Math.Min(720f, Math.Max(RightOuter - LeftOuter, FloorY - ArenaData.WorldBounds.Top));
+                Vector2 center = NPC.Center - screenPos;
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 endPoint = center + (MathHelper.TwoPi * i / count + rotation).ToRotationVector2() * radius;
+                    TumblerVFX.DrawTelegraph(spriteBatch, center, endPoint, PhaseColor, 0.18f + charge * 0.62f, 58f);
+                }
+                TumblerVFX.DrawCharge(spriteBatch, center, PhaseColor, charge, 36f - charge * 10f, StateTimer * 0.035f);
+            }
             if (State == TumblerState.Stunned)
             {
                 float fade = MathHelper.Clamp((stunReturnTimer - StateTimer) / 25f, 0f, 1f);
@@ -173,7 +188,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             if (State == TumblerState.LoopSlam && substate is 2 or 4)
             {
-                Vector2 tip = TumblerLoopRail.Point(rampStart, 1f);
+                Vector2 tip = TumblerLoopRail.Point(rampStart, storedDirection, 1f);
                 Vector2 ground = new(tip.X, FloorY);
                 float strength = substate == 4 ? 0.8f : 0.35f;
                 TumblerVFX.DrawTelegraph(spriteBatch, ground - screenPos, tip - screenPos, PhaseColor, strength, 60f);

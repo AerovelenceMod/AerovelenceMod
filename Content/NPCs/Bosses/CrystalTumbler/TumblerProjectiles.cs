@@ -428,7 +428,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
     public class TumblerLightningBolt : ModProjectile
     {
+        private const int FenceMarker = 1000;
         private int timer;
+        private bool FenceBolt => Projectile.ai[0] >= FenceMarker;
+        private int WarningTime => FenceBolt ? Math.Max(1, (int)Projectile.ai[0] - FenceMarker) : Math.Max(1, (int)Projectile.ai[0]);
+        internal static float FenceWarning(int warning) => FenceMarker + Math.Max(1, warning);
         private int ActiveDuration => Projectile.ai[2] < 0f ? Math.Clamp((int)-Projectile.ai[2], 10, 120) : 10;
         private int FadeDuration => Projectile.ai[2] < 0f ? 14 : 4;
 
@@ -492,11 +496,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                         TumblerProjectileRetirement.Begin(Projectile);
                     return;
                 }
-                timer = Math.Min(timer, (int)Projectile.ai[0] - 1);
+                timer = Math.Min(timer, WarningTime - 1);
                 Projectile.timeLeft = 240;
                 return;
             }
-            if (timer == (int)Projectile.ai[0])
+            if (timer == WarningTime)
             {
                 SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.15f }, Projectile.Center);
                 if (!Main.dedServ)
@@ -507,18 +511,20 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (Main.netMode != NetmodeID.MultiplayerClient)
                     Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, 54f, 20f, Projectile.ai[1]);
             }
-            if (timer >= Projectile.ai[0])
+            if (timer >= WarningTime)
             {
                 lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
+                if (FenceBolt)
+                    Lighting.AddLight(Projectile.Center, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
                 Lighting.AddLight(Projectile.Center + Projectile.velocity, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
             }
-            if (timer > Projectile.ai[0] + ActiveDuration + FadeDuration)
+            if (timer > WarningTime + ActiveDuration + FadeDuration)
                 Projectile.Kill();
         }
 
         public override bool? CanDamage()
         {
-            return Projectile.ai[2] <= 0f && timer >= Projectile.ai[0] && timer <= Projectile.ai[0] + ActiveDuration;
+            return Projectile.ai[2] <= 0f && timer >= WarningTime && timer <= WarningTime + ActiveDuration;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -531,8 +537,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override bool PreDraw(ref Color lightColor)
         {
-            float telegraph = MathHelper.Clamp(timer / Math.Max(1f, Projectile.ai[0]), 0f, 1f);
-            float strike = Projectile.ai[2] <= 0f && timer >= Projectile.ai[0] ? MathHelper.Clamp((Projectile.ai[0] + ActiveDuration + FadeDuration - timer) / (Projectile.ai[2] < 0f ? FadeDuration : 14f), 0f, 1f) : 0f;
+            float telegraph = MathHelper.Clamp(timer / (float)WarningTime, 0f, 1f);
+            float strike = Projectile.ai[2] <= 0f && timer >= WarningTime ? MathHelper.Clamp((WarningTime + ActiveDuration + FadeDuration - timer) / (Projectile.ai[2] < 0f ? FadeDuration : 14f), 0f, 1f) : 0f;
             Color color = Projectile.ai[1] >= 1f ? new Color(255, 182, 48) : new Color(45, 225, 255);
             Vector2 start = Projectile.Center - Main.screenPosition;
             Vector2 end = start + Projectile.velocity;
@@ -540,11 +546,19 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             {
                 lightning.Draw(Main.spriteBatch, color, strike, 3f);
                 Texture2D star = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_07").Value;
+                if (FenceBolt)
+                    Main.EntitySpriteDraw(star, start, null, TumblerVFX.Glow(color, strike), 0f, star.Size() * 0.5f, new Vector2(0.38f, 0.18f) * strike, SpriteEffects.None);
                 Main.EntitySpriteDraw(star, end, null, TumblerVFX.Glow(color, strike), 0f, star.Size() * 0.5f, new Vector2(0.38f, 0.18f) * strike, SpriteEffects.None);
             }
             else
             {
-                TumblerVFX.DrawTelegraph(Main.spriteBatch, start, end, color, MathHelper.Clamp(timer / 8f, 0f, 1f) * (0.65f + telegraph * 0.2f));
+                float opacity = MathHelper.Clamp(timer / 8f, 0f, 1f) * (0.65f + telegraph * 0.2f);
+                TumblerVFX.DrawTelegraph(Main.spriteBatch, start, end, color, opacity);
+                if (FenceBolt)
+                {
+                    TumblerVFX.DrawTelegraph(Main.spriteBatch, end, start, color, opacity);
+                    TumblerVFX.DrawCharge(Main.spriteBatch, start, color, telegraph, 13f + 9f * (1f - telegraph), timer * 0.025f);
+                }
                 TumblerVFX.DrawCharge(Main.spriteBatch, end, color, telegraph, 13f + 9f * (1f - telegraph), -timer * 0.025f);
             }
             return false;

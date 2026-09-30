@@ -57,6 +57,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (platformIndex < 0)
                 return true;
             Projectile platform = Main.projectile[platformIndex];
+            if (player.whoAmI == Main.myPlayer && player.controlJump && player.releaseJump)
+            {
+                player.velocity.Y = -5f * player.gravDir;
+                player.jump = 0;
+                player.releaseJump = false;
+                player.justJumped = true;
+            }
             if (!TumblerMagneticPlatform.IsArenaPlatform(platform) || platform.identity != platformIdentity || !((TumblerMagneticPlatform)platform.ModProjectile).CanStand || player.dead || player.controlJump || projectile.ai[0] == 1f || Vector2.Distance(player.Center, platform.Center) > 650f)
             {
                 platformIndex = -1;

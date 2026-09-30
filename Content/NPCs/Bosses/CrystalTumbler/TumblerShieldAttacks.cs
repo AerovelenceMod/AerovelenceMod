@@ -17,6 +17,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         private int timer;
         private readonly Vector2[] endpoints = new Vector2[3];
         private readonly bool[] locked = new bool[3];
+        private readonly bool[] tileImpacts = new bool[3];
         private readonly TumblerLightningVisual[] bolts = [new(), new(), new()];
         private int Cycle => timer % 480;
         private static int FireTime(int index) => 360 + index * 45;
@@ -67,7 +68,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 {
                     Player player = Main.player[Player.FindClosest(Crystal(i), 1, 1)];
                     Vector2 aim = player.Center + player.velocity * 10f;
-                    endpoints[i] = aim + (aim - Crystal(i)).SafeNormalize(Vector2.UnitY) * 180f;
+                    Vector2 target = aim + (aim - Crystal(i)).SafeNormalize(Vector2.UnitY) * 180f;
+                    endpoints[i] = ClipToTiles(Crystal(i), target, out tileImpacts[i]);
                     locked[i] = true;
                     Projectile.netUpdate = true;
                 }
@@ -77,8 +79,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 {
                     SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.8f, Pitch = -0.25f }, Crystal(i));
                     if (!Main.dedServ)
+                    {
                         for (int spark = 0; spark < 14; spark++)
                             TumblerVFX.SpawnSpark(Crystal(i), Main.rand.NextVector2Circular(4f, 4f), Color.White, 0.3f);
+                        if (tileImpacts[i])
+                        {
+                            Vector2 incoming = (Crystal(i) - endpoints[i]).SafeNormalize(Vector2.UnitY);
+                            for (int spark = 0; spark < 5; spark++)
+                                TumblerVFX.SpawnSpark(endpoints[i], incoming.RotatedByRandom(0.8f) * Main.rand.NextFloat(0.8f, 2.2f), Color.Lerp(TumblerVFX.PhaseColor(1f), Color.White, 0.75f), 0.16f);
+                            for (int dust = 0; dust < 3; dust++)
+                                Dust.NewDustPerfect(endpoints[i], DustID.Stone, incoming.RotatedByRandom(0.9f) * Main.rand.NextFloat(0.7f, 1.7f), 0, new Color(130, 136, 148), Main.rand.NextFloat(0.7f, 1f));
+                        }
+                    }
                 }
                 if (!Main.dedServ && Cycle < fire && timer % 6 == 0)
                 {
@@ -90,6 +102,32 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             if (Cycle >= 240 && Cycle < 360 && Cycle % 20 == 0)
                 SoundEngine.PlaySound(SoundID.Item93 with { Volume = 0.18f, Pitch = (Cycle - 240f) / 180f, MaxInstances = 1 }, owner.Center);
+        }
+
+        private static Vector2 ClipToTiles(Vector2 start, Vector2 end, out bool hitTile)
+        {
+            Vector2 delta = end - start;
+            float distance = delta.Length();
+            if (distance <= 1f)
+            {
+                hitTile = false;
+                return end;
+            }
+            Vector2 direction = delta / distance;
+            int steps = Math.Max(1, (int)MathF.Ceiling(distance / 4f));
+            Vector2 previous = start;
+            for (int step = 1; step <= steps; step++)
+            {
+                Vector2 point = start + direction * Math.Min(distance, step * 4f);
+                if (Collision.SolidCollision(point - new Vector2(2f), 4, 4))
+                {
+                    hitTile = true;
+                    return previous;
+                }
+                previous = point;
+            }
+            hitTile = false;
+            return end;
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -111,6 +149,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             for (int i = 0; i < 3; i++)
             {
                 writer.Write(locked[i]);
+                writer.Write(tileImpacts[i]);
                 writer.WriteVector2(endpoints[i]);
             }
         }
@@ -120,6 +159,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             for (int i = 0; i < 3; i++)
             {
                 locked[i] = reader.ReadBoolean();
+                tileImpacts[i] = reader.ReadBoolean();
                 endpoints[i] = reader.ReadVector2();
             }
         }

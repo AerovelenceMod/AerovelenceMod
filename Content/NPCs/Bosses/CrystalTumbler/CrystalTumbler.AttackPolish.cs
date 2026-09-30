@@ -37,6 +37,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
     public partial class CrystalTumbler
     {
+        private static int PylonWarningTime => Main.masterMode ? 135 : Main.expertMode ? 165 : 195;
+        private static int PylonWaveTime => PylonWarningTime + 100;
+        private static float PylonSafeWidth => Main.masterMode ? 170f : Main.expertMode ? 260f : 320f;
+
         private void ConductiveFloorRoll()
         {
             RollTowardPlayer(PhaseTwo ? 7f : 6f, 0.16f);
@@ -58,10 +62,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             float width = RightOuter - 60f - left;
             for (int lane = 0; lane < 3; lane++)
             {
-                float y = FloorY - 125f - lane * 100f;
+                float y = FloorY - 93f - lane * 100f;
                 if (y < ArenaData.WorldBounds.Top + 100f)
                     continue;
-                SpawnProjectile<TumblerLightningBolt>(new Vector2(left, y), new Vector2(width, 0f), ProjectileDamage(17), 0f, 100f, PhaseTwo ? 1f : 0f, -75f);
+                SpawnProjectile<TumblerLightningBolt>(new Vector2(left, y), new Vector2(width, 0f), ProjectileDamage(17), 0f, TumblerLightningBolt.FenceWarning(PylonWarningTime), PhaseTwo ? 1f : 0f, -75f);
             }
         }
 

@@ -15,7 +15,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         private static readonly float[] distances = BuildDistances();
         private readonly TumblerConjuredRail rail = new();
 
-        internal static float StartX => ArenaData.ArenaCenter.X - 355f;
+        internal static float StartX(int direction) => ArenaData.ArenaCenter.X - direction * 355f;
 
         private static Vector2[] BuildCurve()
         {
@@ -46,7 +46,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             return result;
         }
 
-        public static Vector2 Point(Vector2 start, float progress)
+        public static Vector2 Point(Vector2 start, int direction, float progress)
         {
             float distance = MathHelper.Clamp(progress, 0f, 1f) * distances[^1];
             int upper = Array.BinarySearch(distances, distance);
@@ -55,13 +55,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             upper = Math.Clamp(upper, 1, curve.Length - 1);
             float fraction = (distance - distances[upper - 1]) / (distances[upper] - distances[upper - 1]);
             Vector2 offset = Vector2.Lerp(curve[upper - 1], curve[upper], fraction);
+            offset.X *= direction;
             offset.Y *= MathHelper.Clamp((start.Y - ArenaData.WorldBounds.Top - 80f) / 400f, 0.55f, 1f);
             return start + offset;
         }
 
-        internal static Vector2 Tangent(Vector2 start, float progress)
+        internal static Vector2 Tangent(Vector2 start, int direction, float progress)
         {
-            return (Point(start, Math.Min(1f, progress + 0.002f)) - Point(start, Math.Max(0f, progress - 0.002f))).SafeNormalize(Vector2.UnitX);
+            return (Point(start, direction, Math.Min(1f, progress + 0.002f)) - Point(start, direction, Math.Max(0f, progress - 0.002f))).SafeNormalize(Vector2.UnitX);
         }
 
         public override void SetDefaults()
@@ -83,7 +84,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (bossIndex < 0 || bossIndex >= Main.maxNPCs || !Main.npc[bossIndex].active || Main.npc[bossIndex].ModNPC is not CrystalTumbler boss)
             {
                 Projectile.timeLeft = Math.Min(Projectile.timeLeft, 90);
-                rail.Update(t => Point(Projectile.Center, t), Projectile.ai[1], true);
+                rail.Update(t => Point(Projectile.Center, (int)Projectile.ai[2], t), Projectile.ai[1], true);
                 return;
             }
             if (boss.LoopRailFinished)
@@ -93,12 +94,12 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Projectile.timeLeft = 450;
                 Projectile.ai[1] = boss.LoopRailProgress;
             }
-            rail.Update(t => Point(Projectile.Center, t), Projectile.ai[1], boss.LoopRailFinished);
+            rail.Update(t => Point(Projectile.Center, (int)Projectile.ai[2], t), Projectile.ai[1], boss.LoopRailFinished);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            rail.Draw(t => Point(Projectile.Center, t), 1, TumblerProjectileRetirement.VisualOpacity(Projectile), false);
+            rail.Draw(t => Point(Projectile.Center, (int)Projectile.ai[2], t), (int)Projectile.ai[2], TumblerProjectileRetirement.VisualOpacity(Projectile), false);
             return false;
         }
     }

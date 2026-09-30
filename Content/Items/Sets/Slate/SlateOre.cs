@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Systems.Language;
+/*using AerovelenceMod.Common.Systems.Language;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -47,4 +47,4 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
             AddMapEntry(new Color(108, 114, 116),Terraria.Localization.Language.GetText("Slate Slab"));
         }
     }
-}
+}*/
