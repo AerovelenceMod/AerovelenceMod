@@ -39,17 +39,11 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
             int maxY = (int)MathHelper.Max(point1.Y, point2.Y);
 
             List<StructureData> structure = new List<StructureData>();
-            HashSet<Vector2> processedTiles = new HashSet<Vector2>();
 
             for (int x = minX; x <= maxX; x++)
             {
                 for (int y = minY; y <= maxY; y++)
                 {
-                    Vector2 tilePosition = new Vector2(x, y);
-
-                    if (processedTiles.Contains(tilePosition))
-                        continue;
-
                     Tile tile = Main.tile[x, y];
                     ModTile modTile = TileLoader.GetTile(tile.TileType);
                     ModWall modWall = WallLoader.GetWall(tile.WallType);
@@ -81,33 +75,6 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                         WallColor = tile.WallColor
                     };
                     structure.Add(data);
-
-                    if (data.TileFrameImportant)
-                    {
-                        TileObjectData tileData = TileObjectData.GetTileData(tile.TileType, 0);
-
-                        if (tileData != null)
-                        {
-                            int width = tileData.Width;
-                            int height = tileData.Height;
-
-                            for (int dx = 0; dx < width; dx++)
-                            {
-                                for (int dy = 0; dy < height; dy++)
-                                {
-                                    processedTiles.Add(new Vector2(x + dx, y + dy));
-                                }
-                            }
-                        }
-                        else
-                        {
-                            processedTiles.Add(tilePosition);
-                        }
-                    }
-                    else
-                    {
-                        processedTiles.Add(tilePosition);
-                    }
                 }
             }
 
@@ -116,7 +83,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 
         public static void SaveStructureToFile(List<StructureData> structure, string structureName, int width, int height)
         {
-            string directoryPath = Path.Combine(Main.SavePath, "Mods", "AerovelenceMod", "Common", "Utilities", "StructureStamper", "Structures");
+            string directoryPath = Path.Combine(Main.SavePath, "ModSources", "AerovelenceMod", "Common", "Utilities", "Generation", "StructureStamper", "Structures");
             string path = Path.Combine(directoryPath, $"{structureName}.dat");
 
             Directory.CreateDirectory(directoryPath);
@@ -306,19 +273,20 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
                                             targetTile.TileFrameX = (short)(data.TileFrameX + dx * 18);
                                             targetTile.TileFrameY = (short)(data.TileFrameY + dy * 18);
                                         }
-                                        targetTile.WallType = GetWallType(data);
-                                        targetTile.WallColor = data.WallColor;
-                                        targetTile.LiquidType = data.LiquidType;
-                                        targetTile.LiquidAmount = data.LiquidAmount;
-                                        targetTile.RedWire = data.HasRedWire;
-                                        targetTile.BlueWire = data.HasBlueWire;
-                                        targetTile.GreenWire = data.HasGreenWire;
-                                        targetTile.YellowWire = data.HasYellowWire;
-                                        targetTile.HasActuator = data.HasActuator;
-                                        targetTile.IsActuated = data.IsActuated;
-                                        targetTile.TileColor = data.TileColor;
-                                        targetTile.IsHalfBlock = data.IsHalfBlock;
-                                        targetTile.Slope = (SlopeType)data.Slope;
+                                        StructureData cellData = structure.Find(entry => entry.X == data.X + dx && entry.Y == data.Y + dy) ?? data;
+                                        targetTile.WallType = GetWallType(cellData);
+                                        targetTile.WallColor = cellData.WallColor;
+                                        targetTile.LiquidType = cellData.LiquidType;
+                                        targetTile.LiquidAmount = cellData.LiquidAmount;
+                                        targetTile.RedWire = cellData.HasRedWire;
+                                        targetTile.BlueWire = cellData.HasBlueWire;
+                                        targetTile.GreenWire = cellData.HasGreenWire;
+                                        targetTile.YellowWire = cellData.HasYellowWire;
+                                        targetTile.HasActuator = cellData.HasActuator;
+                                        targetTile.IsActuated = cellData.IsActuated;
+                                        targetTile.TileColor = cellData.TileColor;
+                                        targetTile.IsHalfBlock = cellData.IsHalfBlock;
+                                        targetTile.Slope = (SlopeType)cellData.Slope;
 
                                         tilesToFrame.Add(new Vector2(x + dx, y + dy));
                                     }

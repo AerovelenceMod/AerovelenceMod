@@ -30,9 +30,15 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
         {
             StructureStamperSystem system = ModContent.GetInstance<StructureStamperSystem>();
 
+            if (system.IsStructurePickerOpen() || system.IsPencilUseBlocked())
+            {
+                return false;
+            }
+
             if (player.altFunctionUse == 2)
             {
                 system.OpenStructurePicker();
+                return false;
             }
             else
             {
