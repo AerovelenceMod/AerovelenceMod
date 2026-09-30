@@ -41,6 +41,10 @@ namespace AerovelenceMod
                 Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.TurnIn(whoAmI, reader.ReadInt16(), reader.ReadByte(), reader.ReadInt32());
             else if (packet == Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.ResultPacket && Main.netMode == NetmodeID.MultiplayerClient)
                 Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.ShowReward(reader.ReadInt32(), reader.ReadInt32());
+            else if (packet == Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.FeedRequestPacket)
+                Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.Feed(whoAmI, reader.ReadInt16(), reader.ReadByte());
+            else if (packet == Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.FeedResultPacket && Main.netMode == NetmodeID.MultiplayerClient)
+                Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.ShowFeed(reader.ReadInt16(), reader.ReadByte(), reader.ReadByte());
         }
 		public Asset<Effect> TrailShader;
 
