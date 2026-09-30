@@ -3,7 +3,7 @@ using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.GaussShotgun;
+using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers;
 using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Projectiles.Other;

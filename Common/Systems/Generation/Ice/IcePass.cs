@@ -143,8 +143,8 @@ namespace AerovelenceMod.Common.Systems.Generation.Ice // MOD NAME HERE
                         size = (int)size2;
                     }
 
-                    //WorldGen.PlaceTile(x - 1, y + 1, ModContent.TileType<SlateOreBlock>());
-                    //WorldGen.PlaceTile(x + 1, y + 1, ModContent.TileType<SlateOreBlock>());
+                    //WorldGen.PlaceTile(x - 1, y + 1, ModContent.TileType<SlateOreTile>());
+                    //WorldGen.PlaceTile(x + 1, y + 1, ModContent.TileType<SlateOreTile>());
 
                     structureCount--;
                 }
@@ -207,7 +207,7 @@ namespace AerovelenceMod.Common.Systems.Generation.Ice // MOD NAME HERE
             {
                 for (int x = 1; x < Main.maxTilesX; x++)
                 {
-                    //if (Framing.GetTileSafely(x, y).TileType == ModContent.TileType<SlateOreBlock>())
+                    //if (Framing.GetTileSafely(x, y).TileType == ModContent.TileType<SlateOreTile>())
                     //{
                     //  WorldGen.KillTile(x, y);
                     //}

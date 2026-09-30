@@ -22,7 +22,10 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
         }
         public override void AddRecipes()
         {
-
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 15)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
     }
 }*/

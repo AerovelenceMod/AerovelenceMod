@@ -11,12 +11,10 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
+namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler.Rubbleswarm;
 
 public class Rubbleswarm : ModItem
 {
-    public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRock";
-	
     public override void SetStaticDefaults()
     {
         this.ModifyLocalization("Rubbleswarm", "Summons a flying clump of magnetized rubbl")
@@ -60,8 +58,6 @@ public class Rubbleswarm : ModItem
 
 public class RubbleboundBuff : ModBuff
 {
-    public override string Texture => "Terraria/Images/Buff_162";
-	
     public override void SetStaticDefaults()
     {
         Main.buffNoSave[Type] = true;

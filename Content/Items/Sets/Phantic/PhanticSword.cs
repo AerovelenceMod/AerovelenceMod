@@ -22,5 +22,12 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Item.rare = ItemRarityID.Green;
             Item.autoReuse = false;
         }
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 15)
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
     }
 }*/

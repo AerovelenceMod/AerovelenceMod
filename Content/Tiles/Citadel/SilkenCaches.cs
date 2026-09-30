@@ -246,7 +246,7 @@ public sealed class SilkenCachePass : GenPass
         Stamp(x, y, kind);
         if (kind == 0 && loot)
             new AeroStructure(new Vector2(x, y), 2, 5, "silkencacheloot").ApplyItemConfigurationsToAll(WorldGen.genRand,
-                HouseGenerator.CreatePrimaryLootPool(), HouseGenerator.CreateSecondaryLootPool());
+                CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
         return true;
     }
     internal static void Stamp(int x, int y, int kind)

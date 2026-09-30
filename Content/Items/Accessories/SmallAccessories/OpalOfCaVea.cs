@@ -137,6 +137,19 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         }
     }
 
+	public class OpalOfCaVeaNPC : GlobalNPC
+	{
+		public override bool InstancePerEntity => true;
+		
+        public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
+        {
+            if (player != null && player.GetModPlayer<OpalOfCaVeaPlayer>().hasOpal)
+            {
+                player.AddBuff(ModContent.BuffType<Glory>(), 300);
+            }
+        }
+    }
+
     public class OpalOfCaVeaCrystalLayer : PlayerDrawLayer
     {
         public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.BackAcc);

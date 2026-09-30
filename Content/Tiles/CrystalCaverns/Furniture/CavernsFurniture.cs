@@ -105,7 +105,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             Item.width = 14;
             Item.height = 18;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.holdStyle = 1;
             Item.noWet = true;
             Item.useTurn = true;
@@ -177,7 +177,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 			TileObjectData.addTile(Type);
 
 			// Etc
-			AddMapEntry(new Color(254, 121, 2), Language.GetText("ItemName.Campfire"));
+			AddMapEntry(new Color(254, 121, 2),Terraria.Localization.Language.GetText("ItemName.Campfire"));
 
 			// Assets
 			flameTexture = ModContent.Request<Texture2D>(Texture + "_Flame");

@@ -2,6 +2,7 @@ using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria;
@@ -35,35 +36,37 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             topsTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree_Tops");
         }
 
+        public override bool Shake(int x, int y, ref bool createLeaves)
+        {
+            if (Main.rand.NextBool(10))
+            {
+                if (Main.rand.NextBool(2))
+                    Item.NewItem(WorldGen.GetItemSource_FromTreeShake(x, y), new Vector2(x, y) * 16, ModContent.ItemType<Items.Potions.CrystalApple>());
+                else if (Main.rand.NextBool(2))
+                    Item.NewItem(WorldGen.GetItemSource_FromTreeShake(x, y), new Vector2(x, y) * 16, ModContent.ItemType<Items.Potions.Glowberry>());
+            }
+            return false;
+        }
+
+        public override int SaplingGrowthType(ref int style)
+        {
+            style = 0;
+            return ModContent.TileType<CrystalSapling>();
+        }
+
         public override void SetTreeFoliageSettings(Tile tile, ref int xoffset, ref int treeFrame, ref int floorY, ref int topTextureFrameWidth, ref int topTextureFrameHeight)
         {
 
         }
 
+        public override int CreateDust() => DustID.SpectreStaff;
 
-        /*public override int CreateDust()
-		{
-			return;// DustType<Sparkle>();
-		}*/
-
-        //public override int GrowthFXGore()
-        //{
-        //	return ModContent.Find<ModGore>("Gores/ExampleTreeFX").Type;
-        //}
-
-        public override int DropWood()
-		{
-			return ItemType <GlimmerwoodItem>();
-		}
+        public override int DropWood() => ItemType<GlimmerwoodItem>();
 
         public override Asset<Texture2D> GetBranchTextures() => branchesTexture;
 
-        // Top Textures
         public override Asset<Texture2D> GetTopTextures() => topsTexture;
 
-        public override Asset<Texture2D> GetTexture()
-        {
-            return texture;
-        }
+        public override Asset<Texture2D> GetTexture() => texture;
     }
 }

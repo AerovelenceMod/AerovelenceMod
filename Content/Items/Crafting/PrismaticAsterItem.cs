@@ -1,4 +1,5 @@
 using AerovelenceMod.Common.Systems.Language;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -18,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Crafting
             Item.height = 34;
             Item.value = 1000;
             Item.rare = ItemRarityID.Orange;
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
         }
     }
 }

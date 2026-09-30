@@ -93,7 +93,7 @@ namespace AerovelenceMod
 				int cyvercrySpawnItem = ModContent.ItemType<Content.Items.BossSummons.ObsidianEye>();
 				List<int> cyvercryCollectibles = new List<int>()
 				{
-					ModContent.ItemType<Content.Items.Weapons.Aurora.Eos.Eos>()
+					ModContent.ItemType<Content.Items.Accessories.Boss.EnergyShield>()
 				};
                 LocalizedText cyvercrySpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.Cyvercry.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<ObsidianEye>() + "]");
                 bossChecklistMod.Call(
@@ -116,13 +116,13 @@ namespace AerovelenceMod
 				float tumblerWeight = 2.8f;
 				Func<bool> tumblerDowned = () => DownedWorld.DownedCrystalTumbler;
 				int tumblerBossType = ModContent.NPCType<Content.NPCs.Bosses.CrystalTumbler.CrystalTumbler>();
-				int tumblerSpawnItem = ModContent.ItemType<Content.Items.BossSummons.LargeGeode>();
+				int tumblerSpawnItem = ModContent.ItemType<Content.Items.BossSummons.CrystalKey>();
 				List<int> tumblerCollectibles = new List<int>()
 				{
-					ModContent.ItemType<Content.Items.Mounts.TumblingHarness>()
+					ModContent.ItemType<Content.Items.Accessories.Boss.PrismaticSoul>()
 				};
 				LocalizedText tumblerDisplayName = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.DisplayName");
-                LocalizedText tumblerSpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<LargeGeode>() + "]");
+                LocalizedText tumblerSpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<CrystalKey>() + "]");
 				Action<SpriteBatch, Rectangle, Color> tumblerPortrait = (SpriteBatch spriteBatch, Rectangle rect, Color color) =>
 				{
 					Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler").Value;

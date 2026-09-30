@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Buffs;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.Items.Mounts;
 using Microsoft.Xna.Framework;

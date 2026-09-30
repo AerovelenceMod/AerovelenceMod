@@ -251,11 +251,10 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D body = TextureAssets.Projectile[Type].Value;
-            Texture2D glowmask = ModContent.Request<Texture2D>(Texture + "_Glowmask").Value;
             Vector2 topLeft = Projectile.Center - body.Size() * 0.5f;
             float opacity = Opacity();
             DrawTileOccluded(body, topLeft, lightColor * opacity);
-            DrawTileOccluded(glowmask, topLeft, Color.White * opacity);
+            DrawTileOccluded(body, topLeft, Color.White * opacity);
             DrawStretchyBand(body, opacity);
             return false;
         }

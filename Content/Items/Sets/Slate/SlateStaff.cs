@@ -123,6 +123,14 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
 
             return false;
         }
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<SlateOre>(), 35)
+                .AddRecipeGroup(RecipeGroupID.Wood, 15)
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
     }
 }
 */

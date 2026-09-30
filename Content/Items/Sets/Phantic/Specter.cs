@@ -1,6 +1,5 @@
 /*using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria;
@@ -21,7 +20,6 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             this.ModifyLocalization("Specter", "Left click to stab forward\nRight click to slash and wound enemies for a short time")
             .AddName(Language.Default, "Specter").AddTooltip(Language.Default, "Left click to stab forward\nRight click to slash and wound enemies for a short time")
             .AddSkillStrike(Language.Default, "Stabbing wounded enemies Skill Strikes");

@@ -1,6 +1,5 @@
 ﻿using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,8 +17,7 @@ namespace AerovelenceMod.Content.Items.Crafting
 
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCorn>());
-            Item.maxStack = 9999;
+            Item.maxStack = Item.CommonMaxStack;
             Item.width = 26;
             Item.height = 22;
             Item.value = 10;

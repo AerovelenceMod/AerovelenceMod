@@ -10,7 +10,6 @@ using Terraria.Graphics.Shaders;
 using rail;
 using Terraria.Audio;
 using Terraria.ID;
-using AerovelenceMod.Content.Buffs.FlareDebuffs;
 using Steamworks;
 using static Terraria.NPC;
 

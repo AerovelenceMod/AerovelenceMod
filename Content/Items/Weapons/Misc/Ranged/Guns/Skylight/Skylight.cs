@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 using static Terraria.NPC;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.ThunderLance;
+using AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 {

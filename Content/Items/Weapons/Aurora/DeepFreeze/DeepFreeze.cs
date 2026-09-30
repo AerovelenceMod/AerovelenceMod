@@ -13,7 +13,6 @@ using ReLogic.Content;
 using AerovelenceMod.Common.Utilities;
 using Terraria.Audio;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Buffs.PlayerInflictedDebuffs;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems.Language;

@@ -11,7 +11,6 @@ using System.Collections.Generic;
 using Terraria.GameContent;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Audio;
-using AerovelenceMod.Content.Buffs.PlayerInflictedDebuffs;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 {

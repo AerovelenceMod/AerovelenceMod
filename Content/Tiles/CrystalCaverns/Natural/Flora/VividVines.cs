@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
 
 			Color colour = Color.White;
 
-			Texture2D glow = (Texture2D)ModContent.Request<Texture2D>("Content/Tiles/CrystalCaverns/Natural/Flora/VividVines_Glow");
+			Texture2D glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/Flora/VividVines_Glow");
 			Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange, Main.offScreenRange);
 			Main.spriteBatch.Draw(glow, new Vector2(i * 16, j * 16) - Main.screenPosition + zero, new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16), colour);
 		}

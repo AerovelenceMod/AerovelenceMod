@@ -10,7 +10,7 @@ namespace AerovelenceMod.Content.Items.TreasureBags
 {
     public class CrystalTumblerBag : TranslatableModItem
     {
-        public static int[] Weapons => new[] { ModContent.ItemType<Geomagnetic>(), ModContent.ItemType<FenceSitter>(), ModContent.ItemType<TumblerAccelerator>(), ModContent.ItemType<ConductorWand>(), ModContent.ItemType<DarkCrystalStaff>(), ModContent.ItemType<Staticstring>(), ModContent.ItemType<Rubbleswarm>(), ModContent.ItemType<BatteryBackpack>() };
+        public static int[] Weapons => new[] { ModContent.ItemType<Geomagnetic>(), ModContent.ItemType<FenceSitter>(), ModContent.ItemType<TumblerAccelerator>(), ModContent.ItemType<ConductorWand>(), ModContent.ItemType<DarkCrystalStaff>(), ModContent.ItemType<Staticstring>(), ModContent.ItemType<Weapons.BossDrops.CrystalTumbler.Rubbleswarm.Rubbleswarm>(), ModContent.ItemType<BatteryBackpack>() };
         private const string Description = "Right click to open";
 		
         public override void SetStaticDefaults()
@@ -33,7 +33,7 @@ namespace AerovelenceMod.Content.Items.TreasureBags
         public override bool CanRightClick() => true;
         public override void ModifyItemLoot(ItemLoot itemLoot)
         {
-            //itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<>()));
+            itemLoot.Add(ItemDropRule.Common(ModContent.ItemType<Accessories.Boss.PrismaticSoul>()));
             itemLoot.Add(ItemDropRule.OneFromOptions(1, Weapons));
             itemLoot.Add(ItemDropRule.CoinsBasedOnNPCValue(ModContent.NPCType<Content.NPCs.Bosses.CrystalTumbler.CrystalTumbler>()));
         }

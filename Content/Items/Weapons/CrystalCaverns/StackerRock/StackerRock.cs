@@ -24,8 +24,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Stacker Rock", "Throws discs that linger on the floor; More can be piled up in one stack\nHit a tower from the side to topple it, sending rocks rolling")
-                .AddName(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Roca Apilable")
-                .AddTooltip(global::AerovelenceMod.Common.Systems.Language.Language.Spanish, "Rocas hechas para apilar\nLos discos se anclan en suelos sólidos y se apilan desde arriba\nCada roca añadida prolonga la duración de la torre\nGolpea una torre por el costado para derribarla antes\nLas rocas derribadas caen, rebotan y ruedan hacia delante");
+                .AddName(Common.Systems.Language.Language.Spanish, "Roca Apilable")
+                .AddTooltip(Common.Systems.Language.Language.Spanish, "Rocas hechas para apilar\nLos discos se anclan en suelos sólidos y se apilan desde arriba\nCada roca añadida prolonga la duración de la torre\nGolpea una torre por el costado para derribarla antes\nLas rocas derribadas caen, rebotan y ruedan hacia delante");
             this.AddSkillStrike(Language.Default, "Topple a tower of at least five rocks to Skill Strike");
             this.AddSkillStrike(Language.Spanish, "Derriba una torre de al menos cinco rocas");
             base.SetStaticDefaults();

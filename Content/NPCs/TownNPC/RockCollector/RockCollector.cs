@@ -231,9 +231,9 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
             // Ensure chosenChat isn't null or empty
             if (string.IsNullOrEmpty(chosenChat))
-                chosenChat = Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2");
+                chosenChat =Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2");
 
-            if (chosenChat == Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"))
+            if (chosenChat ==Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"))
                 Main.npcChatCornerItem = ModContent.ItemType<OnTheRocks>();
 
             return chosenChat;
@@ -242,7 +242,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button = Language.GetTextValue("LegacyInterface.28");
+            button =Terraria.Localization.Language.GetTextValue("LegacyInterface.28");
             button2 = RockCollectorTrade.Text("TurnIn");
         }
 
@@ -439,7 +439,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         internal const byte ResultPacket = 232;
         private int cooldown;
         public override void PostUpdate() => cooldown = Math.Max(0, cooldown - 1);
-        internal static string Text(string key) => global::AerovelenceMod.Common.Systems.Language.LocalizationManager.GetTranslation("AerovelenceMod.RockCollectorTrade." + key);
+        internal static string Text(string key) => Common.Systems.Language.LocalizationManager.GetTranslation("AerovelenceMod.RockCollectorTrade." + key);
         internal static int FindSpecimen(Player player)
         {
             int selected = player.selectedItem;
@@ -561,14 +561,14 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         private static void Register(string key, string english, string spanish)
         {
             string fullKey = "AerovelenceMod.RockCollectorTrade." + key;
-            global::AerovelenceMod.Common.Systems.Language.LocalizationManager.RegisterTranslation(fullKey, english, "default");
-            global::AerovelenceMod.Common.Systems.Language.LocalizationManager.RegisterTranslation(fullKey, spanish, "es-ES");
+            Common.Systems.Language.LocalizationManager.RegisterTranslation(fullKey, english, "default");
+            Common.Systems.Language.LocalizationManager.RegisterTranslation(fullKey, spanish, "es-ES");
         }
         public override void PostSetupContent()
         {
             if (ModLoader.TryGetMod("Census", out Mod census))
                 census.Call("TownNPCCondition", ModContent.NPCType<RockCollector>(),
-                    Language.GetText("Mods.AerovelenceMod.NPCs.RockCollector.Census.SpawnCondition"));
+                   Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.RockCollector.Census.SpawnCondition"));
         }
     }
 }

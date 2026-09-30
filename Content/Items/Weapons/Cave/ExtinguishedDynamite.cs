@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -36,9 +35,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Cave
 
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            this.ModifyLocalization("ExtinguishedDynamite", "")
-            .AddName(Language.Default, "Extinguished Dynamite")
+            this.ModifyLocalization("Extinguished Dynamite", "")
             .AddSkillStrike(Language.Default, "Every second hit Skill Strikes with an explosion")
 
             .AddName(Language.Spanish, "Dinamita Extinguida").AddSkillStrike(Language.Spanish, "Cada segundo explota y realiza Golpes de Habilidad")

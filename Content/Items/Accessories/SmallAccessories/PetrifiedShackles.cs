@@ -18,7 +18,6 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
     public class PetrifiedShackles : TranslatableModItem
     {
-        public override string Texture => "AerovelenceMod/Content/Items/Accessories/SmallAccessories/PetrifiedShackles";
         private string EnglishName => "Petrified Shackles";
         private string EnglishTooltip => "Grants 1 defense and reduces attack speed by 10%\nGrows 1 defense every 7 seconds in combat, up to 15\nOutside combat, grows 1 defense every 4 seconds, up to 25\nEntering combat sheds growth above 15; bosses keep you in combat\nCannot be equipped with Band of Crystallization";
         public override void SetDefaults()

@@ -18,12 +18,15 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
         }
         public override void UpdateEquip(Player player)
         {
-            player.GetCritChance(DamageClass.Melee) += 3;
-			player.GetCritChance(DamageClass.Ranged) += 3;
-			player.GetCritChance(DamageClass.Magic) += 3;
+            player.GetCritChance(DamageClass.Generic) += 3;
         }
         public override void AddRecipes()
         {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<PhanticBar>(), 17)
+                .AddRecipeGroup("AerovelenceMod:EvilMaterials", 15)
+                .AddTile(TileID.Anvils)
+                .Register();
 
         }
     }

@@ -1,7 +1,6 @@
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Buffs;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
@@ -150,9 +149,9 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                         if (!Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, p.position, p.width, p.height)) continue;
                         sentry = p.sentry;
                         captured.Add(p.identity);
-                        if (sentry && p.ModProjectile is global::AerovelenceMod.Content.Items.Weapons.CrystalCaverns.SaplingCluster)
+                        if (sentry && p.ModProjectile is Weapons.CrystalCaverns.SaplingCluster)
                             foreach (Projectile child in Main.ActiveProjectiles)
-                                if (child.owner == p.owner && child.ModProjectile is global::AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BabySapper && child.ai[0] == p.identity) captured.Add(child.identity);
+                                if (child.owner == p.owner && child.ModProjectile is Weapons.CrystalCaverns.BabySapper && child.ai[0] == p.identity) captured.Add(child.identity);
                         Projectile.netUpdate = true;
                         SoundEngine.PlaySound(SoundID.Item9 with { Volume = .3f, Pitch = .3f }, p.Center);
                     }

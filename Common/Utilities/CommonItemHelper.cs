@@ -7,7 +7,7 @@ namespace AerovelenceMod.Common.Utilities
 {
     public static class CommonItemHelper
     {
-        public static void SetupPlaceableItem(ModItem modItem, int width, int height, int value, int createTileType, int placeStyle = 0, int maxStack = 99, int useAnimation = 15, int useTime = 10)
+        public static void SetupPlaceableItem(ModItem modItem, int width, int height, int value, int createTileType, int placeStyle = 0, int maxStack = 9999, int useAnimation = 15, int useTime = 10)
         {
             modItem.Item.width = width;
             modItem.Item.height = height;
@@ -27,7 +27,7 @@ namespace AerovelenceMod.Common.Utilities
         {
             modItem.Item.width = 10;
             modItem.Item.height = 12;
-            modItem.Item.maxStack = 999;
+            modItem.Item.maxStack = Item.CommonMaxStack;
             modItem.Item.value = value;
             modItem.Item.useTurn = true;
             modItem.Item.autoReuse = true;

@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -18,10 +17,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            this.ModifyLocalization("MeteorCrossbow","Fires a rocket arrow")
-            .AddName(Language.Default, "Meteor Crossbow")
-            .AddTooltip(Language.Default, "Fires a rocket arrow")
+            this.ModifyLocalization("Meteor Crossbow", "Fires a rocket arrow")
             .AddSkillStrike(Language.Default, "The Arrow at full velocity Skill Strikes")
 
             .AddName(Language.Spanish, "Ballesta Meteórica").AddTooltip(Language.Spanish, "Dispara una flecha cohete").AddSkillStrike(Language.Spanish, "La Flecha a velocidad máxima realiza Golpes de Habilidad")

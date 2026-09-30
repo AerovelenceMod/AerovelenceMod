@@ -20,24 +20,24 @@ namespace AerovelenceMod.Content.Tiles.Citadel
 			DustType = 59;
 			HitSound = SoundID.Tink;
         }
+    }
 
-        public class CitadelBrickItem : ModItem
+    public class CitadelBrickItem : ModItem
+    {
+        public override void SetDefaults()
         {
-            public override void SetDefaults()
-            {
-                Item.width = 16;
-                Item.height = 16;
-                Item.maxStack = 999;
-                Item.useTurn = true;
-                Item.autoReuse = true;
-                Item.useAnimation = 15;
-                Item.useTime = 10;
-                Item.useStyle = ItemUseStyleID.Swing;
-                Item.consumable = true;
-                Item.createTile = ModContent.TileType<CitadelBrickTile>();
-                Item.rare = ItemRarityID.White;
-                Item.value = 5;
-            }
+            Item.width = 16;
+            Item.height = 16;
+            Item.maxStack = Item.CommonMaxStack;
+            Item.useTurn = true;
+            Item.autoReuse = true;
+            Item.useAnimation = 15;
+            Item.useTime = 10;
+            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = true;
+            Item.createTile = ModContent.TileType<CitadelBrickTile>();
+            Item.rare = ItemRarityID.White;
+            Item.value = 5;
         }
     }
 }

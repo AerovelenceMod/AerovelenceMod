@@ -2,7 +2,7 @@
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.GaussShotgun;
+using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;

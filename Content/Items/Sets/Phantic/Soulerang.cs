@@ -8,7 +8,6 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -23,7 +22,6 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
     {
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
             this.ModifyLocalization("Soulerang", "This boomerang has a unique flight pattern, and can go through blocks")
             .AddName(Language.Default, "Soulerang").AddTooltip(Language.Default, "This boomerang has a unique flight pattern, and can go through blocks");
 

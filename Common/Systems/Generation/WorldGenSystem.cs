@@ -11,16 +11,16 @@ namespace AerovelenceMod.Common.Systems.Generation
         public static LocalizedText CrystalCavernsTerrainPassMessage { get; private set; }
         public static LocalizedText CrystalCavernsStructurePassMessage { get; private set; }
         public static LocalizedText LivingTreeIslandsPassMessage { get; private set; }
-		public static LocalizedText CrystalCavernsRubblePassMessage { get; private set; }
+        public static LocalizedText CrystalCavernsRubblePassMessage { get; private set; }
 
         public override void SetStaticDefaults()
-		{
+        {
             LivingTreeIslandsPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(LivingTreeIslandsPassMessage)}"),
                 () => "Growing living tree sky islands");
-			CrystalCavernsTerrainPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsTerrainPassMessage)}"));
+            CrystalCavernsTerrainPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsTerrainPassMessage)}"));
             CrystalCavernsStructurePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsStructurePassMessage)}"));
-			CrystalCavernsRubblePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsRubblePassMessage)}"));
-		}
+            CrystalCavernsRubblePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsRubblePassMessage)}"));
+        }
 
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
         {
@@ -28,9 +28,11 @@ namespace AerovelenceMod.Common.Systems.Generation
                 CCTerrainPass.Instance("Crystal Caverns Terrain", 100f),
                 new SilkenCitadelPass(),
                 new CCStructurePass("Crystal Caverns Polish", 101f));
-            totalWeight += InsertAfter(tasks, "Tile Cleanup", new CCRubblePass("Crystal Caverns Rubble", 102f));
+            totalWeight += InsertAfter(tasks, "Tile Cleanup",
+                new CCRubblePass("Crystal Caverns Rubble", 102f));
             LivingTreeIslandPass islands = new();
-            totalWeight += InsertAfter(tasks, "Floating Islands", islands);
+            totalWeight += InsertAfter(tasks, "Floating Islands",
+                islands);
             totalWeight += InsertAfter(tasks, "Floating Island Houses",
                 new Terraria.GameContent.Generation.PassLegacy("Living Tree Island Structures", islands.Finish, 10f));
             totalWeight += InsertAfter(tasks, "Final Cleanup",
@@ -43,7 +45,8 @@ namespace AerovelenceMod.Common.Systems.Generation
             if (index < 0) return 0;
             tasks.InsertRange(index + 1, passes);
             double weight = 0;
-            foreach (GenPass pass in passes) weight += pass.Weight;
+            foreach (GenPass pass in passes)
+                weight += pass.Weight;
             return weight;
         }
     }

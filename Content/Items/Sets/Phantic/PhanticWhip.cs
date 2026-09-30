@@ -13,19 +13,14 @@ using Terraria.UI;
 using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems.Language;
-using Terraria.GameContent.Creative;
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
     public class PhanticWhip : TranslatableModItem
     {
-        //public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(PhanticWhipDebuff.TagDamage);
-
         public override void SetStaticDefaults()
         {
-            CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-            this.ModifyLocalization("PhanticWhip", "Inflicts enemies with a short-timed soul sapping effect\nYour minions capture soul energy from afflicted enemies\nThe energy is released when you next swing the whip in an arc of spirits")
-            .AddName(Language.Default, "Phantic Whip").AddTooltip(Language.Default, "Inflicts enemies with a short-timed soul sapping effect\nYour minions capture soul energy from afflicted enemies\nThe energy is released when you next swing the whip in an arc of spirits");
+            this.ModifyLocalization("Phantic Whip", "Inflicts enemies with a short-timed soul sapping effect\nYour minions capture soul energy from afflicted enemies\nThe energy is released when you next swing the whip in an arc of spirits");
 
             //.AddName(Language.Spanish, "").AddSkillStrike(Language.Spanish, "")
             //.AddName(Language.French, "").AddSkillStrike(Language.French, "")

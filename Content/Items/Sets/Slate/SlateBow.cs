@@ -117,6 +117,14 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
 
             return base.PreDrawInInventory(spriteBatch, position, frame, drawColor, itemColor, origin, scale);
         }
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
+                .AddIngredient(ModContent.ItemType<SlateOre>(), 30)
+                .AddRecipeGroup(RecipeGroupID.Wood, 10)
+                .AddTile(TileID.Anvils)
+                .Register();
+        }
     }
 }
 */

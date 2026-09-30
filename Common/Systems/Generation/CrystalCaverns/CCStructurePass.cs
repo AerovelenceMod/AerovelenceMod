@@ -1,11 +1,6 @@
-using AerovelenceMod.Content.Items.Ammo;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
-using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using AerovelenceMod.Content.Items.BossSummons;
-using AerovelenceMod.Content.Items.Potions;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using Microsoft.Xna.Framework;
 using System;
@@ -120,69 +115,6 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 UnifiedRandom rand = WorldGen.genRand;
                 InitializeValidPoints(mainPass.TotalUnderground);
 
-                #region Loot Pools
-                List<PrimaryItemConfiguration> smallShrinePrimary = new()
-                {
-                    new(ModContent.ItemType<CrystalCrescent>(), 1, 1, 1f)
-                };
-
-                List<ItemConfiguration> smallShrineSecondary = new()
-                {
-                    new(ModContent.ItemType<MineralWater>(), 2, 4, 1f / 2),
-                    new(ItemID.SuspiciousLookingEye, 1, 1, 1f/5),
-                    new(ItemID.Dynamite, 25, 50, 1f/3),
-                    new(new List<int> { ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar }, 3, 10, 1f/2),
-                    new(ItemID.HealingPotion, 3, 5, 1f/2),
-                    new(new List<int>
-                    {
-                        ItemID.SpelunkerPotion, ItemID.FeatherfallPotion, ItemID.NightOwlPotion, ItemID.WaterWalkingPotion,
-                        ItemID.ArcheryPotion, ItemID.GravitationPotion, ItemID.ThornsPotion, ItemID.InvisibilityPotion,
-                        ItemID.HunterPotion, ItemID.BattlePotion, ItemID.TeleportationPotion
-                    }, 1, 2, 2f/3), // Vanilla splits the potions into two item slots for caverns chests
-                    new(ItemID.RecallPotion, 1, 2, 1f/2),
-                    new(new List<int> { ItemID.Torch, ItemID.Glowstick }, 15, 29, 1f/2),
-                    new(ModContent.ItemType <CavernCrystalItem>(), 10, 30, 1f),
-                    new(ItemID.GoldCoin, 1, 2, 1f/2)
-                };
-
-                List<PrimaryItemConfiguration> genericLootPrimary = new()
-                {
-                    new(ModContent.ItemType<BandOfCrystallization>(), 1, 1, 1f),
-                    new(ItemID.MagicMirror, 1, 1, 1f),
-                    new(ModContent.ItemType<SpikesInABottle>(), 1, 1, 1f),
-                    new(ModContent.ItemType<SilkenScarf>(), 1, 1, 1f),
-                    new(ModContent.ItemType<TheSling>(), 1, 1, 1f),
-                    new(ModContent.ItemType<RockRumbler>(), 1, 1, 1f),
-                    new(ModContent.ItemType<CavernousRampart>(), 1, 1, 1f),
-                    new(ModContent.ItemType<TumblerCommander>(), 1, 1, 1f),
-                    new(ModContent.ItemType<SaplingCane>(), 1, 1, 1f),
-                    new(ItemID.HermesBoots, 1, 1, 1f),
-                    new(ItemID.Mace, 1, 1, 1f),
-                    new(ModContent.ItemType<CrystalStompers>(), 1, 1, 1f)
-                };
-
-                List<ItemConfiguration> genericLootSecondary = new()
-                {
-                    new(ModContent.ItemType<StoneSlug>(), 30, 60, 1f / 2),
-                    new(ModContent.ItemType<MineralWater>(), 2, 4, 1f / 2),
-                    new(ItemID.SuspiciousLookingEye, 1, 1, 1f/5),
-                    new(ItemID.Dynamite, 25, 50, 1f/3),
-                    new(new List<int> { ItemID.SilverBar, ItemID.TungstenBar, ItemID.GoldBar, ItemID.PlatinumBar }, 3, 10, 1f/2),
-                    new(ItemID.HealingPotion, 3, 5, 1f/2),
-                    new(new List<int>
-                    {
-                        ItemID.SpelunkerPotion, ItemID.FeatherfallPotion, ItemID.NightOwlPotion, ItemID.WaterWalkingPotion,
-                        ItemID.ArcheryPotion, ItemID.GravitationPotion, ItemID.ThornsPotion, ItemID.InvisibilityPotion,
-                        ItemID.HunterPotion, ItemID.BattlePotion, ItemID.TeleportationPotion
-                    }, 1, 2, 2f/3), // Vanilla splits the potions into two item slots for caverns chests
-                    new(ItemID.RecallPotion, 1, 2, 1f/2),
-                    new(new List<int> { ItemID.Torch, ItemID.Glowstick }, 15, 29, 1f/2),
-                    new(ModContent.ItemType <CavernCrystalItem>(), 10, 30, 1f),
-                    new(ItemID.GoldCoin, 1, 2, 1f/2)
-                };
-
-                #endregion
-
                 WorldGen.noTileActions = false;
 
                 AeroStructure tumblerArena = StructureStamper.LoadStructure(
@@ -197,48 +129,65 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                 PlaceStructureSafely("ancientbridge")
                     .ProtectStructure()
-                    .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                    .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 PlaceStructureSafely("smallshrine")
                         .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, smallShrinePrimary, smallShrineSecondary);
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 if (rand.NextBool())
                 {
                     PlaceStructureSafely("librarydarkleft")
                     .ProtectStructure()
-                    .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                    .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 }
                 else
                 {
                     PlaceStructureSafely("librarydarkright")
                         .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 }
                 if (rand.NextBool())
                 {
                     PlaceStructureSafely("librarylightleft")
                     .ProtectStructure()
-                    .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                    .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 } 
                 else
                 {
                     PlaceStructureSafely("librarylightright")
                     .ProtectStructure()
-                    .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                    .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 }
 
                 if (mainPass.WorldSizeScale > 1.2f) // Medium or large world, 1.2f instead of 1f so floating point math doesn't screw it up
                 {
-                    PlaceStructureSafely(rand.NextBool() ? "librarydarkleft" : "librarydarkright")
+                    PlaceStructureSafely("librarydarkleft")
                         .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarydarkright")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarylightleft")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarylightright")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 }
                 if (mainPass.WorldSizeScale > 1.7f) // Large world, otherwise same as last if statement
                 {
-                    PlaceStructureSafely(rand.NextBool() ? "librarylightleft" : "librarylightright")
+                    PlaceStructureSafely("librarydarkleft")
                         .ProtectStructure()
-                        .ApplyItemConfigurationsToAll(rand, genericLootPrimary, genericLootSecondary);
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarydarkright")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarylightleft")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+                    PlaceStructureSafely("librarylightright")
+                        .ProtectStructure()
+                        .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
                 }
-
                 PlaceRandomCaveHouses();
                 int reservoirs = LushReservoirGenerator.GenerateCrystalCaverns(mainPass);
                 ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Crystal Caverns lush reservoirs generated: {reservoirs}.");
@@ -268,7 +217,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 return;
 
             int houseCount = WorldGen.genRand.Next(5, 11);
-            var primaryItems = HouseGenerator.CreatePrimaryLootPool();
+            var primaryItems = CCLoot.CreatePrimaryLootPool();
             int placed = 0;
             for (int attempt = 0; attempt < houseCount * 100 && placed < houseCount; attempt++)
             {
