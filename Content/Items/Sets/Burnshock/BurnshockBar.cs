@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Systems.Language;
+/*using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -73,4 +73,4 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock
 			}
 		}
 	}
-}
+}*/

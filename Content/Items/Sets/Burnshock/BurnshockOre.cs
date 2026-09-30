@@ -1,4 +1,4 @@
-using AerovelenceMod.Common.Systems.Language;
+/*using AerovelenceMod.Common.Systems.Language;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -61,4 +61,4 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock
             b = 0.9f;
         }
     }
-}
+}*/

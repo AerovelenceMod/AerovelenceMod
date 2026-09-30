@@ -20,7 +20,7 @@ using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun
 {
-    public class GaussShotgun : ModItem
+    /*public class GaussShotgun : ModItem
     {
         private int shotCounter = 0;
         
@@ -437,7 +437,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun
             return false;
 
         }
-    }
+    }*/
 
     public class GaussExplosionVFX : ModProjectile
     {

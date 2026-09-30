@@ -124,6 +124,8 @@ NPCs: {
 	}
 
 	SilkenCacheMoth.DisplayName: Silken Cache Moth
+	BlueSlimeTest.DisplayName: Blue Slime Test
+	HugeBlueSlimeTest.DisplayName: Huge Blue Slime Test
 }
 
 Buffs: {
@@ -2163,6 +2165,11 @@ Items: {
 		DisplayName: Slate Pickaxe
 		Tooltip: ""
 	}
+
+	TumblerStatueItem: {
+		DisplayName: Tumbler Statue Item
+		Tooltip: ""
+	}
 }
 
 Projectiles: {
@@ -2735,6 +2742,7 @@ Projectiles: {
 	ReaperProj.DisplayName: Reaper Proj
 	ReaperProjectile.DisplayName: Reaper Projectile
 	LumberjackAxe.DisplayName: Lumberjack Axe
+	CrystalSlimeHazard.DisplayName: Crystal Slime Hazard
 }
 
 Configs: {
