@@ -66,7 +66,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
         public override bool? CanDamage() => false;
 
         SlotId soundSlot;
-        SoundStyle chargeSound = new SoundStyle("AerovelenceMod/Sounds/Effects/Thunder/ElectricChargeUp") with {  Pitch = -0.075f, PauseBehavior = PauseBehavior.PauseWithGame };
+        SoundStyle chargeSound = new SoundStyle("AerovelenceMod/Sounds/Effects/Thunder/ElectricChargeUp") with { Pitch = -0.075f, PauseBehavior = PauseBehavior.PauseWithGame };
 
         int chargeTime = 75;
 
@@ -335,10 +335,10 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 
             d1.customData = DustBehaviorUtil.AssignBehavior_GSSBase(fadePower: 0.85f, shouldFadeColor: true);
             d2.customData = DustBehaviorUtil.AssignBehavior_GSSBase(fadePower: 0.85f, shouldFadeColor: true);
-            
+
             //VFX Projectiles
             int gaussImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<GaussExplosionVFX>(), 0, 0, Main.myPlayer);
-            
+
             int booyahImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BooyahImpactVFX>(), 0, 0, Main.myPlayer);
             Main.projectile[booyahImpact].spriteDirection = Projectile.velocity.X > 0 ? 1 : -1;
 
@@ -462,7 +462,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             if (giveUp)
                 return;
 
-            Texture2D trailTexture = Mod.Assets.Request<Texture2D>("Assets/Trails/EvenThinnerGlowLine").Value; 
+            Texture2D trailTexture = Mod.Assets.Request<Texture2D>("Assets/Trails/EvenThinnerGlowLine").Value;
             Texture2D trailTexture2 = Mod.Assets.Request<Texture2D>("Assets/Trails/Trail5Loop").Value;
 
             if (trailEffect == null)
@@ -658,7 +658,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
                     //Circle Pulse
                     if (afterImageTimer == 1 && Player.velocity.Length() > 2.5f) //Yes it is supposed to be timer == 1 and not timer == 0
                     {
-                        Dust d2 = Dust.NewDustPerfect(Player.Center - Player.velocity * 2f, ModContent.DustType<CirclePulse>(), Player.velocity.SafeNormalize(Vector2.UnitX) * 1f, 
+                        Dust d2 = Dust.NewDustPerfect(Player.Center - Player.velocity * 2f, ModContent.DustType<CirclePulse>(), Player.velocity.SafeNormalize(Vector2.UnitX) * 1f,
                             newColor: Color.DeepSkyBlue);
                         d2.scale = 0.1f;
                         CirclePulseBehavior b2 = new CirclePulseBehavior(0.5f, true, 1, 0.25f, 0.5f);
@@ -673,7 +673,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
                     {
                         Color dustCol = Color.Lerp(Color.DeepSkyBlue, Color.DodgerBlue, 0.5f);
 
-                        Dust p = Dust.NewDustPerfect(Player.Center + Main.rand.NextVector2Circular(10f, 10f) + Player.velocity * 0.5f, ModContent.DustType<WindLine>(), 
+                        Dust p = Dust.NewDustPerfect(Player.Center + Main.rand.NextVector2Circular(10f, 10f) + Player.velocity * 0.5f, ModContent.DustType<WindLine>(),
                             Player.velocity.SafeNormalize(Vector2.UnitX) * -6f, newColor: dustCol, Scale: 4f);
 
                         WindLineBehavior wlb = new WindLineBehavior(VelFadePower: 0.95f, TimeToStartShrink: 0, ShrinkYScalePower: 0.7f, 0.3f, 0.55f, true); //0.7 yfade

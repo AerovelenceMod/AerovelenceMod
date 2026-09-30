@@ -20,6 +20,7 @@ using Terraria.ModLoader.IO;
 using Terraria.WorldBuilding;
 
 namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
+
 public sealed class SilkenCitadelWorld : ModSystem
 {
     internal static readonly List<Action> GeneratedFurnishings = new();

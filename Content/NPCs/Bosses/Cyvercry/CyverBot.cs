@@ -73,7 +73,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             SpriteEffects effects = NPC.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             if (!shouldHide)
-                Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition + new Vector2(0,4), NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, NPC.frame.Size() / 2f, NPC.scale, effects, 0);
+                Main.EntitySpriteDraw(texture, NPC.Center - Main.screenPosition + new Vector2(0, 4), NPC.frame, NPC.GetAlpha(Color.White), NPC.rotation, NPC.frame.Size() / 2f, NPC.scale, effects, 0);
 
             Main.EntitySpriteDraw(eyeStar, NPC.Center - Main.screenPosition + (NPC.rotation.ToRotationVector2() * 22f * NPC.direction) + new Vector2(0, 4), null, Color.DeepPink with { A = 0 } * 1.75f, eyeStarRot, eyeStar.Size() / 2, justShotPower * 0.85f, SpriteEffects.None, 0f);
             Main.EntitySpriteDraw(eyeStar, NPC.Center - Main.screenPosition + (NPC.rotation.ToRotationVector2() * 22f * NPC.direction) + new Vector2(0, 4), null, Color.HotPink with { A = 0 } * 1.75f, eyeStarRot, eyeStar.Size() / 2, justShotPower * 0.6f, SpriteEffects.None, 0f);
@@ -146,7 +146,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             {
                 Dust dust = Dust.NewDustPerfect(NPC.Center + new Vector2(10 * (NPC.direction == 1 ? -1 : 1), 0).RotatedBy(NPC.rotation), DustID.Electric, Vector2.Zero);
                 dust.noGravity = true;
-                dust.velocity += NPC.velocity;  
+                dust.velocity += NPC.velocity;
                 dust.velocity *= 0.1f;
                 dust.scale *= 0.35f;
             }
@@ -236,18 +236,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
                     Vector2 offset = (NPC.rotation + MathHelper.Pi).ToRotationVector2();    //NPC.direction == 1 ? (NPC.rotation + MathHelper.Pi).ToRotationVector2() : NPC.rotation.ToRotationVector2(); 
                     float speedMultiplier = (isFarFromCenter ? 6.5f : 6.5f); //13 : 8
-                    int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset * 20, (NPC.rotation + MathHelper.Pi).ToRotationVector2() * speedMultiplier, 
+                    int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset * 20, (NPC.rotation + MathHelper.Pi).ToRotationVector2() * speedMultiplier,
                         ModContent.ProjectileType<CyverLaser>(), damage, 1);
-                    
-                    
-                    
+
+
+
                     Main.projectile[a].scale = 0.8f;
                     Main.projectile[a].timeLeft = 300;
 
 
                     if (Main.projectile[a].ModProjectile is CyverLaser laser)
                     {
-                        laser.damageDelay = 40; 
+                        laser.damageDelay = 40;
                         //Never collide
                         laser.tileCollideDelay = 400;
                     }
@@ -272,7 +272,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
                 if (Leader)
                 {
-                    
+
                     if (timer == 300) //380
                     {
                         SoundStyle stylec = new SoundStyle("Terraria/Sounds/Item_67") with { Pitch = 1f, Volume = 1f, MaxInstances = -1 }; //1f
@@ -325,12 +325,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                     {
                         State = (int)CyverBot.Behavior.ESABall;
                         NPC.Center = auraPosition;
-                    } else if (State == (int)Behavior.PrimeLaserLong)
+                    }
+                    else if (State == (int)Behavior.PrimeLaserLong)
                     {
                         KillFX();
                         NPC.active = false;
                     }
-                    
+
                 }
                 if (timer >= 160)
                 {
@@ -341,7 +342,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
 
             #endregion;
-             
+
             #region StarStrike
 
             #endregion
@@ -422,7 +423,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             timer++;
             NPC.damage = 0;
-            
+
         }
         public void setGoalLocation(Vector2 location)
         {
@@ -498,7 +499,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             {
                 //spriteBatch.Draw(barrierTex, auraPosition - Main.screenPosition, null, (Color.HotPink) * ((float)Math.Sin(timer  * 0.1f) * 0.75f), auraRotation, barrierTex.Size() / 2, 8f, SpriteEffects.None, 0f);
                 //spriteBatch.Draw(barrierTex, auraPosition - Main.screenPosition, null, Color.HotPink, auraRotation, barrierTex.Size() / 2, 8f, SpriteEffects.None, 0f);
-                
+
                 //spriteBatch.Draw(barrierTex, auraPosition - Main.screenPosition, null, Color.HotPink * 0.8f, auraRotation, barrierTex.Size() / 2, 7f, SpriteEffects.None, 0f);
                 //spriteBatch.Draw(barrierTex2, auraPosition - Main.screenPosition, null, Color.HotPink * 0.8f, auraRotation, barrierTex2.Size() / 2, 2.1f, SpriteEffects.None, 0f);
                 //spriteBatch.Draw(barrierTex2, auraPosition - Main.screenPosition, null, Color.HotPink * 0.8f, auraRotation, barrierTex2.Size() / 2, 2.1f, SpriteEffects.None, 0f);
@@ -626,11 +627,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
 
                 dust.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
-                    rotPower: 0.05f, preSlowPower: 0.99f,  timeBeforeSlow: 8, postSlowPower: 0.92f, velToBeginShrink: 1f, fadePower: 0.87f, shouldFadeColor: false);
+                    rotPower: 0.05f, preSlowPower: 0.99f, timeBeforeSlow: 8, postSlowPower: 0.92f, velToBeginShrink: 1f, fadePower: 0.87f, shouldFadeColor: false);
 
             }
 
-            SoundStyle style = new SoundStyle("Terraria/Sounds/NPC_Killed_44") with { Pitch = 0f, PitchVariance = 0, MaxInstances = -1, Volume = 0.1f * volumeMult }; 
+            SoundStyle style = new SoundStyle("Terraria/Sounds/NPC_Killed_44") with { Pitch = 0f, PitchVariance = 0, MaxInstances = -1, Volume = 0.1f * volumeMult };
             SoundEngine.PlaySound(style, NPC.Center);
 
         }

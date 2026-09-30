@@ -88,7 +88,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 }
                 if (!exists)
                 {
-                    Projectile.NewProjectile( Main.LocalPlayer.GetSource_FromThis(),
+                    Projectile.NewProjectile(Main.LocalPlayer.GetSource_FromThis(),
                         position: Main.npc[npcIndex].Center,
                         velocity: Vector2.Zero,
                         Type: ModContent.ProjectileType<EnemyGlowEffect>(),
@@ -169,7 +169,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             player.pickSpeed -= 0.1f;
         }
     }
-    
+
     public class EnemyGlowEffect : ModProjectile
     {
         public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";

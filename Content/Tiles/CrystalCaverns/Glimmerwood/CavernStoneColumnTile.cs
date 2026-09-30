@@ -15,7 +15,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
             Main.tileLighted[Type] = true;
             AddMapEntry(new Color(061, 079, 110));
             TileID.Sets.IsBeam[Type] = true;
-			HitSound = SoundID.Dig;
+            HitSound = SoundID.Dig;
         }
 
         public class CavernStoneColumnItem : ModItem

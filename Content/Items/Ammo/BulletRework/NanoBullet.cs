@@ -21,31 +21,31 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
         public override string Texture => "Terraria/Images/Projectile_0";
 
         float timer = 0;
-		public Color color = Color.White;
-		public float overallSize = 1f;
-		public int lineWidth = 3;
+        public Color color = Color.White;
+        public float overallSize = 1f;
+        public int lineWidth = 3;
 
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Bullet Test");
-		}
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Bullet Test");
+        }
 
         public override void SetDefaults()
-		{
-			Projectile.width = 10;
-			Projectile.height = 10;
-			Projectile.friendly = true;
-			Projectile.hostile = false;
-			Projectile.penetrate = 1;
-			Projectile.timeLeft = 400;
-			Projectile.tileCollide = true;
-			Projectile.scale = 1f;
-			Projectile.extraUpdates = 2;
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.penetrate = 1;
+            Projectile.timeLeft = 400;
+            Projectile.tileCollide = true;
+            Projectile.scale = 1f;
+            Projectile.extraUpdates = 2;
 
-		}
+        }
 
-		public float xScale = 1f;
-		public float yScale = 1f;
+        public float xScale = 1f;
+        public float yScale = 1f;
 
         public override void AI()
         {
@@ -64,7 +64,7 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
             TrailLogic();
 
             Lighting.AddLight(Projectile.Center, Color.SkyBlue.ToVector3() * 0.3f);
-			timer++;
+            timer++;
         }
 
         public override bool OnTileCollide(Vector2 oldVelocity)
@@ -97,7 +97,7 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
             {
                 //Obv ineficietentntet
                 Dust d = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowPixel>(),
-                    Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.Pi + Main.rand.NextFloat(-2, 2)) * Main.rand.Next(1, 3), 
+                    Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.Pi + Main.rand.NextFloat(-2, 2)) * Main.rand.Next(1, 3),
                     newColor: Color.DodgerBlue, Alpha: 69);
 
                 //int dust = Dust.NewDust(Projectile.Center, 30, 30, ModContent.DustType<GlowPixel>(), Scale: 1f, newColor: Color.DodgerBlue);
@@ -120,25 +120,25 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
         }
 
         public float widthIntensity = 0;
-		//public List<Projectile> InkProj = new List<Projectile>();
-		public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D Tex = Mod.Assets.Request<Texture2D>("Assets/Pixel/Starlight").Value;
-			Vector2 scale = new Vector2(Projectile.scale * 2, Projectile.scale) * 0.5f;
+        //public List<Projectile> InkProj = new List<Projectile>();
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D Tex = Mod.Assets.Request<Texture2D>("Assets/Pixel/Starlight").Value;
+            Vector2 scale = new Vector2(Projectile.scale * 2, Projectile.scale) * 0.5f;
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
 
-            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1 ,1, 0, 0), Color.DeepSkyBlue, Projectile.rotation + MathHelper.PiOver2, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1, 1, 0, 0), Color.DeepSkyBlue, Projectile.rotation + MathHelper.PiOver2, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1, 1, 0, 0), Color.White, Projectile.rotation + MathHelper.PiOver2, Tex.Size() / 2, scale * 0.5f, SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             TrailDrawing();
 
             return false;
-		}
+        }
 
         public override float WidthFunction(float progress)
         {
@@ -187,9 +187,9 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
 
         int timer = 0;
         public override void AI()
-          {
+        {
             Projectile.scale = 0.5f;
-            
+
             Projectile.rotation += 0.01f;
 
             distanceScale = (float)Math.Abs((float)Math.Sin(timer / 20f)) * 3f;

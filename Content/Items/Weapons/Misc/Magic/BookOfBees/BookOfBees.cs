@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
 {
     public class BookOfBees : ModItem
     {
-        
+
         public override void SetDefaults()
         {
             Item.damage = 26;

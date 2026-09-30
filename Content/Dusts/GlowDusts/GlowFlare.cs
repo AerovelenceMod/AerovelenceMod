@@ -20,12 +20,12 @@ using Steamworks;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	public class GlowFlare : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowCircleFlare";
+    public class GlowFlare : ModDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowCircleFlare";
 
-		public override void OnSpawn(Dust dust)
-		{
+        public override void OnSpawn(Dust dust)
+        {
             //noLightEmittence is used as a first-frame check in this dust
             dust.noLightEmittence = false;
 
@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
         }
 
         public override bool Update(Dust dust)
-		{            
+        {
             if (!dust.noLightEmittence)
             {
                 dust.position -= Vector2.One * 32 * dust.scale;
@@ -61,7 +61,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
             dust.position += currentCenter - nextCenter;
 
 
-            dust.position += dust.velocity; 
+            dust.position += dust.velocity;
 
             dust.velocity *= 0.94f;
 

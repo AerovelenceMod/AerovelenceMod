@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.Gores
                 if (gore.alpha >= 250)
                     gore.active = false;
             }
-            
+
             gore.frameCounter++;
 
 

@@ -217,7 +217,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             if (timer == 15)
                 muzzleFlashAlpha = 0;
 
-            muzzleFlashAlpha = Math.Clamp(MathHelper.Lerp(muzzleFlashAlpha, -0.2f, 0.1f) , 0, 1);
+            muzzleFlashAlpha = Math.Clamp(MathHelper.Lerp(muzzleFlashAlpha, -0.2f, 0.1f), 0, 1);
 
             timer++;
         }
@@ -235,7 +235,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Texture2D Flash = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/CrispStar");
 
             Vector2 offset = new Vector2(Weapon.Width / 1.25f * Player.direction, (-Weapon.Height / 2)).RotatedBy(Projectile.rotation) * Player.direction;
-            Vector2 offsetOffset = new Vector2(-22,8 * Player.direction).RotatedBy(Projectile.rotation) + new Vector2(0f, Player.gfxOffY);
+            Vector2 offsetOffset = new Vector2(-22, 8 * Player.direction).RotatedBy(Projectile.rotation) + new Vector2(0f, Player.gfxOffY);
 
             Vector2 vec2Scale = new Vector2(0.45f, 0.45f) * Projectile.scale;
             Vector2 origin = new Vector2(0f, Flash.Height / 2);
@@ -276,7 +276,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Projectile.tileCollide = true;
 
             Projectile.usesLocalNPCImmunity = true;
-            Projectile.localNPCHitCooldown = -1; 
+            Projectile.localNPCHitCooldown = -1;
         }
 
         int timer = 0;
@@ -347,7 +347,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 }
             }
 
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -435,7 +435,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         public override void SetDefaults()
         {
             Projectile.DamageType = DamageClass.Ranged;
-            
+
             Projectile.width = Projectile.height = 70;
             Projectile.timeLeft = 10000;
             Projectile.penetrate = -1;
@@ -542,7 +542,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
 
             Projectile.rotation = currentAng;
-            Projectile.Center = (currentAng.ToRotationVector2() * 50) + player.RotatedRelativePoint(player.MountedCenter) + new Vector2(0,-10);
+            Projectile.Center = (currentAng.ToRotationVector2() * 50) + player.RotatedRelativePoint(player.MountedCenter) + new Vector2(0, -10);
             player.itemTime = 10;
             player.itemAnimation = 10;
 
@@ -552,7 +552,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             if (getProgress(easingProgress) >= 0.3f && !playedSound)
             {
 
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/GGS/Swing_Sword_Heavy_M_a") with { Pitch = - 0.25f, PitchVariance = 0.3f, Volume = 0.37f }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/GGS/Swing_Sword_Heavy_M_a") with { Pitch = -0.25f, PitchVariance = 0.3f, Volume = 0.37f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/katana_06") with { Pitch = -.42f, Volume = 0.27f };
@@ -585,7 +585,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             if (getProgress(easingProgress) >= 0.1f && getProgress(easingProgress) <= 0.9f)
             {
                 Main.spriteBatch.Draw(BladeGlow, drawPos, null, Color.Red with { A = 0 } * 0.8f, Projectile.rotation, BladeGlow.Size() / 2, Projectile.scale + ((float)Math.Sin(getProgress(easingProgress) * Math.PI) * 0.25f) + 0f, Projectile.ai[0] != 1 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
-                
+
                 if (justHitTime > 0)
                     Main.spriteBatch.Draw(BladeGlow, drawPos, null, Color.Crimson with { A = 0 } * 0.3f, Projectile.rotation, BladeGlow.Size() / 2, Projectile.scale + ((float)Math.Sin(getProgress(easingProgress) * Math.PI) * 0.25f) + 0f, Projectile.ai[0] != 1 ? SpriteEffects.None : SpriteEffects.FlipVertically, 0f);
             }
@@ -605,7 +605,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         {
             float toReturn = 0f;
             #region easeExpo
-            
+
             //pre 0.5
             if (x <= 0.5f)
             {
@@ -623,12 +623,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 toReturn = 1;
 
             return toReturn;
-            
+
 
             #endregion;
 
             #region easeCircle
-            
+
             if (x < 0.5)
             {
                 toReturn = (float)(1 - Math.Sqrt(1 - Math.Pow(2 * x, 2))) / 2;
@@ -639,7 +639,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             }
 
             return toReturn;
-            
+
             #endregion
 
             #region easeOutBack
@@ -666,7 +666,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Main.projectile[a].rotation = Projectile.rotation;
 
             for (int i = 0; i < 20; i++)
-                Dust.NewDust(target.position, 30, 30, DustID.Blood, 0f, 0f, 0, new Color(255,255,255), 1f);
+                Dust.NewDust(target.position, 30, 30, DustID.Blood, 0f, 0f, 0, new Color(255, 255, 255), 1f);
 
             SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/cleaver_hit_06") with { Pitch = 0.36f, PitchVariance = .35f, Volume = 0.3f };
             SoundEngine.PlaySound(style2, target.Center);
@@ -706,7 +706,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         }
         public override bool? CanDamage() => false;
         public override bool? CanCutTiles() => false;
-        
+
 
         public override void AI()
         {
@@ -741,7 +741,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Rectangle sourceRectangle = new Rectangle(0, startY, Tex.Width, frameHeight);
 
             Vector2 origin = sourceRectangle.Size() / 2f;
-            
+
             Main.spriteBatch.Draw(Ball, Projectile.Center - Main.screenPosition + new Vector2(-10, -40).RotatedBy(Projectile.rotation + MathHelper.PiOver2), null, Color.Red with { A = 0 } * 0.3f, Projectile.rotation, Ball.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + new Vector2(-10, -40).RotatedBy(Projectile.rotation + MathHelper.PiOver2), sourceRectangle, Color.Red * 0.2f, Projectile.rotation + MathHelper.PiOver2, origin, Projectile.scale, SpriteEffects.None, 0f);
@@ -771,7 +771,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             timer++;
         }
 
-       
+
     }
 
     public class ShotgunAxeDebuffGlobalNPC : GlobalNPC
@@ -802,7 +802,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 }
                 if (DebuffTime % 7 == 0) //else if is intentional
                 {
-                    int p = GlowDustHelper.DrawGlowDust(npc.position, npc.width, npc.height, ModContent.DustType<GlowCircleFlare>(), Color.Red, 
+                    int p = GlowDustHelper.DrawGlowDust(npc.position, npc.width, npc.height, ModContent.DustType<GlowCircleFlare>(), Color.Red,
                         Main.rand.NextFloat(0.3f, 0.5f), 0.4f, 0f, dustShader);
                 }
                 DebuffTime++;

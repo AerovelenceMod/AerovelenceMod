@@ -136,7 +136,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
 
             return true;
         }
-        
+
     }
 
 
@@ -173,7 +173,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public float GoalXOffset = 4f;
         public float yRecoilPower = 0.075f;
 
-        public Vector2 HoldoutOffset = Vector2.Zero; 
+        public Vector2 HoldoutOffset = Vector2.Zero;
         public Vector2 TipPosition = Vector2.Zero; //Muzzle Flash Position
         public Vector2 StarPosition = Vector2.Zero; //Postion of the little star vfx (generally advised to be about 6 less than TipPos)
 
@@ -424,7 +424,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             Main.spriteBatch.Draw(Star, starPos, null, colors[1] with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.4f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Star, starPos, null, colors[2] with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.3f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Star, starPos, null, Color.White with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.2f, SpriteEffects.None, 0f);
-            
+
 
             //Gun Texture
             Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation, Texture.Size() / 2, Projectile.scale, mySE, 0f);

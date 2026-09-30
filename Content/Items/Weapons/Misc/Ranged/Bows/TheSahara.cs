@@ -23,8 +23,8 @@ using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 {
-	public class TheSahara : TranslatableModItem
-	{
+    public class TheSahara : TranslatableModItem
+    {
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("TheSahara", "Hold to charge, increasing damage and velocity\nReleases a fire vortex at full charge")
@@ -44,18 +44,18 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         }
 
         public override void SetDefaults()
-		{
-			Item.damage = 20;
+        {
+            Item.damage = 20;
             Item.knockBack = KnockbackTiers.Average;
             Item.shootSpeed = 15f;
 
-			Item.width = 26;
-			Item.height = 70;
-			Item.useAnimation = 20;
-			Item.useTime = 20;
+            Item.width = 26;
+            Item.height = 70;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
 
-			Item.useStyle = ItemUseStyleID.Shoot;
-			Item.DamageType = DamageClass.Ranged;
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.DamageType = DamageClass.Ranged;
             Item.useAmmo = AmmoID.Arrow;
             Item.shoot = ProjectileID.WoodenArrowFriendly;
             Item.rare = ItemRarities.MidPHM;
@@ -64,19 +64,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.channel = true;
-			Item.noUseGraphic = true;
-		}
+            Item.noUseGraphic = true;
+        }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-		{
-			Projectile proj2 = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<TheSaharaHeldProj>(), damage, 0, player.whoAmI);
+        {
+            Projectile proj2 = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<TheSaharaHeldProj>(), damage, 0, player.whoAmI);
 
-			if (proj2.ModProjectile is TheSaharaHeldProj wb)
+            if (proj2.ModProjectile is TheSaharaHeldProj wb)
             {
-				wb.projToShootID = type;
+                wb.projToShootID = type;
             }
 
-			return false;
+            return false;
         }
 
         public override void AddRecipes()
@@ -279,7 +279,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
             timer++;
             starRotation += 0.04f * Player.direction;
-            
+
         }
 
         float starRotation = 0;
@@ -307,7 +307,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             {
                 float extraRot = Player.direction == 1 ? 0 : -3.14f;
                 SpriteEffects ef = Player.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-                
+
                 //0.5f
                 Main.spriteBatch.Draw(texture, pos + Main.rand.NextVector2Circular(1f, 1f), null, Color.OrangeRed with { A = 0 } * 1f * percentDrawnBack, direction.ToRotation() + extraRot, origin, Projectile.scale * 1f, ef, 0.0f);
             }
@@ -386,7 +386,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.width = 42;
             Projectile.height = 42;
-            Projectile.timeLeft = 135; 
+            Projectile.timeLeft = 135;
             Projectile.penetrate = -1;
 
             Projectile.friendly = true;
@@ -400,7 +400,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         }
 
         int timer = 0;
-        float justPulsedVal = 0f; 
+        float justPulsedVal = 0f;
 
         public override void AI()
         {
@@ -548,14 +548,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         {
             Texture2D Tex = Mod.Assets.Request<Texture2D>("Assets/Flare/Royal_Resonance").Value;
 
-            
-            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1,1,0,0), new Color(255, 130, 0) with { A = 0 } * opacity, Projectile.rotation, Tex.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0f);
+
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), new Color(255, 130, 0) with { A = 0 } * opacity, Projectile.rotation, Tex.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.OrangeRed with { A = 0 } * opacity, Projectile.rotation, Tex.Size() / 2, Projectile.scale * 1.5f + 0.15f, SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), new Color(255, 130, 0) with { A = 0 } * opacity, Projectile.rotation, Tex.Size() / 2, Projectile.scale * 1.5f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.OrangeRed with { A = 0 } * opacity, Projectile.rotation, Tex.Size() / 2, Projectile.scale * 1.5f + 0.15f, SpriteEffects.None, 0f);
 
-            
+
             return false;
         }
 
@@ -616,7 +616,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             fireTrail.timesToDraw = 1;
             fireTrail.pinch = true;
             fireTrail.pinchAmount = 0.4f;
-            
+
             fireTrail.trailTime = (float)Main.timeForVisualEffects * 0.05f;
             fireTrail.trailRot = projectile.velocity.ToRotation();
             fireTrail.trailPos = projectile.ModProjectile is Content.Items.Ammo.CrystalDrillrowShot ? projectile.Center : projectile.Center + projectile.velocity;
@@ -682,8 +682,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Texture2D spike = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/DiamondGlowPMA").Value;
             Main.EntitySpriteDraw(spike, projectile.Center - Main.screenPosition + projectile.velocity.SafeNormalize(Vector2.UnitX) * -2f, null, Color.Orange with { A = 0 }, projectile.rotation, spike.Size() / 2, projectile.scale * scale, SpriteEffects.None);
             Main.EntitySpriteDraw(spike, projectile.Center - Main.screenPosition + projectile.velocity.SafeNormalize(Vector2.UnitX) * -2f, null, Color.White with { A = 0 }, projectile.rotation, spike.Size() / 2, projectile.scale * 0.5f * scale, SpriteEffects.None);
-            
-            
+
+
             base.PostDraw(projectile, lightColor);
         }
 

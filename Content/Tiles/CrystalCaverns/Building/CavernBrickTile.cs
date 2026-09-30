@@ -11,15 +11,15 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
     {
         public override void SetStaticDefaults()
         {
-			MineResist = 2.5f;
+            MineResist = 2.5f;
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = false;
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = true;
             Main.tileMerge[Type][ModContent.TileType<CrackedCavernBrickTile>()] = true;
             AddMapEntry(new Color(061, 079, 110));
-			DustType = 59;
-			HitSound = SoundID.Tink;
+            DustType = 59;
+            HitSound = SoundID.Tink;
             AddMapEntry(new Color(069, 066, 088));
         }
     }

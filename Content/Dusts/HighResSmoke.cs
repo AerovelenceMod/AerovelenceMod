@@ -20,32 +20,32 @@ using System;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	public class HighResSmoke : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
+    public class HighResSmoke : ModDust
+    {
+        public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
 
-		public override void OnSpawn(Dust dust)
-		{
-			dust.frame = new Rectangle(0, 0, 512, 512);
+        public override void OnSpawn(Dust dust)
+        {
+            dust.frame = new Rectangle(0, 0, 512, 512);
 
-			//FADEIN IS USED AS THE SMOKE'S ALPHA
-			dust.fadeIn = 1f;
+            //FADEIN IS USED AS THE SMOKE'S ALPHA
+            dust.fadeIn = 1f;
 
-			//ALPHA IS USED AS A TIMER
-			dust.alpha = 0;
-		}
+            //ALPHA IS USED AS A TIMER
+            dust.alpha = 0;
+        }
 
-		public override Color? GetAlpha(Dust dust, Color lightColor)
-		{
-			return dust.color;
-		}
+        public override Color? GetAlpha(Dust dust, Color lightColor)
+        {
+            return dust.color;
+        }
 
-		public override bool Update(Dust dust)
-		{
-			if (dust.customData != null)
-			{
-				if (dust.customData is HighResSmokeBehavior behavior)
-				{
+        public override bool Update(Dust dust)
+        {
+            if (dust.customData != null)
+            {
+                if (dust.customData is HighResSmokeBehavior behavior)
+                {
                     if (dust.alpha == 0)
                     {
                         behavior.randomSmokeNumber = Main.rand.NextBool() ? 1 : 2;
@@ -70,9 +70,9 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
                     dust.position += dust.velocity;
                     dust.alpha++;
                 }
-			}
-			else
-			{
+            }
+            else
+            {
                 if (dust.alpha == 0)
                 {
                     dust.rotation = Main.rand.NextFloat(6.28f);
@@ -97,16 +97,16 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
             if (dust.fadeIn == 0)
                 dust.active = false;
 
-			return false;
-		}
+            return false;
+        }
 
 
-		public override bool PreDraw(Dust dust)
-		{
-			if (dust.customData != null)
-			{
-				if (dust.customData is HighResSmokeBehavior behavior)
-				{
+        public override bool PreDraw(Dust dust)
+        {
+            if (dust.customData != null)
+            {
+                if (dust.customData is HighResSmokeBehavior behavior)
+                {
                     Texture2D Smoke = Mod.Assets.Request<Texture2D>("Assets/Smoke/smoke_0" + behavior.randomSmokeNumber).Value;
                     Texture2D ExtraGlow = Mod.Assets.Request<Texture2D>("Assets/Orbs/SoftGlow").Value;
 
@@ -114,14 +114,14 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
                     Color col = dust.color * dust.fadeIn * behavior.overallAlpha;
 
                     //Yes the extra '* dust.fadeIn' is intentional
-                    if (behavior.drawSoftGlowUnder) 
-						Main.EntitySpriteDraw(ExtraGlow, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.1f * behavior.softGlowIntensity * dust.fadeIn, dust.rotation, ExtraGlow.Size() / 2f, myscale * 0.5f, SpriteEffects.None);
-                    
-					Main.EntitySpriteDraw(Smoke, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.2f, dust.rotation, Smoke.Size() / 2f, myscale, SpriteEffects.None);
+                    if (behavior.drawSoftGlowUnder)
+                        Main.EntitySpriteDraw(ExtraGlow, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.1f * behavior.softGlowIntensity * dust.fadeIn, dust.rotation, ExtraGlow.Size() / 2f, myscale * 0.5f, SpriteEffects.None);
+
+                    Main.EntitySpriteDraw(Smoke, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.2f, dust.rotation, Smoke.Size() / 2f, myscale, SpriteEffects.None);
                 }
             }
-			else
-			{
+            else
+            {
                 Texture2D Smoke = Mod.Assets.Request<Texture2D>("Assets/Smoke/smoke_0" + 1).Value;
                 Texture2D ExtraGlow = Mod.Assets.Request<Texture2D>("Assets/Orbs/SoftGlow").Value;
 
@@ -131,16 +131,16 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
                 //Yes the extra '* dust.fadeIn' is intentional
                 Main.EntitySpriteDraw(ExtraGlow, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.1f * dust.fadeIn, dust.rotation, ExtraGlow.Size() / 2f, myscale * 0.5f, SpriteEffects.None);
-                
-				Main.EntitySpriteDraw(Smoke, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.2f, dust.rotation, Smoke.Size() / 2f, myscale, SpriteEffects.None);
+
+                Main.EntitySpriteDraw(Smoke, dust.position - Main.screenPosition, null, col with { A = 0 } * 0.2f, dust.rotation, Smoke.Size() / 2f, myscale, SpriteEffects.None);
             }
-			return false;
+            return false;
         }
 
-	}
+    }
 
-	public class HighResSmokeBehavior
-	{
+    public class HighResSmokeBehavior
+    {
         public float overallAlpha = 1f;
         public bool drawSoftGlowUnder = true;
         public float softGlowIntensity = 1f;
@@ -149,7 +149,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public int frameToStartFade = 5;
         public int fadeDuration = 25;
-		public float velSlowAmount = 1f;
+        public float velSlowAmount = 1f;
 
         public float rotMult = 0f;
     }

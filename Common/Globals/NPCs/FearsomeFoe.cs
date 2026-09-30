@@ -13,7 +13,7 @@ namespace AerovelenceMod.Common.Globals.NPCs
             if (npc.type == ModContent.NPCType<Cyvercry>() || npc.type == ModContent.NPCType<CrystalTumbler>())
             {
                 spawnRate = (int)(spawnRate * 10); //1/10 of normal spawn rate
-                maxSpawns = (int)(maxSpawns * 0.5f); 
+                maxSpawns = (int)(maxSpawns * 0.5f);
             }
         }
     }

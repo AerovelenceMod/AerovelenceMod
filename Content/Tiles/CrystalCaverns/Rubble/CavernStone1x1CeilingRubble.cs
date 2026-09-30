@@ -37,7 +37,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble
             TileObjectData.newTile.CoordinateHeights = [16];
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidBottom, TileObjectData.newTile.Width, 0);
-            
+
             drawYOffset = -2;
             TileObjectData.addTile(Type);
 

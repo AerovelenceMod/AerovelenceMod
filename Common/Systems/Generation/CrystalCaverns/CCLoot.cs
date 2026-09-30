@@ -12,8 +12,8 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 {
-	public static class CCLoot
-	{
+    public static class CCLoot
+    {
         public static List<PrimaryItemConfiguration> CreatePrimaryLootPool() => new()
         {
             new(ModContent.ItemType<CrystalCrescent>(), 1, 1, 1f),
@@ -47,5 +47,5 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             new(ModContent.ItemType<CavernCrystalItem>(), 10, 30, 1f),
             new(ItemID.GoldCoin, 1, 2, 1f/2)
         };
-	}
+    }
 }

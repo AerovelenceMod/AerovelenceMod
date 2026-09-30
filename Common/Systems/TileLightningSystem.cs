@@ -25,7 +25,7 @@ namespace AerovelenceMod.Common.Systems
                     expiredLightning.Add(data);
                     continue;
                 }
-                
+
                 // Must run these to render the lightning with DrawLightning()
                 LightningUtils.InitializeBetweenPoints(data, data.WorldOrigin, data.WorldTarget);
                 LightningUtils.UpdateSegments(data);

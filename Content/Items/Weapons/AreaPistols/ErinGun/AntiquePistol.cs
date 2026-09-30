@@ -81,7 +81,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                 Item.noUseGraphic = true;
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             if (player.GetModPlayer<AmmoPlayer>().ErinAmmoCount <= 0)
             {
@@ -174,7 +174,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                     //Main.NewText("1 - " + AngleDiff);
                     //Main.NewText("2 - " + MathHelper.ToDegrees(AngleDiff));
 
-                    
+
                     if (TopLeftCol || TopRightCol || BottomLeftCol || BottomRightCol)
                     {
 
@@ -217,7 +217,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
     }
 
     public class ErinCircle : ModProjectile
-    { 
+    {
         public override void SetDefaults()
         {
             Projectile.width = 300;
@@ -281,7 +281,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             return false;
         }
     }
-    
+
     public class ErinAltFireHeldProjectile : ModProjectile
     {
         int timer = 0;
@@ -430,7 +430,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             int height1 = texture.Height;
             Vector2 origin = new Vector2((float)texture.Width / 2f, (float)height1 / 2f);
             Vector2 position = (Projectile.position - (0.5f * (direction * -17)) + new Vector2((float)Projectile.width, (float)Projectile.height) / 2f + Vector2.UnitY * Projectile.gfxOffY - Main.screenPosition).Floor();
-            
+
             SpriteEffects myEffect = Player.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
             Main.spriteBatch.Draw(texture, position, null, lightColor, direction.ToRotation(), origin, Projectile.scale, myEffect, 0.0f);
 
@@ -585,7 +585,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             Vector2 origin = sourceRectangle.Size() / 2f;
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + new Vector2(5,5).RotatedBy(Projectile.rotation), sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale * 0.5f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + new Vector2(5, 5).RotatedBy(Projectile.rotation), sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale * 0.5f, SpriteEffects.None, 0f);
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
@@ -633,7 +633,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             Projectile.Center = Main.player[Projectile.owner].Center + new Vector2(75, Main.player[Projectile.owner].direction == 1 ? -15 : 5).RotatedBy(Angle);
             Projectile.rotation = Angle + MathHelper.PiOver2;
 
-            
+
 
 
         }
@@ -794,7 +794,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                 for (float j = (-1 * halfCurrentBullets) + 0.5f; j < halfCurrentBullets; j++)
                 {
                     DrawData preLetter = new DrawData(BulletTex, new Vector2((int)drawPos.X, (int)drawPos.Y) + new Vector2(8f * j, -40),
-                        BulletTex.Frame(1,1,0,0), Color.Lerp(Color.Yellow, Color.Black, shotReactTime / 20), 0f, BulletTex.Size() / 2, new Vector2(0.76f - (timeJustHeld * 0.03f), 0.76f - (shotReactTime * 0.03f)), SpriteEffects.None, 0);
+                        BulletTex.Frame(1, 1, 0, 0), Color.Lerp(Color.Yellow, Color.Black, shotReactTime / 20), 0f, BulletTex.Size() / 2, new Vector2(0.76f - (timeJustHeld * 0.03f), 0.76f - (shotReactTime * 0.03f)), SpriteEffects.None, 0);
                     drawInfo.DrawDataCache.Add(preLetter);
                 }
 
@@ -964,7 +964,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             if (timer >= 75)
                 lerp2progress = Math.Clamp(lerp2progress + 0.06f, 0, 1);
             */
-            
+
             if (timer < 75)
             {
                 Projectile.scale = Math.Clamp(MathHelper.Lerp(0, 1.1f, lerp1progress), 0f, 1f);
@@ -1003,11 +1003,11 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                 lerp2progress = Math.Clamp(lerp2progress + 0.1f, 0, 1);
 
             }
-            
+
 
             if (lerp2progress == 1)
             {
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Research_3") with { Pitch = 1f, Volume = 0.4f }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Research_3") with { Pitch = 1f, Volume = 0.4f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 Player player = Main.player[Projectile.owner];
@@ -1030,7 +1030,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
                 Projectile.active = false;
             }
 
-            
+
             Projectile.rotation += 0.2f;// * lerp1progress;
             timer++;
         }
@@ -1052,7 +1052,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             //scale = new Vector2(Projectile.scale, Projectile.scale * 0.5f);
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            Main.spriteBatch.Draw(Tex, new Vector2((int)Projectile.Center.X, (int)Projectile.Center.Y) - Main.screenPosition, Tex.Frame(1,1,0,0), Color.White, Projectile.rotation, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex, new Vector2((int)Projectile.Center.X, (int)Projectile.Center.Y) - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.White, Projectile.rotation, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             return false;

@@ -14,19 +14,19 @@ using static Terraria.ModLoader.ModContent;
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
     public class CrystalTree : ModTree
-	{
+    {
         private Asset<Texture2D> texture;
         private Asset<Texture2D> branchesTexture;
         private Asset<Texture2D> topsTexture;
 
         public override TreePaintingSettings TreeShaderSettings => new()
         {
-			UseSpecialGroups = true,
-			SpecialGroupMinimalHueValue = 11f / 72f,
-			SpecialGroupMaximumHueValue = 0.25f,
-			SpecialGroupMinimumSaturationValue = 0.88f,
-			SpecialGroupMaximumSaturationValue = 1f
-		};
+            UseSpecialGroups = true,
+            SpecialGroupMinimalHueValue = 11f / 72f,
+            SpecialGroupMaximumHueValue = 0.25f,
+            SpecialGroupMinimumSaturationValue = 0.88f,
+            SpecialGroupMaximumSaturationValue = 1f
+        };
 
         public override void SetStaticDefaults()
         {

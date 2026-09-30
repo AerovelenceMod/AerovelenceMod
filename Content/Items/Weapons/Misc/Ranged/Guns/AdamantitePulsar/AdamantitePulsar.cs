@@ -45,7 +45,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
         public override void SetDefaults()
         {
-            Item.damage = 66; 
+            Item.damage = 66;
             Item.knockBack = KnockbackTiers.Average;
             Item.DamageType = DamageClass.Ranged;
 
@@ -106,10 +106,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                 else
                     CombatText.NewText(new Rectangle((int)player.Center.X, (int)player.Center.Y, 2, 2), Color.Red, "Burst", false, true);
 
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Item_149") with { Pitch = .35f, Volume = 0.45f, MaxInstances = 1 }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Item_149") with { Pitch = .35f, Volume = 0.45f, MaxInstances = 1 };
                 SoundEngine.PlaySound(style, player.Center);
 
-                SoundStyle style3 = new SoundStyle("Terraria/Sounds/Research_3") with { Pitch = .15f, Volume = 0.45f, MaxInstances = 1 }; 
+                SoundStyle style3 = new SoundStyle("Terraria/Sounds/Research_3") with { Pitch = .15f, Volume = 0.45f, MaxInstances = 1 };
                 SoundEngine.PlaySound(style3, player.Center);
 
 
@@ -187,7 +187,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
 
                 //lol
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Item_92") with { Pitch = .80f, PitchVariance = 0.2f, Volume = 0.2f }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Item_92") with { Pitch = .80f, PitchVariance = 0.2f, Volume = 0.2f };
                 SoundEngine.PlaySound(style, player.Center);
                 SoundStyle style23 = new SoundStyle("Terraria/Sounds/Custom/dd2_sky_dragons_fury_shot_0") with { Pitch = .2f, PitchVariance = 0.1f, Volume = 0.4f };
                 SoundEngine.PlaySound(style23, player.Center);
@@ -195,7 +195,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                 SoundEngine.PlaySound(style3, player.Center);
                 SoundStyle style4 = new SoundStyle("Terraria/Sounds/Research_3") with { Volume = .3f, Pitch = .55f, PitchVariance = 0.1f };
                 SoundEngine.PlaySound(style4, player.Center);
-                SoundStyle style5 = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorShot") with { Volume = .05f, Pitch = 1f, PitchVariance = 0.25f }; 
+                SoundStyle style5 = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorShot") with { Volume = .05f, Pitch = 1f, PitchVariance = 0.25f };
                 SoundEngine.PlaySound(style5, player.Center);
 
                 currentShot++;
@@ -344,7 +344,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
     public class AdamantitePulsarHeldProj : ModProjectile
     {
         int timer = 0;
-        public float offset = 10; 
+        public float offset = 10;
         public ref float Angle => ref Projectile.ai[1];
         public Vector2 direction = Vector2.Zero;
         public float lerpToStuff = 0;
@@ -378,7 +378,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             Projectile.velocity = Vector2.Zero;
-            Player.itemTime = 2; 
+            Player.itemTime = 2;
             Player.itemAnimation = 2;
 
             if (Projectile.owner == Main.myPlayer)
@@ -393,7 +393,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                 }
                 direction = Angle.ToRotationVector2();
 
-            } 
+            }
             //Release Shot
             else
             {
@@ -425,7 +425,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                     Vector2 vel2 = adjustedVel * (reticleProgress == 1 ? 2.8f : 2.75f);
 
                     Dust circA = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel1, newColor: new Color(255, 10, 10) * 0.6f, Scale: 0.01f);
-                    circA.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.65f : 0.55f), false, 2, 0.25f, 0.5f);                   
+                    circA.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.65f : 0.55f), false, 2, 0.25f, 0.5f);
 
                     Dust circB = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel2, newColor: new Color(255, 10, 10) * 0.7f, Scale: 0.01f);
                     circB.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.35f : 0.25f), false, 1, 0.25f, 0.5f);
@@ -468,7 +468,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
                     if (reticleProgress == 1)
                     {
-                        SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorShot") with { Volume = .13f, Pitch = .15f, PitchVariance = 0.1f }; 
+                        SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorShot") with { Volume = .13f, Pitch = .15f, PitchVariance = 0.1f };
                         SoundEngine.PlaySound(style, Projectile.Center);
 
                         Player.GetModPlayer<AeroPlayer>().ScreenShakePower = 18;
@@ -517,7 +517,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             if (hasLetGo && Projectile.timeLeft < (reticleProgress == 1 ? 12 : 8))
             {
                 gunOpacity = Math.Clamp(MathHelper.Lerp(gunOpacity, -0.65f, 0.06f), 0, 1);
-                reticleAlpha = Math.Clamp(MathHelper.Lerp(reticleAlpha, -1f, 0.12f), 0, 1); 
+                reticleAlpha = Math.Clamp(MathHelper.Lerp(reticleAlpha, -1f, 0.12f), 0, 1);
             }
 
             goldPulseAmount = Math.Clamp(MathHelper.Lerp(goldPulseAmount, -0.5f, 0.04f), 0, 1);
@@ -574,5 +574,5 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             return false;
         }
     }
- 
+
 }

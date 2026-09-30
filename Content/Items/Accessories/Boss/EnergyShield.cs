@@ -258,7 +258,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
                 SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Thunder/EnergyDash1") with { Volume = 0.25f * totalDashVol, Pitch = pitch, PitchVariance = 0.07f };
                 SoundEngine.PlaySound(style, player.Center);
 
-                SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/GloogaSlide") with { Volume = 0.1f * totalDashVol, Pitch = 0.35f + pitch, PitchVariance = 0.05f,  MaxInstances = -1 }, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/GloogaSlide") with { Volume = 0.1f * totalDashVol, Pitch = 0.35f + pitch, PitchVariance = 0.05f, MaxInstances = -1 }, player.Center);
             }
 
             Projectile.velocity.X = Vector2.Lerp(startingVel, startingVel.SafeNormalize(Vector2.UnitX), Easings.easeOutQuad(easingProgress)).X;

@@ -108,9 +108,9 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
         {
             bestiaryEntry.Info.AddRange([
-				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
-				new FlavorTextBestiaryInfoElement("The Rock Collector lives among the violent nature of the Crystal Caverns, but is always cheerful. Has a huge collection of rare gemstones!"),
-				new FlavorTextBestiaryInfoElement("Mods.AerovelenceMod.Bestiary.RockCollector")
+                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+                new FlavorTextBestiaryInfoElement("The Rock Collector lives among the violent nature of the Crystal Caverns, but is always cheerful. Has a huge collection of rare gemstones!"),
+                new FlavorTextBestiaryInfoElement("Mods.AerovelenceMod.Bestiary.RockCollector")
             ]);
         }
 
@@ -231,9 +231,9 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
             // Ensure chosenChat isn't null or empty
             if (string.IsNullOrEmpty(chosenChat))
-                chosenChat =Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2");
+                chosenChat = Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2");
 
-            if (chosenChat ==Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"))
+            if (chosenChat == Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"))
                 Main.npcChatCornerItem = ModContent.ItemType<OnTheRocks>();
 
             return chosenChat;
@@ -242,7 +242,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
         public override void SetChatButtons(ref string button, ref string button2)
         {
-            button =Terraria.Localization.Language.GetTextValue("LegacyInterface.28");
+            button = Terraria.Localization.Language.GetTextValue("LegacyInterface.28");
             button2 = RockCollectorTrade.Text("TurnIn");
         }
 
@@ -305,8 +305,8 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
                 .Add(new Item(ModContent.ItemType<ElectricBlueSolution>()), Condition.DownedMechBossAny);
 
-                //.Add(new Item(ModContent.ItemType<ShotgunAxe>()) { shopCustomPrice = Item.buyPrice(copper: 15) })
-                //.Add<ShotgunAxe>(Condition.IsNpcShimmered);
+            //.Add(new Item(ModContent.ItemType<ShotgunAxe>()) { shopCustomPrice = Item.buyPrice(copper: 15) })
+            //.Add<ShotgunAxe>(Condition.IsNpcShimmered);
 
             npcShop.Register();
         }
@@ -364,7 +364,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         }
 
         //COMMENTING OUT CUZ ROCK COLLECTOR IS LITERALLY AGENDER
-        
+
         //public override bool CanGoToStatue(bool toKingStatue) => true;
 
         //public override void OnGoToStatue(bool toKingStatue)

@@ -33,7 +33,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             {
                 //int p = GlowDustHelper.DrawGlowDust(npc.position, npc.width, npc.height, ModContent.DustType<GlowCircleRise>(), new Color(255, 75, 50), 0.4f, 0.6f, 0f, dustShader);
                 //Main.dust[p].velocity *= 0.5f;
-            
+
             }
             else if (timer % 7 == 0) //else if is intentional
             {
@@ -64,8 +64,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 //Add sound ?!
 
 
-                
-            } else
+
+            }
+            else
             {
 
             }

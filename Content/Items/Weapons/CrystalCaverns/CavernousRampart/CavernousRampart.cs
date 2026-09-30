@@ -21,15 +21,15 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class CavernousRampart : TranslatableModItem
     {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/CavernousRampart/CavernousRampart";
-		
+
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Cavernous Rampart", "Hold to guard toward the cursor\nGuarding reduces damage taken, but taking too much damage breaks the rampart temporarily\nRun into enemies to cause shield bashes")
                 .AddName(Common.Systems.Language.Language.Spanish, "Baluarte Cavernoso")
-				.AddTooltip(Common.Systems.Language.Language.Spanish, "Mantén presionado para defenderte hacia el cursorLa defensa reduce el daño recibido, pero recibir demasiado daño rompe el baluarte temporalmenteArremete contra los enemigos para realizar golpes de escudo");
+                .AddTooltip(Common.Systems.Language.Language.Spanish, "Mantén presionado para defenderte hacia el cursorLa defensa reduce el daño recibido, pero recibir demasiado daño rompe el baluarte temporalmenteArremete contra los enemigos para realizar golpes de escudo");
             base.SetStaticDefaults();
         }
-		
+
         public override void SetDefaults()
         {
             base.SetDefaults();

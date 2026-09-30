@@ -91,7 +91,7 @@ namespace AerovelenceMod.Common.Globals.Players
             }
 
             //NoRandom
-            
+
             if (DirectionalScreenShakePower > 0.1f)
             {
 

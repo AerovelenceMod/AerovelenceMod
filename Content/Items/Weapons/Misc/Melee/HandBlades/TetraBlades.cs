@@ -89,9 +89,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                 dashes = 4;
 
                 int a = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<TetraBladeRefreshFX>(), 0, 0, Main.myPlayer);
-                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Custom/dd2_phantom_phoenix_shot_2") with { Pitch = .76f, Volume = 0.8f}, player.Center);
+                SoundEngine.PlaySound(new SoundStyle("Terraria/Sounds/Custom/dd2_phantom_phoenix_shot_2") with { Pitch = .76f, Volume = 0.8f }, player.Center);
 
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/katana_06") with { Pitch = .5f, Volume = 0.05f }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/katana_06") with { Pitch = .5f, Volume = 0.05f };
                 SoundEngine.PlaySound(style, player.Center);
             }
 
@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
             if (dashRefreshCounter > 80 && dashRefreshCounter % 2 == 0)
             {
                 int p = Dust.NewDust(player.position, player.width, player.height, ModContent.DustType<LineSpark>(), player.velocity.X * 0.1f, player.velocity.Y * 0.1f, newColor: Color.White, Scale: 0.25f);
-                Main.dust[p].customData = DustBehaviorUtil.AssignBehavior_LSBase(velFadePower: 0.88f, preShrinkPower: 0.99f, postShrinkPower: 0.8f, timeToStartShrink: 10 + Main.rand.Next(-5, 5), killEarlyTime: 40, 
+                Main.dust[p].customData = DustBehaviorUtil.AssignBehavior_LSBase(velFadePower: 0.88f, preShrinkPower: 0.99f, postShrinkPower: 0.8f, timeToStartShrink: 10 + Main.rand.Next(-5, 5), killEarlyTime: 40,
                     0.9f, 0.35f);
 
                 Main.dust[p].velocity = player.velocity * 0.15f;
@@ -134,7 +134,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                     Item.useAnimation = 18;
                 }
 
-            } else
+            }
+            else
             {
                 Item.UseSound = SoundID.DD2_MonkStaffSwing with { Volume = 0f, Pitch = 0.8f, PitchVariance = 0.1f };
                 if (doubleAttackCount > 0)
@@ -207,7 +208,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                 }
                 SoundEngine.PlaySound(SoundID.DD2_MonkStaffSwing with { Volume = 0.35f, Pitch = 0.8f, PitchVariance = 0.1f }, player.Center);
 
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Metallic/joker_stab1") with { Volume = .25f, Pitch = soundPitch, PitchVariance = 0.1f, MaxInstances = -1 }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Metallic/joker_stab1") with { Volume = .25f, Pitch = soundPitch, PitchVariance = 0.1f, MaxInstances = -1 };
                 SoundEngine.PlaySound(style, player.Center);
 
             }
@@ -270,7 +271,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
             if (player.altFunctionUse == 2)
             {
                 doubleAttackCount = 10;
-                dash = true;                
+                dash = true;
             }
 
             if (!dash)
@@ -282,14 +283,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                 modPlayer.frontArmRotation = itemAngle - MathHelper.PiOver2;
 
                 player.direction = Main.MouseWorld.X > player.Center.X ? 1 : -1;
-                
+
 
 
                 if (player.itemAnimation > (player.itemAnimationMax / 1.2f))
                 {
                     modPlayer.stretchAmount = (int)Player.CompositeArmStretchAmount.None;
                 }
-                else 
+                else
                 {
                     if (trueFrontFalseBack)
                     {

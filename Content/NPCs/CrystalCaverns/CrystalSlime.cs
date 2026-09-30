@@ -206,7 +206,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             NPC.noTileCollide = false;
             NPC.damage = 15;
             Timer++;
-            bool grounded = NPC.collideY && Math.Abs(NPC.velocity.Y) < .2f;
+            bool grounded = SlimeSurface.IsGrounded(NPC);
             if ((airborneBlob || splatImpactTicks > 0) && TryImpactSplat(false)) return;
             if (!target.active || target.dead)
             {
@@ -535,7 +535,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             hopTimer = 0;
             surfaceCount = 0;
             NPC.netUpdate = true;
-			//release the splat. this sounds really funny youre welcome
+            //release the splat. this sounds really funny youre welcome
         }
         private void DoStretch(Player target)
         {
@@ -610,7 +610,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             if (Main.netMode == NetmodeID.MultiplayerClient)
                 return;
             for (int i = 0; i < count; i++)
-				Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CrystalSlimeHazard>(), NPC.damage, 0f, Main.myPlayer, NPC.whoAmI, i);
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, Vector2.Zero, ModContent.ProjectileType<CrystalSlimeHazard>(), NPC.damage, 0f, Main.myPlayer, NPC.whoAmI, i);
         }
         public bool GetHazardSegment(int slot, out Vector2 start, out Vector2 end, out float width)
         {
@@ -639,7 +639,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         public override void FindFrame(int frameHeight) { NPC.frame = new Rectangle(0, 0, 38, frameHeight); }
         private void UpdateShape()
         {
-            bool grounded = NPC.collideY && Math.Abs(NPC.velocity.Y) < .4f;
+            bool grounded = SlimeSurface.TryGroundContact(NPC, out Vector2 groundPoint, out _);
             if (grounded && previousVelocity.Y > 1) landingImpulse = Math.Min(1, previousVelocity.Y / 10);
             previousVelocity = NPC.velocity;
             landingImpulse *= .85f;
@@ -680,12 +680,18 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             SlimeShape.Spring(ref bodySize, ref bodySizeVelocity, size, .2f, .64f);
             SlimeShape.Spring(ref bodyOffset, ref bodyOffsetVelocity, offset, .16f, .65f);
             bodySize = Vector2.Max(bodySize, new Vector2(5));
+            if (grounded && CurrentState == ActionState.Idle)
+            {
+                bodyOffset.Y = groundPoint.Y - NPC.Center.Y + 2f - bodySize.Y * shape.BottomCutoff;
+                bodyOffsetVelocity.Y = 0f;
+            }
             shape.Begin(bodyOffset, bodySize, VisualTime, NPC.Center);
             shape.SurfaceCount = splat > 0 ? surfaceCount : 0;
             shape.SurfaceBlend = MathHelper.Clamp(splat, 0, 1);
             for (int i = 0; i < shape.SurfaceCount; i++)
             {
-                shape.SurfacePoints[i] = Vector2.Lerp(anchorA, surfacePoints[i], MathHelper.Clamp(splat, 0, 1)) - NPC.Center;
+                shape.SurfacePoints[i] = Vector2.Lerp(anchorA, surfacePoints[i], MathHelper.Clamp(splat, 0, 1)) - NPC.Center
+                    + (surfaceNormals[i].Y < -.25f ? Vector2.UnitY * 2f : Vector2.Zero);
                 shape.SurfaceNormals[i] = surfaceNormals[i];
             }
             for (int i = 0; i < 9; i++)

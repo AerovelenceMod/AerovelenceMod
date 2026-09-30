@@ -352,7 +352,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
         private void UpdateInfinitySymbol()
         {
-            int segments = 20; 
+            int segments = 20;
             infinityPoints.Clear();
             infinityTime += infinitySpeed;
             if (infinityTime > MathHelper.TwoPi)
@@ -626,7 +626,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                         for (int i = 0; i < Main.maxNPCs; i++)
                         {
                             NPC nearbyNPC = Main.npc[i];
-                            if (nearbyNPC.active && !nearbyNPC.friendly && !nearbyNPC.dontTakeDamage &&Vector2.Distance(nearbyNPC.Center, Projectile.Center) < 120f &&nearbyNPC.whoAmI != target.whoAmI)
+                            if (nearbyNPC.active && !nearbyNPC.friendly && !nearbyNPC.dontTakeDamage && Vector2.Distance(nearbyNPC.Center, Projectile.Center) < 120f && nearbyNPC.whoAmI != target.whoAmI)
                             {
                                 int explosionDamage = Projectile.damage / 2;
                                 nearbyNPC.StrikeNPC(new NPC.HitInfo

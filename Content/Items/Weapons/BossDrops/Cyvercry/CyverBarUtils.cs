@@ -12,10 +12,10 @@ using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion;
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry
 {
-	internal static class CyverBarUtils
-	{
-		public static void DrawCyverBar(PlayerDrawSet pds, float barProgress, float barVisualProgress, float justShotPower, float barFadeIn)
-		{
+    internal static class CyverBarUtils
+    {
+        public static void DrawCyverBar(PlayerDrawSet pds, float barProgress, float barVisualProgress, float justShotPower, float barFadeIn)
+        {
             Player Player = pds.drawPlayer;
 
             bool drainingBar = Player.GetModPlayer<OblivionBarPlayer>().decreaseBar;
@@ -96,7 +96,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry
 
                 if (drainingBar)
                     fillColor = Color.Lerp(betweenPink, Color.White, 0.2f + (float)Math.Sin(Main.timeForVisualEffects * 0.2f) * 0.05f);
-                    //fillColor = Color.Lerp(betweenPink, Color.HotPink, 0.55f + (float)Math.Sin(Main.timeForVisualEffects * 0.2f) * 0.08f);
+                //fillColor = Color.Lerp(betweenPink, Color.HotPink, 0.55f + (float)Math.Sin(Main.timeForVisualEffects * 0.2f) * 0.08f);
 
                 Vector2 fillScale = new Vector2(1f, 1f + justShotPower * 0.2f);
                 fillScale.X *= Easings.easeInOutBack(barFadeIn, 0f, 1.5f);

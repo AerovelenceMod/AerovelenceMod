@@ -59,7 +59,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 Projectile.rotation = Projectile.AngleTo(player.Center) + MathHelper.Pi;
                 Projectile.spriteDirection = Projectile.direction;
             }
-            
+
             if (timer == 65)
             {
                 storedRotation = (player.Center - GoalPoint).ToRotation();
@@ -88,14 +88,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                     SoundStyle style2 = new SoundStyle("Terraria/Sounds/NPC_Hit_53") with { Volume = .20f, Pitch = 1f, MaxInstances = 2 };
                     SoundEngine.PlaySound(style2, Projectile.Center);
 
-                    SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/ElectricExplode") with { Volume = .1f, Pitch = 1f, }; 
+                    SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/ElectricExplode") with { Volume = .1f, Pitch = 1f, };
                     SoundEngine.PlaySound(style3, Projectile.Center);
 
 
                 }
 
                 Projectile.velocity = Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.Pi) * dashSpeed;
-                
+
                 if (timer % 3 == 0)
                 {
                     int a = Dust.NewDust(Projectile.Center, 12, Projectile.height, ModContent.DustType<DashTrailDust>(), Projectile.velocity.X * 0.2f, Projectile.velocity.Y * 0.2f, 0, new Color(0, 255, 255), 1f);
@@ -140,14 +140,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 drawingCol = Color.SkyBlue * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
                 drawingCol2 = Color.White * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
 
-                Main.EntitySpriteDraw(Tex, drawPos + new Vector2(22, 22), Tex.Frame(1,1,0,0), drawingCol * 0.5f * alpha, Projectile.rotation, Tex.Size() / 2, vec2Scale, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(Tex, drawPos + new Vector2(22, 22), Tex.Frame(1, 1, 0, 0), drawingCol * 0.5f * alpha, Projectile.rotation, Tex.Size() / 2, vec2Scale, SpriteEffects.None, 0);
                 Main.EntitySpriteDraw(Tex2, drawPos + new Vector2(22, 22), Tex.Frame(1, 1, 0, 0), drawingCol2 * glowVal * alpha, Projectile.rotation, Tex2.Size() / 2, vec2Scale, SpriteEffects.None, 0);
 
             }
 
 
-            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), new Color(50,50,50) * alpha, Projectile.rotation, Tex.Size() / 2, vec2Scale, SpriteEffects.None, 0f);
-            
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), new Color(50, 50, 50) * alpha, Projectile.rotation, Tex.Size() / 2, vec2Scale, SpriteEffects.None, 0f);
+
             Main.spriteBatch.Draw(Tex2, Projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(1.5f, 1.5f), Tex.Frame(1, 1, 0, 0), Color.DeepSkyBlue with { A = 0 } * 0.5f * alpha, Projectile.rotation, Tex2.Size() / 2, vec2Scale, SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(Tex2, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.DeepSkyBlue * glowVal * 1f * alpha, Projectile.rotation, Tex2.Size() / 2, vec2Scale, SpriteEffects.None, 0f);
@@ -254,4 +254,4 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             GoalPoint = input;
         }
     }
-} 
+}

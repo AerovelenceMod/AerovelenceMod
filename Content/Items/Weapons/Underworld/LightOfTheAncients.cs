@@ -407,13 +407,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
             {
                 //we're in skill strike territory baby
                 overlayFrameIndex = 2;
-               // meterFrameRow = 2;
+                // meterFrameRow = 2;
             }
             else if (heatLevel > 0)
             {
                 //any heat level below skill strike threshold shows regular meter which is the first column
                 overlayFrameIndex = 1;
-               // meterFrameRow = 0;
+                // meterFrameRow = 0;
             }
             else
             {
@@ -580,14 +580,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
             Vector2 meterPosition = player.Center - Main.screenPosition;
             meterPosition.Y -= player.height + 30;
             Rectangle backgroundRect = new(meterFrameRow * (frameWidth + paddingX), animRow * (frameHeight + paddingY), frameWidth, frameHeight);
-            Main.spriteBatch.Draw(meterTexture, meterPosition, backgroundRect, Color.White, 0f, new Vector2(frameWidth / 2, frameHeight / 2), 1f, SpriteEffects.None,0f);
+            Main.spriteBatch.Draw(meterTexture, meterPosition, backgroundRect, Color.White, 0f, new Vector2(frameWidth / 2, frameHeight / 2), 1f, SpriteEffects.None, 0f);
 
             //for overheated state the background is already the full overheated texture
             if (isOverheated)
             {
                 string soulText = $"{Math.Floor((heatLevel - 30) / 10)}";
                 Vector2 textSize = FontAssets.ItemStack.Value.MeasureString(soulText);
-                Vector2 textPos =  meterPosition - new Vector2(textSize.X / 2, 12);
+                Vector2 textPos = meterPosition - new Vector2(textSize.X / 2, 12);
                 Utils.DrawBorderStringFourWay(Main.spriteBatch, FontAssets.ItemStack.Value, soulText, textPos.X, textPos.Y, Color.White, Color.Black, Vector2.Zero, 1.2f);
             }
             else

@@ -124,6 +124,14 @@ namespace AerovelenceMod.Common.Utilities
                 }
             }
             DrawGel(shape);
+            if (palette.ColorTransform != null)
+                for (int y = 0; y < height; y++)
+                    for (int x = 0; x < width; x++)
+                    {
+                        int index = y * width + x;
+                        if (pixels[index].A > 0)
+                            pixels[index] = palette.ColorTransform(PixelPoint(x, y), shape.Time, pixels[index]);
+                    }
             if (palette.FacetStyle != null)
                 for (int i = 0; i < shape.TendrilCount; i++)
                 {

@@ -296,7 +296,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                 spriteBatch.Draw(star, tip, null, Glow(color, (0.45f + progress * 0.4f) * opacity), -angle, star.Size() * 0.5f, Math.Min(0.16f, radius / 75f), SpriteEffects.None, 0f);
             }
         }
-            private static ulong dustTick;
+        private static ulong dustTick;
         private static int dustBudget;
         private static void DrawPath(Vector2[] points, Color color, float opacity, float width)
         {

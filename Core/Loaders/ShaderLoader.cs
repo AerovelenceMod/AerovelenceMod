@@ -19,40 +19,40 @@ namespace AerovelenceMod.Core.Loaders
 {
     internal sealed class ShaderLoader : Abstracts.ILoadable
     {
-		public float Priority => 1f;
+        public float Priority => 1f;
 
 
-		public bool LoadOnDedServer => false;
+        public bool LoadOnDedServer => false;
 
-		public void Load(Mod mod)
-		{
-			MethodInfo info = typeof(Mod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod(true);
-			var file = (TmodFile)info.Invoke(mod, null);
+        public void Load(Mod mod)
+        {
+            MethodInfo info = typeof(Mod).GetProperty("File", BindingFlags.NonPublic | BindingFlags.Instance).GetGetMethod(true);
+            var file = (TmodFile)info.Invoke(mod, null);
 
-			var shaders = file.Where(x => x.Name.StartsWith("Effects/") && x.Name.EndsWith(".xnb"));
+            var shaders = file.Where(x => x.Name.StartsWith("Effects/") && x.Name.EndsWith(".xnb"));
 
-			foreach (var entry in shaders)
-			{
-				var shaderPath = entry.Name.Replace(".xnb", string.Empty);
-				var shaderName = Path.GetFileName(shaderPath);
+            foreach (var entry in shaders)
+            {
+                var shaderPath = entry.Name.Replace(".xnb", string.Empty);
+                var shaderName = Path.GetFileName(shaderPath);
 
-				LoadShader(AerovelenceMod.AbbreviationPrefix + shaderName, shaderPath);
-			}
-		}
+                LoadShader(AerovelenceMod.AbbreviationPrefix + shaderName, shaderPath);
+            }
+        }
 
-		public void Unload() { }
+        public void Unload() { }
 
-		internal static void LoadShader(string shaderName, string shaderPath)
-		{
-			var shaderRef = new Ref<Effect>(AerovelenceMod.Instance.Assets.Request<Effect>(shaderPath).Value);
+        internal static void LoadShader(string shaderName, string shaderPath)
+        {
+            var shaderRef = new Ref<Effect>(AerovelenceMod.Instance.Assets.Request<Effect>(shaderPath).Value);
 
-			if (AerovelenceMod.DEBUG)
-			{
-				AerovelenceMod.Instance.Logger.Debug($"Loading shader: <{shaderName}> @ <{shaderPath}>");
-			}
+            if (AerovelenceMod.DEBUG)
+            {
+                AerovelenceMod.Instance.Logger.Debug($"Loading shader: <{shaderName}> @ <{shaderPath}>");
+            }
 
-			(Filters.Scene[shaderName] = new Filter(new ScreenShaderData(shaderRef, shaderName + "Pass"), EffectPriority.High))
-				.Load();
-		}
-	}
+            (Filters.Scene[shaderName] = new Filter(new ScreenShaderData(shaderRef, shaderName + "Pass"), EffectPriority.High))
+                .Load();
+        }
+    }
 }

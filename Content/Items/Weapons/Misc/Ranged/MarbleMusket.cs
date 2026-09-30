@@ -76,7 +76,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             SoundStyle style2 = SoundID.Item110 with { Volume = 0.35f, PitchVariance = 0.15f, Pitch = 0.25f };
             SoundEngine.PlaySound(style2, position);
 
-            SoundStyle style = new SoundStyle("Terraria/Sounds/Item_38") with { Volume = .4f, Pitch = 1f, PitchVariance = 0.1f}; 
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Item_38") with { Volume = .4f, Pitch = 1f, PitchVariance = 0.1f };
             SoundEngine.PlaySound(style, position);
 
             Projectile.NewProjectile(null, position, Vector2.Zero, ModContent.ProjectileType<MarbleMusketHeldProjectile>(), 0, 0, player.whoAmI);
@@ -136,7 +136,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         public override bool? CanDamage() => false;
 
         public override bool? CanCutTiles() => false;
-        
+
 
         public override void AI()
         {
@@ -181,7 +181,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                     glowIntensity = Math.Clamp(MathHelper.Lerp(glowIntensity, -0.20f, 0.1f), 0f, 1f);
             }
 
-            
+
 
             direction = Angle.ToRotationVector2().RotatedBy(yRecoilProgress * Player.direction * -1f); ;
             Projectile.Center = Player.MountedCenter + (direction * Offset);
@@ -241,10 +241,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.timeLeft = 95;
-            
+
             Projectile.extraUpdates = 1;
         }
-        
+
         public override void AI()
         {
             Dust star = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowPixelCross>(),
@@ -258,7 +258,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
             star.rotation = Main.rand.NextFloat(6.28f);
             star2.rotation = Main.rand.NextFloat(6.28f);
-            
+
             star.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
                 rotPower: 0.05f, preSlowPower: 0.95f, timeBeforeSlow: 20, postSlowPower: 0.86f, velToBeginShrink: 4f, fadePower: 0.89f, shouldFadeColor: true);
             star2.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
@@ -300,7 +300,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                 {
                     Color lineCol = Main.rand.NextBool() ? Color.Gold : new Color(255, 180, 0);
 
-                    Dust d = Dust.NewDustPerfect(p.Center, ModContent.DustType<MuraLineBasic>(), 
+                    Dust d = Dust.NewDustPerfect(p.Center, ModContent.DustType<MuraLineBasic>(),
                         Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(0.75f, 2f), Alpha: Main.rand.Next(10, 15), lineCol, 0.23f);
                     d.velocity += outVec.SafeNormalize(Vector2.UnitX) * Projectile.velocity.Length() * 0.45f;
 
@@ -309,8 +309,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                     d2.velocity += outVec2.SafeNormalize(Vector2.UnitX) * Projectile.velocity.Length() * 0.45f;
                 }
 
-                
-                
+
+
                 //Spawn dust
                 Vector2 vel2 = Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.ToRadians(120)) * 2f;
                 Vector2 vel3 = Projectile.rotation.ToRotationVector2().RotatedBy(MathHelper.ToRadians(-120)) * 2f;
@@ -329,14 +329,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                                 rotPower: 0.05f, preSlowPower: 0.95f, timeBeforeSlow: 20, postSlowPower: 0.86f, velToBeginShrink: 4f, fadePower: 0.90f, shouldFadeColor: false);
 
                 //Sound
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Pitch = .55f, MaxInstances = -1, Volume = 0.45f }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Pitch = .55f, MaxInstances = -1, Volume = 0.45f };
                 SoundEngine.PlaySound(style, Projectile.Center);
                 p.GetModPlayer<MarbleMusketPlayer>().consecutiveHits = 0;
-                
+
             }
             else if (p.GetModPlayer<MarbleMusketPlayer>().consecutiveHits == 1)
             {
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Volume = .4f, Pitch = 0.2f, MaxInstances = -1}; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Volume = .4f, Pitch = 0.2f, MaxInstances = -1 };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
 
@@ -353,7 +353,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             }
             else
             {
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = -0.1f, MaxInstances = -1, Volume = 0.4f }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = -0.1f, MaxInstances = -1, Volume = 0.4f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 p.GetModPlayer<MarbleMusketPlayer>().consecutiveHits += 1;
@@ -382,7 +382,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             Main.spriteBatch.Draw(line, Projectile.Center - Main.screenPosition, null, Color.Black with { A = 0 } * 0.4f, Projectile.rotation - MathHelper.PiOver2, line.Size() / 2, vec2ScaleLine * 1.2f, SpriteEffects.None, 0.0f);
             Main.spriteBatch.Draw(line, Projectile.Center - Main.screenPosition, null, Color.Gold with { A = 0 } * 0.75f, Projectile.rotation - MathHelper.PiOver2, line.Size() / 2, vec2ScaleLine * 1.2f, SpriteEffects.None, 0.0f);
             Main.spriteBatch.Draw(line, Projectile.Center - Main.screenPosition, null, Color.White with { A = 0 } * 1f, Projectile.rotation - MathHelper.PiOver2, line.Size() / 2, vec2ScaleLine * 0.6f, SpriteEffects.None, 0.0f);
-            
+
             return false;
         }
 
@@ -392,13 +392,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             Projectile.Kill();
             return true;
         }
-        
+
         public override void OnKill(int timeLeft)
         {
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_40") with { Pitch = -.71f, PitchVariance = .28f, MaxInstances = 1, Volume = 0.5f };
             SoundEngine.PlaySound(style, Projectile.Center);
 
-            
+
             Dust star = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowPixelCross>(),
                 Projectile.rotation.ToRotationVector2() * 2f, newColor: Color.Goldenrod, Scale: 0.95f);
 
@@ -418,7 +418,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
         bool firstFrame = true;
         int timer = 0;
-        float overallAlpha = 0f; 
+        float overallAlpha = 0f;
 
         public override void SetDefaults()
         {
@@ -553,7 +553,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
         public override void OnKill(int timeLeft)
         {
-            Vector2 dustStartPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 3f; 
+            Vector2 dustStartPos = Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 3f;
             for (int i = 0; i < 10; i++)
             {
                 Vector2 vel = Main.rand.NextVector2Circular(5f, 5f);

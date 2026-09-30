@@ -19,17 +19,17 @@ using AerovelenceMod.Content.Projectiles.Other;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ember
 {
-	public class SolsearBomb : ModProjectile
-	{
+    public class SolsearBomb : ModProjectile
+    {
         public override string Texture => "Terraria/Images/Projectile_0";
 
         private int timer = 0;
-		
-		public override void SetDefaults()
-		{
+
+        public override void SetDefaults()
+        {
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.width = Projectile.height = 80;
-            
+
             Projectile.timeLeft = 300;
             Projectile.penetrate = -1;
             Projectile.scale = 1;
@@ -37,10 +37,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.ignoreWater = true;
-			Projectile.tileCollide = true; 
+            Projectile.tileCollide = true;
 
-			Projectile.alpha = 0;
-			Projectile.hide = true;
+            Projectile.alpha = 0;
+            Projectile.hide = true;
 
 
             Projectile.usesLocalNPCImmunity = true;
@@ -55,8 +55,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         }
 
         public float velocityValue = 30f;
-		float currentVelocity = 20f;
-		Vector2 velDirection = Vector2.Zero;
+        float currentVelocity = 20f;
+        Vector2 velDirection = Vector2.Zero;
 
         Vector2 stoppedPos = Vector2.Zero;
         bool stopped = false;
@@ -66,15 +66,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
         public override void AI()
         {
-			if (timer == 0)
-			{
+            if (timer == 0)
+            {
                 velDirection = Projectile.velocity.SafeNormalize(Vector2.UnitX);
-				currentVelocity = velocityValue;
+                currentVelocity = velocityValue;
             }
 
             Projectile.velocity = velDirection * currentVelocity;
 
-			float lerpValue = Math.Clamp(timer / 60f, 0f, 1f);
+            float lerpValue = Math.Clamp(timer / 60f, 0f, 1f);
             currentVelocity = MathHelper.Lerp(velocityValue, 0f, Easings.easeOutExpo(lerpValue));
 
             Projectile.velocity *= 0.8f;
@@ -141,10 +141,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             drawnScale = Math.Clamp(MathHelper.Lerp(drawnScale, 1.25f, 0.1f), 0f, 1f);
         }
 
-		float globalScale = 1f;
+        float globalScale = 1f;
         float drawnScale = 0f;
-		public override bool PreDraw(ref Color lightColor)
-		{
+        public override bool PreDraw(ref Color lightColor)
+        {
             Texture2D ball = Mod.Assets.Request<Texture2D>("Assets/Orbs/bigCircle2").Value;
             Texture2D ball2 = Mod.Assets.Request<Texture2D>("Assets/Orbs/feather_circle").Value;
 
@@ -192,33 +192,33 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
-			
-		}
+
+        }
 
         bool isFading = false;
         public override void OnKill(int timeLeft)
         {
             float exploScale = isFading ? storedScale : globalScale;
 
-			int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolsearBombExplosion>(), 
-				(int)(Projectile.damage * 3f * globalScale), 2f, Main.player[Projectile.owner].whoAmI);
-			(Main.projectile[explo].ModProjectile as SolsearBombExplosion).size = 0.35f * exploScale;
+            int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolsearBombExplosion>(),
+                (int)(Projectile.damage * 3f * globalScale), 2f, Main.player[Projectile.owner].whoAmI);
+            (Main.projectile[explo].ModProjectile as SolsearBombExplosion).size = 0.35f * exploScale;
 
             if (globalScale == 2f)
                 SkillStrikeUtil.setSkillStrike(Main.projectile[explo], 1.5f, 1000, 0f, 0f);
 
 
-			ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-			ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
 
-			SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Pitch = -.53f, };
-			SoundEngine.PlaySound(style2, Projectile.Center);
+            SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Pitch = -.53f, };
+            SoundEngine.PlaySound(style2, Projectile.Center);
 
-			SoundStyle stylea = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
-			SoundEngine.PlaySound(stylea, Projectile.Center);
+            SoundStyle stylea = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
+            SoundEngine.PlaySound(stylea, Projectile.Center);
 
-			SoundStyle styleb = new SoundStyle("Terraria/Sounds/Item_105") with { Pitch = .55f, Volume = 1f };
-			SoundEngine.PlaySound(styleb, Projectile.Center);
+            SoundStyle styleb = new SoundStyle("Terraria/Sounds/Item_105") with { Pitch = .55f, Volume = 1f };
+            SoundEngine.PlaySound(styleb, Projectile.Center);
 
 
             int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
@@ -267,9 +267,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
         int timer = 0;
         public float opacity = 1f;
-		public float size = 1f;
-		public bool maxPower = false;
-        
+        public float size = 1f;
+        public bool maxPower = false;
+
         public override void SetDefaults()
         {
             Projectile.DamageType = DamageClass.Ranged;
@@ -294,9 +294,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public override void AI()
         {
             if (timer == 0)
-			{
+            {
                 startingCenter = Projectile.Center;
-				timer = Main.rand.Next(0, 200);
+                timer = Main.rand.Next(0, 200);
             }
 
             timer++;
@@ -320,10 +320,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Texture2D Tex2 = Mod.Assets.Request<Texture2D>("Assets/Orbs/ElectricPopE").Value;
 
             float scale = Projectile.scale * 0.25f;
-			float timeFade = 1f - (0.25f * (Projectile.scale / size));
+            float timeFade = 1f - (0.25f * (Projectile.scale / size));
 
             float timeA = timer * 0.045f * timeFade;
-			float timeB = timer * -0.07f * timeFade;
+            float timeB = timer * -0.07f * timeFade;
 
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.Black * opacity * 0.35f, timeA, Tex.Size() / 2, scale * 1.65f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.Black * opacity * 0.35f, timeB, Tex.Size() / 2, scale * 1.65f + (0.15f * scale), SpriteEffects.None, 0f);

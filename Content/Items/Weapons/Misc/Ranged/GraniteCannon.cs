@@ -255,7 +255,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                             Vector2 dustVel = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(2f, 3.25f);
 
                             Dust gd = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowPixelCross>(), dustVel, newColor: Color.SkyBlue, Scale: Main.rand.NextFloat(0.2f, 0.4f));
-                            gd.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.2f, timeBeforeSlow: 5, 
+                            gd.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.2f, timeBeforeSlow: 5,
                                 preSlowPower: 0.95f, postSlowPower: 0.89f, velToBeginShrink: 1f, fadePower: 0.9f, shouldFadeColor: false);
                         }
 
@@ -274,7 +274,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                     }
                 }
 
-                
+
             }
 
             if (timer % 2 == 0)
@@ -322,7 +322,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                         previousRotations[i], Chunk.Size() / 2f, size2 * 1.5f, SpriteEffects.None);
 
                     //Main.EntitySpriteDraw(Chunk, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 1.25f * colVal,
-                        //previousRotations[i], Chunk.Size() / 2f, vec2Scale * 1.5f, SpriteEffects.None);
+                    //previousRotations[i], Chunk.Size() / 2f, vec2Scale * 1.5f, SpriteEffects.None);
                 }
 
             }
@@ -438,7 +438,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                     Projectile.timeLeft -= 3;
                 }
 
-            } else
+            }
+            else
             {
                 Projectile.velocity *= 0.98f;
             }
@@ -467,7 +468,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
         public override void OnKill(int timeLeft)
         {
-            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_hurt_1") with { Pitch = .4f, MaxInstances = -1 }; 
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_hurt_1") with { Pitch = .4f, MaxInstances = -1 };
             SoundEngine.PlaySound(style, Projectile.Center);
 
             SoundEngine.PlaySound(SoundID.Item93 with { Pitch = 0.4f, Volume = 0.2f, MaxInstances = -1 }, Projectile.Center);

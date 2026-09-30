@@ -156,7 +156,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
             Projectile.extraUpdates = 100;
         }
 
-        public override bool? CanDamage() { return !collided; }        
+        public override bool? CanDamage() { return !collided; }
 
         public override void AI()
         {
@@ -177,7 +177,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
                 timeAfterCollided++;
             }
 
-            if (timer == 200 && !collided) 
+            if (timer == 200 && !collided)
             {
                 collided = true;
             }
@@ -285,7 +285,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
         public override string Texture => "Terraria/Images/Projectile_0";
 
         int timer = 0;
-        float OFFSET = 20; 
+        float OFFSET = 20;
 
         ref float Angle => ref Projectile.ai[1];
         Vector2 direction = Vector2.Zero;
@@ -310,7 +310,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
         public override bool? CanDamage() => false;
 
         public override bool? CanCutTiles() => false;
-        
+
 
         bool firstFrame = true;
         int shotCount = 0;
@@ -324,7 +324,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
             }
 
             HeldProjCode(false);
-            
+
             Player owner = Main.player[Projectile.owner];
 
             //Fire weapon
@@ -436,7 +436,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
 
             Player.heldProj = Projectile.whoAmI;
             Projectile.rotation = direction.ToRotation();
-            
+
             timer++;
         }
 
@@ -508,7 +508,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
                         SoundStyle style = new SoundStyle("Terraria/Sounds/Item_108") with { Volume = 0.7f, Pitch = .6f, PitchVariance = 0.2f };
                         SoundEngine.PlaySound(style, Projectile.Center);
 
-                        SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_72") with { Volume = .75f, Pitch = .6f, }; 
+                        SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_72") with { Volume = .75f, Pitch = .6f, };
                         SoundEngine.PlaySound(style2, Projectile.Center);
 
                         SoundStyle style4 = new SoundStyle("Terraria/Sounds/Item_149") with { Volume = 1f, Pitch = .7f };
@@ -529,7 +529,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
 
                 }
 
-                windUpPercent = Math.Clamp((windUpTimer - 20) * 0.3f, 0, MathHelper.TwoPi); 
+                windUpPercent = Math.Clamp((windUpTimer - 20) * 0.3f, 0, MathHelper.TwoPi);
 
                 if (windUpPercent == MathHelper.TwoPi)
                 {

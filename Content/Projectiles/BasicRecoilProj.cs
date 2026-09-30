@@ -72,7 +72,7 @@ namespace AerovelenceMod.Content.Projectiles
             HoldoutOffset = HoldOffset;
         }
 
-        public void SetProjInfo(int GunID, int AnimTime, float NormalXOffset, float DestXOffset, float YRecoilAmount, 
+        public void SetProjInfo(int GunID, int AnimTime, float NormalXOffset, float DestXOffset, float YRecoilAmount,
             Vector2 HoldOffset, Vector2 TipPos, Vector2 StarPos)
         {
             gunID = GunID;
@@ -185,7 +185,7 @@ namespace AerovelenceMod.Content.Projectiles
             Player.itemRotation = MathHelper.WrapAngle(Player.itemRotation);
 
             #region compositeArms
-            
+
             if (doCompositeArm)
             {
                 if (compositeArmAlwaysFull)
@@ -229,7 +229,7 @@ namespace AerovelenceMod.Content.Projectiles
             Player Player = Main.player[Projectile.owner];
             SpriteEffects mySE = Player.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
 
-            Vector2 heldOffset = new Vector2(HoldoutOffset.X, HoldoutOffset.Y * Player.direction).RotatedBy(Projectile.rotation);         
+            Vector2 heldOffset = new Vector2(HoldoutOffset.X, HoldoutOffset.Y * Player.direction).RotatedBy(Projectile.rotation);
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Player.gfxOffY) + heldOffset;
 
 

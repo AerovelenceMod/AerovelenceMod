@@ -149,7 +149,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 RockRumblerVFX.Crystal(Projectile.Center + angle.ToRotationVector2() * 8f, angle + MathHelper.PiOver2, new Vector2(5f, 12f), 1f, 0.25f + powered * 0.5f);
             }
             if (powered > 0f)
-                {
+            {
                 RockRumblerVFX.Glow(Projectile.Center, new Vector2(30f), Color.White, powered);
                 RockRumblerVFX.Flare(Projectile.Center, 62f, powered, Projectile.velocity.ToRotation() + MathHelper.PiOver2);
             }

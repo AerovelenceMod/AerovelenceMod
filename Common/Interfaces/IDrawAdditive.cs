@@ -1,7 +1,8 @@
 using Microsoft.Xna.Framework.Graphics;
 
 namespace AerovelenceMod.Common.Interfaces
-{    interface IDrawAdditive
+{
+    interface IDrawAdditive
     {
         void DrawAdditive(SpriteBatch spriteBatch);
     }

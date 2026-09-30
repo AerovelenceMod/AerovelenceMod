@@ -140,8 +140,12 @@ namespace AerovelenceMod.Backgrounds
             if (!Exposed(position))
                 return;
             float depth = Main.rand.NextFloat(0.55f, 1f);
-            drops.Add(new Drop { Position = position, Depth = depth,
-                Velocity = new Vector2(Main.windSpeedCurrent * 3f + 0.5f, 10f) * depth });
+            drops.Add(new Drop
+            {
+                Position = position,
+                Depth = depth,
+                Velocity = new Vector2(Main.windSpeedCurrent * 3f + 0.5f, 10f) * depth
+            });
         }
 
         private void TryStartStrike()
@@ -164,8 +168,10 @@ namespace AerovelenceMod.Backgrounds
                         break;
                     bolt = new LightningUtils.LightningData((Projectile)null, LightningUtils.LightningStyle.Static)
                     {
-                        MaxSegments = 60, StaticMaxTime = BoltDuration,
-                        StartThickness = 5f, EndThickness = 0.7f,
+                        MaxSegments = 60,
+                        StaticMaxTime = BoltDuration,
+                        StartThickness = 5f,
+                        EndThickness = 0.7f,
                         CoreColorOverride = new Color(230, 245, 255),
                         OuterColorOverride = new Color(135, 155, 255),
                         DisplacementIntensity = 1.2f

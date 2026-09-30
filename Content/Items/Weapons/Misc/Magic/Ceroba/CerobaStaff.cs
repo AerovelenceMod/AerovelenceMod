@@ -113,7 +113,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         }
 
-        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) 
+        public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             Vector2 randomVel = velocity.RotatedByRandom(0.6f); // 0.75
 
@@ -161,7 +161,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 SoundEngine.PlaySound(style3, player.Center);
             }
 
-            
+
 
             return false;
         }
@@ -407,10 +407,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             float ribbonLeftBonusBottom = dir == 1 ? 0f : 0f;
             float ribbonLeftBonusTop = dir == 1 ? 0f : -3.14f;
 
-            float ribbonBottomSinRot = dir == 1 ? 
+            float ribbonBottomSinRot = dir == 1 ?
                 (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.15f) + yOffset + (xOffset > 0 ? xOffset : 0f)
-                : (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.15f) + (-yOffset * 0.5f)  + (xOffset < 0 ? xOffset : 0f);
-            
+                : (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.15f) + (-yOffset * 0.5f) + (xOffset < 0 ? xOffset : 0f);
+
             float ribbonTopSinRot = (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.05f) + (yOffset * 0.5f * dir) + xOffset;
 
             Vector2 bottomScale = dir == 1 ?
@@ -418,7 +418,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 : new Vector2(scalePercent - (ribbonBottomSinRot > 0 ? -ribbonBottomSinRot * 0.75f : -ribbonBottomSinRot * 0.5f) - (justShotValue * 0.1f), 1f);
 
             Vector2 topScale = new Vector2(1f, scalePercent - (ribbonTopSinRot < 0 ? ribbonTopSinRot : ribbonTopSinRot * 0.5f) - (justShotValue * 0.1f));
-           
+
 
             Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, lightColor * alpha, Projectile.rotation + ribbonBottomSinRot + faceLeftBonus + ribbonLeftBonusBottom, bottomOrigin, bottomScale * Projectile.scale, ribbonSpriteFXBottom);
             Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, lightColor * alpha, Projectile.rotation + ribbonTopSinRot + faceLeftBonus + ribbonLeftBonusTop, topOrigin, topScale * Projectile.scale, ribbonSpriteFXTop);
@@ -426,7 +426,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             //Glow Ribbons
             float glowRibbonBonusScale = 1f + (justShotValue * 0.05f);
             Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, Projectile.rotation + ribbonBottomSinRot + faceLeftBonus + ribbonLeftBonusBottom, bottomOrigin, bottomScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXBottom);
-            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, Projectile.rotation + ribbonTopSinRot + faceLeftBonus + ribbonLeftBonusTop, topOrigin, topScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXTop);;
+            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, Projectile.rotation + ribbonTopSinRot + faceLeftBonus + ribbonLeftBonusTop, topOrigin, topScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXTop); ;
 
             #endregion
 
@@ -507,14 +507,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                     dust.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
                         rotPower: 0.15f, preSlowPower: 0.9f, timeBeforeSlow: 0, postSlowPower: 0.9f, velToBeginShrink: 3f, fadePower: 0.85f, shouldFadeColor: false);
-                    
+
                 }
             }
 
             NPC target = Main.npc.Where(n => n.CanBeChasedBy() && n.Distance(Projectile.Center) < 1000f && (Collision.CanHitLine(Projectile.Center, 1, 1, n.Center, 1, 1) || Collision.CanHitLine(Main.player[Projectile.owner].Center, 1, 1, n.Center, 1, 1))).OrderBy(n => n.Distance(Projectile.Center)).FirstOrDefault();
 
             #region myHoming
-            
+
             if (target != null && timer > 15 && timer < 130)
             {
                 float homingVal = Utils.GetLerpValue(0f, 1f, (timer - 10f) / 80f, true);
@@ -529,7 +529,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 else if (timer > 75)
                     Projectile.velocity *= 0.97f;
             }
-            
+
             if (timer >= 130)
             {
                 Projectile.timeLeft--;
@@ -655,7 +655,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                     //dust.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
                     //    rotPower: 0.15f, preSlowPower: 0.95f, timeBeforeSlow: 12, postSlowPower: 0.92f, velToBeginShrink: 3f, fadePower: 0.91f, shouldFadeColor: false);
 
-                    
+
                     if (!Main.rand.NextBool(2))
                     {
                         int dust2 = Dust.NewDust(previousPostions[i], 1, 1, ModContent.DustType<GlowPixelRise>(), Scale: 0.35f + Main.rand.NextFloat(-0.25f, 0.1f), newColor: Main.rand.NextBool() ? Color.HotPink : Color.Pink);
@@ -717,7 +717,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         public override void ModifyHitNPC(NPC target, ref HitModifiers modifiers)
         {
-            if (target.HasBuff(ModContent.BuffType<CerobaMark>())) {
+            if (target.HasBuff(ModContent.BuffType<CerobaMark>()))
+            {
 
                 SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, impactVolume: 0.5f, impactScale: 0f);
 
@@ -726,7 +727,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                 modifiers.FinalDamage *= 1f;
             }
-            
+
             base.ModifyHitNPC(target, ref modifiers);
         }
 
@@ -757,7 +758,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         Vector2 storedDistanceFromOwner = Vector2.Zero;
 
-        public override bool? CanDamage() => false; 
+        public override bool? CanDamage() => false;
 
         float alpha = 1f;
         float progress = 0f;
@@ -770,16 +771,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             if (timer == 0)
             {
                 storedDistanceFromOwner = Projectile.Center - owner.Center;
-                Projectile.ai[0] = (storedDistanceFromOwner.X + owner.Center.X) > owner.Center.X ? -1f : 1f; 
+                Projectile.ai[0] = (storedDistanceFromOwner.X + owner.Center.X) > owner.Center.X ? -1f : 1f;
             }
-            
+
 
             float timeProgress = Utils.GetLerpValue(0f, 1f, timer / 50f, true);
             float alphaTime = Utils.GetLerpValue(0f, 1f, timer / 40f, true);
 
             Projectile.rotation = MathHelper.Lerp(MathHelper.TwoPi * 1.25f * Projectile.ai[0], 0f, Easings.easeOutQuart(timeProgress));
             progress = Easings.easeOutQuad(timeProgress);
-            
+
             if (timer < 50)
             {
                 alpha = MathHelper.Lerp(0f, 1f, Easings.easeOutQuad(alphaTime));
@@ -792,10 +793,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             {
                 if (timer == 50)
                 {
-                    SoundStyle style = new SoundStyle("Terraria/Sounds/Item_68") with { Pitch = -.05f, PitchVariance = .15f, MaxInstances = -1, Volume = 0.5f }; 
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Item_68") with { Pitch = -.05f, PitchVariance = .15f, MaxInstances = -1, Volume = 0.5f };
                     SoundEngine.PlaySound(style, Projectile.Center);
 
-                    SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_dark_mage_heal_impact_2") with { Pitch = .22f, PitchVariance = .19f, }; 
+                    SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_dark_mage_heal_impact_2") with { Pitch = .22f, PitchVariance = .19f, };
                     SoundEngine.PlaySound(style4, Projectile.Center);
 
                     for (int i = 0; i < 0; i++)
@@ -963,7 +964,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             animProgress = Easings.easeInOutHarsh(arcTravelProgress);
 
             arcCurrentAngle = MathHelper.Lerp(arcStartAngle, arcEndAngle, animProgress);
-            
+
 
             Projectile.rotation = arcCurrentAngle;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, arcCurrentAngle - MathHelper.PiOver2);
@@ -973,7 +974,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 Projectile.active = false;
 
             int timeVal = 25;
-            if (timer == timeVal - 3 || timer == timeVal + 3 || timer == timeVal - 12 || timer == timeVal + 12) 
+            if (timer == timeVal - 3 || timer == timeVal + 3 || timer == timeVal - 12 || timer == timeVal + 12)
             {
                 Vector2 randomVel = arcMiddleAngle.ToRotationVector2().RotatedByRandom(1f) * Main.rand.NextFloat(9f, 11f);
 
@@ -995,7 +996,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
             if (timer == 18)
             {
-                SoundStyle stylea = new SoundStyle("AerovelenceMod/Sounds/Effects/glaive_shot_01") with { Pitch = -.15f, PitchVariance = .1f, Volume = 0.3f }; 
+                SoundStyle stylea = new SoundStyle("AerovelenceMod/Sounds/Effects/glaive_shot_01") with { Pitch = -.15f, PitchVariance = .1f, Volume = 0.3f };
                 SoundEngine.PlaySound(stylea, player.Center);
 
                 SoundStyle styleb = new SoundStyle("AerovelenceMod/Sounds/Effects/trident_twirl_01") with { Pitch = .3f, Volume = 0.5f, PitchVariance = 0.2f };
@@ -1033,7 +1034,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
             float intensity = (float)Math.Sin(animProgress * Math.PI);
 
-            Main.EntitySpriteDraw(Swirl, offset - Main.screenPosition, null, Color.HotPink with { A = 0 } * intensity* 0.4f, swirlRot1 + (dir == 1 ? 0f : 0.5f), Swirl.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None);
+            Main.EntitySpriteDraw(Swirl, offset - Main.screenPosition, null, Color.HotPink with { A = 0 } * intensity * 0.4f, swirlRot1 + (dir == 1 ? 0f : 0.5f), Swirl.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None);
             Main.EntitySpriteDraw(Swirl, offset - Main.screenPosition, null, Color.DeepPink with { A = 0 } * intensity * 0.4f, swirlRot2 + (dir == 1 ? 0f : 4f), Swirl.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None);
             Main.EntitySpriteDraw(Swirl, offset - Main.screenPosition, null, Color.Pink with { A = 0 } * intensity * 0.4f, Projectile.rotation, Swirl.Size() / 2, Projectile.scale * 0.5f, SpriteEffects.None);
 
@@ -1045,7 +1046,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             for (int i = 0; i < 4; i++)
             {
                 float underGlowAdjustedRot = Projectile.rotation + MathHelper.PiOver4;
-                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f) + new Vector2(21f, -21f).RotatedBy(underGlowAdjustedRot), 
+                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f) + new Vector2(21f, -21f).RotatedBy(underGlowAdjustedRot),
                     null, Color.Gold with { A = 0 } * alpha * 1f * intensity, underGlowAdjustedRot, White.Size() / 2, Projectile.scale, SpriteEffects.None);
             }
 
@@ -1108,7 +1109,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 if (scale <= 0.1f)
                     Projectile.active = false;
             }
-            
+
             timer++;
         }
 
@@ -1204,7 +1205,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                 if (timer == 46)
                 {
-                    SoundStyle stab = new SoundStyle("Terraria/Sounds/Custom/dd2_javelin_throwers_attack_1") with { Pitch = .5f, PitchVariance = .2f, MaxInstances = -1, Volume = 0.25f }; 
+                    SoundStyle stab = new SoundStyle("Terraria/Sounds/Custom/dd2_javelin_throwers_attack_1") with { Pitch = .5f, PitchVariance = .2f, MaxInstances = -1, Volume = 0.25f };
                     SoundEngine.PlaySound(stab, Projectile.Center);
 
                     for (int i = 0; i < 7; i++)
@@ -1260,7 +1261,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 float pitch = timer == 0 ? 0.45f : 0.6f;
                 float vol = timer == 0 ? 0.7f : 0.35f;
 
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_monk_staff_swing_1") with { Pitch = pitch, PitchVariance = .03f, Volume = vol * 0.6f }; 
+                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_monk_staff_swing_1") with { Pitch = pitch, PitchVariance = .03f, Volume = vol * 0.6f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
             }
@@ -1276,7 +1277,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         {
             if (timer == 0 || timer == 1)
                 return false;
-            
+
             string path = "Content/Items/Weapons/Misc/Magic/Ceroba/";
             Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffProj").Value;
             Texture2D Stick = Mod.Assets.Request<Texture2D>(path + "CerobaStaffStick").Value;
@@ -1295,7 +1296,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             int dir = player.direction;
             SpriteEffects sFX = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             float correctRot = Projectile.rotation + MathHelper.PiOver4;
-            
+
             float leftRotBonus = dir == 1 ? 0f : MathHelper.PiOver2;
 
             Vector2 offset = player.Center + Projectile.rotation.ToRotationVector2() * 10f * distanceMult + new Vector2(0f, player.gfxOffY);
@@ -1339,7 +1340,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             SpriteEffects ribbonSpriteFXBottom = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
             Vector2 ribbonBottomPos = offset - Main.screenPosition + (dir == 1 ? new Vector2(15f, -11f) : new Vector2(11f, -15f)).RotatedBy(correctRot);
-            Vector2 ribbonTopPos = offset - Main.screenPosition + (dir == 1 ? new Vector2(11, -15f) : new Vector2(15f, -11f)) .RotatedBy(correctRot);
+            Vector2 ribbonTopPos = offset - Main.screenPosition + (dir == 1 ? new Vector2(11, -15f) : new Vector2(15f, -11f)).RotatedBy(correctRot);
 
 
             Vector2 bottomScale = new Vector2((scalePercent * 0.85f) - (justShotValue * 0.2f), 1f);
@@ -1372,7 +1373,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             float starAlpha = justShotValue * alpha;
             Vector2 starScale = new Vector2(1f, 0.75f) * justShotValue;
             Color middleGroundPink = Color.Lerp(Color.DeepPink, Color.HotPink, 0.25f);
-           
+
             Main.EntitySpriteDraw(Star, offset - Main.screenPosition + new Vector2(21f, -21f).RotatedBy(correctRot), null, middleGroundPink with { A = 0 } * starAlpha, Projectile.rotation, Star.Size() / 2, starScale * 1.25f, SpriteEffects.None);
             Main.EntitySpriteDraw(Star, offset - Main.screenPosition + new Vector2(21f, -21f).RotatedBy(correctRot), null, Color.HotPink with { A = 0 } * starAlpha, Projectile.rotation, Star.Size() / 2, starScale, SpriteEffects.None);
 
@@ -1421,7 +1422,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         {
             if (CerobaMarkActive)
             {
-                
+
                 if (CerobaMarkTime % 2 == 0)
                 {
                     int dust = Dust.NewDust(npc.position, npc.width, npc.height, ModContent.DustType<GlowPixelRise>(), Scale: 0.5f, newColor: Color.HotPink);

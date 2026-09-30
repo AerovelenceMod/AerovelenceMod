@@ -31,7 +31,7 @@ using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using System.Security.Policy;
 using Terraria.Map;
 
-namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry 
+namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 {
     [AutoloadBossHead]
     public class Cyvercry : ModNPC
@@ -153,7 +153,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 modifiers.FinalDamage *= 0.7f;
 
             if (hasDoneFullCycle)
-                modifiers.FinalDamage *= 1.33f; 
+                modifiers.FinalDamage *= 1.33f;
 
         }
 
@@ -168,11 +168,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-			npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Content.Tiles.Relics.CyvercryRelicItem>()));
+            npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Content.Tiles.Relics.CyvercryRelicItem>()));
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Content.Items.TreasureBags.CyvercryBag>()));
-			npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Content.Tiles.Trophies.CyvercryTrophy>(), 10));
+            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<Content.Tiles.Trophies.CyvercryTrophy>(), 10));
             LeadingConditionRule normal = new LeadingConditionRule(new Conditions.NotExpert());
-			normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Content.Items.Armor.Vanity.CyvercryMask>(), 7));
+            normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Content.Items.Armor.Vanity.CyvercryMask>(), 7));
             normal.OnSuccess(ItemDropRule.OneFromOptions(1, Content.Items.TreasureBags.CyvercryBag.Weapons));
             npcLoot.Add(normal);
         }
@@ -377,7 +377,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         }
 
         float thrusterValue = 0f;
-        
+
         Vector2 trackPoint = Vector2.Zero;
 
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
@@ -639,7 +639,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         int advancer = 0;
         int totalTime = 0;
         float accelFloat = 0;
-         
+
         //Doing this and not Main.masterMode so I can override the difficulty for both testing and in a config
         public bool isExpert = true;
         public bool isMaster = true;
@@ -853,7 +853,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
 
             int shotDelay = isExpert ? 28 : 33; //25 | 30
-            float shotSpeed = isMaster ? 7 : 6; 
+            float shotSpeed = isMaster ? 7 : 6;
 
             shotDelay += extraShotDelay;
 
@@ -1265,7 +1265,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
                 eyeStarValue = 1;
                 Vector2 vel = NPC.rotation.ToRotationVector2().RotatedBy(MathHelper.Pi);
-                NPC.velocity = vel * -12f; 
+                NPC.velocity = vel * -12f;
 
                 backVelRot = vel.ToRotation();
                 backVelVal = -12f;
@@ -1857,7 +1857,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                         if (Main.projectile[a].ModProjectile is StretchLaser laser)
                         {
                             laser.accelerateTime = 180;
-                            laser.accelerateStrength = 1.03f; 
+                            laser.accelerateStrength = 1.03f;
                         }
 
                     }
@@ -2096,7 +2096,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                         distort.implode = false;
                         distort.scale = 0.4f;
                     }
-                }            
+                }
 
                 accelFloat = MathHelper.SmoothStep(accelFloat, dashAccelValue, 0.3f);  //MathHelper.Clamp(MathHelper.Lerp(accelFloat, 60f, 0.1f), 0, 50f);
                 NPC.rotation = storedRotaion;
@@ -2746,7 +2746,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                         if (Main.projectile[a].ModProjectile is StretchLaser laser)
                         {
                             laser.accelerateTime = 100;
-                            laser.accelerateStrength = 1.03f; 
+                            laser.accelerateStrength = 1.03f;
                         }
                     }
 
@@ -2941,7 +2941,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 //Want Cyver to stay hidden after this attack
                 //NPC.dontTakeDamage = false;
                 //NPC.hide = false;
-                
+
             }
 
             timer++;
@@ -2956,7 +2956,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             int cloneDashSpeed = isExpert ? 20 : 18;
 
             float cyverDashMult = isExpert ? 1f : 0.975f;
-            float laserCircleSpeed = isMaster ? 0.7f : 0.5f; 
+            float laserCircleSpeed = isMaster ? 0.7f : 0.5f;
 
             if (timer == 0 + startingDelay)
             {
@@ -3161,7 +3161,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                     rotationOffset = truePlusFalseX ? 0f : MathHelper.PiOver4;
                 else
                     rotationOffset = Main.rand.NextFloat(6.28f);
-                
+
                 for (int i = 0; i < numberOfBots; i++)
                 {
                     //Assign where bots will start at
@@ -3265,7 +3265,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         }
 
         //Turns things like the Eye sword projectile off
-        public void OnDespawnCleanup(Player myPlayer) 
+        public void OnDespawnCleanup(Player myPlayer)
         {
             if (eyeSwordInstance != null)
                 eyeSwordInstance.active = false;
@@ -3470,7 +3470,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             if (timer <= 219)
             {
-                Main.GameZoomTarget = MathHelper.Lerp(Main.GameZoomTarget, 1.3f, 0.02f); 
+                Main.GameZoomTarget = MathHelper.Lerp(Main.GameZoomTarget, 1.3f, 0.02f);
 
                 //Lmao
                 if (timer == 85 || timer == 118 || timer == 140 || timer == 155 || timer == 168 || timer == 175 || timer == 182 || timer == 190 || timer == 197 || timer == 204 || timer == 211)
@@ -4037,7 +4037,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         private enum AtkVals
         {
             //50 60 80 100 110
-            VeryLight = 40, 
+            VeryLight = 40,
             Light = 45,
             Medium = 50,
             Heavy = 65,

@@ -9,8 +9,8 @@ using Terraria.GameContent.ItemDropRules;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public abstract class MuzzleFlashBase : ModProjectile
-	{
+    public abstract class MuzzleFlashBase : ModProjectile
+    {
         public Vector2 distFromTarget = Vector2.Zero;
         public int timer = 0;
         public float fade = 1f;
@@ -45,7 +45,7 @@ namespace AerovelenceMod.Content.Projectiles
             }
             Projectile.Center = Main.player[Projectile.owner].Center + distFromTarget;
 
-            Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3() * 0.35f * (1 - fade)); 
+            Lighting.AddLight(Projectile.Center, Color.Orange.ToVector3() * 0.35f * (1 - fade));
 
             timer++;
         }

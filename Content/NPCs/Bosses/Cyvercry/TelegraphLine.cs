@@ -16,7 +16,7 @@ using System.Collections.Generic;
 using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
-{   
+{
     public class TelegraphLineCyver : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
@@ -53,7 +53,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Projectile.timeLeft = 110 + 5;
             Projectile.hide = true;
         }
-        public override bool? CanDamage() {  return false; }
+        public override bool? CanDamage() { return false; }
         public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         {
             behindNPCs.Add(index);
@@ -77,7 +77,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                     uColorIntensity = 0.9f;
                     Projectile.Center = NPCTetheredTo.Center + NPCTetheredTo.rotation.ToRotationVector2() * -30;
                     Rotation += 0.06f * (sweepDir ? 1 : -1);// + (timer * 0.002f);
-                } 
+                }
                 else
                 {
                     Projectile.Center = NPCTetheredTo.Center;

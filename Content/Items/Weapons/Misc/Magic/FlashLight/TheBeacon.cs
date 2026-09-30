@@ -49,7 +49,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
             Item.width = 46;
             Item.height = 46;
             Item.knockBack = 5f;
-            
+
             Item.useAnimation = 16;
             Item.useTime = 16;
             Item.shootSpeed = 12f;
@@ -60,7 +60,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
             Item.rare = ItemRarities.PlanteraGolemTier;
             Item.value = Item.sellPrice(0, 10, 0, 0);
-            
+
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.channel = true;
@@ -127,7 +127,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
         int laserTimer = 0;
         NPC prevLockOn = Main.npc[0];
         public bool lockedOn = false;
-        
+
         List<int> tendrils = new List<int>();
 
         //TODO use a function for killing tendrils instead 
@@ -234,12 +234,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                         SoundStyle style = new SoundStyle("Terraria/Sounds/Item_108") with { Pitch = .78f, PitchVariance = 0.1f, Volume = 0.3f };
                         SoundEngine.PlaySound(style, Projectile.Center);
 
-                        SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/rescue_ranger_fire") with { Volume = .1f, Pitch = .9f, PitchVariance = .1f }; 
+                        SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/rescue_ranger_fire") with { Volume = .1f, Pitch = .9f, PitchVariance = .1f };
                         SoundEngine.PlaySound(style2, npc.Center);
 
                         //Store direction that star should turn
-                        Projectile.ai[0] = player.MountedCenter.X > npc.Center.X ? -1 : 1; 
-                        
+                        Projectile.ai[0] = player.MountedCenter.X > npc.Center.X ? -1 : 1;
+
                         //Delete tendrils incase they were still alive
                         foreach (int k in tendrils)
                         {
@@ -509,7 +509,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            
+
             if (target.whoAmI == prevLockOn.whoAmI)
             {
 
@@ -572,7 +572,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
         }
 
         public override bool? CanDamage() { return !fadeOut; }
-    
+
         int timer = 0;
         float width = 0f;
 
@@ -668,7 +668,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
                 Vector2 vel = rot.ToRotationVector2().RotatedByRandom(0.25f) * Main.rand.NextFloat(4f, 6f);
                 vel += rot.ToRotationVector2().RotatedBy(MathHelper.PiOver2 * Projectile.ai[0]) * 9;
-                
+
                 Dust smoke = Dust.NewDustPerfect(pos, ModContent.DustType<GlowStrong>(), vel, newColor: new Color(255, 100, 15), Scale: 0.2f);
             }
 

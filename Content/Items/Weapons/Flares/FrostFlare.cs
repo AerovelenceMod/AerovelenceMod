@@ -16,11 +16,11 @@ using AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze;
 using XPT.Core.Audio.MP3Sharp.Decoding.Decoders.LayerIII;
 
 namespace AerovelenceMod.Content.Items.Weapons.Flares
-{   
+{
     public class FrostFlare : BaseFlare
     {
         public override string Texture => "Terraria/Images/Projectile_0";
-        
+
         public override void SetStaticDefaults()
         {
         }
@@ -205,7 +205,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public override void OnKill(int timeLeft)
         {
             noSound = true;
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.2f };
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.2f };
             SoundEngine.PlaySound(style, Projectile.Center);
             KillDust();
             /*
@@ -228,7 +228,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             noSound = true;
             HitDust();
 
-            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;;
+            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI; ;
 
             SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/FlareImpact") with { Volume = 0.3f, PitchVariance = 0.1f };
             SoundEngine.PlaySound(style2, Projectile.Center);
@@ -363,7 +363,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             }
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
 
             return false;
         }
@@ -383,7 +383,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
                 dust.velocity *= 2;
                 dust.color = Color.SkyBlue;
             }
-            
+
         }
     }
-} 
+}

@@ -20,27 +20,27 @@ using AerovelenceMod.Common.Systems;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	
-	public class LineSpark : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowLine1Black";
 
-		public override void OnSpawn(Dust dust)
-		{
-			dust.noGravity = true;
-			dust.alpha = 255;
-			dust.frame = new Rectangle(0, 0, 128, 27);
-		}
+    public class LineSpark : ModDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowLine1Black";
+
+        public override void OnSpawn(Dust dust)
+        {
+            dust.noGravity = true;
+            dust.alpha = 255;
+            dust.frame = new Rectangle(0, 0, 128, 27);
+        }
 
         public override Color? GetAlpha(Dust dust, Color lightColor) => dust.color;
 
-		public override bool Update(Dust dust)
-		{
+        public override bool Update(Dust dust)
+        {
 
-			if (dust.customData != null)
-			{
-				if (dust.customData is LineSparkBehavior behavior)
-				{
+            if (dust.customData != null)
+            {
+                if (dust.customData is LineSparkBehavior behavior)
+                {
 
                     dust.rotation = dust.velocity.ToRotation();
 
@@ -66,9 +66,9 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
                     dust.fadeIn++;
                 }
-			}
-			else
-			{
+            }
+            else
+            {
                 dust.rotation = dust.velocity.ToRotation();
 
                 dust.velocity *= 0.97f;
@@ -99,37 +99,37 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
                 dust.fadeIn++;
             }
 
-			return false;
-		}
+            return false;
+        }
 
 
-		public override bool PreDraw(Dust dust)
-		{
-			Color White = Color.White with { A = 0 } * (dust.alpha / 255f);
-			Color Black = Color.Black * (dust.alpha / 255f);
-			Texture2D tex = Texture2D.Value;
+        public override bool PreDraw(Dust dust)
+        {
+            Color White = Color.White with { A = 0 } * (dust.alpha / 255f);
+            Color Black = Color.Black * (dust.alpha / 255f);
+            Texture2D tex = Texture2D.Value;
 
             if (dust.customData != null)
-			{
-				if (dust.customData is LineSparkBehavior behavior)
-				{
-					Vector2 scale = behavior.Vector2DrawScale * dust.scale;
+            {
+                if (dust.customData is LineSparkBehavior behavior)
+                {
+                    Vector2 scale = behavior.Vector2DrawScale * dust.scale;
 
                     Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, dust.color with { A = 0 }, dust.rotation, tex.Size() / 2f, scale * 1f, SpriteEffects.None, 0f);
-                    
-					if (behavior.DrawWhiteCore)
-						Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, White with { A = 0 } * 1f, dust.rotation, tex.Size() / 2f, scale * 0.5f, SpriteEffects.None, 0f);
-				}
-			}
+
+                    if (behavior.DrawWhiteCore)
+                        Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, White with { A = 0 } * 1f, dust.rotation, tex.Size() / 2f, scale * 0.5f, SpriteEffects.None, 0f);
+                }
+            }
             else
             {
-				Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, dust.color with { A = 0 }, dust.rotation, tex.Size() / 2f, dust.scale * 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, dust.color with { A = 0 }, dust.rotation, tex.Size() / 2f, dust.scale * 1f, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(tex, dust.position - Main.screenPosition, null, White with { A = 0 }, dust.rotation, tex.Size() / 2f, dust.scale * 0.65f, SpriteEffects.None, 0f);
             }
             return false;
-		}
+        }
 
-	}
+    }
 
     public class PixelatedLineSpark : LineSpark
     {
@@ -164,27 +164,27 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
     }
 
     public class LineSparkBehavior
-	{
-		public Behavior behaviorToUse = Behavior.Base;
-		//Default behavoir is Base with preset values
-		public enum Behavior
-		{
-			Base = 0,
-			PlaceHolder1 = 1,
-			PlaceHolder2 = 2,
-			PlaceHolder3 = 3,
-		}
+    {
+        public Behavior behaviorToUse = Behavior.Base;
+        //Default behavoir is Base with preset values
+        public enum Behavior
+        {
+            Base = 0,
+            PlaceHolder1 = 1,
+            PlaceHolder2 = 2,
+            PlaceHolder3 = 3,
+        }
 
-		public enum DrawBehavior
-		{
-			Basic = 0,
-			CircleGlow = 1,
-			PlaceHolder2 = 2,
-			PlaceHolder3 = 3,
-		}
+        public enum DrawBehavior
+        {
+            Basic = 0,
+            CircleGlow = 1,
+            PlaceHolder2 = 2,
+            PlaceHolder3 = 3,
+        }
 
-		public bool DrawWhiteCore = true;
-		public Vector2 Vector2DrawScale = new Vector2(1f, 1f);
+        public bool DrawWhiteCore = true;
+        public Vector2 Vector2DrawScale = new Vector2(1f, 1f);
         //public bool DrawBlackCore = false;
         //public bool DrawBlackUnder = false;
 
@@ -193,17 +193,17 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         //Base 
         public float base_velFadePower = 0.97f;
-		public float base_preShrinkPower = 0.99f;
-		public float base_postShrinkPower = 0.92f;
-		public int  base_timeToStartShrink = 40;
-		public int base_killEarlyTime = 60;
+        public float base_preShrinkPower = 0.99f;
+        public float base_postShrinkPower = 0.92f;
+        public int base_timeToStartShrink = 40;
+        public int base_killEarlyTime = 60;
 
-		public bool base_shouldFadeColor = false;
-		public float base_colorFadePower = 0.93f;
+        public bool base_shouldFadeColor = false;
+        public float base_colorFadePower = 0.93f;
 
-		/////////////////////
+        /////////////////////
 
 
-	}
+    }
 
 }

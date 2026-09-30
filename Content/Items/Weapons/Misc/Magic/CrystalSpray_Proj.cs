@@ -47,7 +47,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             {
                 Projectile.velocity *= 0.6f;
             }
-            if(FindNearestNPC(300f, true, false, true, out int index))
+            if (FindNearestNPC(300f, true, false, true, out int index))
             {
                 NPC npc = Main.npc[index];
                 Projectile.velocity *= .98f;
@@ -59,7 +59,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
                 Projectile.velocity.Y += .056f;
                 Projectile.velocity.X *= .985f;
             }
-            if(Main.rand.NextBool(20))
+            if (Main.rand.NextBool(20))
             {
                 float randomRot = Main.rand.NextFloat(6.28f);
 
@@ -89,7 +89,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             npcIndex = -1;
             bool foundNPC = false;
             double dist = range * range;
-            for(int i = 0; i < Main.maxNPCs; i++)
+            for (int i = 0; i < Main.maxNPCs; i++)
             {
                 NPC npc = Main.npc[i];
                 //Make sure NPC is valid anyway
@@ -248,7 +248,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
 
         public virtual float WidthFunction(float progress)
         {
-            
+
             float num = 1f;
             float lerpValue = Utils.GetLerpValue(0f, 0.4f, progress, clamped: true);
             num *= 1f - (1f - lerpValue) * (1f - lerpValue);
@@ -292,10 +292,10 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
 
         public override void AI()
         {
-            
+
             Projectile.velocity = new Vector2(Projectile.ai[1] * 0.15f, 0);
 
-            Vector2 dustSpawnPos = new Vector2(Main.rand.NextFloat(-100,100), Main.rand.NextFloat(-100, 100));
+            Vector2 dustSpawnPos = new Vector2(Main.rand.NextFloat(-100, 100), Main.rand.NextFloat(-100, 100));
 
             //dust pos relative to Center (redundant???)
             Vector2 dustRelPos = (Projectile.Center + dustSpawnPos) - Projectile.Center;
@@ -325,12 +325,12 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             Texture2D orb = Mod.Assets.Request<Texture2D>("Assets/EnergyBalls/energyball_1").Value;
             Texture2D orb2 = Mod.Assets.Request<Texture2D>("Assets/EnergyBalls/energyball_4").Value;
 
-            Main.spriteBatch.Draw(orb2, Projectile.Center - Main.screenPosition, orb2.Frame(1, 1, 0, 0), Color.Black * 0.5f , Projectile.rotation * 2f, orb2.Size() / 2, Projectile.scale * 1.15f * (1 - Projectile.ai[0]), SpriteEffects.None, 0.0f);
+            Main.spriteBatch.Draw(orb2, Projectile.Center - Main.screenPosition, orb2.Frame(1, 1, 0, 0), Color.Black * 0.5f, Projectile.rotation * 2f, orb2.Size() / 2, Projectile.scale * 1.15f * (1 - Projectile.ai[0]), SpriteEffects.None, 0.0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.Draw(orb, Projectile.Center - Main.screenPosition, orb.Frame(1,1,0,0), Color.White, Projectile.rotation, orb.Size() / 2, Projectile.scale, SpriteEffects.None, 0.0f);
+            Main.spriteBatch.Draw(orb, Projectile.Center - Main.screenPosition, orb.Frame(1, 1, 0, 0), Color.White, Projectile.rotation, orb.Size() / 2, Projectile.scale, SpriteEffects.None, 0.0f);
             Main.spriteBatch.Draw(orb, Projectile.Center - Main.screenPosition, orb.Frame(1, 1, 0, 0), Color.DodgerBlue * 0.95f, Projectile.rotation * 1.5f, orb.Size() / 2, Projectile.scale * 1.3f, SpriteEffects.None, 0.0f);
             Main.spriteBatch.Draw(orb, Projectile.Center - Main.screenPosition, orb.Frame(1, 1, 0, 0), Color.DeepSkyBlue * 0.55f, Projectile.rotation * 2f, orb.Size() / 2, Projectile.scale * 1.55f * (1 - Projectile.ai[0]), SpriteEffects.None, 0.0f);
 
@@ -352,12 +352,12 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             SoundStyle style4 = new SoundStyle("Terraria/Sounds/Item_21") with { Pitch = .69f, PitchVariance = .27f, };
             SoundEngine.PlaySound(style4, Projectile.Center);
 
-            
+
             for (int i = 1; i < 5; i++)
             {
                 for (int m = 1; m < 12; m++)
                 {
-                    Vector2 dustSpawnPos = new Vector2(Main.rand.NextFloat(-100,100), Main.rand.NextFloat(-100, 100));
+                    Vector2 dustSpawnPos = new Vector2(Main.rand.NextFloat(-100, 100), Main.rand.NextFloat(-100, 100));
 
                     //dust vel
                     float velVal = Main.rand.NextFloat(m, m);
@@ -369,14 +369,14 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
                 }
 
             }
-            
+
             for (int k = 0; k < 18; k++)
             {
                 Vector2 vel;
                 if (k < 9)
-                    vel = new Vector2(-4,0).RotatedBy(Main.rand.NextFloat(-1.75f, 1.75f)) * Main.rand.NextFloat(0f, 2.5f);
+                    vel = new Vector2(-4, 0).RotatedBy(Main.rand.NextFloat(-1.75f, 1.75f)) * Main.rand.NextFloat(0f, 2.5f);
                 else
-                    vel = new Vector2(4,0).RotatedBy(Main.rand.NextFloat(-1.75f, 1.75f)) * Main.rand.NextFloat(0f, 2.5f);
+                    vel = new Vector2(4, 0).RotatedBy(Main.rand.NextFloat(-1.75f, 1.75f)) * Main.rand.NextFloat(0f, 2.5f);
 
                 //Vector2 vel = Main.rand.NextVector2Circular(5.5f, 2f) * 2.5f;
                 ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
@@ -400,7 +400,8 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
         }
     }
 
-    public class WaterTrailTest : ModProjectile {
+    public class WaterTrailTest : ModProjectile
+    {
 
         int timer = 0;
         public override string Texture => "Terraria/Images/Projectile_0";
@@ -557,7 +558,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             return false;
         }
 

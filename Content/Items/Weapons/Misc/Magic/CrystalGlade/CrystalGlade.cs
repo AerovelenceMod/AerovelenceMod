@@ -73,7 +73,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
                 Register();
         }
 
-        public override bool AltFunctionUse(Player player) {  return true; }
+        public override bool AltFunctionUse(Player player) { return true; }
 
         public override void ModifyManaCost(Player player, ref float reduce, ref float mult)
         {
@@ -243,7 +243,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
         }
         public override void AI()
         {
-            if (timer < 25 && timer > 5) 
+            if (timer < 25 && timer > 5)
                 Projectile.velocity *= 1.105f;
 
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -300,7 +300,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 
         public override void OnKill(int timeLeft)
         {
-            SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = 0f, PitchVariance = .25f, MaxInstances = 0, Volume = 0.5f }; 
+            SoundStyle style4 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_crystal_impact_1") with { Pitch = 0f, PitchVariance = .25f, MaxInstances = 0, Volume = 0.5f };
             SoundEngine.PlaySound(style4, Projectile.Center);
 
             for (int i = 0; i < 4; i++)
@@ -363,7 +363,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
         }
 
         public override bool? CanDamage() => false;
-        
+
         int timer = 0;
         float scale = 0;
         float alpha = 1;
@@ -389,7 +389,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 
             Projectile.timeLeft = 2;
 
-            if (alpha <= 0) 
+            if (alpha <= 0)
                 Projectile.active = false;
 
             //Intentional
@@ -507,7 +507,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
             float rot = (float)Main.timeForVisualEffects * 0.12f;
             float offsetVal = MathF.Sin((float)Main.timeForVisualEffects * 0.14f) * 0.5f;
 
-            Vector2 v = new Vector2(1.5f + offsetVal * (scale * 2), 0) + Main.rand.NextVector2Circular(1,1);
+            Vector2 v = new Vector2(1.5f + offsetVal * (scale * 2), 0) + Main.rand.NextVector2Circular(1, 1);
             Vector2 v2 = new Vector2(1.5f * (scale * 2), 0);
 
 
@@ -522,7 +522,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 
             Main.spriteBatch.Draw(Base, pos + v.RotatedBy(rot), null, Color.Green * 0.5f, Projectile.rotation + MathHelper.PiOver4, Base.Size() / 2, scale2, 0, 0f);
             Main.spriteBatch.Draw(Base, pos + v.RotatedBy(rot + MathHelper.PiOver2), null, Color.GreenYellow * 0.5f, Projectile.rotation + MathHelper.PiOver4, Base.Size() / 2, scale2, 0, 0f);
-            Main.spriteBatch.Draw(Base, pos + v.RotatedBy(rot + MathHelper.Pi), null, Color.ForestGreen * 0.5f, Projectile.rotation + MathHelper.PiOver4 , Base.Size() / 2, scale2, 0, 0f);
+            Main.spriteBatch.Draw(Base, pos + v.RotatedBy(rot + MathHelper.Pi), null, Color.ForestGreen * 0.5f, Projectile.rotation + MathHelper.PiOver4, Base.Size() / 2, scale2, 0, 0f);
             Main.spriteBatch.Draw(Base, pos + v.RotatedBy(rot - MathHelper.PiOver2), null, Color.Aqua * 0.65f, Projectile.rotation + MathHelper.PiOver4, Base.Size() / 2, scale2, 0, 0f);
 
 

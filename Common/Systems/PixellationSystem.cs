@@ -42,7 +42,8 @@ namespace AerovelenceMod.Common.Systems
             if (!Main.dedServ)
             {
                 Main.OnResolutionChanged += InitializeRT;
-                Main.RunOnMainThread(() => {
+                Main.RunOnMainThread(() =>
+                {
                     AlphaBlendTarget = new(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     AdditiveTarget = new(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);
                     PrimitiveTarget = new RenderTarget2D(Main.instance.GraphicsDevice, Main.screenWidth / 2, Main.screenHeight / 2);

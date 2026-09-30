@@ -597,7 +597,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                 Projectile.velocity = Vector2.Normalize(Vector2.Lerp(Projectile.velocity,
                     Vector2.Normalize(Main.npc[target].Center - Projectile.Center) * Projectile.velocity.Length(), 0.05f)) * Projectile.velocity.Length();
             }
-            
+
 
             if (timer % 2 == 0)
             {
@@ -650,7 +650,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             if (previousRotations == null)
                 return false;
-            
+
             //Texture2D Swing = Mod.Assets.Request<Texture2D>("Assets/Flare/SwordSwipeA").Value;
             Texture2D Swing = Mod.Assets.Request<Texture2D>("Assets/Pixel/BusterGlow").Value;
 
@@ -711,7 +711,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             if (progress < 0.33f)
             {
                 myCol = Color.Lerp(color1, color2, progress * 3f);
-            } 
+            }
             else if (progress < 0.66f)
             {
                 float fakeProgress = progress - 0.33f;

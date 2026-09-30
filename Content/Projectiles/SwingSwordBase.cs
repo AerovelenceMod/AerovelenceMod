@@ -6,8 +6,8 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public abstract class SwingSwordBase : ModProjectile
-	{
+    public abstract class SwingSwordBase : ModProjectile
+    {
         //TBD
     }
 }

@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Particles
 
         private float alphaFade = 0.92f * Main.rand.NextFloat(0.9f, 1f);
         private float velFade = 0.85f;
-        
+
         //Scale is multiplied by this every frame
         public float scaleFadePower = 1f;
         private float rotPower = 0.02f;
@@ -48,7 +48,7 @@ namespace AerovelenceMod.Content.Particles
             initialVelMag = velocity.Length();
         }
 
-        public FireParticle(Vector2 position, Vector2 velocity, float scale, Color color, float colorMult = 1f, float bloomAlpha = 1f, 
+        public FireParticle(Vector2 position, Vector2 velocity, float scale, Color color, float colorMult = 1f, float bloomAlpha = 1f,
             float AlphaFade = 0.92f, float VelFade = 0.85f, float RotPower = 0.02f)
         {
             active = true;
@@ -76,7 +76,7 @@ namespace AerovelenceMod.Content.Particles
         {
             float timeForPopInAnim = 20;
             float animProgress = Math.Clamp((Timer + 10) / timeForPopInAnim, 0f, 1f);
-            
+
             Rotation += Velocity.X * 0.25f * rotPower * (Velocity.X > 0 ? 1f : -1f);
             Velocity *= velFade;
 

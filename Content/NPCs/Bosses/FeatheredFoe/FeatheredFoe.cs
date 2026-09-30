@@ -27,7 +27,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
         {
             BasicAttack = 0,
             SwoopFeatherBehind = 1,
-            FiveSpread = 2, 
+            FiveSpread = 2,
             MartletOrbitFeather = 3,
             CircleBurstFeather = 4,
             SwirlFeather = 5,
@@ -101,7 +101,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                 case FeatheredFoeState.CornerTravelShot:
                     CornerTravelShot();
                     break;
-                //case FeatheredFoeState.MeleeTalon:
+                    //case FeatheredFoeState.MeleeTalon:
 
             }
 

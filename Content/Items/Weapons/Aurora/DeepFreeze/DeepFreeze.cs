@@ -77,7 +77,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
         {
             SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_wind_attack_0") with { Volume = .36f, Pitch = -.84f, PitchVariance = .15f, MaxInstances = 0, };
             SoundEngine.PlaySound(style2, position);
-            
+
             return true;
         }
 
@@ -131,7 +131,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
         public override bool? CanDamage() => false;
 
         public override bool? CanCutTiles() => false;
-        
+
 
         Color[] bandColors = new Color[3];
         public override void AI()
@@ -146,17 +146,17 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
             storedMousePos = Vector2.Lerp(storedMousePos, Main.MouseWorld, 0.04f);
 
-            if (timer % 10 == 0 && Main.rand.NextBool() && timer > 0) 
+            if (timer % 10 == 0 && Main.rand.NextBool() && timer > 0)
             {
-                
+
                 ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
 
                 Vector2 offsetVel = Projectile.rotation.ToRotationVector2().RotatedBy(Main.rand.NextBool() ? Main.rand.NextFloat(-0.6f, -0.3f) : Main.rand.NextFloat(0.3f, 0.6f));
-                Dust p = GlowDustHelper.DrawGlowDustPerfect((Projectile.rotation.ToRotationVector2() * 45) + Projectile.Center, 
+                Dust p = GlowDustHelper.DrawGlowDustPerfect((Projectile.rotation.ToRotationVector2() * 45) + Projectile.Center,
                     ModContent.DustType<FuzzySpark>(), offsetVel * (4f + Main.rand.NextFloat(-1f, 1f)),
                     eyeCol, Main.rand.NextFloat(0.1f, 0.1f), 0.4f, 0f, dustShader);
                 p.noLight = true;
-                
+
             }
 
             if (timer == 0)
@@ -223,7 +223,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
                     SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_wind_attack_0") with { Volume = .30f, Pitch = -.84f, PitchVariance = .25f, MaxInstances = 0, };
                     SoundEngine.PlaySound(style2, Projectile.Center);
                 }
-                
+
 
                 Vector2 spawnPos = Projectile.Center + (Projectile.rotation.ToRotationVector2() * 35);
                 int a = Projectile.NewProjectile(null, spawnPos, Projectile.rotation.ToRotationVector2() * 5, ModContent.ProjectileType<DeepFreezeProj>(), 0, 0);
@@ -366,7 +366,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
             distanceFromPlayer += Velocity;
             Center = distanceFromPlayer + Main.player[playerIndex].Center;
-            
+
             //Center += Velocity;
             timer++;
         }
@@ -423,8 +423,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
                 for (int i = 0; i < 5; i++)
                 {
-                    IcyWind newWind = new IcyWind(Projectile.Center, 
-                        Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.05f,0.05f)) * Main.rand.NextFloat(0.85f, 1.15f), 
+                    IcyWind newWind = new IcyWind(Projectile.Center,
+                        Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f)) * Main.rand.NextFloat(0.85f, 1.15f),
                         distFromPlayer, Projectile.owner);
 
                     Wind.Add(newWind);
@@ -525,15 +525,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
                     Main.dust[p].noLight = true;
                     Main.dust[p].velocity *= 0.3f;
 
-                    Main.dust[p].velocity = Vector2.Normalize(target.Center - Main.dust[p].position) * Main.rand.NextFloat(5,10);
+                    Main.dust[p].velocity = Vector2.Normalize(target.Center - Main.dust[p].position) * Main.rand.NextFloat(5, 10);
 
                     //int p = GlowDustHelper.DrawGlowDust(target.position, target.width, target.height, ModContent.DustType<GlowCircleDust>(), c * 2f, 0.75f, 0.8f, 0f, dustShader);
                     Main.dust[p].fadeIn = 35 + Main.rand.NextFloat(5, 15f);
                     //Main.dust[p].velocity *= 3f;
                 }
-                
+
             }
-            
+
             target.AddBuff(ModContent.BuffType<AuroraFire>(), 120);
             target.immune[Projectile.owner] = 10; //20 
         }

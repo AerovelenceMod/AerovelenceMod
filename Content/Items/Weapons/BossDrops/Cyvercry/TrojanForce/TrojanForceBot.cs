@@ -432,7 +432,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
         {
             //Orbit around player
 
-            
+
             substateTimer++;
         }
         #endregion

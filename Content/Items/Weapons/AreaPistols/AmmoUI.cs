@@ -15,72 +15,72 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 {
-	public class AmmoUI : ModProjectile
-	{
+    public class AmmoUI : ModProjectile
+    {
         #region unimportant
         public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("AmmoUI");
-		}
+        {
+            // DisplayName.SetDefault("AmmoUI");
+        }
 
-		public override void SetDefaults()
-		{
-			Projectile.width = 1;
-			Projectile.height = 1;
-			Projectile.friendly = true;
-			Projectile.hostile = false;
-			Projectile.ignoreWater = true;
-			Projectile.tileCollide = true;
-		}
+        public override void SetDefaults()
+        {
+            Projectile.width = 1;
+            Projectile.height = 1;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = true;
+        }
 
-		public override bool? CanDamage()
-		{
-			return false;
-		}
+        public override bool? CanDamage()
+        {
+            return false;
+        }
         #endregion
 
-		//This one projectile is used for every time of weapon,
-		//so we need to know which one in order to set things like
-		//max ammo count correctly
-		public enum whatWeaponEnum
+        //This one projectile is used for every time of weapon,
+        //so we need to know which one in order to set things like
+        //max ammo count correctly
+        public enum whatWeaponEnum
         {
-			ErinGun = 0,
+            ErinGun = 0,
         }
-		public whatWeaponEnum whatWeapon;
+        public whatWeaponEnum whatWeapon;
 
-		public float MaxAmmo = 0f;
+        public float MaxAmmo = 0f;
 
-		//old
-		//List containing the number of bullets
-		//It is a list instead of an array not because the length will dynamically change based on consumed ammo,
-		//but because the max ammo will be different for each weapon
+        //old
+        //List containing the number of bullets
+        //It is a list instead of an array not because the length will dynamically change based on consumed ammo,
+        //but because the max ammo will be different for each weapon
         public List<Bullet> Bullets = new List<Bullet>();
 
-		public bool createdBullets = false;
+        public bool createdBullets = false;
 
-		public float activeBulletsCount = 0f;
-
-
-		//also old
-		public float halfCurrentBullets = 0f;
-		public float currentBullets = 0f;
+        public float activeBulletsCount = 0f;
 
 
-		public List<bool> areActive = new List<bool>();
+        //also old
+        public float halfCurrentBullets = 0f;
+        public float currentBullets = 0f;
 
-		public override void AI()
-		{
-			Player owner = Main.player[Projectile.owner];
-			//Vector2 move = (owner.Center) - Projectile.Center;
-			//float scalespeed = 10; //(timer < 20 ? 3f : 7); //5
 
-			//Projectile.velocity.X = (Projectile.velocity.X + move.X) / 20f * scalespeed;
-			//Projectile.velocity.Y = (Projectile.velocity.Y + move.Y) / 20f * scalespeed;
+        public List<bool> areActive = new List<bool>();
 
-			Projectile.Center = owner.Center;
+        public override void AI()
+        {
+            Player owner = Main.player[Projectile.owner];
+            //Vector2 move = (owner.Center) - Projectile.Center;
+            //float scalespeed = 10; //(timer < 20 ? 3f : 7); //5
 
-			#region old
-			/*
+            //Projectile.velocity.X = (Projectile.velocity.X + move.X) / 20f * scalespeed;
+            //Projectile.velocity.Y = (Projectile.velocity.Y + move.Y) / 20f * scalespeed;
+
+            Projectile.Center = owner.Center;
+
+            #region old
+            /*
 			
 			//Here we created the correct number of bullets based on the weapon
 			if (!createdBullets)
@@ -198,69 +198,70 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 					break;
 			}
 			*/
-			#endregion
-			
-			if (!createdBullets)
-			{
-				switch (whatWeapon)
-				{
-					case whatWeaponEnum.ErinGun:
-						MaxAmmo = 12;
+            #endregion
 
-						for (int i = 0; i < MaxAmmo; i++)
+            if (!createdBullets)
+            {
+                switch (whatWeapon)
+                {
+                    case whatWeaponEnum.ErinGun:
+                        MaxAmmo = 12;
+
+                        for (int i = 0; i < MaxAmmo; i++)
                         {
-							areActive.Add(true);
+                            areActive.Add(true);
                         }
 
-						break;
-					default:
-						break;
-				}
+                        break;
+                    default:
+                        break;
+                }
 
-				createdBullets = true;
-			}
+                createdBullets = true;
+            }
 
-			switch (whatWeapon)
-			{
-				case whatWeaponEnum.ErinGun:
+            switch (whatWeapon)
+            {
+                case whatWeaponEnum.ErinGun:
 
-					if (owner.inventory[owner.selectedItem].type != ModContent.ItemType<AntiquePistol>())
-					{
-						Projectile.active = false;
-					}
-
-					currentBullets = owner.GetModPlayer<AmmoPlayer>().ErinAmmoCount;
-					halfCurrentBullets = currentBullets / 2;
-
-					float tempCurrentBullets = currentBullets;
-
-					for (int j = 0; j < areActive.Count; j++)
+                    if (owner.inventory[owner.selectedItem].type != ModContent.ItemType<AntiquePistol>())
                     {
-						if (tempCurrentBullets > 0)
-						{
-							areActive[j] = false;
-						} else
-                        {
-							areActive[j] = true;
-                        }
-					} 
+                        Projectile.active = false;
+                    }
 
-					break;
-				default:
-					Main.NewText("not set"); //Debug message
-					break;
-			}
-			
-		}
+                    currentBullets = owner.GetModPlayer<AmmoPlayer>().ErinAmmoCount;
+                    halfCurrentBullets = currentBullets / 2;
+
+                    float tempCurrentBullets = currentBullets;
+
+                    for (int j = 0; j < areActive.Count; j++)
+                    {
+                        if (tempCurrentBullets > 0)
+                        {
+                            areActive[j] = false;
+                        }
+                        else
+                        {
+                            areActive[j] = true;
+                        }
+                    }
+
+                    break;
+                default:
+                    Main.NewText("not set"); //Debug message
+                    break;
+            }
+
+        }
 
         public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D BulletTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUIBullet").Value;
-			Texture2D BulletOpen = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoOpen").Value;
-			Texture2D BulletUsed = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUsed").Value;
+        {
+            Texture2D BulletTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUIBullet").Value;
+            Texture2D BulletOpen = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoOpen").Value;
+            Texture2D BulletUsed = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/AreaPistols/AmmoUsed").Value;
 
 
-			/*
+            /*
 			foreach (Bullet b in Bullets)
             {
 				if (!b.usedUp)
@@ -268,21 +269,21 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
             }
 			*/
 
-			
-			for (int i = 0; i < areActive.Count; i++)
-            {
-				if (areActive[i])
-                {
-					Main.spriteBatch.Draw(BulletOpen, Main.player[Projectile.owner].Center - Main.screenPosition + new Vector2(15f * i, -40) - new Vector2(0, 10 - Main.player[Projectile.owner].gfxOffY), new Rectangle(0, 0, BulletOpen.Width, BulletOpen.Height), Color.White, Projectile.rotation, BulletOpen.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
-				}
-				else
-                {
-					Main.spriteBatch.Draw(BulletUsed, Main.player[Projectile.owner].Center - Main.screenPosition + new Vector2(15f * i, -40) - new Vector2(0, 10 - Main.player[Projectile.owner].gfxOffY), new Rectangle(0, 0, BulletUsed.Width, BulletUsed.Height), Color.White, Projectile.rotation, BulletUsed.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
-				}
-			}
-			
 
-			/*
+            for (int i = 0; i < areActive.Count; i++)
+            {
+                if (areActive[i])
+                {
+                    Main.spriteBatch.Draw(BulletOpen, Main.player[Projectile.owner].Center - Main.screenPosition + new Vector2(15f * i, -40) - new Vector2(0, 10 - Main.player[Projectile.owner].gfxOffY), new Rectangle(0, 0, BulletOpen.Width, BulletOpen.Height), Color.White, Projectile.rotation, BulletOpen.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
+                }
+                else
+                {
+                    Main.spriteBatch.Draw(BulletUsed, Main.player[Projectile.owner].Center - Main.screenPosition + new Vector2(15f * i, -40) - new Vector2(0, 10 - Main.player[Projectile.owner].gfxOffY), new Rectangle(0, 0, BulletUsed.Width, BulletUsed.Height), Color.White, Projectile.rotation, BulletUsed.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
+                }
+            }
+
+
+            /*
 			for (float j = (-1 * halfCurrentBullets) + 0.5f; j < halfCurrentBullets; j++)
 			{
 				Main.spriteBatch.Draw(BulletTex, Projectile.Center - Main.screenPosition + new Vector2(10f * j, -40), new Rectangle(0, 0, BulletTex.Width, BulletTex.Height), Color.White, Projectile.rotation, BulletTex.Size() / 2, 1 * Projectile.scale, SpriteEffects.None, 0f);
@@ -290,12 +291,12 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 			}
 			*/
 
-			
-
-			return false;
 
 
-			/*
+            return false;
+
+
+            /*
 			Main.spriteBatch.End();
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 			Vector2 drawOrigin = new Vector2(TextureAssets.Projectile[Projectile.type].Value.Width * 0.5f, TextureAssets.Projectile[Projectile.type].Value.Height * 0.5f);
@@ -309,43 +310,43 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 			return false;
 			*/
-		}
-	}
+        }
+    }
 
-	//This class is for storing the placement of drawn bullets of the UI
-	public class Bullet
-	{
-		//General variables 
-		public Vector2 velocity;
-		public Vector2 center;
-		public float rotation;
-		public Color color;
-		public float scale;
-		public int timer;
+    //This class is for storing the placement of drawn bullets of the UI
+    public class Bullet
+    {
+        //General variables 
+        public Vector2 velocity;
+        public Vector2 center;
+        public float rotation;
+        public Color color;
+        public float scale;
+        public int timer;
 
-		//Whether an ammo slot has been consumed or not
-		public bool usedUp;
-		public Bullet(Vector2 pos, Vector2 vel)
-		{
-			center = pos;
-			velocity = vel;
-			scale = 1f;
-			rotation = 0f;
+        //Whether an ammo slot has been consumed or not
+        public bool usedUp;
+        public Bullet(Vector2 pos, Vector2 vel)
+        {
+            center = pos;
+            velocity = vel;
+            scale = 1f;
+            rotation = 0f;
 
-			usedUp = false;
-		}
+            usedUp = false;
+        }
 
-		public void Update(Vector2 goal)
-		{
-			center = goal;
-			timer++;
-		}
+        public void Update(Vector2 goal)
+        {
+            center = goal;
+            timer++;
+        }
 
 
-		public void Draw(SpriteBatch sb, Texture2D tex, Player player)
-		{
-			if (!usedUp)
-				sb.Draw(tex, center - Main.screenPosition - new Vector2(0, player.gfxOffY), null, Color.White, rotation, tex.Size() / 2, scale, SpriteEffects.None, 0f);
-		}
-	}
+        public void Draw(SpriteBatch sb, Texture2D tex, Player player)
+        {
+            if (!usedUp)
+                sb.Draw(tex, center - Main.screenPosition - new Vector2(0, player.gfxOffY), null, Color.White, rotation, tex.Size() / 2, scale, SpriteEffects.None, 0f);
+        }
+    }
 }

@@ -12,7 +12,7 @@ namespace AerovelenceMod.Core
         /// <summary>
         /// Make <paramref name="tilesToMergeWith"></paramref> null to not merge with any specific tile(s).
         /// </summary>
-        public static void SimpleFramedTile(this ModTile tile, int drop, Terraria.Audio.SoundStyle hitSound, int DustType, Color mapColor, int MinPick, 
+        public static void SimpleFramedTile(this ModTile tile, int drop, Terraria.Audio.SoundStyle hitSound, int DustType, Color mapColor, int MinPick,
             string mapName = "", bool mergeDirt = false, bool stone = false, params int[] tilesToMergeWith)
         {
             Main.tileBlockLight[tile.Type] = true;

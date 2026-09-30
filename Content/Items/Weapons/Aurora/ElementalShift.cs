@@ -60,7 +60,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             Item.rare = ItemRarities.LatePHM;
             Item.DamageType = DamageClass.Melee;
             Item.useStyle = ItemUseStyleID.Shoot;
-            
+
             Item.shootSpeed = 1f;
             Item.shoot = ModContent.ProjectileType<NewElementalShiftProj>();
         }
@@ -195,7 +195,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 justHitCounter = 5;
                 justBouncedTime = 0;
 
-                SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .5f, PitchVariance = 0.23f, Volume = 0.35f }; 
+                SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .5f, PitchVariance = 0.23f, Volume = 0.35f };
                 SoundEngine.PlaySound(style2, Projectile.Center);
 
                 int Mura = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MuraLineHandler>(), 0, 0, Projectile.owner);
@@ -290,7 +290,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
     }
     public class ElementalShiftImpact : ModProjectile
     {
-        
+
         public override string Texture => "Terraria/Images/Projectile_0";
 
         int timer = 0;
@@ -310,7 +310,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
         float alpha = 1f;
         float scale = 0f;
-        
+
         public override void AI()
         {
             if (timer == 0 && Projectile.rotation == 0)
@@ -456,7 +456,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 previousRotations = new List<float>();
             }
 
-            SwingHalfAngle = 190; 
+            SwingHalfAngle = 190;
             easingAdditionAmount = 0.026f / (Projectile.extraUpdates + 1);
             offset = 65;
             frameToStartSwing = 2 * (Projectile.extraUpdates + 1);
@@ -501,7 +501,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             {
 
                 Dust d = Dust.NewDustPerfect(Main.player[Projectile.owner].Center + currentAngle.ToRotationVector2() * Main.rand.NextFloat(60f, 80f), ModContent.DustType<GlowPixelCross>(),
-                    currentAngle.ToRotationVector2().RotatedByRandom(0.2f).RotatedBy(MathHelper.PiOver2 * (Projectile.ai[0] > 0 ? 1 : -1)) * -Main.rand.NextFloat(2f, 5f), 
+                    currentAngle.ToRotationVector2().RotatedByRandom(0.2f).RotatedBy(MathHelper.PiOver2 * (Projectile.ai[0] > 0 ? 1 : -1)) * -Main.rand.NextFloat(2f, 5f),
                     newColor: FetchRainbow(100), Scale: 0.2f + Main.rand.NextFloat(-0.1f, 0.1f));
                 d.scale *= Projectile.scale;
 
@@ -524,7 +524,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 else
                 {
                     Rectangle biggerHitbox = new Rectangle(Projectile.Hitbox.X - Projectile.width / 2, Projectile.Hitbox.Y - Projectile.height / 2, Projectile.Hitbox.Width * 2, Projectile.Hitbox.Height * 2);
-                    
+
                     //Got this tech from Everjade (gong and ringer)
                     Projectile ball = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<ElementalShiftBall>() && n.Hitbox.Intersects(biggerHitbox)).FirstOrDefault();
 
@@ -616,7 +616,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             float easedGlowIntensity = getProgress(easingProgress) <= 0.5f ? Easings.easeInCirc(glowIntensity) : Easings.easeOutCirc(glowIntensity);
 
             Color rainbowCol = FetchRainbow(100) with { A = 0 } * easedGlowIntensity;
-            
+
             //SwingTex
             if (getProgress(easingProgress) > 0.0f && getProgress(easingProgress) < 0.99f)
             {
@@ -664,7 +664,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 spawnPos = Main.player[Projectile.owner].Center + currentAngle.ToRotationVector2() * 60;
             }
             Projectile.NewProjectile(null, spawnPos, Vector2.Zero, ModContent.ProjectileType<ElementalShiftImpact>(), 0, 0f);
- 
+
             for (int i = 0; i < 5; i++)
             {
                 Dust d = Dust.NewDustPerfect(target.Center, ModContent.DustType<RoaParticle>(), newColor: FetchRainbow(100), Scale: 0.55f + Main.rand.NextFloat(-0.2f, 0.2f));
@@ -689,7 +689,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             float toReturn = 0f;
             #region easeExpo
 
-           
+
             //pre 0.5
             if (x <= 0.5f)
             {
@@ -707,7 +707,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 toReturn = 1;
 
             return toReturn;
-            
+
 
             #endregion;
 

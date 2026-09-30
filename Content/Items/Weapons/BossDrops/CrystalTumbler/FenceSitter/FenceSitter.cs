@@ -58,7 +58,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             Projectile.NewProjectile(source, player.MountedCenter, velocity.SafeNormalize(Vector2.UnitX * player.direction), type, damage, knockback, player.whoAmI, special ? 1 : 0, velocity.X >= 0f ? 1 : -1);
             return false;
         }
-            public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
             if (Main.gameMenu)
                 return;
@@ -406,7 +406,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             }
             DrawPath(points, color, opacity * 0.8f, width);
         }
-            private static ulong dustTick;
+        private static ulong dustTick;
         private static int dustBudget;
         private static void DrawPath(Vector2[] points, Color color, float opacity, float width)
         {

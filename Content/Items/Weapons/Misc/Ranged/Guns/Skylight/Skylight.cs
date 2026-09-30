@@ -116,7 +116,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
         public override bool? CanDamage() => false;
 
         public override bool? CanCutTiles() => false;
-    
+
         Vector2 offset = Vector2.Zero;
 
         float recoilAngle = 0f;
@@ -171,7 +171,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 //Line Dust on shot
-                for (int m = 0; m < 5; m++) 
+                for (int m = 0; m < 5; m++)
                 {
                     Color col = new Color(0, 155, 255);
                     Dust d = Dust.NewDustPerfect(Projectile.Center + Projectile.velocity * 25, ModContent.DustType<MuraLineDust>(),
@@ -180,7 +180,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 }
 
                 //Orb dust on shot
-                for (int m = 0; m < 6; m++) 
+                for (int m = 0; m < 6; m++)
                 {
                     float rotAdd = (Main.rand.NextBool() ? 0.5f : -0.5f) + Main.rand.NextFloat(-0.22f, 0.22f);
 
@@ -192,13 +192,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 glowVal = 1;
 
                 //Recoil
-                offset = new Vector2(2, 0); 
+                offset = new Vector2(2, 0);
                 recoilTimer = 0;
             }
 
 
             //Shoot the rapid shots
-            if (burstTimer == 85 || burstTimer == 90 || burstTimer == 95 || burstTimer == 100) {
+            if (burstTimer == 85 || burstTimer == 90 || burstTimer == 95 || burstTimer == 100)
+            {
 
                 Projectile.velocity = player.DirectionTo(Main.MouseWorld);
                 Projectile.velocity = Vector2.Normalize(Projectile.velocity);
@@ -212,14 +213,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/lightning_flash_01") with { Pitch = 1f, PitchVariance = 0.2f, Volume = 0.4f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
-                SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/LightningMothSFX_1") with { Pitch = 1f, MaxInstances = 2, Volume = 0.3f }; 
+                SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/LightningMothSFX_1") with { Pitch = 1f, MaxInstances = 2, Volume = 0.3f };
                 SoundEngine.PlaySound(style2, Projectile.Center);
                 SoundEngine.PlaySound(style2, Projectile.Center);
 
                 SoundStyle style3 = new SoundStyle("Terraria/Sounds/Item_106") with { Volume = .2f, Pitch = .82f, }; SoundEngine.PlaySound(style3, Projectile.Center);
 
                 //Line Dust
-                for (int m = 0; m < 6; m++) 
+                for (int m = 0; m < 6; m++)
                 {
                     Dust d = Dust.NewDustPerfect(Projectile.Center + Projectile.velocity * 25, ModContent.DustType<GlowStrong>(),
                         Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.12f, 0.12f)) * Main.rand.NextFloat(1, 5) * 2, newColor: Color.DodgerBlue, Scale: 0.3f + Main.rand.NextFloat(0, 0.2f));
@@ -227,7 +228,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 }
 
                 //Orb dust
-                for (int m = 0; m < 4; m++) 
+                for (int m = 0; m < 4; m++)
                 {
                     float rotAdd = (Main.rand.NextBool() ? 0.5f : -0.5f) + Main.rand.NextFloat(-0.22f, 0.22f);
 
@@ -369,7 +370,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             //trail2.trailPos = Projectile.Center; ////
             //trail2.TrailLogic();
 
-            trail1.trailPos = Projectile.Center + Projectile.velocity; 
+            trail1.trailPos = Projectile.Center + Projectile.velocity;
             trail1.TrailLogic();
 
             //Trail2 Info Dump
@@ -482,7 +483,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
         }
 
         public override bool? CanDamage() => !hasHit;
-        
+
     }
 
     public class SkylightHitFlare : ModProjectile
@@ -711,7 +712,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
         {
             if (timer == 0)
             {
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ElectricExplode") with { Pitch = .42f, PitchVariance = .16f, Volume = 0.25f }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ElectricExplode") with { Pitch = .42f, PitchVariance = .16f, Volume = 0.25f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/lightning_flash_01") with { Pitch = 0f, PitchVariance = 0.2f, Volume = 0.8f };
@@ -738,14 +739,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                     {
                         Vector2 randomStart = Main.rand.NextVector2CircularEdge(18, 18);
 
-                        Dust d = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowStrong>(), 
+                        Dust d = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowStrong>(),
                             randomStart * Main.rand.NextFloat(0.65f, 1.35f), newColor: col, Scale: 0.6f + Main.rand.NextFloat(0, 0.2f));
                     }
                 }
 
                 for (int i = 0; i < 8; i++)
                 {
-                    Vector2 direction = new Vector2(1,0).RotatedByRandom(6.28f);
+                    Vector2 direction = new Vector2(1, 0).RotatedByRandom(6.28f);
                     Vector2 ai1 = new Vector2((float)Math.Cos(direction.ToRotation()), (float)Math.Sin(direction.ToRotation())) * 10f;
 
                     float ai2 = Main.rand.Next(100);
@@ -930,7 +931,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                 SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/lightning_flash_01") with { Pitch = 0.7f, PitchVariance = 0.2f, Volume = 0.35f };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
-                SoundStyle style3 = new SoundStyle("Terraria/Sounds/Item_106") with { Volume = .15f, Pitch = .52f, }; 
+                SoundStyle style3 = new SoundStyle("Terraria/Sounds/Item_106") with { Volume = .15f, Pitch = .52f, };
                 SoundEngine.PlaySound(style3, Projectile.Center);
 
                 SoundStyle style2 = new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = .25f, Pitch = 1f, PitchVariance = .12f, };
@@ -971,7 +972,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             }
 
             if (!hasShot)
-                    Projectile.velocity = player.DirectionTo(aimPos);
+                Projectile.velocity = player.DirectionTo(aimPos);
 
             timer++;
         }

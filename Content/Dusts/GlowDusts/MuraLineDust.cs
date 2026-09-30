@@ -20,10 +20,10 @@ using Microsoft.Xna.Framework.Graphics.PackedVector;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	
-	public class MuraLineDust : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/MuraLine120x120";
+
+    public class MuraLineDust : ModDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/MuraLine120x120";
 
         public override void OnSpawn(Dust dust)
         {
@@ -91,9 +91,9 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
         }
     }
 
-	public class MuraLineBasic : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/MuraLine120x120";
+    public class MuraLineBasic : ModDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/MuraLine120x120";
 
         public override void OnSpawn(Dust dust)
         {
@@ -186,107 +186,107 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
 
     public class ColorSpark : ModDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/ColorSpark";
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/ColorSpark";
 
-		public override void OnSpawn(Dust dust)
-		{
-			dust.fadeIn = 0f;
-			dust.frame = new Rectangle(0, 0, 30, 18);
-		}
+        public override void OnSpawn(Dust dust)
+        {
+            dust.fadeIn = 0f;
+            dust.frame = new Rectangle(0, 0, 30, 18);
+        }
 
-		public override bool Update(Dust dust)
-		{
-			if (dust.customData != null)
+        public override bool Update(Dust dust)
+        {
+            if (dust.customData != null)
             {
-				if (dust.customData is ColorSparkBehavior behavior)
+                if (dust.customData is ColorSparkBehavior behavior)
                 {
-					dust.rotation = dust.velocity.ToRotation();
-					dust.position += dust.velocity;
+                    dust.rotation = dust.velocity.ToRotation();
+                    dust.position += dust.velocity;
 
-					if (behavior.slow)
-						dust.velocity *= behavior.slowAmount;
+                    if (behavior.slow)
+                        dust.velocity *= behavior.slowAmount;
 
-					if (!dust.noGravity)
-						dust.velocity.Y += behavior.gravityIntensity;
+                    if (!dust.noGravity)
+                        dust.velocity.Y += behavior.gravityIntensity;
 
-					if (dust.fadeIn > 1f)
-						dust.color *= 0.93f;
-					else
-						dust.color *= 0.98f;
+                    if (dust.fadeIn > 1f)
+                        dust.color *= 0.93f;
+                    else
+                        dust.color *= 0.98f;
 
-					dust.fadeIn += behavior.fadeInSpeed;
+                    dust.fadeIn += behavior.fadeInSpeed;
 
-					if (dust.fadeIn >= 5)
-						dust.active = false;
+                    if (dust.fadeIn >= 5)
+                        dust.active = false;
 
-					dust.alpha++;
+                    dust.alpha++;
 
-					if (dust.alpha > 60)
-						dust.active = false;
+                    if (dust.alpha > 60)
+                        dust.active = false;
 
-					if (behavior.shrink)
-						dust.scale *= behavior.shrinkAmount;
-				}
+                    if (behavior.shrink)
+                        dust.scale *= behavior.shrinkAmount;
+                }
             }
             else
             {
-				//Default behavior 
-				dust.rotation = dust.velocity.ToRotation();
-				dust.position += dust.velocity;
+                //Default behavior 
+                dust.rotation = dust.velocity.ToRotation();
+                dust.position += dust.velocity;
 
-				dust.velocity *= 0.95f;
-				dust.velocity.Y += 0.24f;
+                dust.velocity *= 0.95f;
+                dust.velocity.Y += 0.24f;
 
-				if (dust.fadeIn > 1f)
-					dust.color *= 0.93f;
-				else
-					dust.color *= 0.98f;
+                if (dust.fadeIn > 1f)
+                    dust.color *= 0.93f;
+                else
+                    dust.color *= 0.98f;
 
-				dust.fadeIn += 0.06f;
+                dust.fadeIn += 0.06f;
 
-				if (dust.fadeIn >= 5)
-					dust.active = false;
+                if (dust.fadeIn >= 5)
+                    dust.active = false;
 
-				dust.alpha++;
+                dust.alpha++;
 
-				if (dust.alpha > 60)
-					dust.active = false;
-			}
-
-
-			return false;
-		}
+                if (dust.alpha > 60)
+                    dust.active = false;
+            }
 
 
-		public override bool PreDraw(Dust dust)
-		{
+            return false;
+        }
 
 
-			Color color = Color.Lerp(Color.White, dust.color, dust.fadeIn);
-
-			//Main.spriteBatch.End();
-			//Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
-
-			Main.spriteBatch.Draw(Texture2D.Value, dust.position - Main.screenPosition, null, color with { A = 0 }, dust.rotation, new Vector2(15, 9), new Vector2(dust.scale * 0.75f, dust.scale * 0.35f), SpriteEffects.None, 0f);
-			
-			//Main.spriteBatch.End();
-			//Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+        public override bool PreDraw(Dust dust)
+        {
 
 
-			return false;
-		}
-	}
+            Color color = Color.Lerp(Color.White, dust.color, dust.fadeIn);
 
-	public class ColorSparkBehavior
+            //Main.spriteBatch.End();
+            //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, default, default, default, default, Main.GameViewMatrix.TransformationMatrix);
+
+            Main.spriteBatch.Draw(Texture2D.Value, dust.position - Main.screenPosition, null, color with { A = 0 }, dust.rotation, new Vector2(15, 9), new Vector2(dust.scale * 0.75f, dust.scale * 0.35f), SpriteEffects.None, 0f);
+
+            //Main.spriteBatch.End();
+            //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+
+
+            return false;
+        }
+    }
+
+    public class ColorSparkBehavior
     {
-		public float gravityIntensity = 0.15f;
-		public bool slow = true;
-		public float slowAmount = 0.95f;
+        public float gravityIntensity = 0.15f;
+        public bool slow = true;
+        public float slowAmount = 0.95f;
 
-		public bool shrink = false;
-		public float shrinkAmount = 0.98f;
+        public bool shrink = false;
+        public float shrinkAmount = 0.98f;
 
-		public float fadeInSpeed = 0.06f;
-	}
+        public float fadeInSpeed = 0.06f;
+    }
 }

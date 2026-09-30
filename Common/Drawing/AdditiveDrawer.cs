@@ -41,7 +41,7 @@ namespace AerovelenceMod.Common.Drawing
                 Projectile p = Main.projectile[i];
 
                 if (p.active && p.ModProjectile is IDrawAdditive)
-                        (p.ModProjectile as IDrawAdditive).DrawAdditive(Main.spriteBatch);
+                    (p.ModProjectile as IDrawAdditive).DrawAdditive(Main.spriteBatch);
             }
 
             Main.spriteBatch.End();

@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 namespace AerovelenceMod.Core
 {
     //Ripped from everjade which prolly ripped from slr
-	public class PlayerTarget : ILoadable
+    public class PlayerTarget : ILoadable
     {
         //Drawing Player to Target. Should be safe. Excuse me if im duplicating something that alr exists :p
         public static RenderTarget2D Target;

@@ -26,7 +26,7 @@ public class BatteryBackpack : ModItem
             .AddSkillStrike(Language.Default, "Completing five charges Skill Strikes a random enemy on screen")
             .AddSkillStrike(Language.Spanish, "Completar cinco cargas lanza un Ataque de habilidad contra un enemigo aleatorio en pantalla");
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = 18;
@@ -44,7 +44,7 @@ public class BatteryBackpack : ModItem
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item1 with { Volume = .6f, Pitch = -.1f };
     }
-	
+
     public override bool CanUseItem(Player player)
     {
         int count = 0;
@@ -54,7 +54,7 @@ public class BatteryBackpack : ModItem
             { count++; attached |= projectile.ai[2] > 0; }
         return count == 0 || count == 1 && attached;
     }
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         Projectile battery = BatteryCircuit.Find(player.whoAmI);
@@ -69,13 +69,13 @@ public class BatteryBackpack : ModItem
         Projectile.NewProjectile(source, player.MountedCenter, velocity.SafeNormalize(Vector2.UnitX * player.direction) * speed, type, damage, knockback, player.whoAmI, battery.identity, wire);
         return false;
     }
-	
+
     public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
     {
         Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glowmask").Value;
         spriteBatch.Draw(glow, position, frame, Color.White * .8f, 0f, origin, scale, SpriteEffects.None, 0f);
     }
-	
+
     public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
     {
         Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glowmask").Value;
@@ -87,14 +87,14 @@ public class BatteryBackpack : ModItem
 public class BatteryCircuit : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Blank";
-	
+
     public static Projectile Find(int owner)
     {
         foreach (Projectile projectile in Main.ActiveProjectiles)
             if (projectile.owner == owner && projectile.type == ModContent.ProjectileType<BatteryCircuit>()) return projectile;
         return null;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 4;
@@ -103,10 +103,10 @@ public class BatteryCircuit : ModProjectile
         Projectile.netImportant = true;
         Projectile.DamageType = DamageClass.Melee;
     }
-	
+
     public override bool? CanDamage() => false;
     public override bool PreDraw(ref Color lightColor) => false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -200,20 +200,20 @@ public class BatteryClamp : ModProjectile
         Projectile.localNPCHitCooldown = -1;
         Projectile.netImportant = true;
     }
-	
+
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(attachment.X); writer.Write(attachment.Y); writer.Write(targetType);
     }
-	
+
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         attachment = new Vector2(reader.ReadSingle(), reader.ReadSingle()); targetType = reader.ReadInt32();
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Projectile.ai[2] == 0f ? null : false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -250,13 +250,13 @@ public class BatteryClamp : ModProjectile
         Projectile.rotation = (Projectile.Center - player.MountedCenter).ToRotation();
         player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
     }
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float distance = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previous, Projectile.Center, 12f, ref distance);
     }
-	
+
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Projectile.owner != Main.myPlayer) return;
@@ -269,7 +269,7 @@ public class BatteryClamp : ModProjectile
         SoundEngine.PlaySound(SoundID.Dig with { Volume = .5f, Pitch = .4f }, target.Center);
         for (int i = 0; i < 8; i++) TumblerVFX.SpawnSpark(Projectile.Center, Main.rand.NextVector2Circular(3f, 3f), Projectile.ai[1] == 0f ? Color.OrangeRed : Color.Cyan);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Player player = Main.player[Projectile.owner];
@@ -302,7 +302,7 @@ public class BatteryDischarge : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Blank";
     private readonly TumblerLightningVisual visual = new();
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 8;
@@ -318,7 +318,7 @@ public class BatteryDischarge : ModProjectile
     public override bool? CanHitNPC(NPC target) => target.whoAmI + 1 == (int)Projectile.ai[0] || target.whoAmI + 1 == (int)Projectile.ai[1] ? null : false;
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) => true;
     public override bool? CanDamage() => Projectile.timeLeft >= 15 ? null : false;
-	
+
     public override void AI()
     {
         int first = (int)Projectile.ai[0] - 1;
@@ -354,9 +354,9 @@ public class BatteryOverflowStrike : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool? CanDamage() => Projectile.timeLeft <= 18 && Projectile.timeLeft > 10 ? null : false;
-	
+
     public override void AI()
     {
         int index = (int)Projectile.ai[0] - 1;
@@ -375,15 +375,15 @@ public class BatteryOverflowStrike : ModProjectile
             for (int i = 0; i < 18; i++) TumblerVFX.SpawnSpark(end, Main.rand.NextVector2Circular(5f, 5f), Color.Gold, .3f);
         }
     }
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float distance = 0;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, end, 24f, ref distance);
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => SkillStrikeUtil.setSkillStrike(Projectile, 2f);
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Projectile.timeLeft > 18 ? .2f : Projectile.timeLeft / 18f;
@@ -396,7 +396,7 @@ public class BatteryOverflowStrike : ModProjectile
 public class BatteryCharge : ModBuff
 {
     public override string Texture => "Terraria/Images/Buff_178";
-	
+
     public override void SetStaticDefaults()
     {
         Main.buffNoTimeDisplay[Type] = true;
@@ -408,7 +408,7 @@ public class BatteryCharge : ModBuff
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Batería cargada", "es-ES");
         LocalizationManager.RegisterTranslation(Description.Key, "+2% de velocidad de movimiento por carga al sostener la mochila", "es-ES");
     }
-	
+
     public override void Update(Player player, ref int buffIndex)
     {
         Projectile battery = BatteryCircuit.Find(player.whoAmI);
@@ -420,7 +420,7 @@ public class BatteryCharge : ModBuff
 public class BatteryBackLayer : PlayerDrawLayer
 {
     public override Position GetDefaultPosition() => new BeforeParent(PlayerDrawLayers.Torso);
-	
+
     protected override void Draw(ref PlayerDrawSet drawInfo)
     {
         Player player = drawInfo.drawPlayer;

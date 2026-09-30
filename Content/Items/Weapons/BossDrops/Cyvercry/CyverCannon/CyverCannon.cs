@@ -67,7 +67,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
 
             Projectile.NewProjectile(source, position, Vector2.Zero, type, damage, knockback, player.whoAmI);
             return false;
-        } 
+        }
     }
 
     public class CyverCannonProjectile : ModProjectile
@@ -151,7 +151,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 else if (timer == 30)
                     shotRot += 0.07f * (burstUp ? 1f : -1f);
 
-                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), storedPosition, shotRot.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(), 
+                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), storedPosition, shotRot.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(),
                     Projectile.damage, 0f, player.whoAmI);
 
                 Main.projectile[a].scale = 0.4f; //35
@@ -160,7 +160,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 for (int i = 0; i < 2 + Main.rand.Next(1, 4); i++)
                 {
                     Vector2 dustVel = shotRot.ToRotationVector2().RotatedBy(Main.rand.NextFloat(-0.3f, 0.3f)) * Main.rand.NextFloat(6f, 22f);
-                    Dust dp = Dust.NewDustPerfect(storedPosition, ModContent.DustType<LineSpark>(), dustVel, 
+                    Dust dp = Dust.NewDustPerfect(storedPosition, ModContent.DustType<LineSpark>(), dustVel,
                         newColor: dustCol, Scale: Main.rand.NextFloat(0.45f, 0.65f) * 0.55f);
 
                     dp.customData = DustBehaviorUtil.AssignBehavior_LSBase(velFadePower: 0.88f, preShrinkPower: 0.99f, postShrinkPower: 0.8f, timeToStartShrink: 10 + Main.rand.Next(-5, 5), killEarlyTime: 80,
@@ -244,7 +244,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             Main.EntitySpriteDraw(MainTex, drawPos, sourceRectangle, lightColor, Projectile.rotation, origin, Projectile.scale * overallScale, SE);
 
             Main.EntitySpriteDraw(Glowmask, drawPos, sourceRectangle, Color.White, Projectile.rotation, origin, Projectile.scale * overallScale, SE);
-            
+
             Main.EntitySpriteDraw(GlowTexFull, drawPos + Main.rand.NextVector2Circular(1f, 1f), sourceRectangle, Color.White with { A = 0 } * justShotPower, Projectile.rotation, origin, Projectile.scale * overallScale, SE);
             Main.EntitySpriteDraw(GlowTexFull, drawPos + Main.rand.NextVector2Circular(1f, 1f), sourceRectangle, Color.White with { A = 0 } * justShotPower, Projectile.rotation, origin, Projectile.scale * overallScale, SE);
 
@@ -532,7 +532,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
 
             if (timer == 90)
             {
-                int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverCannonHyperBeam>(), 
+                int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverCannonHyperBeam>(),
                     Projectile.damage, Projectile.knockBack, player.whoAmI);
 
                 laser = Main.projectile[proj];
@@ -574,7 +574,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
         {
             if (timer == 0 || timer == 1)
                 return false;
-            
+
             Player player = Main.player[Projectile.owner];
 
             Texture2D MainTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/BossDrops/Cyvercry/CyverCannon/CyverCannonProj").Value;
@@ -597,7 +597,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             Color underGlowColor = Color.Lerp(Color.DeepPink, Color.HotPink, randomShakePower);
             for (int i = 0; i < 5; i++)
             {
-                Main.EntitySpriteDraw(PureWhie, drawPos + Main.rand.NextVector2CircularEdge(2.5f, 2.5f), sourceRectangle, underGlowColor with { A = 0 } * randomShakePower * 0.2f, 
+                Main.EntitySpriteDraw(PureWhie, drawPos + Main.rand.NextVector2CircularEdge(2.5f, 2.5f), sourceRectangle, underGlowColor with { A = 0 } * randomShakePower * 0.2f,
                     Projectile.rotation, origin, Projectile.scale * overallScale, SE);
             }
 
@@ -665,7 +665,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
         {
             if (overallScale < 0.15f)
                 return false;
-            
+
             //Check collision in a radius for every 4 positions
             int i = 0;
             foreach (Vector2 vec in trailPositions)
@@ -707,14 +707,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/water_blast_projectile_spell_03") with { Volume = .35f, Pitch = .65f, MaxInstances = -1 };
                 SoundEngine.PlaySound(style2, Projectile.Center);
 
-                SoundStyle style6 = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorCharge") with { Volume = .4f, Pitch = .65f, }; 
+                SoundStyle style6 = new SoundStyle("AerovelenceMod/Sounds/Effects/AnnihilatorCharge") with { Volume = .4f, Pitch = .65f, };
                 SoundEngine.PlaySound(style6, Projectile.Center);
 
                 FlashSystem.SetCAFlashEffect(0.4f, 30, 1f, 0.85f, true, true);
 
                 Main.player[Projectile.owner].GetModPlayer<AeroPlayer>().ScreenShakePower = 60f;
             }
-            
+
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             //Populate Points

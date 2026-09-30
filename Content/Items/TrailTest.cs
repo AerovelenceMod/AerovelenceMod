@@ -14,26 +14,26 @@ using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.Items
 {
-	public class TrailTest : ModProjectile
-	{
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("TrailTest");
-			ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
-		}
-		public override void SetDefaults()
-		{
-			Projectile.tileCollide = false;
-			Projectile.damage = 0;
-			Projectile.width = 20;
-			Projectile.height = 20;
-			Projectile.friendly = true;
-			Projectile.tileCollide = false;
-			Projectile.timeLeft = 4000;
-			Projectile.penetrate = -1;
-		}
+    public class TrailTest : ModProjectile
+    {
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("TrailTest");
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
+        }
+        public override void SetDefaults()
+        {
+            Projectile.tileCollide = false;
+            Projectile.damage = 0;
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.friendly = true;
+            Projectile.tileCollide = false;
+            Projectile.timeLeft = 4000;
+            Projectile.penetrate = -1;
+        }
 
-		public int trailPointLimit = 60;
+        public int trailPointLimit = 60;
 
         public int trailWidth = 10;
 
@@ -122,9 +122,9 @@ namespace AerovelenceMod.Content.Items
 
         BasicEffect basicEffect;
 
-        public override bool PreDraw(ref Color lightColor) 
-		{
-            Utils.DrawLine(Main.spriteBatch, Projectile.Center + new Vector2(-10,0).RotatedBy(Projectile.rotation), Main.player[Projectile.owner].Center, Color.White, Color.White, 2);
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Utils.DrawLine(Main.spriteBatch, Projectile.Center + new Vector2(-10, 0).RotatedBy(Projectile.rotation), Main.player[Projectile.owner].Center, Color.White, Color.White, 2);
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, SamplerState.PointClamp, DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -160,7 +160,7 @@ namespace AerovelenceMod.Content.Items
 
 
             return false;
-		}
+        }
 
         public virtual float WidthFunction(float progress)
         {
@@ -170,14 +170,15 @@ namespace AerovelenceMod.Content.Items
                 float lerpValue = Utils.GetLerpValue(0f, 0.4f, progress, clamped: true);
                 num *= 1f - (1f - lerpValue) * (1f - lerpValue);
                 return MathHelper.Lerp(0f, 30f, num) * 0.4f + Main.rand.NextFloat(0, 2);
-            } 
+            }
             else if (progress >= 0.5 && progress < 0.9f)
             {
                 float num = 1f;
                 float lerpValue = Utils.GetLerpValue(0f, 0.6f, 1 - progress, clamped: true);
                 num *= 1f - (1f - lerpValue) * (1f - lerpValue);
                 return MathHelper.Lerp(0f, 30f, num) * 0.4f + Main.rand.NextFloat(0, 2);
-            } else if (progress >= 0.9)
+            }
+            else if (progress >= 0.9)
             {
                 float num = 1f;
                 float lerpValue = Utils.GetLerpValue(0f, 0.6f, 1 - progress, clamped: true);

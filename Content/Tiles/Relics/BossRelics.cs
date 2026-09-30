@@ -56,7 +56,7 @@ namespace AerovelenceMod.Content.Tiles.Relics
             TileObjectData.addAlternate(1);
 
             TileObjectData.addTile(Type);
-            AddMapEntry(new Color(233, 207, 94),Terraria.Localization.Language.GetText("MapObject.Relic"));
+            AddMapEntry(new Color(233, 207, 94), Terraria.Localization.Language.GetText("MapObject.Relic"));
         }
         public override void KillMultiTile(int i, int j, int frameX, int frameY)
         {

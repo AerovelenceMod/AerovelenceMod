@@ -46,8 +46,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             {
                 ManaLeechDebuff = false;
                 ManaLeechTime = 0;
-                
-            } else
+
+            }
+            else
             {
 
             }
@@ -59,7 +60,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             {
                 if (ManaLeechTime % 14 == 0)
                 {
-                    Projectile.NewProjectile(null, npc.Center, Main.rand.NextVector2CircularEdge(7,7), ModContent.ProjectileType<ManaLeechStar>(), 
+                    Projectile.NewProjectile(null, npc.Center, Main.rand.NextVector2CircularEdge(7, 7), ModContent.ProjectileType<ManaLeechStar>(),
                         0, 0, Main.myPlayer);
                 }
                 if (ManaLeechTime % 1 == 0)
@@ -101,70 +102,70 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
         }
     }
 
-	public class ManaLeechStar : ModProjectile
-	{
-		public override string Texture => "Terraria/Images/Projectile_0";
+    public class ManaLeechStar : ModProjectile
+    {
+        public override string Texture => "Terraria/Images/Projectile_0";
 
-		private int timer;
-		public float scale = 1f;
+        private int timer;
+        public float scale = 1f;
 
-		public override void SetDefaults()
-		{
-			Projectile.scale = 1;
-			Projectile.width = 2;
-			Projectile.height = 2;
+        public override void SetDefaults()
+        {
+            Projectile.scale = 1;
+            Projectile.width = 2;
+            Projectile.height = 2;
 
-			Projectile.friendly = false;
-			Projectile.hostile = false;
+            Projectile.friendly = false;
+            Projectile.hostile = false;
 
-			Projectile.timeLeft = 300;
-			Projectile.penetrate = -1;
-			Projectile.tileCollide = false;
-			Projectile.ignoreWater = true;
+            Projectile.timeLeft = 300;
+            Projectile.penetrate = -1;
+            Projectile.tileCollide = false;
+            Projectile.ignoreWater = true;
 
-		}
-		public override bool? CanCutTiles() => false;
+        }
+        public override bool? CanCutTiles() => false;
 
-		public override bool? CanDamage() => false;
+        public override bool? CanDamage() => false;
 
         public override void AI()
-		{
-			//TODO: Very not multiplayer compatible
-			Player target = Main.player[Main.myPlayer];
+        {
+            //TODO: Very not multiplayer compatible
+            Player target = Main.player[Main.myPlayer];
 
-			if (timer > 20)
-			{
-				Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * (13f + (timer * 0.02f)), .3f);
+            if (timer > 20)
+            {
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(target.Center) * (13f + (timer * 0.02f)), .3f);
 
-				if (Projectile.Center.Distance(target.Center) < 30)
+                if (Projectile.Center.Distance(target.Center) < 30)
                 {
-					SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = 0.7f, Volume = 0.2f }, target.position);
-					target.statMana += 3;
-					target.ManaEffect(3);
-					Projectile.Kill();
+                    SoundEngine.PlaySound(SoundID.MaxMana with { Pitch = 0.7f, Volume = 0.2f }, target.position);
+                    target.statMana += 3;
+                    target.ManaEffect(3);
+                    Projectile.Kill();
                 }
-			}
-			else
-			{
-				Projectile.velocity *= 0.96f;
-			}
+            }
+            else
+            {
+                Projectile.velocity *= 0.96f;
+            }
 
-			scale = Math.Clamp(MathHelper.Lerp(scale, 1.25f, 0.08f), 0f, 1f);
+            scale = Math.Clamp(MathHelper.Lerp(scale, 1.25f, 0.08f), 0f, 1f);
 
-			if (Projectile.velocity.X > 0)
-				Projectile.rotation += 0.3f;
-			else
-				Projectile.rotation -= 0.3f;
-			timer++;
+            if (Projectile.velocity.X > 0)
+                Projectile.rotation += 0.3f;
+            else
+                Projectile.rotation -= 0.3f;
+            timer++;
 
-		}
+        }
 
 
-		public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D Star = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/Twinkle");
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D Star = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/Twinkle");
 
-			Color betweenBlueA = Color.Lerp(Color.DodgerBlue, Color.DeepSkyBlue, 0.5f);
+            Color betweenBlueA = Color.Lerp(Color.DodgerBlue, Color.DeepSkyBlue, 0.5f);
             Color betweenBlueB = Color.Lerp(Color.Blue, Color.DodgerBlue, 0.5f);
 
 
@@ -173,7 +174,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             float[] scales = { 1.15f, 1.6f, 2.5f };
 
             float orbAlpha = 2f;
-			float orbScale = 0.2f * Projectile.scale * scale;
+            float orbScale = 0.2f * Projectile.scale * scale;
             Vector2 orbOrigin = Star.Size() / 2f;
 
             float sineScale1 = 1f + (float)Math.Sin(Main.timeForVisualEffects * 0.07f) * 0.15f;
@@ -184,6 +185,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             Main.EntitySpriteDraw(Star, drawPos, null, cols[2] with { A = 0 } * orbAlpha, Projectile.rotation, orbOrigin, orbScale * scales[2] * sineScale2, SpriteEffects.None);
 
             return false;
-		}
-	}
+        }
+    }
 }

@@ -12,8 +12,8 @@ using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public class ExampleTrailProj : TrailProjBase
-	{
+    public class ExampleTrailProj : TrailProjBase
+    {
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetStaticDefaults()
         {
@@ -29,7 +29,7 @@ namespace AerovelenceMod.Content.Projectiles
             Projectile.timeLeft = 600;
             Projectile.penetrate = -1;
         }
- 
+
         public override void AI()
         {
             //Projectile.velocity.Y += 0.09f;
@@ -50,14 +50,14 @@ namespace AerovelenceMod.Content.Projectiles
             trailPointLimit = 400;
             trailWidth = 20;
             trailMaxLength = 600;
-            
+
 
             //MUST call TrailLogic AFTER assigning trailRot and trailPos
             trailRot = Projectile.velocity.ToRotation();
             trailPos = Projectile.Center;
             TrailLogic();
 
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)

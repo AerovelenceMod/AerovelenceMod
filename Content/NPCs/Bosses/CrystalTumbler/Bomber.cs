@@ -427,7 +427,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Vector2 trailPosition = NPC.oldPos[i] + NPC.Hitbox.Size() / 2f - Main.screenPosition + new Vector2(0f, NPC.gfxOffY);
                 spriteBatch.Draw(texture, trailPosition, NPC.frame, drawColor * opacity, NPC.oldRot[i], NPC.frame.Size() / 2f, NPC.scale * 1.1f, effects, 0f);
             }
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -629,7 +629,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 float glowScale = 0.7f + ExplosionTimer / 60f;
                 float glowAlpha = (float)Math.Sin(ExplosionTimer * 0.7f) * 0.9f + 0.5f;
 
-                Main.spriteBatch.Draw(glowTexture, drawPosition, null, Color.DodgerBlue * glowAlpha, 0f, glowTexture.Size() / 2f, glowScale, SpriteEffects.None,  0f);
+                Main.spriteBatch.Draw(glowTexture, drawPosition, null, Color.DodgerBlue * glowAlpha, 0f, glowTexture.Size() / 2f, glowScale, SpriteEffects.None, 0f);
             }
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);

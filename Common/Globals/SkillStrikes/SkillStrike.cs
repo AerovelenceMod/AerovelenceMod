@@ -17,12 +17,12 @@ using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 
 namespace AerovelenceMod.Common.Globals.SkillStrikes
 {
-	public class SkillStrikePlayer : ModPlayer
-	{
-		public float skillStrikeMultiplier = 1f;
+    public class SkillStrikePlayer : ModPlayer
+    {
+        public float skillStrikeMultiplier = 1f;
 
-		// When a skill strike is also a crit
-		public float superCritMultiplier = 1f;
+        // When a skill strike is also a crit
+        public float superCritMultiplier = 1f;
 
         // To activate OnSkillStrike effects
         public bool justSkillStriked = false;
@@ -40,7 +40,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
 
     public enum SkillStrikeImpactType
     {
-        Basic = 0, 
+        Basic = 0,
         Pixel = 1,
         PlaceHolder = 2,
     }
@@ -105,7 +105,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
             }
             else
             {
-                
+
                 //Do normal skill strike stuff
             }
 

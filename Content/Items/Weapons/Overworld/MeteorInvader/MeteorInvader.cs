@@ -28,7 +28,7 @@ public class MeteorInvader : ModItem
         ItemID.Sets.GamepadWholeScreenUseRange[Type] = true;
         ItemID.Sets.LockOnIgnoresCollision[Type] = true;
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = 32;
@@ -47,7 +47,7 @@ public class MeteorInvader : ModItem
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item44 with { Volume = .55f, Pitch = -.2f };
     }
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         Projectile fleet = MeteorInvaderFleet.Find(player.whoAmI);
@@ -72,14 +72,14 @@ public class MeteorInvader : ModItem
         }
         return false;
     }
-	
+
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.MeteoriteBar, 18).AddIngredient(ItemID.FallenStar, 3).AddTile(TileID.Anvils).Register();
 }
 
 public class MeteorInvaderBuff : ModBuff
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorInvader/MeteorInvaderBuff";
-	
+
     public override void SetStaticDefaults()
     {
         Main.buffNoSave[Type] = Main.buffNoTimeDisplay[Type] = true;
@@ -90,7 +90,7 @@ public class MeteorInvaderBuff : ModBuff
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Invasor meteórico", "es-ES");
         LocalizationManager.RegisterTranslation(Description.Key, "Llegan los invasores", "es-ES");
     }
-	
+
     public override void Update(Player player, ref int buffIndex)
     {
         if (!player.dead && player.ownedProjectileCounts[ModContent.ProjectileType<MeteorInvaderMinion>()] > 0) player.buffTime[buffIndex] = 18000;
@@ -127,14 +127,14 @@ public class MeteorInvaderFleet : ModProjectile
     private int highestRow;
     private int resetPause;
     public bool Attacking => Projectile.ai[0] > 0f && resetPause == 0;
-	
+
     public static Projectile Find(int owner)
     {
         foreach (Projectile projectile in Main.ActiveProjectiles)
             if (projectile.owner == owner && projectile.type == ModContent.ProjectileType<MeteorInvaderFleet>()) return projectile;
         return null;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 4;
@@ -142,25 +142,25 @@ public class MeteorInvaderFleet : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.netImportant = true;
     }
-	
+
     public override bool? CanDamage() => false;
     public override bool ShouldUpdatePosition() => false;
     public override bool PreDraw(ref Color lightColor) => false;
-	
+
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(anchor.X); writer.Write(anchor.Y);
         writer.Write(Pattern.Sweep); writer.Write(Pattern.Depth); writer.Write(Pattern.Direction); writer.Write(Pattern.Beat);
         writer.Write(resetPause);
     }
-	
+
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         anchor = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         Pattern.Sweep = reader.ReadSingle(); Pattern.Depth = reader.ReadSingle(); Pattern.Direction = reader.ReadInt32(); Pattern.Beat = reader.ReadInt32();
         resetPause = reader.ReadInt32();
     }
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -235,7 +235,7 @@ public class MeteorInvaderMinion : ModProjectile
     private int age;
     private float heat;
     private int marchFrame;
-	
+
     public override void SetStaticDefaults()
     {
         Main.projPet[Type] = true;
@@ -243,7 +243,7 @@ public class MeteorInvaderMinion : ModProjectile
         ProjectileID.Sets.MinionTargettingFeature[Type] = true;
         ProjectileID.Sets.CultistIsResistantTo[Type] = true;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = 26;
@@ -258,10 +258,10 @@ public class MeteorInvaderMinion : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.netImportant = true;
     }
-	
+
     public override bool? CanDamage() => false;
     public override bool ShouldUpdatePosition() => false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -298,13 +298,13 @@ public class MeteorInvaderMinion : ModProjectile
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Bottom, Vector2.UnitY * 9f, ModContent.ProjectileType<MeteorInvaderLaser>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
         }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         MeteorInvaderArt.DrawInvader(Projectile.Center - Main.screenPosition, (int)Projectile.ai[1] / 3 % 3, marchFrame, 1f, Math.Min(1f, age / 20f), heat >= .75f);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 12; i++) MeteorInvaderArt.Spark(Projectile.Center, Main.rand.NextVector2Circular(3f, 3f), heat >= .75f);
@@ -315,7 +315,7 @@ public class MeteorInvaderLaser : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Assets/Pixel/CrispStarPMA";
     public override void SetStaticDefaults() => ProjectileID.Sets.MinionShot[Type] = true;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = 8;
@@ -327,9 +327,9 @@ public class MeteorInvaderLaser : ModProjectile
         Projectile.extraUpdates = 1;
         Projectile.timeLeft = 80;
     }
-	
+
     public override bool? CanDamage() => false;
-	
+
     public override void AI()
     {
         if (Projectile.timeLeft == 80) SoundEngine.PlaySound(SoundID.Item12 with { Volume = .25f, Pitch = .35f }, Projectile.Center);
@@ -338,7 +338,7 @@ public class MeteorInvaderLaser : ModProjectile
             foreach (NPC npc in Main.ActiveNPCs)
                 if (npc.CanBeChasedBy() && npc.Hitbox.Intersects(Projectile.Hitbox)) { Projectile.Kill(); return; }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Vector2 center = Projectile.Center - Main.screenPosition;
@@ -347,7 +347,7 @@ public class MeteorInvaderLaser : ModProjectile
         MeteorInvaderArt.Line(center - Vector2.UnitY * 22f, center + Vector2.UnitY * 5f, new Color(255, 220, 120, 0) * fade, 3f);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         if (Projectile.owner == Main.myPlayer && timeLeft > 0)
@@ -361,7 +361,7 @@ public class MeteorInvaderBlast : ModProjectile
     public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
     public override void SetStaticDefaults() => ProjectileID.Sets.MinionShot[Type] = true;
     public static float BlastRadius(bool sacrifice) => sacrifice ? 68f : 28f;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 140;
@@ -374,14 +374,14 @@ public class MeteorInvaderBlast : ModProjectile
         Projectile.localNPCHitCooldown = -1;
     }
     public override bool? CanDamage() => Projectile.timeLeft >= 17 ? null : false;
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float radius = BlastRadius(Projectile.ai[0] == 1f);
         Vector2 closest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
         return Vector2.DistanceSquared(Projectile.Center, closest) <= radius * radius && Collision.CanHitLine(Projectile.Center, 1, 1, closest, 1, 1);
     }
-	
+
     public override void AI()
     {
         bool sacrifice = Projectile.ai[0] == 1f;
@@ -392,12 +392,12 @@ public class MeteorInvaderBlast : ModProjectile
         }
         Lighting.AddLight(Projectile.Center, new Vector3(.8f, .35f, .05f) * (Projectile.timeLeft / 22f));
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         if (Projectile.ai[0] == 1f) SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, 1, .5f, .8f);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float progress = 1f - Projectile.timeLeft / 22f;
@@ -421,7 +421,7 @@ public class MeteorInvaderBlast : ModProjectile
 internal static class MeteorInvaderArt
 {
     private const string InvaderTexture = "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorInvader/MeteorInvaderInvaders";
-	
+
     private static Texture2D cachedTexture;
     private static Color[] cachedPixels;
     private static int cachedWidth;
@@ -448,7 +448,7 @@ internal static class MeteorInvaderArt
                 Main.EntitySpriteDraw(pixel, position, new Rectangle(0, 0, 1, 1), glow * (.4f * fade), 0f, new Vector2(.5f), new Vector2(2f * scale), SpriteEffects.None);
             }
     }
-	
+
 
     private static void CachePixels(Texture2D texture)
     {
@@ -485,7 +485,7 @@ internal static class MeteorInvaderArt
         Vector2 delta = end - start;
         Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, start, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0f, .5f), new Vector2(delta.Length() + 1f, width), SpriteEffects.None);
     }
-	
+
 
     internal static void Spark(Vector2 position, Vector2 velocity, bool golden)
     {

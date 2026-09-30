@@ -57,7 +57,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (Projectile.frame >= 4)
                     Projectile.frame = 0;
             }
-            if (Projectile.localAI[1] == 0f) 
+            if (Projectile.localAI[1] == 0f)
                 Projectile.localAI[1] = 1f;
 
             if (Projectile.ai[0] < 180f)
@@ -196,7 +196,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             Projectile parent = Main.projectile[(int)Projectile.ai[0]];
             if (!parent.active || parent.type != ModContent.ProjectileType<TumblerOrb>())
-parentDied = true;
+                parentDied = true;
             if (!parentDied)
             {
                 Projectile.Center = parent.Center;
@@ -221,7 +221,7 @@ parentDied = true;
             if (timer < 38)
 
                 CreateContinualDust();
-            
+
 
             Projectile.rotation += 0.12f;
             timer++;

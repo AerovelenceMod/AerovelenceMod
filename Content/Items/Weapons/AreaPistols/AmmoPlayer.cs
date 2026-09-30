@@ -13,8 +13,8 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 {
-	public class AmmoPlayer : ModPlayer
-	{
+    public class AmmoPlayer : ModPlayer
+    {
         //Want to keep ammo in a player so it is synced between instances of a weapon
         //I don't want people to just have 20 of the weapon to overcome its downside
 

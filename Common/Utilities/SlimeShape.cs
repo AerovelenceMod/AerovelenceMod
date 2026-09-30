@@ -158,5 +158,5 @@ namespace AerovelenceMod.Common.Utilities
             return tendril.TipExtension > 1f && extensionWidth > 0f && Collision.CheckAABBvLineCollision(target.TopLeft(), target.Size(), previous, position + tendril.ExtendedTip, extensionWidth, ref extensionHit);
         }
     }
-	
+
 }

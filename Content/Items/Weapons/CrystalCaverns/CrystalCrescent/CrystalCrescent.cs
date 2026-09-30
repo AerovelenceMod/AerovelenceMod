@@ -202,8 +202,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.immune[Main.player[Projectile.owner].whoAmI] = 10;
-            SoundEngine.PlaySound(SoundID.NPCHit53 with { Volume = 0.2f, Pitch = 0.1f, PitchVariance = 0.4f});
-            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.20f, Pitch = -0.25f, PitchVariance = 0.4f});
+            SoundEngine.PlaySound(SoundID.NPCHit53 with { Volume = 0.2f, Pitch = 0.1f, PitchVariance = 0.4f });
+            SoundEngine.PlaySound(SoundID.Shatter with { Volume = 0.20f, Pitch = -0.25f, PitchVariance = 0.4f });
 
             float currentShakePower = Main.player[Projectile.owner].GetModPlayer<AeroPlayer>().ScreenShakePower;
             Main.player[Projectile.owner].GetModPlayer<AeroPlayer>().ScreenShakePower = currentShakePower > 1 ? Math.Clamp(currentShakePower, 3, 8) : 8;

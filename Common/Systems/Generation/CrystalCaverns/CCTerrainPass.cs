@@ -81,7 +81,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         private ushort[] ReplaceWithBrickTiles { get; set; }
         private ushort[] SurfaceOres { get; set; }
 
-        private ushort[] ClearTiles {  get; set; }
+        private ushort[] ClearTiles { get; set; }
 
         private ushort[] ReplaceWithStoneWallsSurface { get; set; }
         private ushort[] ReplaceWithBrickWalls { get; set; }
@@ -115,7 +115,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         }
 
         public static CCTerrainPass Instance(string name, float loadWeight)
-        { 
+        {
             if (_instance == null)
             {
                 lock (_lock)
@@ -129,10 +129,10 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             return _instance;
         }
 
-        public CCTerrainPass(string name, float loadWeight) : base(name, loadWeight) {}
+        public CCTerrainPass(string name, float loadWeight) : base(name, loadWeight) { }
 
-		protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
-		{
+        protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
+        {
             //TODO: localize
             //progress.Message = WorldGenSystem.CrystalCavernsTerrainPassMessage.Value; 
             progress.Message = "Generating the Crystal Caverns";
@@ -146,7 +146,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             LowerUndergroundHeight = (int)(100 * WorldSizeScale);
             UndergroundHeight = UpperUndergroundHeight + LowerUndergroundHeight;
             BiomeHeight = UndergroundHeight + SurfaceHeight;
-            
+
             GrassTile = (ushort)ModContent.TileType<CrystalGrassTile>();
             DirtTile = (ushort)ModContent.TileType<CrystalDirtTile>();
             StoneTile = (ushort)ModContent.TileType<CavernStoneTile>();
@@ -158,7 +158,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             DirtWall = (ushort)ModContent.WallType<CavernDirtWallUnsafe>();
             StoneWall = (ushort)ModContent.WallType<CavernStoneWallUnsafe>();
             BrickWall = (ushort)ModContent.WallType<CitadelBrickWall>();
-            GrassWall = (ushort)ModContent.WallType <CrystalGrassWall>();
+            GrassWall = (ushort)ModContent.WallType<CrystalGrassWall>();
             LushWall = (ushort)ModContent.WallType<LushGrowthWall>();
             LivingWoodTile = TileID.LivingWood;
             LivingLeafTile = TileID.LeafBlock;
@@ -490,7 +490,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 WorldUtils.Gen(lowerUndergroundOrigin, new ModShapes.All(lushBiomeLowerOrigins), Actions.Chain(new GenAction[]
                 {
                     new Modifiers.Offset(
-                        WorldGen.genRand.Next(-lushBiomeSize, lushBiomeSize + 1), 
+                        WorldGen.genRand.Next(-lushBiomeSize, lushBiomeSize + 1),
                         WorldGen.genRand.Next(-lushBiomeSize, lushBiomeSize + 1)),
                     new AeroGenUtils.PlaceBlob(LushTile, 9, 9, [new Modifiers.OnlyTiles(StoneTile, DirtTile, SandTile, ChargedTile), new Modifiers.IsTouchingAir(true)]),
                     new AeroGenUtils.PlaceBlobWall(LushWall, 9, 9, [new Modifiers.OnlyWalls(StoneWall)]),
@@ -558,7 +558,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 new Modifiers.OnlyTiles(GrassTile, DirtTile, SandTile, StoneTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 6, new Vector2D(0, -20), 0, 4, 3)
             }));
-         
+
             // Underground crystal growths
             WorldUtils.Gen(upperUndergroundOrigin, upperUndergroundShape, Actions.Chain(new GenAction[]
             {
@@ -646,11 +646,11 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 )
             );
 
-                UpperUnderground = upperUndergroundShapeData;
-                LowerUnderground = lowerUndergroundShapeData;
-                TotalUnderground = totalUndergroundShapeData;
-                TotalSurface = surfaceShapeData;
-                TotalBiome = totalBiomeShapeData;
+            UpperUnderground = upperUndergroundShapeData;
+            LowerUnderground = lowerUndergroundShapeData;
+            TotalUnderground = totalUndergroundShapeData;
+            TotalSurface = surfaceShapeData;
+            TotalBiome = totalBiomeShapeData;
         }
 
         public ushort UndergroundMaterial(ushort tile)
@@ -786,13 +786,13 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             Point[] surfacePoints = new Point[5];
             Point surfacePoint = Point.Zero;
             for (int attempts = 0; attempts < 10000; attempts++)
-			{
+            {
                 int x = WorldGen.genRand.Next((int)(500 * WorldSizeScale), Main.maxTilesX - (int)(500 * WorldSizeScale));
                 // Don't place on the spawn point
-				while (Main.maxTilesX * .4 < x && x < Main.maxTilesX * .6)
-				{
-					x = WorldGen.genRand.Next((int)(500 * WorldSizeScale), Main.maxTilesX - (int)(500 * WorldSizeScale));
-				}
+                while (Main.maxTilesX * .4 < x && x < Main.maxTilesX * .6)
+                {
+                    x = WorldGen.genRand.Next((int)(500 * WorldSizeScale), Main.maxTilesX - (int)(500 * WorldSizeScale));
+                }
 
                 Point initialPoint = new Point(x, (int)Main.worldSurface);
 
@@ -870,10 +870,10 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             return surfacePoint;
         }
 
-		private int CheckPoint(int xOffset, Point surfacePoint) 
-		{
+        private int CheckPoint(int xOffset, Point surfacePoint)
+        {
             int strikes = 0;
-			Point point = new Point(surfacePoint.X + xOffset, surfacePoint.Y);
+            Point point = new Point(surfacePoint.X + xOffset, surfacePoint.Y);
             //surfacePoint argument means only the central point is taken into consideration, while point means all three are
             if (WorldUtils.Find(point, Searches.Chain(new Searches.Down(UndergroundHeight + SurfaceDepth), new Conditions.IsTile(
                 TileID.Crimstone,
@@ -902,12 +902,12 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         }
 
         private int DetermineOriginY(int biomeWidth, Point surfacePoint)
-		{
-			int xOffset = (int)(.5 * biomeWidth);
+        {
+            int xOffset = (int)(.5 * biomeWidth);
             Point leftPoint = new Point(surfacePoint.X - xOffset, (int)Main.worldSurface);
             Point rightPoint = new Point(surfacePoint.X + xOffset, (int)Main.worldSurface);
             for (int attempts = -4; attempts < 6; attempts += 2) // This for loop is meant to solve corruption chasms dragging the average very far down
-			{
+            {
                 WorldUtils.Find(leftPoint, Searches.Chain(new Searches.Up(1000), new TerrainWithoutLivingTrees().AreaOr(1, 25).Not()), out leftPoint);
                 leftPoint.Y += 25; // Adjust result to point to surface, not 50 tiles above 
 

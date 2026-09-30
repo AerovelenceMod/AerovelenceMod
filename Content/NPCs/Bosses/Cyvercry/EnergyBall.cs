@@ -145,7 +145,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                 crp.pixel = true;
                 crp.forRoar = false;
             }
-            
+
         }
 
         public override bool PreDraw(ref Color lightColor)
@@ -156,7 +156,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
             //trail1.TrailDrawing(Main.spriteBatch);
             //trail2.TrailDrawing(Main.spriteBatch);
             //return false;
-            
+
             trail1.TrailDrawing(Main.spriteBatch);
             trail1.trailColor = Color.White;
             trail1.trailWidth = 11;

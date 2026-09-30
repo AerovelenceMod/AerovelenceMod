@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
             AddMapEntry(new Color(061, 079, 110));
             TileID.Sets.IsBeam[Type] = true;
             DustType = 59;
-			HitSound = SoundID.Dig;
+            HitSound = SoundID.Dig;
         }
 
         public class GlimmerwoodBeamItem : ModItem

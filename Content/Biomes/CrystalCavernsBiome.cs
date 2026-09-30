@@ -13,9 +13,9 @@ namespace AerovelenceMod.Content.Biomes
     public class CrystalCavernsBiome : ModBiome
     {
         public override ModWaterStyle WaterStyle => ModContent.Find<ModWaterStyle>("AerovelenceMod/CrystalCavernsWaterStyle");
-		//public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("AerovelenceMod/CrystalCavernsBgStyle");
+        //public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.Find<ModUndergroundBackgroundStyle>("AerovelenceMod/CrystalCavernsBgStyle");
         public override ModUndergroundBackgroundStyle UndergroundBackgroundStyle => ModContent.GetInstance<CrystalCavernsConceptBackgroundStyle>();
-		//uncomment the above and comment the previous line to see the new open background
+        //uncomment the above and comment the previous line to see the new open background
         public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Mushroom;
 
         public override int Music => MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalCaverns");
@@ -28,7 +28,7 @@ namespace AerovelenceMod.Content.Biomes
         public override string MapBackground => "AerovelenceMod/Backgrounds/CrystalCaverns/CrystalCavernsMapBg";
 
         public override int BiomeTorchItemType => ModContent.ItemType<CrystalTorchItem>();
-		public override int BiomeCampfireItemType => ModContent.ItemType<CrystalCampfireItem>();
+        public override int BiomeCampfireItemType => ModContent.ItemType<CrystalCampfireItem>();
 
         public override void SetStaticDefaults()
         {

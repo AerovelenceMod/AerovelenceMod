@@ -12,7 +12,7 @@ namespace AerovelenceMod.Content.Items.TreasureBags
     {
         public static int[] Weapons => new[] { ModContent.ItemType<Geomagnetic>(), ModContent.ItemType<FenceSitter>(), ModContent.ItemType<TumblerAccelerator>(), ModContent.ItemType<ConductorWand>(), ModContent.ItemType<DarkCrystalStaff>(), ModContent.ItemType<Staticstring>(), ModContent.ItemType<Weapons.BossDrops.CrystalTumbler.Rubbleswarm.Rubbleswarm>(), ModContent.ItemType<BatteryBackpack>() };
         private const string Description = "Right click to open";
-		
+
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Treasure Bag (Crystal Tumbler)", Description);

@@ -1,4 +1,5 @@
 using Terraria.Enums;
+using AerovelenceMod.Common.Systems.Language;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 using Terraria;
@@ -125,7 +126,12 @@ namespace AerovelenceMod.Content.Tiles.Banners
     public class BabyJellyBanner : BaseBannerItem { public BabyJellyBanner() : base(EnemyBanners.StyleID.BabyJelly) { } }
     public class CrystalWormBanner : BaseBannerItem { public CrystalWormBanner() : base(EnemyBanners.StyleID.CrystalWorm) { } }
     public class CrystalBatBanner : BaseBannerItem { public CrystalBatBanner() : base(EnemyBanners.StyleID.CrystalBat) { } }
-    public class SapperBanner : BaseBannerItem { public SapperBanner() : base(EnemyBanners.StyleID.Sapper) { } }
+    public class SapperBanner : BaseBannerItem
+    {
+        public SapperBanner() : base(EnemyBanners.StyleID.Sapper) { }
+
+        public override void SetStaticDefaults() => this.ModifyLocalization("Sapper Banner");
+    }
     public class MiniTumblerBanner : BaseBannerItem { public MiniTumblerBanner() : base(EnemyBanners.StyleID.MiniTumbler) { } }
     public class CondurtleBanner : BaseBannerItem { public CondurtleBanner() : base(EnemyBanners.StyleID.Condurtle) { } }
     public class DredgerBanner : BaseBannerItem { public DredgerBanner() : base(EnemyBanners.StyleID.Dredger) { } }

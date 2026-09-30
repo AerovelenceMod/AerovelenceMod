@@ -52,7 +52,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public override bool? CanCutTiles() => false;
 
         float muzzlewidth = 1f;
-        public override void AI() 
+        public override void AI()
         {
             Player Player = Main.player[Projectile.owner];
 
@@ -101,7 +101,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             {
                 if (hasReachedDestination == false)
                     lerpToStuff = Math.Clamp(MathHelper.Lerp(lerpToStuff, 1f, 0.24f), 0, 0.4f);
-                else 
+                else
                     lerpToStuff = Math.Clamp(MathHelper.Lerp(lerpToStuff, -0.2f, 0.06f), 0, 0.4f);
 
                 if (lerpToStuff == 0.4f)
@@ -123,7 +123,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
 
             Projectile.rotation = direction.ToRotation();
 
-            if (maxTime == 87) OFFSET = 10f; 
+            if (maxTime == 87) OFFSET = 10f;
             OFFSET = Math.Clamp(MathHelper.Lerp(OFFSET, 17f, 0.07f), 0, 15);
 
             muzzlewidth = MathHelper.Lerp(muzzlewidth, 0, 0.04f);
@@ -173,7 +173,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
                 myEffect.CurrentTechnique.Passes[0].Apply();
 
 
-                Main.spriteBatch.Draw(texture2, new Vector2(0,5 * Player.direction * -1).RotatedBy(direction.ToRotation()) + position + direction * 38, texture2.Frame(1, 1, 0, 0), Color.Red, direction.ToRotation() + MathHelper.Pi / 2, 
+                Main.spriteBatch.Draw(texture2, new Vector2(0, 5 * Player.direction * -1).RotatedBy(direction.ToRotation()) + position + direction * 38, texture2.Frame(1, 1, 0, 0), Color.Red, direction.ToRotation() + MathHelper.Pi / 2,
                     texture2.Size() / 2, new Vector2(0.1f * muzzlewidth, 0.1f), flipMuzzle ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 
                 Main.spriteBatch.End();
@@ -183,7 +183,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             }
-            
+
 
 
             return false;

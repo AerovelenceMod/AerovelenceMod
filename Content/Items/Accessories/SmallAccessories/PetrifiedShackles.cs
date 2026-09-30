@@ -95,7 +95,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             VisualOpacity = MathHelper.Lerp(VisualOpacity, Equipped && Visible ? 1f : 0f, 0.12f);
             GrowthFlash *= 0.9f;
         }
-        
+
     }
 
     internal sealed class PetrifiedShacklesCrystallizationGrowth

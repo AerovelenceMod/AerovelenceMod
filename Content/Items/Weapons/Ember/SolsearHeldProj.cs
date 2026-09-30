@@ -53,7 +53,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public override bool? CanDamage() => false;
         public override bool? CanCutTiles() => false;
 
-        public override void AI() 
+        public override void AI()
         {
             Player Player = Main.player[Projectile.owner];
 
@@ -63,7 +63,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             Vector2 exhaustLocation;
             if (Player.direction == 1)
-                exhaustLocation = new Vector2(-18 + Main.rand.NextFloat(-2,3), -16).RotatedBy(Projectile.rotation) + Player.Center;
+                exhaustLocation = new Vector2(-18 + Main.rand.NextFloat(-2, 3), -16).RotatedBy(Projectile.rotation) + Player.Center;
             else
                 exhaustLocation = new Vector2(-18 + Main.rand.NextFloat(-2, 3), 16).RotatedBy(Projectile.rotation) + Player.Center;
 
@@ -75,14 +75,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 if (!Main.rand.NextBool(3))
                 {
                     Dust m = GlowDustHelper.DrawGlowDustPerfect(exhaustLocation, ModContent.DustType<GlowCircleRise>(),
-                        (new Vector2(0,-2 * Player.direction).RotatedBy(Main.rand.NextFloat(-0.5f,0.5f))).RotatedBy(Projectile.rotation), Color.Gray * 0.7f, Main.rand.NextFloat(0.3f, 0.5f), 0.8f, 0f, dustShader);
+                        (new Vector2(0, -2 * Player.direction).RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f))).RotatedBy(Projectile.rotation), Color.Gray * 0.7f, Main.rand.NextFloat(0.3f, 0.5f), 0.8f, 0f, dustShader);
                 }
                 else
                 {
                     Dust p = GlowDustHelper.DrawGlowDustPerfect(exhaustLocation, ModContent.DustType<GlowCircleRiseFlare>(),
                         (new Vector2(0, -2 * Player.direction).RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f))).RotatedBy(Projectile.rotation), Color.OrangeRed, Main.rand.NextFloat(0.3f, 0.5f), 0.4f, 0f, dustShader2);
                 }
-                
+
             }
 
             if (timer == 0)
@@ -94,8 +94,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 2;
-            Player.itemTime = 2; 
-            Player.itemAnimation = 2; 
+            Player.itemTime = 2;
+            Player.itemAnimation = 2;
 
             if (Player.channel)
             {

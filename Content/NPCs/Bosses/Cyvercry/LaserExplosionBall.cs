@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                     int damage = (cyver.ModNPC as Cyvercry).GetDamage("BallDash");
 
                     int proj = 0;
-                    if (aimToPlayer) 
+                    if (aimToPlayer)
                         proj = Projectile.NewProjectile(entitySource, Projectile.Center, toPlayer.RotatedBy(MathHelper.ToRadians(i) + rotationOffset) * vel, projType, damage, 0);
                     else
                         proj = Projectile.NewProjectile(entitySource, Projectile.Center, new Vector2(vel, 0).RotatedBy(MathHelper.ToRadians(i) + rotationOffset), projType, damage, 0);
@@ -108,7 +108,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                     {
                         Main.projectile[proj].timeLeft = stretchLaserTimeLeft;
                         laser.accelerateTime = stretchLaserAccelTime;
-                        laser.accelerateStrength = stretchLaserAccelStrength;                    
+                        laser.accelerateStrength = stretchLaserAccelStrength;
                     }
 
                     if (projTimeLeft > 0)

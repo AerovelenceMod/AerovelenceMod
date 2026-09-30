@@ -18,7 +18,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Prismatic Soul", "Doubles health restored from healing potions\nVastly reduces Potion Sickness duration\nHealing potions now take 5 seconds to consume, preventing movement\nGetting hit cancels your heal\nDisables natural life regen");
-            
+
             Main.RegisterItemAnimation(Item.type, new DrawAnimationVertical(5, 7));
             ItemID.Sets.ItemNoGravity[Item.type] = true;
 
@@ -34,14 +34,14 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
         }
 
         public override Color? GetAlpha(Color lightColor) => Color.White;
-        
+
         public override void UpdateAccessory(Player player, bool hideVisual)
         {
             if (player.lifeRegen < 0)
             {
                 player.lifeRegen = 0;
             }
-			player.lifeRegenTime = 0;
+            player.lifeRegenTime = 0;
             player.GetModPlayer<PrismaticSoulPlayer>().prismaticSoul = true;
         }
     }
@@ -91,16 +91,16 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
     }
 
     public class PrismaticSoulBuff : ModBuff
-	{
+    {
         public override string Texture => "AerovelenceMod/Content/Items/Pets/FriendOfTheCaverns";
-        
+
         public int Duration;
 
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
-			Main.debuff[Type] = true;
-			BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
-		}
+            Main.debuff[Type] = true;
+            BuffID.Sets.NurseCannotRemoveDebuff[Type] = true;
+        }
 
         public override void Update(Player player, ref int buffIndex)
         {
@@ -115,12 +115,12 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
                 player.velocity.Y = 0;
             }
 
-			if (player.ownedProjectileCounts[ModContent.ProjectileType<PrismaticSoulVFX>()] <= 0 && player.whoAmI == Main.myPlayer)
-			{
+            if (player.ownedProjectileCounts[ModContent.ProjectileType<PrismaticSoulVFX>()] <= 0 && player.whoAmI == Main.myPlayer)
+            {
                 Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<PrismaticSoulVFX>(), 0, 0, player.whoAmI);
             }
 
-			Duration++;
+            Duration++;
             if (Duration > 299)
             {
                 SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/energyClick"), player.Center);
@@ -128,8 +128,8 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
                 ItemLoader.GetHealLife(item, player, false, ref heal);
                 Duration = 0;
             }
-		}
-	}
+        }
+    }
 
     public class PrismaticSoulVFX : ModProjectile
     {
@@ -168,7 +168,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
             auraSize--;
             if (auraSize >= 100)
             {
-				var tracker = new ProjectileAudioTracker(Projectile);
+                var tracker = new ProjectileAudioTracker(Projectile);
                 SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/SwooshySwoosh"), Projectile.position, soundInstance => tracker.IsActiveAndInGame());
             }
             if (auraSize <= 0)

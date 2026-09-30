@@ -336,7 +336,7 @@ namespace AerovelenceMod.Common.Utilities
             int chest = Chest.FindChest(left, top);
             player.cursorItemIconID = -1;
             if (chest < 0)
-                player.cursorItemIconText =Terraria.Localization.Language.GetTextValue("LegacyChestType.0");
+                player.cursorItemIconText = Terraria.Localization.Language.GetTextValue("LegacyChestType.0");
             else
             {
                 string defaultName = TileLoader.DefaultContainerName(tile.TileType, tile.TileFrameX, tile.TileFrameY);
@@ -366,7 +366,7 @@ namespace AerovelenceMod.Common.Utilities
             int chestIndex = Chest.FindChest(left, top);
             player.cursorItemIconID = -1;
             if (chestIndex < 0)
-                player.cursorItemIconText =Terraria.Localization.Language.GetTextValue("LegacyDresserType.0");
+                player.cursorItemIconText = Terraria.Localization.Language.GetTextValue("LegacyDresserType.0");
             else
             {
                 string defaultName = TileLoader.DefaultContainerName(tile.TileType, tile.TileFrameX, tile.TileFrameY);

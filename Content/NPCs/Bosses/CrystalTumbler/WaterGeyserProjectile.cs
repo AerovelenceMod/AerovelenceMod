@@ -64,7 +64,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             float fadeFactor = (float)Projectile.timeLeft / fadeOutTimer;
             fadeFactor *= 1.1f;
             if (fadingOut)
-            {   
+            {
                 Main.NewText(fadeFactor);
                 trail1.trailColor *= fadeFactor;
                 trail2.trailColor *= fadeFactor;

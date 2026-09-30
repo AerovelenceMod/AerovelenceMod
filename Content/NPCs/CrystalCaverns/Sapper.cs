@@ -1,4 +1,6 @@
 using AerovelenceMod.Content.Biomes;
+using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Utilities;
@@ -14,7 +15,7 @@ using Terraria.WorldBuilding;
 
 namespace AerovelenceMod.Content.NPCs.CrystalCaverns
 {
-    public class Sapper : ModNPC
+    public class Sapper : TranslatableModNPC
     {
         private const int VINE_WIDTH = 22;
         private const int VINE_HEIGHT = 32;
@@ -39,6 +40,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         [Obsolete]
         public override void SetStaticDefaults()
         {
+            this.ModifyLocalization("Sapper", "A flower-like creature that sways with the currents of the Crystal Caverns. Its benign appearance belies its aggressive nature.");
             Main.npcFrameCount[Type] = 1;
             NPCID.Sets.NPCBestiaryDrawModifiers value = new NPCID.Sets.NPCBestiaryDrawModifiers(0)
             {
@@ -68,13 +70,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             // BannerItem = Item.BannerToItem(Banner);
 
             SpawnModBiomes = new int[] { ModContent.GetInstance<CrystalCavernsBiome>().Type };
-        }
-
-        public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
-        {
-            bestiaryEntry.Info.AddRange(new List<IBestiaryInfoElement> {
-                new FlavorTextBestiaryInfoElement("A flower-like creature that sways with the currents of the Crystal Caverns. Its benign appearance belies its aggressive nature.")
-            });
         }
 
         public override float SpawnChance(NPCSpawnInfo spawnInfo)
@@ -212,59 +207,29 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         private void HandleSapperBehavior()
         {
             attackTimer--;
+            if (target != null && attackTimer > 0 && attackTimer < 24 && !Main.dedServ && Main.rand.NextBool(3))
+            {
+                Vector2 offset = Main.rand.NextVector2CircularEdge(20f, 20f);
+                Dust dust = Dust.NewDustPerfect(NPC.Center + offset, DustID.GemSapphire, -offset * 0.07f, 120, new Color(55, 155, 255), 0.7f);
+                dust.noGravity = true;
+            }
             if (target != null && attackTimer <= 0)
             {
-                bool canSeePlayer = CheckLineOfSight();
-
-                if (canSeePlayer)
-                {
-                    ShootCrystalShard();
-                }
-                else
-                {
+                if (Main.netMode != NetmodeID.MultiplayerClient)
                     ShootGasClouds();
-                }
                 attackTimer = ATTACK_COOLDOWN + Main.rand.Next(-10, 11);
             }
         }
 
-        private bool CheckLineOfSight()
-        {
-            if (target == null) return false;
-            Vector2 flowerDirection = new(-(float)Math.Sin(NPC.rotation), (float)Math.Cos(NPC.rotation));
-            flowerDirection.Normalize();
-            Vector2 playerDirection = target.Center - NPC.Center;
-            float distanceToPlayer = playerDirection.Length();
-            playerDirection.Normalize();
-            float dotProduct = Vector2.Dot(flowerDirection, playerDirection);
-            bool playerInFrontOfFlower = dotProduct > 0.7f;
-            if (playerInFrontOfFlower)
-                return Collision.CanHitLine(NPC.Center, 1, 1, target.Center, 1, 1);
-
-            return false;
-        }
-
-        private void ShootCrystalShard()
-        {
-            Vector2 direction = new(-(float)Math.Sin(NPC.rotation), (float)Math.Cos(NPC.rotation));
-            direction.Normalize();
-            int projType = ModContent.ProjectileType<CrystalShard>();
-            int damage = NPC.damage / 2;
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, direction * 8f, projType, damage, 1f, Main.myPlayer);
-        }
-
         private void ShootGasClouds()
         {
-            int gasType = ModContent.ProjectileType<SapperGasCloud>();
-            Vector2 baseDirection = new(-(float)Math.Sin(NPC.rotation), (float)Math.Cos(NPC.rotation));
-            baseDirection.Normalize();
-            for (int i = 0; i < 5; i++)
+            Vector2 baseDirection = (target.Center - NPC.Center).SafeNormalize(Vector2.UnitY);
+            GasSettings settings = GasSettings.For(GasKind.Sapfog) with { Hostile = true };
+            for (int i = 0; i < 7; i++)
             {
-                float spreadAngle = MathHelper.ToRadians(-30 + (i * 15));
+                float spreadAngle = MathHelper.ToRadians(-32 + i * 10.67f);
                 Vector2 spreadDirection = baseDirection.RotatedBy(spreadAngle);
-                Vector2 velocity = spreadDirection * Main.rand.NextFloat(4f, 6f);
-                int damage = NPC.damage / 3;
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center, velocity, gasType, damage, 0.5f, Main.myPlayer);
+                GasUtil.Emit(NPC.GetSource_FromAI(), NPC.Center + baseDirection * 10f, spreadDirection * Main.rand.NextFloat(4f, 6f), settings, Math.Max(5, NPC.damage / 3));
             }
         }
 
@@ -342,83 +307,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             currentPosition = position;
             oldPosition = position;
             isFixed = false;
-        }
-    }
-    
-    public class SapperGasCloud : ModProjectile
-    {
-        public override string Texture => "Terraria/Images/Projectile_0";
-
-        private float rotationSpeed;
-        private float scale = 0.15f;
-        private float maxScale = 0.3f;
-        private float alpha = 0.6f;
-        private Vector2 initialPosition;
-
-        public override void SetDefaults()
-        {
-            Projectile.width = 32;
-            Projectile.height = 32;
-            Projectile.hostile = true;
-            Projectile.friendly = false;
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-            Projectile.penetrate = -1;
-            Projectile.timeLeft = 180;
-            Projectile.alpha = 100;
-            Projectile.light = 0.1f;
-            Projectile.aiStyle = -1;
-            Projectile.scale = scale;
-            Projectile.damage = 5;
-        }
-
-        public override void AI()
-        {
-            if (Projectile.localAI[0] == 0)
-            {
-                Projectile.localAI[0] = 1;
-                rotationSpeed = Main.rand.NextFloat(-0.03f, 0.03f);
-                initialPosition = Projectile.position;
-                maxScale = Main.rand.NextFloat(0.25f, 0.35f);
-                Projectile.velocity += new Vector2(
-                    Main.rand.NextFloat(-0.5f, 0.5f),
-                    Main.rand.NextFloat(-0.5f, 0.5f)
-                );
-            }
-            Projectile.velocity *= 0.98f;
-            Projectile.rotation += rotationSpeed;
-            if (Projectile.timeLeft > 90)
-            {
-                scale = MathHelper.Lerp(scale, maxScale, 0.03f);
-            }
-            else
-            {
-                scale = MathHelper.Lerp(scale, 0.1f, 0.02f);
-                alpha = MathHelper.Lerp(alpha, 0f, 0.02f);
-            }
-
-            Projectile.scale = scale;
-            if (Main.rand.NextBool(10))
-            {
-                Vector2 dustPos = Projectile.Center + new Vector2(Main.rand.NextFloat(-15, 15), Main.rand.NextFloat(-15, 15));
-                int dustIndex = Dust.NewDust(dustPos, 1, 1, DustID.BlueCrystalShard, 0f, 0f, 0, default, 0.5f);
-                Main.dust[dustIndex].noGravity = true;
-                Main.dust[dustIndex].velocity *= 0.3f;
-            }
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Smoke/Smoke1Enhanced").Value;
-            Vector2 drawPosition = Projectile.Center - Main.screenPosition;
-            Vector2 origin = texture.Size() / 2f;
-            Color tintColor = new(100, 170, 255, (int)(255 * alpha));
-            Main.spriteBatch.Draw(texture, drawPosition, null, tintColor, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.LinearClamp, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-            return false;
         }
     }
 }
