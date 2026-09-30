@@ -198,7 +198,7 @@ namespace AerovelenceMod.Content.Items
                     newColor: Color.HotPink, Scale: Main.rand.NextFloat(0.45f, 0.65f) * 0.45f);
                 p.velocity += velocity * (1.45f + Main.rand.NextFloat(-0.1f, -0.2f));
 
-                p.customData = AssignBehavior_LSBase(velFadePower: 0.88f, preShrinkPower: 0.99f, postShrinkPower: 0.8f, timeToStartShrink: 10 + Main.rand.Next(-5, 5), killEarlyTime: 80, 
+                p.customData = AssignBehavior_LSBase(velFadePower: 0.88f, preShrinkPower: 0.99f, postShrinkPower: 0.8f, timeToStartShrink: 10 + Main.rand.Next(-5, 5), killEarlyTime: 80,
                     1f, 0.75f);
 
             }
@@ -218,7 +218,7 @@ namespace AerovelenceMod.Content.Items
 
             return false;
 
-            
+
             for (double m = 0; m < 6.28; m += 1)
             {
                 Dust dust = Dust.NewDustPerfect(player.Center + new Vector2(200f, 0f), ModContent.DustType<GlowPixelCross>(), new Vector2((float)Math.Sin(m) * 1.3f, (float)Math.Cos(m)) * 2.4f);
@@ -231,11 +231,11 @@ namespace AerovelenceMod.Content.Items
                     rotPower: 0.15f, preSlowPower: 0.99f, timeBeforeSlow: 8, postSlowPower: 0.92f, velToBeginShrink: 2f, fadePower: 0.87f, shouldFadeColor: false);
 
             }
-            
+
             for (int i11 = 0; i11 < 10; i11++) //4 //2,2
             {
                 Dust p = Dust.NewDustPerfect(Main.MouseWorld, ModContent.DustType<GlowPixelCross>(),
-                    velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.Next(2, 10), 
+                    velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-0.4f, 0.4f)) * Main.rand.Next(2, 10),
                     newColor: Color.DeepSkyBlue, Scale: Main.rand.NextFloat(0.3f, 0.5f) * 1.25f);
                 p.velocity += velocity * (0.75f + Main.rand.NextFloat(-0.1f, -0.2f));
 
@@ -244,9 +244,9 @@ namespace AerovelenceMod.Content.Items
 
             for (int i22 = 0; i22 < 8; i22++) //4 //2,2
             {
-                Dust p = Dust.NewDustPerfect(Main.MouseWorld, ModContent.DustType<GlowPixelCross>(), 
+                Dust p = Dust.NewDustPerfect(Main.MouseWorld, ModContent.DustType<GlowPixelCross>(),
                     velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-1.2f, 1.2f)) * Main.rand.Next(2, 10),
-                    newColor: Color.DodgerBlue, Scale: Main.rand.NextFloat(0.3f, 0.5f)  * 1.25f);
+                    newColor: Color.DodgerBlue, Scale: Main.rand.NextFloat(0.3f, 0.5f) * 1.25f);
                 p.velocity += velocity * (0.45f + Main.rand.NextFloat(-0.1f, -0.2f));
 
                 p.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.3f, timeBeforeSlow: 5, postSlowPower: 0.89f, velToBeginShrink: 1f, fadePower: 0.9f, shouldFadeColor: false);
@@ -257,7 +257,7 @@ namespace AerovelenceMod.Content.Items
 
             for (int fg = 0; fg < 11; fg++)
             {
-                Vector2 randomStart = Main.rand.NextVector2Circular(1f,1f) * 6f;
+                Vector2 randomStart = Main.rand.NextVector2Circular(1f, 1f) * 6f;
                 Dust gd = Dust.NewDustPerfect(Main.MouseWorld, ModContent.DustType<GlowPixelCross>(), randomStart * Main.rand.NextFloat(0.3f, 1.35f) * 1.5f, newColor: Color.DodgerBlue, Scale: Main.rand.NextFloat(1f, 1.4f) * 0.5f);
                 gd.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.3f, timeBeforeSlow: 5, postSlowPower: 0.89f, velToBeginShrink: 1f, fadePower: 0.9f, shouldFadeColor: false);
             }
@@ -314,7 +314,7 @@ namespace AerovelenceMod.Content.Items
             //Dust d = Dust.NewDustPerfect(player.Center + new Vector2(0,50), ModContent.DustType<GlowStrong>(), velocity * 0.6f, newColor: Color.Red);
             //return false;
 
-            int Mura = Projectile.NewProjectile(null, position + new Vector2(0,0), velocity * 1.2f, ModContent.ProjectileType<otherHollowPulseTestDearFutureMePleaseRewriteAndMoveThisInsteadOfUsingItInTheFutureDearGod>(), 10, 0, player.whoAmI, 0f, 0f);
+            int Mura = Projectile.NewProjectile(null, position + new Vector2(0, 0), velocity * 1.2f, ModContent.ProjectileType<otherHollowPulseTestDearFutureMePleaseRewriteAndMoveThisInsteadOfUsingItInTheFutureDearGod>(), 10, 0, player.whoAmI, 0f, 0f);
             if (Main.projectile[Mura].ModProjectile is otherHollowPulseTestDearFutureMePleaseRewriteAndMoveThisInsteadOfUsingItInTheFutureDearGod vfx)
             {
                 vfx.size = 0.5f;
@@ -375,7 +375,7 @@ namespace AerovelenceMod.Content.Items
             //SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/back_scatter") with { Volume = .14f, Pitch = .6f, PitchVariance = 0.25f };
             //SoundEngine.PlaySound(style);
             SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/rescue_ranger_fire") with { Volume = .1f, Pitch = .4f, };
-            SoundEngine.PlaySound(style2); 
+            SoundEngine.PlaySound(style2);
             //SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/GGS/Impact_Sword_L_a") with { Volume = .27f, Pitch = .6f, PitchVariance = 0.25f };
             //SoundEngine.PlaySound(style3);
 
@@ -403,6 +403,6 @@ namespace AerovelenceMod.Content.Items
             //Projectile.NewProjectile(null, position, velocity, ModContent.ProjectileType<StretchLaser>(), 0, 0, player.whoAmI);
             return false;
         }
-        
+
     }
 }

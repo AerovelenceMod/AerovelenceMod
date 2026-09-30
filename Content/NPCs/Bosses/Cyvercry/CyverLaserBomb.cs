@@ -13,7 +13,7 @@ using Terraria.Audio;
 using AerovelenceMod.Content.Projectiles.Other;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
-{   
+{
     public class CyverLaserBomb : ModProjectile
     {
         float whiteIntensity = 0f;
@@ -37,7 +37,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Projectile.tileCollide = false;
         }
         public override bool? CanDamage() => false;
-    
+
         public bool longTelegraph = false;
 
         public float overallScale = 0f;
@@ -171,7 +171,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             Main.spriteBatch.Draw(Tex, L1pos - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.White with { A = 0 } * 0.75f * drawAlpha, L1rot, Tex.Size() / 2, overallScale * 0.9f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, L2pos - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.White with { A = 0 } * 0.75f * drawAlpha, L2rot, Tex.Size() / 2, overallScale * 0.9f, SpriteEffects.None, 0f);
-            
+
             Main.spriteBatch.Draw(White, L1pos - Main.screenPosition, White.Frame(1, 1, 0, 0), Color.White * 0.75f * drawAlpha, L1rot, White.Size() / 2, overallScale * 0.9f, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(White, L2pos - Main.screenPosition, White.Frame(1, 1, 0, 0), Color.White * 0.75f * drawAlpha, L2rot, White.Size() / 2, overallScale * 0.9f, SpriteEffects.None, 0f);
 
@@ -392,4 +392,4 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 Projectile.Center + unit * 1000, 22, ref point);
         }
     }
-} 
+}

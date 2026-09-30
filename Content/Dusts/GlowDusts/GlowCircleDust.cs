@@ -20,183 +20,183 @@ using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	public class GlowCircleDust : ModDust
-	{
-		
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowOrb";
-		public override void OnSpawn(Dust dust) 
-		{
-			
-			dust.noGravity = true;
-			dust.frame = new Rectangle(0, 0, 64, 64);
-			dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+    public class GlowCircleDust : ModDust
+    {
 
-		}
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowOrb";
+        public override void OnSpawn(Dust dust)
+        {
+
+            dust.noGravity = true;
+            dust.frame = new Rectangle(0, 0, 64, 64);
+            dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+
+        }
 
         public override Color? GetAlpha(Dust dust, Color lightColor)
         {
-            return dust.color; 
+            return dust.color;
         }
 
         public override bool Update(Dust dust)
-		{
-			
-			if (dust.customData is null)
-			{
-				dust.position -= Vector2.One * 32 * dust.scale;
-				dust.customData = true;
-			}
-			//float plswowk = (float)Math.Atan(dust.velocity.Y / dust.velocity.X);
-			//dust.rotation = plswowk;
+        {
 
-			//The code for updating the dust is from SLR, but the shader and everything else is mine
+            if (dust.customData is null)
+            {
+                dust.position -= Vector2.One * 32 * dust.scale;
+                dust.customData = true;
+            }
+            //float plswowk = (float)Math.Atan(dust.velocity.Y / dust.velocity.X);
+            //dust.rotation = plswowk;
 
-			Vector2 currentCenter = dust.position + Vector2.One.RotatedBy(dust.rotation) * 32 * dust.scale;
+            //The code for updating the dust is from SLR, but the shader and everything else is mine
 
-			if (dust.noGravity) 
-				dust.scale *= 1 - (0.04f + (.04f * dust.fadeIn));
-			else
-				dust.scale *= 0.96f;
+            Vector2 currentCenter = dust.position + Vector2.One.RotatedBy(dust.rotation) * 32 * dust.scale;
 
-			Vector2 nextCenter = dust.position + Vector2.One.RotatedBy(dust.rotation + 0.06f) * 32 * dust.scale;
+            if (dust.noGravity)
+                dust.scale *= 1 - (0.04f + (.04f * dust.fadeIn));
+            else
+                dust.scale *= 0.96f;
 
-			dust.rotation += 0.06f;
-			dust.position += currentCenter - nextCenter;
+            Vector2 nextCenter = dust.position + Vector2.One.RotatedBy(dust.rotation + 0.06f) * 32 * dust.scale;
 
-
-			dust.position += dust.velocity; //Idk why we have to do this ourselves
-
-			dust.velocity *= 0.94f;
-
-			if (!dust.noLight)
-				Lighting.AddLight(currentCenter, dust.color.R * dust.scale * 0.005f, dust.color.G * dust.scale * 0.005f, dust.color.B * dust.scale * 0.005f);
+            dust.rotation += 0.06f;
+            dust.position += currentCenter - nextCenter;
 
 
-			if (dust.scale < 0.05f) 
-			{
-				dust.active = false;
-			}
+            dust.position += dust.velocity; //Idk why we have to do this ourselves
 
-			if (dust.alpha != 0)
-				dust.color *= 0.95f;
+            dust.velocity *= 0.94f;
 
-			return false; 
+            if (!dust.noLight)
+                Lighting.AddLight(currentCenter, dust.color.R * dust.scale * 0.005f, dust.color.G * dust.scale * 0.005f, dust.color.B * dust.scale * 0.005f);
 
-		}
-	}
-	public class GlowCircleRise : GlowCircleDust
-	{
-		public override bool Update(Dust dust)
-		{
-			dust.velocity.Y -= 0.04f;
-			return base.Update(dust);
-		}
-	}
 
-	//SoftGlow
-	#region SoftGlow
-	public class GlowCircleSoft : GlowCircleDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/SoftGlow";
+            if (dust.scale < 0.05f)
+            {
+                dust.active = false;
+            }
 
-	}
+            if (dust.alpha != 0)
+                dust.color *= 0.95f;
 
-	public class GlowCircleRiseSoft : GlowCircleRise
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/SoftGlow";
+            return false;
 
-	}
-	#endregion
+        }
+    }
+    public class GlowCircleRise : GlowCircleDust
+    {
+        public override bool Update(Dust dust)
+        {
+            dust.velocity.Y -= 0.04f;
+            return base.Update(dust);
+        }
+    }
 
-	#region Flare
-	public class GlowCircleFlare : GlowCircleDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Flare";
+    //SoftGlow
+    #region SoftGlow
+    public class GlowCircleSoft : GlowCircleDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/SoftGlow";
 
-	}
+    }
 
-	public class GlowCircleRiseFlare : GlowCircleRise
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Flare";
+    public class GlowCircleRiseSoft : GlowCircleRise
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/SoftGlow";
 
-	}
-	#endregion
+    }
+    #endregion
 
-	#region Spinner
-	public class GlowCircleSpinner : GlowCircleDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Spinner";
+    #region Flare
+    public class GlowCircleFlare : GlowCircleDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Flare";
 
-	}
+    }
 
-	public class GlowCircleRiseSpinner : GlowCircleRise
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Spinner";
+    public class GlowCircleRiseFlare : GlowCircleRise
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Flare";
 
-	}
+    }
+    #endregion
+
+    #region Spinner
+    public class GlowCircleSpinner : GlowCircleDust
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Spinner";
+
+    }
+
+    public class GlowCircleRiseSpinner : GlowCircleRise
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/Spinner";
+
+    }
     #endregion
 
     #region QuadStar
     public class GlowCircleQuadStar : GlowCircleDust
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/QuadStar";
-	}
-	public class GlowCircleRiseQuadStar : GlowCircleRise
-	{
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/QuadStar";
-	}
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/QuadStar";
+    }
+    public class GlowCircleRiseQuadStar : GlowCircleRise
+    {
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/QuadStar";
+    }
     #endregion
 
-	//////////////////////////////////////
-	public class GlowLine1 : ModDust
+    //////////////////////////////////////
+    public class GlowLine1 : ModDust
     {
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowLine1";
+        public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/GlowLine1";
 
-		Vector3 initialColor = Color.White.ToVector3();
-		Vector3 colorToUse = Color.White.ToVector3();
-		public override void OnSpawn(Dust dust)
+        Vector3 initialColor = Color.White.ToVector3();
+        Vector3 colorToUse = Color.White.ToVector3();
+        public override void OnSpawn(Dust dust)
         {
-			dust.noLight = true;
-			initialColor = dust.color.ToVector3();
-			colorToUse = dust.color.ToVector3();
-			dust.fadeIn = 0;
-			dust.customData = dust.scale;
+            dust.noLight = true;
+            initialColor = dust.color.ToVector3();
+            colorToUse = dust.color.ToVector3();
+            dust.fadeIn = 0;
+            dust.customData = dust.scale;
 
-			dust.noGravity = true;
-			dust.frame = new Rectangle(0, 0, 128, 27);
-			dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            dust.noGravity = true;
+            dust.frame = new Rectangle(0, 0, 128, 27);
+            dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
         }
 
         public override bool Update(Dust dust)
         {
-			if ((float)dust.customData != 0f)
-			{
-				//dust.position -= new Vector2(13, 64) * dust.scale;
-				dust.scale = (float)dust.customData;
-				dust.customData = 0f;
-			}
+            if ((float)dust.customData != 0f)
+            {
+                //dust.position -= new Vector2(13, 64) * dust.scale;
+                dust.scale = (float)dust.customData;
+                dust.customData = 0f;
+            }
 
-			dust.rotation = dust.velocity.ToRotation();
+            dust.rotation = dust.velocity.ToRotation();
 
 
-			dust.velocity *= 0.97f;
-			dust.position += dust.velocity;
+            dust.velocity *= 0.97f;
+            dust.position += dust.velocity;
 
-			colorToUse.X = Math.Clamp(colorToUse.X * 0.95f, initialColor.X * 1f, 2f);
-			colorToUse.Y = Math.Clamp(colorToUse.Y * 0.95f, initialColor.Y * 1f, 2f);
-			colorToUse.Z = Math.Clamp(colorToUse.Z * 0.95f, initialColor.Z * 1f, 2f);
+            colorToUse.X = Math.Clamp(colorToUse.X * 0.95f, initialColor.X * 1f, 2f);
+            colorToUse.Y = Math.Clamp(colorToUse.Y * 0.95f, initialColor.Y * 1f, 2f);
+            colorToUse.Z = Math.Clamp(colorToUse.Z * 0.95f, initialColor.Z * 1f, 2f);
 
-			dust.color = new Color(colorToUse.X, colorToUse.Y, colorToUse.Z);
+            dust.color = new Color(colorToUse.X, colorToUse.Y, colorToUse.Z);
 
-			Lighting.AddLight(dust.position, dust.color.ToVector3() * 0.6f);
-			
-			if (dust.noLight == false)
-			{
+            Lighting.AddLight(dust.position, dust.color.ToVector3() * 0.6f);
+
+            if (dust.noLight == false)
+            {
                 if (dust.fadeIn > 60)
                     dust.active = false;
             }
-			else
-			{
+            else
+            {
                 if (dust.fadeIn < 40)
                 {
                     dust.scale *= 0.99f;
@@ -213,34 +213,34 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
             }
 
 
-			dust.fadeIn++;
+            dust.fadeIn++;
 
-			return false;
-		}
+            return false;
+        }
 
         public override Color? GetAlpha(Dust dust, Color lightColor)
         {
-			if (dust.fadeIn <= 2)
-				return Color.Transparent;
+            if (dust.fadeIn <= 2)
+                return Color.Transparent;
 
-			return dust.color * MathHelper.Min(1, dust.fadeIn / 20f);
-		}
+            return dust.color * MathHelper.Min(1, dust.fadeIn / 20f);
+        }
     }
 
-	public class GlowLine1Fast : GlowLine1
+    public class GlowLine1Fast : GlowLine1
     {
         public override bool Update(Dust dust)
         {
-			dust.velocity *= 0.99f;
-			if (dust.fadeIn > 55)
-				dust.scale *= 0.85f;
+            dust.velocity *= 0.99f;
+            if (dust.fadeIn > 55)
+                dust.scale *= 0.85f;
 
-			if (dust.scale < 0.03f)
-			{
-				dust.active = false;
-			}
+            if (dust.scale < 0.03f)
+            {
+                dust.active = false;
+            }
 
-			return base.Update(dust);
+            return base.Update(dust);
         }
     }
 }

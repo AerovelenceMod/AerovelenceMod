@@ -413,7 +413,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             }
             else
                 Projectile.velocity = Vector2.Zero;
-            
+
             int mod = 30;
             if (timer % mod == 0)
             {
@@ -433,14 +433,14 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                         previousRotations[i].ToRotationVector2().RotatedByRandom(0.2f) * Main.rand.NextFloat(4f, 14f), newColor: col, Scale: Main.rand.NextFloat(0.35f, 0.50f) * 1.25f);
 
                         //star.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
-                            //rotPower: 0.15f, preSlowPower: 0.91f, timeBeforeSlow: 15, postSlowPower: 0.90f, velToBeginShrink: 2f, fadePower: 0.93f, shouldFadeColor: false);
+                        //rotPower: 0.15f, preSlowPower: 0.91f, timeBeforeSlow: 15, postSlowPower: 0.90f, velToBeginShrink: 2f, fadePower: 0.93f, shouldFadeColor: false);
 
 
                         //float maxVel = Projectile.timeLeft < 200 ? 7.5f : 10f;
 
                         //Dust orb = Dust.NewDustPerfect(previousPositions[i] + sideOffset, ModContent.DustType<GlowStrong>(),
-                            //previousRotations[i].ToRotationVector2().RotatedByRandom(0.15f) * Main.rand.NextFloat(4f, maxVel), 
-                            //newColor: col, Scale: size);
+                        //previousRotations[i].ToRotationVector2().RotatedByRandom(0.15f) * Main.rand.NextFloat(4f, maxVel), 
+                        //newColor: col, Scale: size);
 
 
                     }
@@ -765,13 +765,13 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         Vector2[] draw_positions = new Vector2[150];
 
 
-        int TotalPoints = 150; 
+        int TotalPoints = 150;
 
         Vector2 anchor = Vector2.Zero;
         public override void AI()
         {
             Player owner = Main.player[Projectile.owner];
-                        
+
             if (timer == 0)
             {
                 //Projectile.velocity = Vector2.Zero;
@@ -794,7 +794,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             Projectile.rotation += 0.07f * Projectile.ai[0];
 
             //if (timer % 130 == 0 && timer != 0)
-                //Projectile.ai[0] *= -1f;
+            //Projectile.ai[0] *= -1f;
 
             //Have all points try to rotate towards the acnhor
             for (int j = 0; j < TotalPoints; j++)
@@ -832,7 +832,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         {
             //Texture2D trailTexture = Mod.Assets.Request<Texture2D>("Assets/spark_07_Black").Value;
             Texture2D trailTexture = Mod.Assets.Request<Texture2D>("Assets/Trail5Loop").Value;
-            Texture2D trailTexture2 = Mod.Assets.Request<Texture2D>("Assets/spark_07_Black").Value;            
+            Texture2D trailTexture2 = Mod.Assets.Request<Texture2D>("Assets/spark_07_Black").Value;
 
             if (myEffect == null)
                 myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/TrailShaders/TendrilShader", AssetRequestMode.ImmediateLoad).Value;
@@ -884,7 +884,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             vertexStripBlack.DrawTrail();
 
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
-            
+
             return false;
         }
 
@@ -894,8 +894,8 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             alpha = 1f - Easings.easeOutQuad(progress);
 
-            Color color = new Color(0f, 0f, 0f, alpha); 
-            
+            Color color = new Color(0f, 0f, 0f, alpha);
+
             return color;
         }
         public float StripWidth(float progress)

@@ -63,7 +63,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Item.DamageType = DamageClass.Melee;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;
-            
+
             Item.shootSpeed = 1f;
             Item.shoot = ModContent.ProjectileType<BurningJealousyHeldProj>();
         }
@@ -82,9 +82,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             tick = !tick;
-            if (player.altFunctionUse == 2) 
-                type = ModContent.ProjectileType<BurningJealousyGuard>(); 
-            
+            if (player.altFunctionUse == 2)
+                type = ModContent.ProjectileType<BurningJealousyGuard>();
+
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (tick ? 1 : 0));
             return false;
         }
@@ -93,7 +93,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
     public class BurningJealousyHeldProj : TrailProjBase
     {
         public bool bigSwing = false;
-        
+
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetStaticDefaults()
         {
@@ -284,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
                     SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_flameburst_tower_shot_2") with { Pitch = -0.8f, PitchVariance = 0.3f };
                     SoundEngine.PlaySound(style, Projectile.Center);
-                } 
+                }
                 else
                 {
                     SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_flameburst_tower_shot_2") with { Pitch = -.48f, PitchVariance = 0.3f };
@@ -304,7 +304,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                     Projectile.active = false;
                 }
                 timerAfterEnd--;
-                
+
             }
 
             if (getProgress(easingProgress) >= 0.75)
@@ -331,7 +331,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             {
                 trailCol = Color.Lerp(Color.OrangeRed * 1.2f, Color.OrangeRed * 0.3f, (getProgress(easingProgress) - 0.87f) / 0.13f);
             }
-            
+
             relativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5").Value; //Trail5!!!
             relativeTrail.trailColor = trailCol;
             relativeTrail.trailPointLimit = 800;
@@ -343,11 +343,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             relativeTrail.trailTime = (float)trailTimeCounter * 0.004f;
             relativeTrail.trailRot = Projectile.rotation + MathHelper.PiOver4;
 
-            relativeTrail.trailPos = Projectile.Center + Projectile.rotation.ToRotationVector2().RotatedBy(-1f) 
-                * (bigSwing ? 15f : 12f * (1 + intensity * 0.35f)) 
+            relativeTrail.trailPos = Projectile.Center + Projectile.rotation.ToRotationVector2().RotatedBy(-1f)
+                * (bigSwing ? 15f : 12f * (1 + intensity * 0.35f))
                 - Main.player[Projectile.owner].MountedCenter + gfxOffset;
 
-            if (justHitTime <= 0 && getProgress(easingProgress) > 0.07) 
+            if (justHitTime <= 0 && getProgress(easingProgress) > 0.07)
                 relativeTrail.TrailLogic();
 
             //NewDust
@@ -400,7 +400,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 effects = SpriteEffects.FlipHorizontally;
             }
 
-            Vector2 armPosition = Main.player[Projectile.owner].GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, currentAng); 
+            Vector2 armPosition = Main.player[Projectile.owner].GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, currentAng);
 
             //Sprite is 52x64 so -12y to "make it square", dont know about the x tbh
             Vector2 otherOffset = new Vector2(Projectile.spriteDirection > 0 ? 4 : 0, Projectile.spriteDirection > 0 ? -8 : -12).RotatedBy(currentAng);
@@ -559,7 +559,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         {
             float toReturn = 0f;
             #region easeExpo
-            
+
             //pre 0.5
             if (x <= 0.5f)
             {
@@ -577,7 +577,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 toReturn = 1;
 
             return toReturn;
-            
+
 
             #endregion;
 
@@ -608,7 +608,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             float lerpValue = Utils.GetLerpValue(0f, 0.4f, progress, clamped: true);
             num *= 1f - (1f - lerpValue) * (1f - lerpValue);
             return MathHelper.Lerp(0f, 30f, num) * (mytrailWidth / 28) * (bigSwing ? 1.1f : 1); // 0.3f
-            
+
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
@@ -714,7 +714,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 Projectile.Kill();
             }
 
-            Projectile.Center = player.Center + new Vector2(20 * Projectile.direction,0);
+            Projectile.Center = player.Center + new Vector2(20 * Projectile.direction, 0);
             player.itemTime = 10;
             player.itemAnimation = 10;
 
@@ -759,12 +759,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_explosive_trap_explode_1") with { PitchVariance = 1.16f, };
                 SoundEngine.PlaySound(style, player.Center);
-                
+
                 int a = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<BurningJealousyPulse>(), Projectile.damage * 2, 0, player.whoAmI);
 
                 SkillStrikeUtil.setSkillStrike(Main.projectile[a], 2f, 1000, 0f, 0f);
 
-                
+
                 if (symbol != null)
                     symbol.active = false;
                 Projectile.active = false;
@@ -807,7 +807,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             float scale = Projectile.scale + ((1f - fadeInVal) * 0.15f);
 
             Main.spriteBatch.Draw(Sword, armPosition - Main.screenPosition + otherOffset, null, lightColor, rot + rotationOffset + x1, origin, scale, effects, 0f);
-            Main.spriteBatch.Draw(Glow,  armPosition - Main.screenPosition + otherOffset, null, glowMaskCol * 0.85f, rot + rotationOffset + x1, origin, scale, effects, 0f);
+            Main.spriteBatch.Draw(Glow, armPosition - Main.screenPosition + otherOffset, null, glowMaskCol * 0.85f, rot + rotationOffset + x1, origin, scale, effects, 0f);
 
             float sinVal = (float)(Math.Sin(Main.timeForVisualEffects * 0.05f));
             Main.spriteBatch.Draw(Glow, armPosition - Main.screenPosition + otherOffset + Main.rand.NextVector2Circular(1.5f, 1.5f), null, glowMaskCol with { A = 0 } * (0.5f + (sinVal * 0.25f)), rot + rotationOffset + x1, origin, scale, effects, 0f);
@@ -823,10 +823,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         {
             // DisplayName.SetDefault("Block");
         }
-         
+
         public override void SetDefaults()
         {
-            Projectile.timeLeft = 4000; 
+            Projectile.timeLeft = 4000;
             Projectile.width = Projectile.height = 85;
             Projectile.scale = 0f;
 
@@ -939,7 +939,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 justHit = true;
                 gaurding = false;
             }
-            
+
         }
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
@@ -975,7 +975,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = false; 
+            Projectile.tileCollide = false;
         }
 
         //Damage is done through a strike
@@ -1041,7 +1041,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                         gd.fadeIn = 1;
                     }
                 }
-                
+
             }
 
             Projectile.scale = Math.Clamp(MathHelper.Lerp(Projectile.scale, 2.1f, 0.15f), 0f, 2f);

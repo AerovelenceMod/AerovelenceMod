@@ -14,8 +14,8 @@ namespace AerovelenceMod.Content.Projectiles.Other
 {
 
     //TODO make less shitty/finish
-	public class CirclePulse : ModProjectile
-	{
+    public class CirclePulse : ModProjectile
+    {
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public enum Behavoir

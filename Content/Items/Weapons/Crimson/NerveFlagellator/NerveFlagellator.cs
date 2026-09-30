@@ -343,7 +343,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
             if (_attackCooldown > 0)
                 _attackCooldown--;
 
-            if(Projectile.timeLeft <= 70)
+            if (Projectile.timeLeft <= 70)
             {
                 Projectile.scale *= 0.90f;
             }
@@ -352,7 +352,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
                 Projectile.scale = 1f + 0.05f * (float)Math.Sin(Main.GameUpdateCount * 0.1f);
             }
 
-            if(Projectile.scale <= 0.11f)
+            if (Projectile.scale <= 0.11f)
             {
                 Projectile.Kill();
             }
@@ -363,7 +363,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
             else
                 IdleOrbit(owner);
             Projectile.velocity = _currentVelocity;
-            
+
             SpawnTrailingDust();
         }
 

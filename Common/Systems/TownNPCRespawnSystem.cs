@@ -21,7 +21,7 @@ namespace AerovelenceMod.Common.Systems
         }
 
         public override void NetSend(BinaryWriter writer) => writer.WriteFlags(unlockedRockCollectorSpawn);
-        
+
         public override void NetReceive(BinaryReader reader) => reader.ReadFlags(out unlockedRockCollectorSpawn);
     }
 }

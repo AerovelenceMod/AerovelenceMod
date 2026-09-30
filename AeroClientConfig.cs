@@ -3,8 +3,8 @@ using Terraria.ModLoader.Config;
 
 namespace AerovelenceMod
 {
-	public class AeroClientConfig : ModConfig
-	{
+    public class AeroClientConfig : ModConfig
+    {
         public override ConfigScope Mode => ConfigScope.ClientSide;
 
         public static AeroClientConfig Instance;

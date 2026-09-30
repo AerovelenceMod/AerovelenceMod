@@ -118,7 +118,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             //Eye
             Texture2D eyeTex = Mod.Assets.Request<Texture2D>("Assets/Pixel/PartiGlow").Value;
 
-            Vector2 leftEyePos = TopVector2 + (new Vector2(-144, -310) / 4) * Projectile.scale; 
+            Vector2 leftEyePos = TopVector2 + (new Vector2(-144, -310) / 4) * Projectile.scale;
             Vector2 rightEyePos = TopVector2 + (new Vector2(144, -310) / 4) * Projectile.scale;
 
 
@@ -149,13 +149,13 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         {
             switch (line)
             {
-                
+
             }
             CurrentLine = "You should kill yourself--------- NOW!---------*-";
-            
+
             if (timer % 3 == 0 && timer >= 50)
             {
-                
+
                 if (CurrentLine[lineIndex].ToString() == "*")
                 {
                     Thunder();
@@ -222,7 +222,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                 //int type = Main.rand.NextBool() ? ModContent.ProjectileType<SkylightThunderStrike>() : ModContent.ProjectileType<SkylightElectricShot>();
 
                 //if (type == ModContent.ProjectileType<SkylightElectricShot>())
-                    //randomVel *= 2f;
+                //randomVel *= 2f;
                 int thunder2 = Projectile.NewProjectile(null, randomPos, randomVel, ModContent.ProjectileType<SkylightThunderStrike>(), 10, 1, Main.myPlayer);
             }
         }

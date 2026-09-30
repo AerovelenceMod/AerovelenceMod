@@ -154,7 +154,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             //Sound
             if (getProgress(easingProgress) >= 0.3f && !playedSound)
             {
-                
+
 
                 playedSound = true;
             }
@@ -1361,7 +1361,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
         public override bool? CanCutTiles() => false;
 
         Vector2 storedVel = Vector2.Zero;
-        float storedHorizontalVel = 0f; 
+        float storedHorizontalVel = 0f;
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
@@ -1370,13 +1370,13 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             {
                 storedVel = player.velocity;
                 storedHorizontalVel = player.velocity.X > 0 ? 25 : -25;
-            }    
+            }
 
             //Held Proj Code
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             //if (!player.channel)
-           //     Projectile.active = false;
+            //     Projectile.active = false;
 
             Projectile.velocity = Vector2.Zero;
 

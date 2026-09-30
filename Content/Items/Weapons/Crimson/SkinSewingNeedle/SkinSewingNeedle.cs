@@ -22,12 +22,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 {
     public class SkinSewingNeedle : TranslatableModItem
     {
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             Item.ResearchUnlockCount = 1;
             this.ModifyLocalization("Skin-Sewing Needle", "Throws a needle that embeds in enemies").AddSkillStrike(Language.Default, "Long-ranged attacks Skill Strike");
         }
-		
+
         public override void SetDefaults()
         {
             Item.width = Item.height = 16;
@@ -45,9 +45,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         }
     }
 
-    
 
-    public class SkinSewingNeedleProj : TrailProjBase 
+
+    public class SkinSewingNeedleProj : TrailProjBase
     {
         static Asset<Texture2D> glow;
         static Asset<Texture2D> piercingStrike;
@@ -60,10 +60,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             sparkAtTheTip = ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_2");
             sparkAtTheTip2 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_3");
         }
-        private NeedleState state 
+        private NeedleState state
         {
-        
-            set {
+
+            set
+            {
                 currentState = value;
                 Timer = 0;
                 Projectile.extraUpdates = 0;
@@ -81,7 +82,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         private Vector2 startingVel;
         private NPC hitNpc;
 
-        
+
         private enum NeedleState : byte
         {
             JustFired,
@@ -93,7 +94,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         {
             ProjectileID.Sets.TrailCacheLength[Type] = 15;
             ProjectileID.Sets.TrailingMode[Type] = 3;
-            
+
         }
         public override void SetDefaults()
         {
@@ -125,14 +126,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             Projectile.rotation = Projectile.velocity.ToRotation();
             SoundStyle swif = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/katana_06") with { Pitch = 1f, Volume = 0.27f };
             SoundEngine.PlaySound(swif, Projectile.Center);
-            
+
         }
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
 
-            switch (state) 
+            switch (state)
             {
-            
+
                 case NeedleState.JustFired:
                     state = NeedleState.Returning;
 
@@ -148,7 +149,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                     }
 
                     SoundStyle tileCollideSS = new SoundStyle("AerovelenceMod/Sounds/Effects/Metallic/joker_stab1") with { Pitch = 0f, Volume = 0.27f };
-                    SoundEngine.PlaySound(tileCollideSS,Projectile.Center);
+                    SoundEngine.PlaySound(tileCollideSS, Projectile.Center);
 
                     break;
 
@@ -156,7 +157,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                 case NeedleState.Swinging:
                 case NeedleState.Latched:
                     break;
-            
+
             }
 
             return false;
@@ -172,11 +173,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
             Main.EntitySpriteDraw(texture, Vector2.Lerp(player.Center, pos, 0.5f) - Main.screenPosition, frame, lightColor.MultiplyRGB(Color.IndianRed * 0.7f), player.Center.DirectionTo(Projectile.Center).ToRotation(), origin + new Vector2(0, 3), new Vector2(Projectile.Distance(player.Center) / 2f, 0.5f), SpriteEffects.None);
 
-            Main.EntitySpriteDraw(texture, Vector2.Lerp(player.Center, pos, 0.5f) - Main.screenPosition, frame, lightColor.MultiplyRGB(Color.IndianRed), player.Center.DirectionTo(Projectile.Center).ToRotation(), origin, new Vector2(Projectile.Distance(player.Center) / 2f,0.25f),SpriteEffects.None);
+            Main.EntitySpriteDraw(texture, Vector2.Lerp(player.Center, pos, 0.5f) - Main.screenPosition, frame, lightColor.MultiplyRGB(Color.IndianRed), player.Center.DirectionTo(Projectile.Center).ToRotation(), origin, new Vector2(Projectile.Distance(player.Center) / 2f, 0.25f), SpriteEffects.None);
 
         }
 
-        private void DrawNeedle(Vector2 shaky, Color lightColor) 
+        private void DrawNeedle(Vector2 shaky, Color lightColor)
         {
 
             Vector2 needleTip = Projectile.Center + new Vector2(-15, 0).RotatedBy(Projectile.rotation);
@@ -187,10 +188,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
             Main.EntitySpriteDraw(glow.Value, Projectile.Center - Main.screenPosition + shaky, null, Color.DarkRed, Projectile.rotation - MathHelper.PiOver2, glow.Size() / 2f - new Vector2(0, -18f * 1.25f), new Vector2(1f, 1f), spriteEffects);
 
-            if(state == NeedleState.JustFired) 
+            if (state == NeedleState.JustFired)
                 Main.EntitySpriteDraw(piercingStrike.Value, needleTip - Main.screenPosition, null, Color.DarkRed * MathHelper.Lerp(0.1f, 3f, Progress), Projectile.rotation + MathHelper.PiOver2, new Vector2(144 / 2f, 512 / 2f + 200), new Vector2(1f, 0.5f), SpriteEffects.None);
-            else if(state == NeedleState.Latched)
-                Main.EntitySpriteDraw(piercingStrike.Value, needleTip - Main.screenPosition + new Vector2(155 * InExpo(1f - Progress,8f),0).RotatedBy(Projectile.rotation), null, Color.DarkRed * MathHelper.Lerp(3f, 0, Progress), Projectile.rotation + MathHelper.PiOver2, new Vector2(144 / 2f, 512 / 2f + 200), new Vector2(0.8f, 0.5f), SpriteEffects.None);
+            else if (state == NeedleState.Latched)
+                Main.EntitySpriteDraw(piercingStrike.Value, needleTip - Main.screenPosition + new Vector2(155 * InExpo(1f - Progress, 8f), 0).RotatedBy(Projectile.rotation), null, Color.DarkRed * MathHelper.Lerp(3f, 0, Progress), Projectile.rotation + MathHelper.PiOver2, new Vector2(144 / 2f, 512 / 2f + 200), new Vector2(0.8f, 0.5f), SpriteEffects.None);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
@@ -198,7 +199,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
             Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.Center - Main.screenPosition + shaky, null, lightColor, Projectile.rotation - MathHelper.PiOver2, TextureAssets.Projectile[Type].Size() / 2f - new Vector2(0, -18f), 1f, spriteEffects);
 
-            if(state == NeedleState.Latched) 
+            if (state == NeedleState.Latched)
             {
 
                 Main.EntitySpriteDraw(sparkAtTheTip.Value, needleTip - Main.screenPosition + shaky, null, Color.Red, Projectile.timeLeft * 0.2f, sparkAtTheTip.Size() / 2f, MathHelper.Lerp(0.0f, 0.2f, Utils.PingPongFrom01To010(OutExpo(Progress, 5f))), spriteEffects);
@@ -214,15 +215,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         {
 
             Vector2 stringPos = Projectile.Center;
-            switch (state) 
+            switch (state)
             {
                 case NeedleState.Returning:
 
 
-                    if(hitNpc != null)
+                    if (hitNpc != null)
                         for (int i = 0; i < Projectile.oldPos.Length; i++)
-                            Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.oldPos[i] + TextureAssets.Projectile[Type].Size() / 2f - new Vector2(0,9) - Main.screenPosition, null, lightColor.MultiplyRGB(Color.Lerp(Color.Crimson,Color.White, MathHelper.Lerp(1f, 0f, i / (float)Projectile.oldPos.Length))) * MathHelper.Lerp(1f,0f,i / (float)Projectile.oldPos.Length), Projectile.rotation - MathHelper.PiOver2, TextureAssets.Projectile[Type].Size() / 2f - new Vector2(0, -18f), 1f, spriteEffects);
-                    
+                            Main.EntitySpriteDraw(TextureAssets.Projectile[Type].Value, Projectile.oldPos[i] + TextureAssets.Projectile[Type].Size() / 2f - new Vector2(0, 9) - Main.screenPosition, null, lightColor.MultiplyRGB(Color.Lerp(Color.Crimson, Color.White, MathHelper.Lerp(1f, 0f, i / (float)Projectile.oldPos.Length))) * MathHelper.Lerp(1f, 0f, i / (float)Projectile.oldPos.Length), Projectile.rotation - MathHelper.PiOver2, TextureAssets.Projectile[Type].Size() / 2f - new Vector2(0, -18f), 1f, spriteEffects);
+
                     DrawNeedle(Vector2.Zero, lightColor);
                     DrawLine(stringPos, lightColor);
 
@@ -232,7 +233,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                     DrawNeedle(Vector2.Zero, lightColor);
                     DrawLine(stringPos, lightColor);
 
-                    
+
                     break;
                 case NeedleState.Swinging:
                     TrailDrawing();
@@ -281,7 +282,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                     }
                     var hitEffect = Projectile.NewProjectileDirect(null, Projectile.Center - Projectile.velocity, Projectile.Center.DirectionFrom(Main.player[Projectile.owner].Center) * 8f, ModContent.ProjectileType<NeedleHit>(), 0, 0, Main.myPlayer);
 
-                    if (Progress < 0.66f) 
+                    if (Progress < 0.66f)
                     {
                         state = NeedleState.Returning;
 
@@ -304,7 +305,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                     }
 
                     SoundStyle hitsound = new SoundStyle("AerovelenceMod/Sounds/Effects/hero_butterfly_blade") with { Pitch = 0f, Volume = 0.27f };
-                    SoundEngine.PlaySound(hitsound,Projectile.Center);
+                    SoundEngine.PlaySound(hitsound, Projectile.Center);
 
                     break;
 
@@ -349,22 +350,22 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
             Projectile.rotation = Projectile.DirectionTo(player.Center).ToRotation();
 
-            switch (state) 
+            switch (state)
             {
-                
+
                 case NeedleState.JustFired:
-                    JustFiredAI( player); break;
+                    JustFiredAI(player); break;
                 case NeedleState.Latched:
-                    LatchedAI( player);
+                    LatchedAI(player);
                     Projectile.velocity = Vector2.Zero;
                     break;
                 case NeedleState.Swinging:
-                    SwingingAI( player);
+                    SwingingAI(player);
                     Projectile.velocity = Vector2.Zero;
                     break;
                 case NeedleState.Returning:
-                    ReturningAI( player); break;
-            
+                    ReturningAI(player); break;
+
             }
 
 
@@ -374,26 +375,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
         }
 
-        public void JustFiredAI( Player player) 
+        public void JustFiredAI(Player player)
         {
 
             Timer++;
             Projectile.extraUpdates = 1;
             Progress = (Timer) / (12f);
-            Projectile.velocity = Vector2.Lerp(startingVel, Vector2.Zero, InExpo(Progress,11f));
-            if(Progress == 1f) 
+            Projectile.velocity = Vector2.Lerp(startingVel, Vector2.Zero, InExpo(Progress, 11f));
+            if (Progress == 1f)
             {
-            
+
                 state = NeedleState.Returning;
                 hitNpcCenterOffset = Projectile.Center;
-                
+
             }
         }
 
-        public void LatchedAI( Player player) 
+        public void LatchedAI(Player player)
         {
-        
-            if(hitNpc == null || !hitNpc.active)
+
+            if (hitNpc == null || !hitNpc.active)
             {
                 state = NeedleState.Returning;
                 return;
@@ -418,29 +419,29 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             Projectile.ResetLocalNPCHitImmunity();
             Main.player[Projectile.owner].GetModPlayer<AeroPlayer>().ScreenShakePower = 18;
             for (int i = 0; i < 15; i++)
-                Dust.NewDustPerfect(Projectile.Center, DustID.Blood, dir.RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(15f,30f));
+                Dust.NewDustPerfect(Projectile.Center, DustID.Blood, dir.RotatedByRandom(MathHelper.PiOver4) * Main.rand.NextFloat(15f, 30f));
             state = NeedleState.Returning;
-            
+
         }
 
         public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
         {
-            if(state == NeedleState.Returning && target == hitNpc) 
+            if (state == NeedleState.Returning && target == hitNpc)
             {
 
-                SkillStrikeUtil.setSkillStrike(Projectile, 3.5f,impactVolume: 0.35f);
-                if (target.boss) 
+                SkillStrikeUtil.setSkillStrike(Projectile, 3.5f, impactVolume: 0.35f);
+                if (target.boss)
                 {
                     // deal bonus max HP damage to low max hp bosses cuz its kinda difficult to skill strike bosses like EOC with this weapon
                     int maxLifedamageScale = (int)(3000f * (Main.expertMode ? Main.masterMode ? 1.2f : 1.1f : 1f));
                     int maxLifeDamage = (int)(target.lifeMax * 0.025f);
-                    modifiers.FinalDamage += Utils.GetLerpValue(maxLifeDamage,0, target.life / maxLifedamageScale,true);
-                
+                    modifiers.FinalDamage += Utils.GetLerpValue(maxLifeDamage, 0, target.life / maxLifedamageScale, true);
+
                 }
 
             }
 
-            
+
 
         }
 
@@ -449,19 +450,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             behindNPCs.Add(index);
         }
 
-        public void SwingingAI( Player player) 
+        public void SwingingAI(Player player)
         {
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.DirectionTo(Projectile.Center).ToRotation() - MathHelper.PiOver2);
             Timer++;
-            Vector2 arcHeight = new Vector2(0, -555 );
-            Progress = ( Timer / 32f);
+            Vector2 arcHeight = new Vector2(0, -555);
+            Progress = (Timer / 32f);
             Vector2 endPoint = player.Center + arcHeight * Utils.PingPongFrom01To010(OutSine(Progress));
             Projectile.Center = Vector2.Lerp(hitNpcCenterOffset, endPoint, Progress);
             KillOnPlayerReached(player);
 
         }
 
-        public void ReturningAI( Player player) 
+        public void ReturningAI(Player player)
         {
             Timer++;
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.DirectionTo(Projectile.Center).ToRotation() - MathHelper.PiOver2);
@@ -475,11 +476,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, player.DirectionTo(Projectile.Center).ToRotation() - MathHelper.PiOver2);
             Progress = Timer / 12f;
-            Projectile.Center = Vector2.Lerp(Projectile.Center,player.Center,Progress);
+            Projectile.Center = Vector2.Lerp(Projectile.Center, player.Center, Progress);
             KillOnPlayerReached(player);
         }
 
-        public void KillOnPlayerReached(Player player) 
+        public void KillOnPlayerReached(Player player)
         {
 
             if (Projectile.Distance(player.Center) < 4)
@@ -546,9 +547,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             Rectangle sourceRectangle = new Rectangle(0, startY, Tex.Width(), frameHeight);
 
             Vector2 origin = sourceRectangle.Size() / 2f;
-            
 
-            Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Red, Projectile.rotation + MathHelper.PiOver2, origin, new Vector2(0.5f,1.5f), SpriteEffects.None, 0f);
+
+            Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Red, Projectile.rotation + MathHelper.PiOver2, origin, new Vector2(0.5f, 1.5f), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, sourceRectangle, Color.DarkRed, Projectile.rotation + MathHelper.PiOver2, origin, new Vector2(0.5f, 2f), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, sourceRectangle, Color.Crimson, Projectile.rotation + MathHelper.PiOver2, origin, new Vector2(1f, 1f), SpriteEffects.None, 0f);
             return false;
@@ -596,7 +597,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.NonPremultiplied, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, null, Color.Lerp(new Color(255,0,0,0), Color.Red, Projectile.timeLeft / 15f), Projectile.rotation + MathHelper.PiOver4, Tex.Size() /2f, new Vector2(MathHelper.Lerp(0f,2f, Projectile.timeLeft / 15f)), SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex.Value, Projectile.Center - Main.screenPosition, null, Color.Lerp(new Color(255, 0, 0, 0), Color.Red, Projectile.timeLeft / 15f), Projectile.rotation + MathHelper.PiOver4, Tex.Size() / 2f, new Vector2(MathHelper.Lerp(0f, 2f, Projectile.timeLeft / 15f)), SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
@@ -604,5 +605,5 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         }
 
     }
-    
+
 }

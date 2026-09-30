@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Xna.Framework;
 namespace AerovelenceMod.Common.Utilities
 {
@@ -28,10 +29,11 @@ namespace AerovelenceMod.Common.Utilities
         public Color BackHot { get; set; }
         public Color BodyDark { get; set; }
         public Color BodyAA { get; set; }
-		
+
         public Color BodyMid { get; set; }
         public Color BodyHighlight { get; set; }
         public SlimeFacetStyle FacetStyle { get; set; }
+        public Func<Vector2, float, Color, Color> ColorTransform { get; set; }
     }
-	
+
 }

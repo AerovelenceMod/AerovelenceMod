@@ -96,7 +96,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
             if (Main.projectile[p].ModProjectile is EosSwing swing)
             {
-                
+
                 if (combo == 1 || combo == 2)
                 {
                     //taeMedium *= combo == 2 ? 0.5f : 1f;
@@ -200,7 +200,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
             if (spin)
                 return getProgress(easingProgress) > 0.05f && getProgress(easingProgress) <= 0.95f;
-            else 
+            else
                 return getProgress(easingProgress) > 0.2f && getProgress(easingProgress) <= 0.85f;
 
         }
@@ -251,7 +251,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             }
 
             offset = 50 * 1.5f * Projectile.scale;
-            
+
             StandardSwingUpdate();
             StandardHeldProjCode();
 
@@ -289,7 +289,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
                 if (spin)
                 {
-                    SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/hero_tentacle_sword") with { PitchVariance = .24f, Volume = 0.7f, MaxInstances = 0 }; 
+                    SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/hero_tentacle_sword") with { PitchVariance = .24f, Volume = 0.7f, MaxInstances = 0 };
                     SoundEngine.PlaySound(style, Projectile.Center);
                 }
 
@@ -609,8 +609,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
             for (int i = 0; i < 3; i++)
             {
-                Dust.NewDustPerfect(target.Center + randomPos, ModContent.DustType<GlowStrong>(), 
-                    randomPos.SafeNormalize(Vector2.UnitX).RotatedByRandom(0.2f) * -Main.rand.NextFloat(1f, 1.2f), 
+                Dust.NewDustPerfect(target.Center + randomPos, ModContent.DustType<GlowStrong>(),
+                    randomPos.SafeNormalize(Vector2.UnitX).RotatedByRandom(0.2f) * -Main.rand.NextFloat(1f, 1.2f),
                     0, newColor: getEosColor(Main.rand.NextFloat(0.0f, 1.0f)), 0.4f);
             }
 
@@ -628,7 +628,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             }
             else if (x > 0.5)
             {
-                toReturn = (float)(2 - Math.Pow(2, (-20 * x) + 10)  ) / 2;
+                toReturn = (float)(2 - Math.Pow(2, (-20 * x) + 10)) / 2;
             }
 
             //post 0.5

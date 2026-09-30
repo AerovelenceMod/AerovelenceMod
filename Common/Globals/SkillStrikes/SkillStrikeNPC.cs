@@ -16,8 +16,8 @@ using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Common.Globals.SkillStrikes
 {
-	public class SkillStrikeOldNPC : GlobalNPC
-	{
+    public class SkillStrikeOldNPC : GlobalNPC
+    {
         public override bool InstancePerEntity => true;
 
         public bool strikeCTRemove = true;

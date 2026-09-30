@@ -14,7 +14,7 @@ using Steamworks;
 using static Terraria.NPC;
 
 namespace AerovelenceMod.Content.Items.Weapons.Flares
-{   
+{
     //This is for the little explosion effect that happens when you hit an NPC with a flare
     public abstract class BaseFlareExplosion : ModProjectile
     {
@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             Projectile.tileCollide = false;
         }
 
-        public Color col = new Color(255, 75, 50); 
+        public Color col = new Color(255, 75, 50);
         public float colMultipliter = 2.5f; //How intense the color is for shader
         public float scale = 0.3f;
 
@@ -138,7 +138,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
                 randomRot = Main.rand.NextFloat(6.28f);
             }
 
-            
+
             //Rotate based on direction 
             if (Projectile.velocity.X < 0)
             {
@@ -293,11 +293,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
 
     }
 
-    public abstract class BaseFlareDebuffNPC   : GlobalNPC
+    public abstract class BaseFlareDebuffNPC : GlobalNPC
     {
         public override bool InstancePerEntity => true;
 
-        public bool DebuffActive = false; 
+        public bool DebuffActive = false;
 
         public float DebuffTime = 0f;
 
@@ -310,7 +310,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public float tagCrit = 0;
 
         public SoundStyle sound = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
-        
+
         public Color colorA = new Color(255, 75, 50);
 
         public Color colorB = Color.OrangeRed;
@@ -402,4 +402,4 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             }
         }
     }
-} 
+}

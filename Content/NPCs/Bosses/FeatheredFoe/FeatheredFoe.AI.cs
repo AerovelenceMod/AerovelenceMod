@@ -29,9 +29,9 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                 }
 
                 //BasicMovementVariant1(player.Center + basicAttackPoint, 0.06f, 22, 2, 0.1f, 60);
-                
+
                 //////BasicMovementVariant2(player.Center + basicAttackPoint); bad
-                
+
                 BasicMovementVariant3(player.Center + basicAttackPoint, 3f, 270f);
 
                 if (timer == 100)
@@ -85,7 +85,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
         Vector2 resultingVec = Vector2.Zero;
         public void FiveSpread()
         {
-            if (substate == 1) 
+            if (substate == 1)
             {
                 if (timer == 0)
                 {
@@ -102,7 +102,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
 
                 float easingProg = Utils.GetLerpValue(0f, 1f, timer / 170f, true);
 
-                float functedEase = Math.Clamp(Easings.easeInOutHarsh(easingProg * 0.85f), 0f, 1f); 
+                float functedEase = Math.Clamp(Easings.easeInOutHarsh(easingProg * 0.85f), 0f, 1f);
 
                 Vector2 npcPosFromPlayer = Vector2.Lerp(NPC.Center, player.Center + fiveSpreadGoalVec, functedEase);
 
@@ -128,7 +128,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                 }
 
             }
-            
+
         }
 
         public void MartletOrbitFeather()
@@ -180,12 +180,12 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
             float clampedDistance = Math.Clamp(NPC.Distance(trueTarget), 5f, 800f);
 
             float velocityMult = MathHelper.Lerp(0.5f, 0.9f, clampedDistance / 800f);
-                
-                //Utils.GetLerpValue(0.9f, 0.9f, (clampedDistance / 800f), true);
+
+            //Utils.GetLerpValue(0.9f, 0.9f, (clampedDistance / 800f), true);
             //Main.NewText((clampedDistance / 800f));
 
             NPC.velocity *= velocityMult;
-            
+
         }
 
         void BasicMovementVariant3(Vector2 goalPos, float moveSpeed = 6f, float clampDistance = 240f)

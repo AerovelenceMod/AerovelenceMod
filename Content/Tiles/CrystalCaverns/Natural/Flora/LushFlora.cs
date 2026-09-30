@@ -27,7 +27,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             TileObjectData.newTile.Width = 1;
             TileObjectData.newTile.Height = 1;
             TileObjectData.newTile.CoordinateWidth = 16;
-            TileObjectData.newTile.CoordinateHeights = [16];    
+            TileObjectData.newTile.CoordinateHeights = [16];
             TileObjectData.newTile.CoordinatePadding = 2;
             TileObjectData.addTile(Type);
         }

@@ -26,6 +26,7 @@ namespace AerovelenceMod.Content.Items.Mounts
         private Vector2 intendedVelocity;
         private Vector2 lastCenter;
         private bool hadPosition;
+        private float walkCycle;
 
         internal void ResetRide()
         {
@@ -34,6 +35,7 @@ namespace AerovelenceMod.Content.Items.Mounts
             rampAge = launchCharge = 0;
             upReleased = !Player.controlUp;
             hadPosition = false;
+            walkCycle = 0;
         }
 
         internal void ReceiveRide(bool riding, float angle, int direction, float charge)
@@ -131,7 +133,8 @@ namespace AerovelenceMod.Content.Items.Mounts
                 ResetRide();
                 return;
             }
-            Player.legFrame.Y = 0;
+            float walkSpeed = Riding ? Math.Abs(Speed) : Math.Abs(Player.velocity.X);
+            walkCycle = walkSpeed > .1f ? (walkCycle + walkSpeed / 6f) % 14 : 0;
             if (Player.whoAmI != Main.myPlayer)
             {
                 float distance = hadPosition ? Vector2.Distance(Player.Center, lastCenter) : 0f;
@@ -157,6 +160,15 @@ namespace AerovelenceMod.Content.Items.Mounts
             hadPosition = true;
             if (Player.ownedProjectileCounts[ModContent.ProjectileType<TumblingMountTrail>()] == 0)
                 Projectile.NewProjectile(Player.GetSource_Misc("TumblingHarness"), BallCenter, Vector2.Zero, ModContent.ProjectileType<TumblingMountTrail>(), 24, 5f, Player.whoAmI);
+        }
+
+        public override void FrameEffects()
+        {
+            if (!Mounted || Player.dead) return;
+            bool moving = Riding || Player.velocity.X * Player.direction > .1f;
+            int frame = moving ? 6 + (int)walkCycle : 0;
+            Player.legFrame.Y = frame * Player.legFrame.Height;
+            if (Player.itemAnimation == 0) Player.bodyFrame.Y = frame * Player.bodyFrame.Height;
         }
     }
 }

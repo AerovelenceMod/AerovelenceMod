@@ -12,7 +12,7 @@ using Terraria.GameContent;
 using Terraria.Audio;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
-{   
+{
     public class CyverLaser : ModProjectile
     {
         public int timer = 0;
@@ -62,7 +62,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         }
 
-        
+
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -213,7 +213,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
 
             Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/FireBallShader", AssetRequestMode.ImmediateLoad).Value;
-            
+
             myEffect.Parameters["caustics"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/GaussianStar").Value);
             myEffect.Parameters["distort"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Noise/noise").Value);
             myEffect.Parameters["gradient"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyBalls/energyball_9").Value);
@@ -236,4 +236,4 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             return false;
         }
     }
-} 
+}

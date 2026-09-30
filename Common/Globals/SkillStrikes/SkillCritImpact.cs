@@ -63,7 +63,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
             {
                 if (Projectile.frame == 5)
                     Projectile.active = false;
-                
+
                 Projectile.frameCounter = 0;
                 Projectile.frame = (Projectile.frame + 1) % Main.projFrames[Projectile.type];
             }
@@ -88,4 +88,4 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
         }
 
     }
-} 
+}

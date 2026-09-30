@@ -12,79 +12,79 @@ namespace AerovelenceMod.Content.Items.Pets
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Fish Ring", "'You may now kiss the fish'\nSummons an Electric Tetra to partner you in life");
-            
-            base.SetStaticDefaults();
-		}
 
-		public override void SetDefaults()
-		{
-			Item.CloneDefaults(ItemID.ZephyrFish);
-			Item.shoot = ModContent.ProjectileType<LightningFish>();
-			Item.buffType = ModContent.BuffType<LightningFishBuff>();
-		}
+            base.SetStaticDefaults();
+        }
+
+        public override void SetDefaults()
+        {
+            Item.CloneDefaults(ItemID.ZephyrFish);
+            Item.shoot = ModContent.ProjectileType<LightningFish>();
+            Item.buffType = ModContent.BuffType<LightningFishBuff>();
+        }
 
         public override bool? UseItem(Player player)
         {
-			player.AddBuff(Item.buffType, 2);
-			return true;
-		}
-	}
+            player.AddBuff(Item.buffType, 2);
+            return true;
+        }
+    }
 
     public class LightningFishBuff : ModBuff
-	{
+    {
         public override LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.LightningFishBuff.DisplayName", () => "Fish Partner");
         public override LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.LightningFishBuff.Description", () => "'I now pronounce you Terrarian and Fish'");
 
-		public override void SetStaticDefaults()
-		{ 
-			Main.buffNoTimeDisplay[Type] = true;
-			Main.lightPet[Type] = true;
-		}
+        public override void SetStaticDefaults()
+        {
+            Main.buffNoTimeDisplay[Type] = true;
+            Main.lightPet[Type] = true;
+        }
 
-		public override void Update(Player player, ref int buffIndex)
-		{
-			player.buffTime[buffIndex] = 18000;
-			bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<LightningFish>()] <= 0;
-			if (petProjectileNotSpawned && player.whoAmI == Main.myPlayer)
-			{
-				Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<LightningFish>(), 0, 0f, player.whoAmI);
-			}
-		}
-	}
+        public override void Update(Player player, ref int buffIndex)
+        {
+            player.buffTime[buffIndex] = 18000;
+            bool petProjectileNotSpawned = player.ownedProjectileCounts[ModContent.ProjectileType<LightningFish>()] <= 0;
+            if (petProjectileNotSpawned && player.whoAmI == Main.myPlayer)
+            {
+                Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<LightningFish>(), 0, 0f, player.whoAmI);
+            }
+        }
+    }
 
     public class LightningFish : ModProjectile
-	{
-		public override void SetStaticDefaults()
-		{
-			Main.projFrames[Projectile.type] = 4;
-			Main.projPet[Projectile.type] = true;
-		}
+    {
+        public override void SetStaticDefaults()
+        {
+            Main.projFrames[Projectile.type] = 4;
+            Main.projPet[Projectile.type] = true;
+        }
 
-		public override void SetDefaults()
-		{
-			Projectile.CloneDefaults(ProjectileID.ZephyrFish);
-			AIType = ProjectileID.ZephyrFish;
-			Projectile.width = 28;
-			Projectile.height = 20;
-		}
+        public override void SetDefaults()
+        {
+            Projectile.CloneDefaults(ProjectileID.ZephyrFish);
+            AIType = ProjectileID.ZephyrFish;
+            Projectile.width = 28;
+            Projectile.height = 20;
+        }
 
-		public override bool PreAI()
-		{
-			Player player = Main.player[Projectile.owner];
-			player.zephyrfish = false;
-			return true;
-		}
+        public override bool PreAI()
+        {
+            Player player = Main.player[Projectile.owner];
+            player.zephyrfish = false;
+            return true;
+        }
 
-		public override void AI()
-		{
-			Lighting.AddLight(Projectile.Center, (255 - Projectile.alpha) * 0.9f / 255f, (255 - Projectile.alpha) * 0.1f / 255f, (255 - Projectile.alpha) * 0.3f / 255f);
+        public override void AI()
+        {
+            Lighting.AddLight(Projectile.Center, (255 - Projectile.alpha) * 0.9f / 255f, (255 - Projectile.alpha) * 0.1f / 255f, (255 - Projectile.alpha) * 0.3f / 255f);
 
             #region vectors floats and ints
             Player player = Main.player[Projectile.owner];
-			AeroPlayer modPlayer = player.GetModPlayer<AeroPlayer>();
-			Vector2 idlePosition = player.Center;
-			Vector2 vectorToIdlePosition = idlePosition - Projectile.Center;
-			float distanceToIdlePosition = vectorToIdlePosition.Length();
+            AeroPlayer modPlayer = player.GetModPlayer<AeroPlayer>();
+            Vector2 idlePosition = player.Center;
+            Vector2 vectorToIdlePosition = idlePosition - Projectile.Center;
+            float distanceToIdlePosition = vectorToIdlePosition.Length();
 
             #endregion
 

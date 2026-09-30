@@ -239,7 +239,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         }
     }
 
-    
+
     public class TempJadeFirePulse : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";

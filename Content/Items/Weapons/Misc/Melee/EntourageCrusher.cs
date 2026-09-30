@@ -59,9 +59,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-           tick = !tick;
-           Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (tick ? 1 : 0));
-           return false;
+            tick = !tick;
+            Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, (tick ? 1 : 0));
+            return false;
         }
 
         public override void AddRecipes()
@@ -115,7 +115,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
 
             return getProgress(easingProgress) > 0.3f && getProgress(easingProgress) <= 0.8f; //.2 8f
 
-        } 
+        }
 
         bool skillStrike = false;
         bool playedSound = false;
@@ -173,7 +173,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
                 SoundStyle slash = new SoundStyle(soundLocation) with { Pitch = -0.1f, PitchVariance = .2f, Volume = 0.2f, MaxInstances = -1 };
                 SoundEngine.PlaySound(slash, Projectile.Center);
 
-                SoundStyle stylea = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/demo_charge_hit_world1") with { Volume = .11f, Pitch = .9f, PitchVariance = .25f, MaxInstances = -1 }; 
+                SoundStyle stylea = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/demo_charge_hit_world1") with { Volume = .11f, Pitch = .9f, PitchVariance = .25f, MaxInstances = -1 };
                 SoundEngine.PlaySound(stylea, Projectile.Center);
 
                 playedSound = true;
@@ -196,11 +196,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             //Reset if swing didn't hit anybody
             if (getProgress(easingProgress) > 0.8f && !hasHit)
                 Main.player[Projectile.owner].GetModPlayer<EntourageCounter>().successiveHits = 1;
-            
+
         }
 
         public void Trail()
-        { 
+        {
             Vector2 gfxOffset = new Vector2(0, Main.player[Projectile.owner].gfxOffY);
 
             float width = 0f;
@@ -295,7 +295,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             float offset = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 1f);
 
             float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 1f) * 0.3f + 1.3f;
-            
+
             if (skillStrike)
                 AfterImageCol *= 1.5f;
 
@@ -358,11 +358,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             return false;
         }
 
-        bool hasHit = false; 
+        bool hasHit = false;
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             Player pl = Main.player[Projectile.owner];
-            
+
             if (!hasHit)
                 pl.GetModPlayer<EntourageCounter>().successiveHits = pl.GetModPlayer<EntourageCounter>().successiveHits + 1;
             hasHit = true;
@@ -380,7 +380,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_hurt_2") with { Pitch = .25f, PitchVariance = .35f, Volume = 1f, MaxInstances = 1 };
             SoundEngine.PlaySound(style, target.Center);
 
-            SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/star_impact_01") with { Pitch = -.22f, PitchVariance = .25f, Volume = 0.5f, MaxInstances = 1 }; 
+            SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/star_impact_01") with { Pitch = -.22f, PitchVariance = .25f, Volume = 0.5f, MaxInstances = 1 };
             SoundEngine.PlaySound(style3, target.Center);
 
             for (int i = 0; i < 6 + Main.rand.Next(0, 5) + (skillStrike ? 3 : 0); i++)

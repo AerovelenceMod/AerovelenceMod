@@ -79,8 +79,8 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
             myEffect.Parameters["uTime"].SetValue(timer * 0.015f);
 
             Main.spriteBatch.Draw(Ball, Projectile.Center - Main.screenPosition, null, new Color(0, 0, 0, 0), Projectile.rotation, Ball.Size() / 2, 0.15f * ballScale * 2f * Projectile.scale, SpriteEffects.None, 0f);
-            
-            
+
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -546,7 +546,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
         public void FadeBehavior()
         {
             if (timer > 15)
-                Projectile.scale -= 0.01f; 
+                Projectile.scale -= 0.01f;
 
             if (Projectile.scale < 0.1f)
             {
@@ -559,5 +559,5 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
     }
 
 
-    
+
 }

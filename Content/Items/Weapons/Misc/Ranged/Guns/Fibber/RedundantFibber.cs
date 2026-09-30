@@ -702,7 +702,7 @@
 //                return;
 
 //            #region orb
-            
+
 //            //Glorb
 //            Vector2 drawPos = Projectile.Center - Main.screenPosition;
 
@@ -721,7 +721,7 @@
 //            Main.EntitySpriteDraw(orb, drawPos, null, cols[0] with { A = 0 } * orbAlpha, orbRot, orbOrigin, orbScale * scales[0], SpriteEffects.None);
 //            Main.EntitySpriteDraw(orb, drawPos, null, cols[1] with { A = 0 } * orbAlpha, orbRot, orbOrigin, orbScale * scales[1] * sineScale1, SpriteEffects.None);
 //            Main.EntitySpriteDraw(orb, drawPos, null, cols[2] with { A = 0 } * orbAlpha, orbRot, orbOrigin, orbScale * scales[2] * sineScale2, SpriteEffects.None);
-            
+
 //            #endregion
 
 //            #region SolidTrail(good) use for fibber 

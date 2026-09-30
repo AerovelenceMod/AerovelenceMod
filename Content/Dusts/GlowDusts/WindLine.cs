@@ -16,28 +16,28 @@ using AerovelenceMod.Common.Systems;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-	public class WindLine : ModDust
-	{
+    public class WindLine : ModDust
+    {
         public override string Texture => "AerovelenceMod/Assets/Pixel/Flare";
 
 
         public override void OnSpawn(Dust dust)
-		{
-			//Alpha is used as a timer in this dust
-			dust.alpha = 0;
+        {
+            //Alpha is used as a timer in this dust
+            dust.alpha = 0;
 
-			//FadeIn is used as the opacity
-			dust.fadeIn = 1f;
+            //FadeIn is used as the opacity
+            dust.fadeIn = 1f;
 
-			dust.customData = null;
+            dust.customData = null;
 
-			dust.noGravity = true;
-			dust.noLight = true;
-		}
+            dust.noGravity = true;
+            dust.noLight = true;
+        }
 
 
-		public override bool Update(Dust dust)
-		{
+        public override bool Update(Dust dust)
+        {
             if (dust.customData == null)
             {
                 dust.customData = new WindLineBehavior();
@@ -81,7 +81,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
 
             return false;
-		}
+        }
 
 
         public override bool PreDraw(Dust dust)
@@ -127,7 +127,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
     }
 
     public class WindLineBehavior
-	{
+    {
         public float initialVelLength = 0f;
 
 
@@ -141,7 +141,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         //
         public float randomVelRotatePower = 0;
-        
+
         //Defaults to 300 as a safety measure in case user doesn't give it scale or alpha fade
         public int killEarlyTime = 300;
 
@@ -154,11 +154,11 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public bool drawWhiteCore = true;
 
-		public Vector2 vec2Scale = new Vector2(1f, 1f);
+        public Vector2 vec2Scale = new Vector2(1f, 1f);
 
 
         //Basic constructor
-        public WindLineBehavior(float VelFadePower = 0.95f, int TimeToStartShrink = 15, float ShrinkYScalePower = 0.5f, float XScale = 1f, float YScale = 1f, bool Pixelize = true) 
+        public WindLineBehavior(float VelFadePower = 0.95f, int TimeToStartShrink = 15, float ShrinkYScalePower = 0.5f, float XScale = 1f, float YScale = 1f, bool Pixelize = true)
         {
             velFadePower = VelFadePower;
             timeToStartShrink = TimeToStartShrink;

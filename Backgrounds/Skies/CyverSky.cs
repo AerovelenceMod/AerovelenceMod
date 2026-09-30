@@ -115,7 +115,7 @@ namespace AerovelenceMod.Backgrounds.Skies
                 {
                     if (runOnce)
                     {
-                        for (int i = 0; i < 100; i++) 
+                        for (int i = 0; i < 100; i++)
                         {
                             bgLines[i].X = Main.rand.Next(Main.screenWidth);
                             bgLines[i].Y = Main.rand.NextBool() ? Main.rand.Next(0, (int)(Main.screenHeight / 4.5f)) : Main.rand.Next((int)(Main.screenHeight / 4.5f * 3.5), Main.screenHeight);
@@ -123,7 +123,7 @@ namespace AerovelenceMod.Backgrounds.Skies
                         runOnce = false;
                     }
 
-                    for (int i = 0; i < 50; i++) 
+                    for (int i = 0; i < 50; i++)
                     {
 
                         if (i % 2 == 0)
@@ -147,13 +147,13 @@ namespace AerovelenceMod.Backgrounds.Skies
                         Color colToUse = Color.Lerp(Color.DeepSkyBlue, Color.DeepPink, bgLines[i].Y / Main.screenHeight);
 
                         spriteBatch.Draw(AerovelenceMod.Instance.Assets.Request<Texture2D>("Assets/Pixel/Starlight", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value,
-                            new Vector2(bgLines[i].X, bgLines[i].Y), null, colToUse with { A = 0 } * bonusIntensity * intensity * 2f * lineAlpha, 0, new Vector2(36, 36), new Vector2(width2, 0.10f), SpriteEffects.None, 0f );
+                            new Vector2(bgLines[i].X, bgLines[i].Y), null, colToUse with { A = 0 } * bonusIntensity * intensity * 2f * lineAlpha, 0, new Vector2(36, 36), new Vector2(width2, 0.10f), SpriteEffects.None, 0f);
 
                         spriteBatch.Draw(AerovelenceMod.Instance.Assets.Request<Texture2D>("Assets/Pixel/Starlight", ReLogic.Content.AssetRequestMode.ImmediateLoad).Value,
                             new Vector2(bgLines[i].X, bgLines[i].Y), null, Color.White with { A = 0 } * bonusIntensity * intensity * lineAlpha, 0, new Vector2(36, 36), new Vector2(width2, 0.10f + 2f * bgLineBoost) * 0.5f, SpriteEffects.None, 0f);
                     }
                 }
-                
+
             }
 
         }

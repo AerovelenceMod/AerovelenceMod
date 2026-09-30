@@ -36,7 +36,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void AI()
         {
-            timer++; 
+            timer++;
             Lighting.AddLight(NPC.Center, Color.DeepSkyBlue.ToVector3() * 0.5f);
             NPC tumbler = Main.npc[(int)NPC.ai[0]];
 

@@ -12,8 +12,8 @@ using AerovelenceMod.Content.Dusts.GlowDusts;
 
 namespace AerovelenceMod.Common
 {
-	public static class ItemStatHelper
-	{
+    public static class ItemStatHelper
+    {
         //Yoinked from Aequus because this is really smart and there really isn't a better way to do it
         public const int RarityBanner = ItemRarityID.Blue;
         public const int RarityBossMasks = ItemRarityID.Blue;

@@ -255,7 +255,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
             {
                 Projectile.NewProjectile(null, player.Center, Main.rand.NextVector2CircularEdge(3, 3), ModContent.ProjectileType<BishopsStaffStar>(), 0, 0, Main.myPlayer);
             }
-            
+
             ActionDustTime++;
 
         }
@@ -1259,7 +1259,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
         public override void AI()
         {
-                        starAlpha = MathHelper.Clamp(MathHelper.Lerp(starAlpha, 1.25f, 0.02f), 0f, 1f);
+            starAlpha = MathHelper.Clamp(MathHelper.Lerp(starAlpha, 1.25f, 0.02f), 0f, 1f);
             vortexRotsmall += 1;
             SkillStrikeUtil.setSkillStrike(Projectile, 1.5f);
             if (timer == 0)

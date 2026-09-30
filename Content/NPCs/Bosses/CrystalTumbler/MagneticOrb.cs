@@ -78,7 +78,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             {
 
             }
-                Main.NewText("fringus");
+            Main.NewText("fringus");
         }
 
         public override bool PreDraw(ref Color lightColor)

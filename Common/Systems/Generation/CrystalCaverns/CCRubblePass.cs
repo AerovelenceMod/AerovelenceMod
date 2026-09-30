@@ -124,8 +124,8 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     if (Main.tile[x, y].TileType == tileType)
                         continue;
 
-                    if (tileType == ModContent.TileType<CavernStone1x1CeilingRubbleNatural>() || 
-                        tileType == ModContent.TileType<CavernStone1x2FloorRubbleNatural>() || 
+                    if (tileType == ModContent.TileType<CavernStone1x1CeilingRubbleNatural>() ||
+                        tileType == ModContent.TileType<CavernStone1x2FloorRubbleNatural>() ||
                         tileType == ModContent.TileType<CavernStone1x2CeilingRubbleNatural>() ||
                         tileType == ModContent.TileType<CavernStone3x2FloorRubbleNatural>())
                     {

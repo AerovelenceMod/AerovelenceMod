@@ -23,10 +23,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Mimiko's Mirror", "Reflects magical light to banish evil\nMoving the cursor scatters the light")
-				.AddSkillStrike(Language.Default, "Focused beam Skill Strikes")
+                .AddSkillStrike(Language.Default, "Focused beam Skill Strikes")
                 .AddName(Language.Spanish, "Espejo de Mimiko")
                 .AddTooltip(Language.Spanish, "Refleja luz mágica para desterrar el mal\nAl mover el cursor, la luz se dispersa")
-				.AddSkillStrike(Language.Spanish, "Ataques de Habilidad con rayo concentrado");
+                .AddSkillStrike(Language.Spanish, "Ataques de Habilidad con rayo concentrado");
         }
 
         public override void SetDefaults()

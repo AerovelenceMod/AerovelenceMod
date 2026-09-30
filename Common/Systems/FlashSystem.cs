@@ -29,7 +29,7 @@ namespace AerovelenceMod.Common.Systems
 
         //Chromatic Abberation Flash
         private static float WhiteIntensity;
-        
+
         private static float DistanceMultiplier;
 
         private static bool MoveColorIn;
@@ -47,7 +47,7 @@ namespace AerovelenceMod.Common.Systems
 
         private static float flashProgress => (float)FlashTime / FlashLifeTime;
 
-        
+
         public static void SetFlashEffect(float intensity, int lifetime)
         {
             FlashIntensity = intensity;
@@ -227,7 +227,7 @@ namespace AerovelenceMod.Common.Systems
                     screenTarget1 = FlashSystem.DrawCAFlash(screenTarget1);
                     break;
             }
-            
+
             //Draw the original screen
             orig(self, finalTexture, screenTarget1, screenTarget2, clearColor);
         }

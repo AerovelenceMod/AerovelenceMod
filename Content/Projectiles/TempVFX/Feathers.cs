@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
         float pulseIntensity = 0f;
         float progress = 0f;
-        
+
         public override void AI()
         {
             if (timer == 0)
@@ -64,13 +64,13 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
                 if (timer == 45)
                 {
-                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_ogre_spit") with { Pitch = 1f, PitchVariance = .33f, MaxInstances = -1 }; 
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_ogre_spit") with { Pitch = 1f, PitchVariance = .33f, MaxInstances = -1 };
                     SoundEngine.PlaySound(style, Projectile.Center);
 
                     SoundStyle style3 = new SoundStyle("Terraria/Sounds/Custom/dd2_ballista_tower_shot_1") with { Pitch = .54f, PitchVariance = 0.2f, Volume = 0.3f, MaxInstances = -1 };
                     SoundEngine.PlaySound(style3, Projectile.Center);
-                    
-                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_42") with { Pitch = .2f, PitchVariance = .2f, Volume = 0.55f, MaxInstances = -1 }; 
+
+                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_42") with { Pitch = .2f, PitchVariance = .2f, Volume = 0.55f, MaxInstances = -1 };
                     SoundEngine.PlaySound(style2, Projectile.Center);
 
                     Projectile.rotation = rotGoal;
@@ -79,7 +79,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
                     timer = -1;
                     advancer++;
-                }    
+                }
             }
             //Dash to cursor
             else if (advancer == 1)
@@ -117,7 +117,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                 #endregion
 
                 float turnPower = 25f;
-                int turn2 = 30; 
+                int turn2 = 30;
 
                 Vector2 mousePos = Vector2.Zero;
 
@@ -137,17 +137,17 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             //Projectile.velocity.Y -= 0.13f;
 
 
-            if (advancer != 0 && timer != -1 && advancer != 1) 
+            if (advancer != 0 && timer != -1 && advancer != 1)
                 Projectile.rotation = Projectile.velocity.ToRotation();
 
             int trailCount = 10;
             previousRotations.Add(Projectile.rotation);
             previousPostions.Add(Projectile.Center);
 
-            if (previousRotations.Count > trailCount) 
+            if (previousRotations.Count > trailCount)
                 previousRotations.RemoveAt(0);
 
-            if (previousPostions.Count > trailCount) 
+            if (previousPostions.Count > trailCount)
                 previousPostions.RemoveAt(0);
 
             pulseIntensity = Math.Clamp(MathHelper.Lerp(pulseIntensity, -0.25f, 0.03f), 0f, 2f);
@@ -175,17 +175,17 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                     float progress = (float)i / previousRotations.Count;
 
                     float size = (0.75f + (progress * 0.25f)) * Projectile.scale;
-                    
-                    
+
+
                     Color col = Color.Lerp(Color.Blue, Color.DeepSkyBlue, progress) * progress;
-                    
+
                     float size2 = (1f + (progress * 0.25f)) * Projectile.scale;
                     Main.EntitySpriteDraw(FeatherGray, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 0.55f,
                             previousRotations[i], FeatherGray.Size() / 2f, size2, SpriteEffects.None);
 
                     Vector2 vec2Scale = new Vector2(1.5f, 0.25f) * size;
                     if (advancer != 0)
-                        Main.EntitySpriteDraw(FeatherWhite, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 0.85f, 
+                        Main.EntitySpriteDraw(FeatherWhite, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 0.85f,
                             previousRotations[i], FeatherGray.Size() / 2f, vec2Scale, SpriteEffects.None);
                 }
 
@@ -193,7 +193,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             #endregion
 
             float twirlAlpha = 1f - Easings.easeOutCirc((float)(timer / 40f));
-            
+
             if (advancer == 0)
                 Main.EntitySpriteDraw(Twirl, Projectile.Center - Main.screenPosition, null, Color.White with { A = 0 } * twirlAlpha * 1.5f, Projectile.rotation, Twirl.Size() / 2f, Projectile.scale * 0.65f, SpriteEffects.None);
 
@@ -263,7 +263,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         public override void AI()
         {
             Player targetPlayer = Main.player[Main.myPlayer];
-            
+
             //Orbit around player
             if (advancer == 0)
             {
@@ -287,16 +287,16 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                 float rot = MathHelper.Lerp(orbitVector.ToRotation(), orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1), Easings.easeInSine(rotProg));
                 Projectile.rotation = rot;
                 //if (lerpToPointProg < 0.75f)
-                  //  Projectile.rotation = ((targetPlayer.Center + orbitVector) - Projectile.Center).ToRotation();
+                //  Projectile.rotation = ((targetPlayer.Center + orbitVector) - Projectile.Center).ToRotation();
                 //else
-                  //  Projectile.rotation = orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1);
+                //  Projectile.rotation = orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1);
 
                 if (timer == timeToOrbit)
                 {
                     //SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/trident_twirl_01") with { Pitch = .75f, PitchVariance = 0.2f, MaxInstances = -1, Volume = 0.25f }; //0.2f
                     //SoundEngine.PlaySound(style, Projectile.Center);
 
-                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .60f, MaxInstances = -1, Volume = 0.35f, PitchVariance = 0.2f }; 
+                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .60f, MaxInstances = -1, Volume = 0.35f, PitchVariance = 0.2f };
                     SoundEngine.PlaySound(style2, Projectile.Center);
 
                     //SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/glaive_shot_01") with { Volume = .35f, Pitch = .75f, PitchVariance = 0.25f, MaxInstances = -1 }; 
@@ -349,7 +349,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                     advancer++;
                 }
             }
-            
+
             // Dash 
             else if (advancer == 2)
             {
@@ -360,14 +360,14 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
                 if (timer == 30 && false)
                 {
-                    for (int i = 0; i < 4; i++) 
+                    for (int i = 0; i < 4; i++)
                     {
                         Projectile.NewProjectile(null, Projectile.Center, new Vector2(21f, 0f).RotatedBy(MathHelper.PiOver2 * i), ModContent.ProjectileType<StraightFeatherOld>(),
                             Projectile.damage, 2f, Main.myPlayer);
                     }
                 }
             }
-            
+
             int trailCount = 10;
             previousRotations.Add(Projectile.rotation);
             previousPostions.Add(Projectile.Center);
@@ -558,7 +558,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                             previousRotations[i], FeatherGray.Size() / 2f, size2, SpriteEffects.None);
 
                     Vector2 vec2Scale = new Vector2(1.5f, 0.25f) * size;
-                    
+
                     Main.EntitySpriteDraw(FeatherWhite, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 0.85f * alpha,
                             previousRotations[i], FeatherGray.Size() / 2f, vec2Scale, SpriteEffects.None);
                 }

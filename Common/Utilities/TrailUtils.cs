@@ -12,8 +12,8 @@ using AerovelenceMod.Content.Dusts.GlowDusts;
 
 namespace AerovelenceMod.Common.Utilities
 {
-	public static class TrailUtils
-	{
+    public static class TrailUtils
+    {
 
-	}
+    }
 }

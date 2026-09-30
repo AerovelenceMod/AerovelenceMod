@@ -23,6 +23,7 @@ namespace AerovelenceMod.Common.Systems
         UnderProjectiles = 3,
         OverPlayers = 4,
         Dusts = 5,
+        BeforeSolidTiles = 6,
     }
 
     public class NewPixelationSystem : ModSystem
@@ -36,6 +37,7 @@ namespace AerovelenceMod.Common.Systems
 
             On_Main.DrawCachedProjs += DrawTargets;
             On_Main.DrawDust += DrawDustTargets;
+            On_Main.DoDraw_Tiles_Solid += DrawBeforeSolidTiles;
         }
 
         public override void PostSetupContent()
@@ -49,6 +51,7 @@ namespace AerovelenceMod.Common.Systems
             RegisterScreenTarget(RenderLayer.OverPlayers);
 
             RegisterScreenTarget(RenderLayer.Dusts);
+            RegisterScreenTarget(RenderLayer.BeforeSolidTiles);
         }
 
         public override void Unload()
@@ -58,6 +61,14 @@ namespace AerovelenceMod.Common.Systems
 
             On_Main.DrawCachedProjs -= DrawTargets;
             On_Main.DrawDust -= DrawDustTargets;
+            On_Main.DoDraw_Tiles_Solid -= DrawBeforeSolidTiles;
+        }
+
+        private void DrawBeforeSolidTiles(On_Main.orig_DoDraw_Tiles_Solid orig, Main self)
+        {
+            foreach (PixelationTarget target in pixelationTargets.Where(t => t.Active && t.renderType == RenderLayer.BeforeSolidTiles))
+                DrawTarget(target, Main.spriteBatch, false);
+            orig(self);
         }
 
 
@@ -121,7 +132,7 @@ namespace AerovelenceMod.Common.Systems
             BlendState blendState = BlendState.AlphaBlend;
 
             //TODO: see if this works without immediate
-            sb.Begin(SpriteSortMode.Immediate, blendState, Main.DefaultSamplerState,
+            sb.Begin(SpriteSortMode.Immediate, blendState, target.Sampling ?? Main.DefaultSamplerState,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
 
             sb.Draw(target.pixelationTarget2.RenderTarget, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
@@ -145,14 +156,32 @@ namespace AerovelenceMod.Common.Systems
             target.pixelationDrawActions.Add(new Tuple<Action, int>(renderAction, order));
             target.renderTimer = 2;
         }
+
+        public bool RegisterPersistentRenderAction(RenderLayer renderType, Func<bool> active, Action renderAction, int order = 0)
+        {
+            PixelationTarget target = pixelationTargets.Find(t => t.renderType == renderType);
+            if (target is null)
+                return false;
+            if (!target.persistentPixelationDrawActions.Any(t => t.Item2 == renderAction))
+                target.persistentPixelationDrawActions.Add(new Tuple<Func<bool>, Action, int>(active, renderAction, order));
+            return true;
+        }
+
+        public void UnregisterPersistentRenderAction(RenderLayer renderType, Action renderAction)
+        {
+            PixelationTarget target = pixelationTargets.Find(t => t.renderType == renderType);
+            target?.persistentPixelationDrawActions.RemoveAll(t => t.Item2 == renderAction);
+        }
     }
 
     public class PixelationTarget
     {
+        public SamplerState Sampling { get; init; }
         public int renderTimer;
 
         // list of actions, and their draw order. Default order is zero, but actions with an order of 1 are drawn over 0, etc.
         public List<Tuple<Action, int>> pixelationDrawActions;
+        public List<Tuple<Func<bool>, Action, int>> persistentPixelationDrawActions;
 
         public ScreenTarget pixelationTarget;
 
@@ -160,11 +189,12 @@ namespace AerovelenceMod.Common.Systems
 
         public RenderLayer renderType;
 
-        public bool Active => renderTimer > 0;
+        public bool Active => renderTimer > 0 || persistentPixelationDrawActions.Any(t => t.Item1());
 
         public PixelationTarget(RenderLayer renderType)
         {
             pixelationDrawActions = new List<Tuple<Action, int>>();
+            persistentPixelationDrawActions = new List<Tuple<Func<bool>, Action, int>>();
 
             pixelationTarget = new(DrawPixelTarget, () => Active, 1f);
             pixelationTarget2 = new(DrawPixelTarget2, () => Active, 1.1f);
@@ -178,7 +208,7 @@ namespace AerovelenceMod.Common.Systems
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             sb.End();
-            sb.Begin(default, default, Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
+            sb.Begin(default, default, Sampling ?? Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
 
             sb.Draw(pixelationTarget.RenderTarget, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0);
 
@@ -192,6 +222,11 @@ namespace AerovelenceMod.Common.Systems
 
             sb.End();
             sb.Begin(default, default, Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
+
+            foreach (Tuple<Func<bool>, Action, int> tuple in persistentPixelationDrawActions.Where(t => t.Item1()).OrderBy(t => t.Item3))
+            {
+                tuple.Item2.Invoke();
+            }
 
             foreach (Tuple<Action, int> tuple in pixelationDrawActions.OrderBy(t => t.Item2))
             {
@@ -326,7 +361,7 @@ namespace AerovelenceMod.Common.Systems
             targetSem.WaitOne();
 
             targets.Remove(toRemove);
-            targets.Sort((a, b) => a.order - b.order > 0 ? 1 : -1);
+            targets.Sort((a, b) => a.order.CompareTo(b.order));
 
             targetSem.Release();
         }
@@ -368,16 +403,13 @@ namespace AerovelenceMod.Common.Systems
 
             foreach (ScreenTarget target in targets)
             {
-                if (target.drawFunct is null) //allows for RTs which dont draw in the default loop, like the lighting tile buffers
+                if (target.drawFunct is null || !target.activeFunct()) //allows for RTs which dont draw in the default loop, like the lighting tile buffers
                     continue;
 
                 Main.spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, RasterizerState.CullNone, default);
                 Main.graphics.GraphicsDevice.SetRenderTarget(target.RenderTarget);
                 Main.graphics.GraphicsDevice.Clear(Color.Transparent);
-
-                if (target.activeFunct())
-                    target.drawFunct(Main.spriteBatch);
-
+                target.drawFunct(Main.spriteBatch);
                 Main.spriteBatch.End();
             }
 
@@ -523,6 +555,22 @@ namespace AerovelenceMod.Common.Systems
 
             target.pixelationDrawActions.Add(new Tuple<Action, int>(renderAction, order));
             target.renderTimer = 2;
+        }
+
+        public bool RegisterPersistentRenderAction(RenderLayer renderType, Func<bool> active, Action renderAction, int order = 0)
+        {
+            PixelationTarget target = pixelationTargets.Find(t => t.renderType == renderType);
+            if (target is null)
+                return false;
+            if (!target.persistentPixelationDrawActions.Any(t => t.Item2 == renderAction))
+                target.persistentPixelationDrawActions.Add(new Tuple<Func<bool>, Action, int>(active, renderAction, order));
+            return true;
+        }
+
+        public void UnregisterPersistentRenderAction(RenderLayer renderType, Action renderAction)
+        {
+            PixelationTarget target = pixelationTargets.Find(t => t.renderType == renderType);
+            target?.persistentPixelationDrawActions.RemoveAll(t => t.Item2 == renderAction);
         }
     }
 

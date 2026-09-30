@@ -7,6 +7,10 @@ namespace AerovelenceMod.Common.Utilities
     {
         public override void PostDrawInterface(SpriteBatch spriteBatch) => SlimeRenderer.Collect();
         public override void OnWorldUnload() => Main.QueueMainThreadAction(SlimeRenderer.Clear);
-        public override void Unload() => Main.QueueMainThreadAction(SlimeRenderer.Clear);
+        public override void Unload() => Main.QueueMainThreadAction(() =>
+        {
+            SlimeRenderer.Clear();
+            VanillaSlimeVisual.ClearCache();
+        });
     }
 }

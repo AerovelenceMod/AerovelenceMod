@@ -20,15 +20,15 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
         public override void SetStaticDefaults()
         {
-			MineResist = 2.5f;
-			MinPick = 59;
+            MineResist = 2.5f;
+            MinPick = 59;
             Main.tileSolid[Type] = true;
             Main.tileMergeDirt[Type] = true;
             Main.tileBlendAll[Type] = true;
             Main.tileBlockLight[Type] = true;
             Main.tileLighted[Type] = true;
             AddMapEntry(new Color(80, 110, 170));
-			DustType = DustID.BlueTorch;
+            DustType = DustID.BlueTorch;
             CommonTileHelper.SetTileProtection(this);
             TileID.Sets.GeneralPlacementTiles[Type] = false;
         }
@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             if (Main.rand.Next(lightningAttemptChanceDenominator) == 0)
             {
                 Vector2 origin = new Vector2(i, j);
-                
+
                 // Find a destination tile with an x/y between min and max distance away
                 float targetX = i + Main.rand.Next(minLightningDistance, maxLightningDistance + 1) * (Main.rand.Next(2) * 2f - 1f);
                 float targetY = j + Main.rand.Next(minLightningDistance, maxLightningDistance + 1) * (Main.rand.Next(2) * 2f - 1f);

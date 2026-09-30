@@ -50,7 +50,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
                 SoundEngine.PlaySound(style, Projectile.Center);
 
 
-                SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Volume = 0.6f, Pitch = .85f, MaxInstances = -1};
+                SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Volume = 0.6f, Pitch = .85f, MaxInstances = -1 };
                 SoundEngine.PlaySound(style2, Projectile.Center);
                 //SoundEngine.PlaySound(style2, Projectile.Center);
 
@@ -120,7 +120,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
                 if (Projectile.velocity.X > 0)
                 {
                     Projectile.rotation += amountToRot;
-                } 
+                }
                 else
                 {
                     Projectile.rotation -= amountToRot;

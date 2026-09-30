@@ -126,9 +126,9 @@ namespace AerovelenceMod.Content.Items
             relativeTrail.trailRot = Projectile.rotation + MathHelper.PiOver4;
 
             relativeTrail.trailPos = Projectile.Center + Projectile.rotation.ToRotationVector2().RotatedBy(-1f) * (30 + (intensity * 15)) - Main.player[Projectile.owner].Center;
-            
+
             if (getProgress(easingProgress) >= 0.03f)
-            relativeTrail.TrailLogic();
+                relativeTrail.TrailLogic();
 
             /*
             if (getProgress(easingProgress) >= 0.98)

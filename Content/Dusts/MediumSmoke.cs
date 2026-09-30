@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.Dusts
 
             dust.customData = null;
         }
-        
+
         public override bool Update(Dust dust)
         {
             if (dust.customData == null)
@@ -70,7 +70,7 @@ namespace AerovelenceMod.Content.Dusts
             {
                 if (msb.currentFrame == -1)
                     Main.NewText("How did this happen | MediumSmoke frame -1");
-                
+
                 Vector2 drawPos = dust.position - Main.screenPosition;
 
                 int frameHeight = TexMain.Height / 3;

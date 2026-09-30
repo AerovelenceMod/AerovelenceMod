@@ -20,7 +20,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public float vortexRot = 0;
         public float vortexRotsmall;
         public float FlareLerp = 0.3f;
-        
+
         public float[] randomRotation = new float[5];
 
         public override void SetDefaults()
@@ -74,7 +74,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             }
             if (timer > 20) FlareLerp = Math.Clamp(FlareLerp - 0.015f, 0, 0.3f);//Math.Clamp(MathHelper.Lerp(FlareLerp, 0.1f, 0.02f), 0, 0.2f);
 
-            
+
             if (timer % 7 == 0)
             {
                 for (int i = 0; i < 1 + Main.rand.NextFloat(0, 1); i++)
@@ -89,11 +89,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             {
                 for (int i = 0; i < 1; i++)
                 {
-                    Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5, 5), ModContent.DustType<GlowCircleRise>(), 
-                        new Vector2(0,-2) + Projectile.velocity * -0.2f + Main.rand.NextVector2Circular(3, 3), Color.Gray * 0.65f, Main.rand.NextFloat(0.5f, 0.9f), 1f, 0f, dustShader);
+                    Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5, 5), ModContent.DustType<GlowCircleRise>(),
+                        new Vector2(0, -2) + Projectile.velocity * -0.2f + Main.rand.NextVector2Circular(3, 3), Color.Gray * 0.65f, Main.rand.NextFloat(0.5f, 0.9f), 1f, 0f, dustShader);
                 }
             }
-            
+
             Projectile.velocity.Y += 0.29f;
 
             goldPulseValue = Math.Clamp(MathHelper.Lerp(goldPulseValue, -0.25f, 0.02f), 0f, 0.5f);
@@ -142,12 +142,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
             Texture2D swirl2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/twirl_03").Value;
 
             Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Red * alpha, vortexRot, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Red * alpha, vortexRot + MathHelper.Pi, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(swirl2, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Red * alpha , MathHelper.ToRadians(vortexRotsmall * 8), swirl.Size() / 2, 0.06f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(swirl2, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Red * alpha, MathHelper.ToRadians(vortexRotsmall * 8), swirl.Size() / 2, 0.06f, SpriteEffects.None, 0f);
 
 
             Main.spriteBatch.End();
@@ -179,7 +179,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
 
-            SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/FlareImpact") with { Volume = 0.5f, PitchVariance = 0.1f};
+            SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/FlareImpact") with { Volume = 0.5f, PitchVariance = 0.1f };
             SoundEngine.PlaySound(style2, Projectile.Center);
 
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
@@ -190,7 +190,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
 
             int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
             Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
-            for (int i = 0; i < 3; i++) 
+            for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
                     Main.rand.NextVector2Circular(5, 5), Color.OrangeRed, Main.rand.NextFloat(0.4f, 0.7f), 0.4f, 0f, dustShader);
@@ -203,7 +203,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
 
     public class FireFlareExplosion : BaseFlareExplosion
     {
-        
+
     }
 
-} 
+}

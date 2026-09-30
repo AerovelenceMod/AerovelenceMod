@@ -95,10 +95,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
                 Vector2 mouseWorld = Main.MouseWorld;
 
                 //Pick the index of orb to use based on the player's itemanimation
-                int index = (int)(((float)(player.itemAnimation-1) / (float)player.itemAnimationMax) * (orbs.Length));
-                Vector2 pos = player.MountedCenter + (orbs[index]*4);
+                int index = (int)(((float)(player.itemAnimation - 1) / (float)player.itemAnimationMax) * (orbs.Length));
+                Vector2 pos = player.MountedCenter + (orbs[index] * 4);
                 Vector2 vel = (mouseWorld - pos).SafeNormalize(Vector2.UnitX) * Item.shootSpeed;
-                Projectile.NewProjectile(source, pos-vel, vel * 0.75f, ModContent.ProjectileType<FireWave>(), damage, 0, player.whoAmI);
+                Projectile.NewProjectile(source, pos - vel, vel * 0.75f, ModContent.ProjectileType<FireWave>(), damage, 0, player.whoAmI);
 
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Item_100") with { Volume = .5f, Pitch = .73f, PitchVariance = .22f, MaxInstances = 1 };
                 SoundEngine.PlaySound(style, player.Center);
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
 
             //Since this works as a generic update hook when being held...
             //Use this to catch cases where these values aren't their default
-            if(!player.controlUseItem && modPlayer.useStyleInt != 0)
+            if (!player.controlUseItem && modPlayer.useStyleInt != 0)
             {
                 modPlayer.useStyleInt = 0;
                 modPlayer.useStyleData = null;
@@ -181,7 +181,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
                     {
                         //Assert new values and rotations, AND add another value
                         float newRotation = modPlayer.useStyleInt * 0.04f + ((MathHelper.TwoPi / newOrbs.Length) * i);
-                        newOrbs[i] = Vector2.UnitY.RotatedBy(newRotation)*16f;
+                        newOrbs[i] = Vector2.UnitY.RotatedBy(newRotation) * 16f;
 
                         for (int m = 0; m < 10; m++)
                         {
@@ -205,8 +205,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
                     for (int i = 0; i < lng; i++)
                     {
                         //Assert new values and rotations
-                        float newRotation = modPlayer.useStyleInt * 0.04f + ((MathHelper.TwoPi/newOrbs.Length) * i);
-                        newOrbs[i] = Vector2.UnitY.RotatedBy(newRotation)*16f;
+                        float newRotation = modPlayer.useStyleInt * 0.04f + ((MathHelper.TwoPi / newOrbs.Length) * i);
+                        newOrbs[i] = Vector2.UnitY.RotatedBy(newRotation) * 16f;
                     }
                     //Push new array to modplayer
                     modPlayer.useStyleData = newOrbs;

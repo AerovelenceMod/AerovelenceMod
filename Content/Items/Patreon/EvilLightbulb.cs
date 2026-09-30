@@ -111,7 +111,7 @@ namespace AerovelenceMod.Content.Items.Patreon
             Projectile.alpha = 0;
         }
 
-		public override bool PreDraw(ref Color lightColor)
+        public override bool PreDraw(ref Color lightColor)
         {
             var effects = Projectile.spriteDirection == -1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
             Texture2D auraTex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/YellowGlow");
@@ -172,13 +172,13 @@ namespace AerovelenceMod.Content.Items.Patreon
             Projectile.tileCollide = true;
             Projectile.penetrate = 300;
             Projectile.damage = 50;
-            
+
         }
 
         public override void AI()
         {
             Projectile.ai[0] += 1f;
-            if(Projectile.ai[0] > 3f)
+            if (Projectile.ai[0] > 3f)
             {
                 for (int i = 0; i < 2; i++)
                 {

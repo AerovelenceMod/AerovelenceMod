@@ -15,36 +15,36 @@ using AerovelenceMod.Content.Dusts.GlowDusts;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 {
-	public class CyverHyperBeam : ModProjectile
-	{
+    public class CyverHyperBeam : ModProjectile
+    {
 
-		public Vector2 endPoint;
-		public float LaserRotation = 0;
-		public override void SetStaticDefaults()
-		{
-			//ALWAYS DRAW CODE
-			ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
-		}
+        public Vector2 endPoint;
+        public float LaserRotation = 0;
+        public override void SetStaticDefaults()
+        {
+            //ALWAYS DRAW CODE
+            ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
+        }
 
-		Vector2 storedCenter = Vector2.Zero;
-		int timer = 0;
+        Vector2 storedCenter = Vector2.Zero;
+        int timer = 0;
 
-		public override void SetDefaults()
-		{
-			Projectile.width = 16;
-			Projectile.height = 16;
-			Projectile.hostile = true;
-			Projectile.friendly = false;
-			Projectile.penetrate = -1;
-			Projectile.ignoreWater = true;
-			Projectile.timeLeft = 1000;
-			Projectile.tileCollide = false;
-			Projectile.extraUpdates = 1;
-		}
+        public override void SetDefaults()
+        {
+            Projectile.width = 16;
+            Projectile.height = 16;
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+            Projectile.penetrate = -1;
+            Projectile.ignoreWater = true;
+            Projectile.timeLeft = 1000;
+            Projectile.tileCollide = false;
+            Projectile.extraUpdates = 1;
+        }
 
 
         public override void AI()
-		{
+        {
             if (timer == 0)
             {
                 SoundStyle style32 = new SoundStyle("AerovelenceMod/Sounds/Effects/laser_fire") with { Volume = 0.48f, Pitch = 0f, MaxInstances = -1, PitchVariance = 0.1f };
@@ -97,47 +97,47 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         }
 
 
-        public override bool PreDraw(ref Color lightColor) 
-		{
-            
-			if (timer > 0) //Laser might be fucked up on first frame if we don't do this
-			{
-				Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/LaserShader", AssetRequestMode.ImmediateLoad).Value;
+        public override bool PreDraw(ref Color lightColor)
+        {
 
-				myEffect.Parameters["uColor"].SetValue(Color.DeepPink.ToVector3() * 0.6f);
-				myEffect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
-				myEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value);
-				myEffect.Parameters["uTime"].SetValue(timer * -0.015f + Projectile.ai[1]);
-				myEffect.Parameters["uSaturation"].SetValue(2);
+            if (timer > 0) //Laser might be fucked up on first frame if we don't do this
+            {
+                Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/LaserShader", AssetRequestMode.ImmediateLoad).Value;
 
-
-				Main.spriteBatch.End();
-				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
+                myEffect.Parameters["uColor"].SetValue(Color.DeepPink.ToVector3() * 0.6f);
+                myEffect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
+                myEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value);
+                myEffect.Parameters["uTime"].SetValue(timer * -0.015f + Projectile.ai[1]);
+                myEffect.Parameters["uSaturation"].SetValue(2);
 
 
-				//Activate Shader
-				myEffect.CurrentTechnique.Passes[0].Apply();
-
-				Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
 
 
-				endPoint = storedCenter;
-				var texBeam = Mod.Assets.Request<Texture2D>("Assets/GlowTrailMoreRes").Value;
+                //Activate Shader
+                myEffect.CurrentTechnique.Passes[0].Apply();
+
+                Texture2D texture = TextureAssets.Projectile[Projectile.type].Value;
 
 
-				Vector2 origin2 = new Vector2(0, texBeam.Height / 2);
+                endPoint = storedCenter;
+                var texBeam = Mod.Assets.Request<Texture2D>("Assets/GlowTrailMoreRes").Value;
 
-				float height = Math.Clamp(Projectile.ai[0], 0, 500); //25
 
-				if (height <= 20)
-					Projectile.active = false;
+                Vector2 origin2 = new Vector2(0, texBeam.Height / 2);
 
-				int width = (int)(Projectile.Center - endPoint).Length() - 24;
+                float height = Math.Clamp(Projectile.ai[0], 0, 500); //25
 
-				var pos = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
-				var target = new Rectangle((int)pos.X, (int)pos.Y, width, (int)(height * 1.2f));
+                if (height <= 20)
+                    Projectile.active = false;
 
-				Main.spriteBatch.Draw(texBeam, target, null, Color.DeepPink, LaserRotation, origin2, 0, 0);
+                int width = (int)(Projectile.Center - endPoint).Length() - 24;
+
+                var pos = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
+                var target = new Rectangle((int)pos.X, (int)pos.Y, width, (int)(height * 1.2f));
+
+                Main.spriteBatch.Draw(texBeam, target, null, Color.DeepPink, LaserRotation, origin2, 0, 0);
                 Main.spriteBatch.Draw(texBeam, target, null, Color.DeepPink, LaserRotation, origin2, 0, 0);
                 Main.spriteBatch.Draw(texBeam, target, null, Color.DeepPink, LaserRotation, origin2, 0, 0); //e196
 
@@ -146,36 +146,36 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 //Lighting.AddLight(pos + Vector2.UnitX.RotatedBy(LaserRotation) * i + Main.screenPosition, Color.DeepPink.ToVector3() * height * 0.020f); //0.030
 
                 Main.spriteBatch.End();
-				Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
-				float height2 = (20f); //25
+                float height2 = (20f); //25
 
-				if (height2 == 0)
-					Projectile.active = false;
+                if (height2 == 0)
+                    Projectile.active = false;
 
-				int width2 = (int)(Projectile.Center - endPoint).Length() - 24;
+                int width2 = (int)(Projectile.Center - endPoint).Length() - 24;
 
-				var pos2 = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
-				var target2 = new Rectangle((int)pos2.X, (int)pos2.Y, width2, (int)(height2 * 1.2f));
+                var pos2 = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
+                var target2 = new Rectangle((int)pos2.X, (int)pos2.Y, width2, (int)(height2 * 1.2f));
 
-				//Main.spriteBatch.Draw(texBeam, target2, null, Color.OrangeRed, LaserRotation, origin2, 0, 0);
+                //Main.spriteBatch.Draw(texBeam, target2, null, Color.OrangeRed, LaserRotation, origin2, 0, 0);
 
-				//for (int i = 0; i < width; i += 6)
-				//Lighting.AddLight(pos + Vector2.UnitX.RotatedBy(LaserRotation) * i + Main.screenPosition, Color.HotPink.ToVector3() * height * 0.015f); //0.030
+                //for (int i = 0; i < width; i += 6)
+                //Lighting.AddLight(pos + Vector2.UnitX.RotatedBy(LaserRotation) * i + Main.screenPosition, Color.HotPink.ToVector3() * height * 0.015f); //0.030
 
-				//timer++;
-			}
-			
+                //timer++;
+            }
+
             return false;
-		}
+        }
 
-		public override void PostDraw(Color lightColor)
+        public override void PostDraw(Color lightColor)
         {
-			var pos = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
+            var pos = Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 24;
 
 
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
             var spotTex = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_21").Value;
             var spotTex2 = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_1").Value;
@@ -190,25 +190,25 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
 
 
-            Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value; 
+            Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
 
-			myEffect.Parameters["uColor"].SetValue(Color.HotPink.ToVector3() * 2.5f);
-			myEffect.Parameters["uTime"].SetValue(2);
-			myEffect.Parameters["uOpacity"].SetValue(0.9f);
-			myEffect.Parameters["uSaturation"].SetValue(1.2f);
+            myEffect.Parameters["uColor"].SetValue(Color.HotPink.ToVector3() * 2.5f);
+            myEffect.Parameters["uTime"].SetValue(2);
+            myEffect.Parameters["uOpacity"].SetValue(0.9f);
+            myEffect.Parameters["uSaturation"].SetValue(1.2f);
 
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
 
-			Main.spriteBatch.Draw(Ball, Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 30, Ball.Frame(1, 1, 0, 0), Color.HotPink * 0.5f, 0, Ball.Size() / 2, 0.6f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
-			Main.spriteBatch.Draw(Ball, thisPos, Ball.Frame(1, 1, 0, 0), Color.HotPink * 0.5f, 0, Ball.Size() / 2, 0.4f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(Ball, Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * 30, Ball.Frame(1, 1, 0, 0), Color.HotPink * 0.5f, 0, Ball.Size() / 2, 0.6f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
+            Main.spriteBatch.Draw(Ball, thisPos, Ball.Frame(1, 1, 0, 0), Color.HotPink * 0.5f, 0, Ball.Size() / 2, 0.4f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
             Main.spriteBatch.Draw(Ball, thisPos, Ball.Frame(1, 1, 0, 0), Color.HotPink, 0, Ball.Size() / 2, 0.4f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
 
             //Activate Shader
             myEffect.CurrentTechnique.Passes[0].Apply();
 
-			Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.End();
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
             Main.spriteBatch.Draw(spotTex, thisPos, spotTex.Frame(1, 1, 0, 0), Color.HotPink * 1.5f, Projectile.rotation + MathHelper.ToRadians((5f * Projectile.ai[2]) * timer), spotTex.Size() / 2, 1f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
             Main.spriteBatch.Draw(spotTex, thisPos, spotTex.Frame(1, 1, 0, 0), Color.DeepPink, Projectile.rotation + MathHelper.ToRadians((-3f * Projectile.ai[2]) * timer), spotTex.Size() / 2, 0.75f * (Projectile.ai[0] / 300), SpriteEffects.None, 0);
@@ -219,31 +219,31 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
 
             Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * (24.9f), glowTex.Frame(1, 1, 0, 0), Color.DeepPink, LaserRotation + MathHelper.Pi, glowTex.Size() / 2, 4f * (Projectile.ai[0] / 300), SpriteEffects.FlipHorizontally, 0);
-			Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * (24.9f), glowTex.Frame(1, 1, 0, 0), Color.DeepPink, LaserRotation + MathHelper.Pi, glowTex.Size() / 2, 4f * (Projectile.ai[0] / 300), SpriteEffects.FlipHorizontally, 0);
+            Main.spriteBatch.Draw(glowTex, Projectile.Center - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * (24.9f), glowTex.Frame(1, 1, 0, 0), Color.DeepPink, LaserRotation + MathHelper.Pi, glowTex.Size() / 2, 4f * (Projectile.ai[0] / 300), SpriteEffects.FlipHorizontally, 0);
 
 
             Main.spriteBatch.Draw(BallHalf, endPoint - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * (126.5f * (Projectile.ai[0] / 300)), BallHalf.Frame(1, 1, 0, 0), Color.DeepPink * 0.6f, LaserRotation, BallHalf.Size() / 2, 1f * (Projectile.ai[0] / 300), SpriteEffects.FlipHorizontally, 0);
 
             //Fix this later (ping me)
             Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-		}
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+        }
 
-		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
-		{
+        public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
             Vector2 unit = LaserRotation.ToRotationVector2();
             float point = 0f;
             // Run an AABB versus Line check to look for collisions, look up AABB collision first to see how it works
             // It will look for collisions on the given line using AABB
-			if (timer < 20 && timer >= 1)
-			{
-                return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center + Vector2.UnitX.RotatedBy(LaserRotation) * 12, 
-					endPoint, 22, ref point);
+            if (timer < 20 && timer >= 1)
+            {
+                return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center + Vector2.UnitX.RotatedBy(LaserRotation) * 12,
+                    endPoint, 22, ref point);
             }
 
-			return false;
-		}
-	}
+            return false;
+        }
+    }
 
     public class PhantomLaserTelegraph : ModProjectile
     {
@@ -260,7 +260,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public bool tethered = false;
         public bool pulse = false;
         public NPC NPCTetheredTo = null;
- 
+
         int timer = 0;
 
         public override void SetDefaults()
@@ -286,10 +286,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             if (timer == 50)
                 Projectile.velocity = Vector2.Zero;
-            
+
             //if (timer == 100)
-                //Release();
-            
+            //Release();
+
             LaserRotation = (startingPos - Projectile.Center).ToRotation();
             Projectile.rotation += 0.1f;
             timer++;
@@ -353,7 +353,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         public override void OnKill(int timeLeft)
         {
-            
+
         }
     }
 
@@ -415,7 +415,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         {
             if (timer == 0)
                 return false;
-            
+
             Texture2D Glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Glorb").Value;
 
             Texture2D star = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/flare_1").Value;
@@ -499,7 +499,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         }
     }
 
-    public class FinaleBeam : ModProjectile {
+    public class FinaleBeam : ModProjectile
+    {
 
         public override string Texture => "Terraria/Images/Projectile_0";
 
@@ -546,11 +547,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         public override bool PreDraw(ref Color lightColor)
         {
-            			
-			Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GradientLaser", AssetRequestMode.ImmediateLoad).Value;
 
-			myEffect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Noise/CoolNoise").Value);
-			myEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail5Loop").Value);
+            Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GradientLaser", AssetRequestMode.ImmediateLoad).Value;
+
+            myEffect.Parameters["sampleTexture"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Noise/CoolNoise").Value);
+            myEffect.Parameters["sampleTexture2"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail5Loop").Value);
             myEffect.Parameters["sampleTexture3"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlameTrail").Value);
             myEffect.Parameters["gradient"].SetValue(ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/PinkPurpleGrad").Value);
 

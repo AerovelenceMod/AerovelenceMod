@@ -16,7 +16,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
-{   
+{
     //Big Laser
     public class AdamantitePulseShot : ModProjectile
     {
@@ -68,7 +68,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                 float scaleBonus = big ? 0.1f : 0f;
                 int flare = Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowFlare>(), newColor: new Color(255, 0, 0), Scale: 0.55f + Main.rand.NextFloat(0.2f) + scaleBonus);
                 Main.dust[flare].customData = new GlowFlareBehavior(0.55f, 2.5f);
-                
+
                 Main.dust[flare].velocity += Projectile.velocity.RotateRandom(0.05f);
             }
 
@@ -110,7 +110,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
             Vector2 drawPos = Projectile.Center - Main.screenPosition + Projectile.velocity.SafeNormalize(Vector2.UnitX) * -40;
 
-            Main.spriteBatch.Draw(softGlow, drawPos + new Vector2(0f, 0f) + Projectile.velocity, null, Color.Red with { A = 0 } * overallAlpha * 0.5f, 
+            Main.spriteBatch.Draw(softGlow, drawPos + new Vector2(0f, 0f) + Projectile.velocity, null, Color.Red with { A = 0 } * overallAlpha * 0.5f,
                 Projectile.rotation, softGlow.Size() / 2, vscale3, SpriteEffects.None, 0f);
 
             Main.spriteBatch.Draw(Tex, drawPos, null, Color.Red with { A = 0 } * 1f * overallAlpha, Projectile.rotation, Tex.Size() / 2, vscale * Projectile.scale, SpriteEffects.None, 0f);
@@ -320,7 +320,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
                 SoundStyle stylecs = new SoundStyle("Terraria/Sounds/Item_109") with { Pitch = .82f, PitchVariance = .11f, Volume = 0.7f };
                 SoundEngine.PlaySound(stylecs, target.Center);
 
-                SoundStyle BlasterDirect = new SoundStyle("AerovelenceMod/Sounds/Effects/SplatoonDirect") with { Pitch = .20f, PitchVariance = .1f, Volume = 0.3f }; 
+                SoundStyle BlasterDirect = new SoundStyle("AerovelenceMod/Sounds/Effects/SplatoonDirect") with { Pitch = .20f, PitchVariance = .1f, Volume = 0.3f };
                 SoundEngine.PlaySound(BlasterDirect, target.Center);
 
 
@@ -393,4 +393,4 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
         }
 
     }
-} 
+}

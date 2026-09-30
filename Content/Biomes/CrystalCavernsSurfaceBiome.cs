@@ -14,12 +14,12 @@ namespace AerovelenceMod.Content.Biomes
         public override ModSurfaceBackgroundStyle SurfaceBackgroundStyle => ModContent.Find<ModSurfaceBackgroundStyle>("AerovelenceMod/CrystalCavernsSurfaceBgStyle");
         public override CaptureBiome.TileColorStyle TileColorStyle => CaptureBiome.TileColorStyle.Crimson;
 
-        public override int Music => Main.LocalPlayer.townNPCs >= 2 
-            ? -1 
-            : (Main.raining 
-                ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalRain") 
-                : (Main.dayTime 
-                    ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFields") 
+        public override int Music => Main.LocalPlayer.townNPCs >= 2
+            ? -1
+            : (Main.raining
+                ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalRain")
+                : (Main.dayTime
+                    ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFields")
                     : MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFieldsNight")));
 
         public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh; //default behavior is BiomeLow.
@@ -30,7 +30,7 @@ namespace AerovelenceMod.Content.Biomes
         public override string MapBackground => "AerovelenceMod/Backgrounds/CrystalCaverns/CrystalCavernsMapBg";
 
         public override int BiomeTorchItemType => ModContent.ItemType<CrystalTorchItem>();
-		public override int BiomeCampfireItemType => ModContent.ItemType<CrystalCampfireItem>();
+        public override int BiomeCampfireItemType => ModContent.ItemType<CrystalCampfireItem>();
 
         public override void SetStaticDefaults()
         {

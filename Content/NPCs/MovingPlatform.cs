@@ -31,8 +31,8 @@ namespace AerovelenceMod.Content.NPCs
         Vector2 prevPos;
         public override void AI()
         {
-            NPC.velocity = new Vector2(1,0);
-            
+            NPC.velocity = new Vector2(1, 0);
+
             base.AI();
 
             float yDistTraveled = NPC.position.Y - prevPos.Y;

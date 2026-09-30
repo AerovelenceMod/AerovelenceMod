@@ -39,7 +39,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
             Item.damage = 12;
             Item.knockBack = KnockbackTiers.ExtremelyWeak;
             Item.mana = 3;
-            
+
             Item.width = 32;
             Item.height = 32;
             Item.useTime = 7;
@@ -71,9 +71,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
         {
             int feather = Projectile.NewProjectile(source, position, velocity.RotatedByRandom(1f) * 1f, ModContent.ProjectileType<PoundOfFeathersProj>(), damage, knockback, Main.myPlayer);
 
-            SoundStyle style = new SoundStyle("Terraria/Sounds/Item_1") with { Pitch = .89f, PitchVariance = .33f, }; 
+            SoundStyle style = new SoundStyle("Terraria/Sounds/Item_1") with { Pitch = .89f, PitchVariance = .33f, };
             SoundEngine.PlaySound(style, player.Center);
-            
+
             return false;
         }
 
@@ -245,7 +245,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
             Color borderCol = doSkillStrikeVisuals ? Color.Gold : Color.DeepSkyBlue;
             for (int i = 0; i < 4; i++)
             {
-                Main.EntitySpriteDraw(FeatherWhite, Projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f), null, borderCol * 0.5f * (fadeAlpha * fadeAlpha), 
+                Main.EntitySpriteDraw(FeatherWhite, Projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f), null, borderCol * 0.5f * (fadeAlpha * fadeAlpha),
                     Projectile.rotation, Feather.Size() / 2f, featherScale * 1.05f, SpriteEffects.None);
             }
 
@@ -264,7 +264,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
         public override void OnKill(int timeLeft)
         {
             if (!stuckIn)
-                hitFX();  
+                hitFX();
         }
 
         bool hasHit = false;

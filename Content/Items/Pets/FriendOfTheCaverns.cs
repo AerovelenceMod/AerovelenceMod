@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Pets
     public class FriendOfTheCavernsBuff : ModBuff
     {
         public override string Texture => "AerovelenceMod/Content/Items/Pets/FriendOfTheCaverns";
-        
+
         public override void SetStaticDefaults()
         {
             Main.buffNoSave[Type] = true;
@@ -55,7 +55,7 @@ namespace AerovelenceMod.Content.Items.Pets
     public class FriendOfTheCavernsPet : ModProjectile
     {
         public override string Texture => "AerovelenceMod/Content/Items/Pets/FriendOfTheCaverns";
-        
+
         private Vector2 eyeOffset;
         private Vector2 desiredEyeOffset;
         private int eyeTimer;

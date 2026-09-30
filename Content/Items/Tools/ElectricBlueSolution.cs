@@ -593,7 +593,7 @@ namespace AerovelenceMod.Content.Items.Tools
                         if (Main.netMode != NetmodeID.SinglePlayer)
                         {
                             NetMessage.SendTileSquare(-1, i, j - 1, 1, 2);
-                        }   
+                        }
                     }
 
                     // WorldGen.ConvertTile() Causes rubble tiles to break. Manually handling tile framing and typing solves the issue. 

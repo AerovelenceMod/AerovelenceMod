@@ -1,4 +1,4 @@
- using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -20,8 +20,8 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
 {
 
     //TODO convert this into a particle
-	public class SkillStrikeProj : ModProjectile
-	{
+    public class SkillStrikeProj : ModProjectile
+    {
         int combatTextIndex = 0;
         public string damageNumber = "";
         int timer = 0;
@@ -57,13 +57,13 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
         public override Color? GetAlpha(Color lightColor)
         {
             //if (Projectile.timeLeft < 95)
-                //return Color.White;
+            //return Color.White;
             //else
-                //return Color.White * 0f;
+            //return Color.White * 0f;
             if (timer > 5)
                 return Color.White;
-            else 
-                return lightColor * 0f; 
+            else
+                return lightColor * 0f;
         }
 
         public override bool? CanDamage()
@@ -84,7 +84,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
             int stringLength = damageNumber.Length;
 
             Projectile.scale = anchor.scale; //anchor.scale * 0.7f + (0.15f * damageNumber.Length);
-            Projectile.position = anchor.position - new Vector2(10 * anchor.scale,0) + new Vector2(5,0);
+            Projectile.position = anchor.position - new Vector2(10 * anchor.scale, 0) + new Vector2(5, 0);
             Projectile.rotation = anchor.rotation;
             anchorOpacity = anchor.alpha;
 
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                     outerColor = Color.DeepPink;
                 else if (skillCrit)
                     outerColor = new Color(255, 160, 0);
-                else 
+                else
                     outerColor = Color.Red;
 
                 DynamicSpriteFont myFont = FontAssets.DeathText.Value;

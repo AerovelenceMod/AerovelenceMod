@@ -48,9 +48,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
             Item.shootSpeed = 16f;
 
             Item.shoot = ModContent.ProjectileType<CrystallineProj>();
-            Item.useStyle = ItemUseStyleID.Shoot; 
-            Item.UseSound = SoundID.Item1; 
-            Item.DamageType = DamageClass.MeleeNoSpeed; 
+            Item.useStyle = ItemUseStyleID.Shoot;
+            Item.UseSound = SoundID.Item1;
+            Item.DamageType = DamageClass.MeleeNoSpeed;
             Item.value = Item.buyPrice(gold: 2);
 
             Item.noMelee = true;
@@ -85,7 +85,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
             Projectile.aiStyle = ProjAIStyleID.Yoyo; // The projectile's ai style. Yoyos use aiStyle 99 (ProjAIStyleID.Yoyo). A lot of yoyo code checks for this aiStyle to work properly.
 
             Projectile.hostile = false;
-            Projectile.friendly = true; 
+            Projectile.friendly = true;
             Projectile.DamageType = DamageClass.MeleeNoSpeed;
             Projectile.penetrate = -1;
         }
@@ -232,7 +232,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
 
             Main.EntitySpriteDraw(glowTex, drawPos, null, Color.White, 0f, glowTex.Size() / 2f, scale, 0);
             Main.EntitySpriteDraw(glowTex, drawPos, null, Color.White, 0f, glowTex.Size() / 2f, scale, 0);
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;

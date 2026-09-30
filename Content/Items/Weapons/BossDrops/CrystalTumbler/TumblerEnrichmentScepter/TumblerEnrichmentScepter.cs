@@ -18,7 +18,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
 public class TumblerEnrichmentScepter : ModItem
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/BossDrops/CrystalTumbler/ConductorWand/ConductorWand";
-	
+
     public override void SetStaticDefaults()
     {
         this.ModifyLocalization("Tumbler Enrichment Scepter", "Hold to power an ethereal Tumbler's electric exercise wheel\nConsumes mana continuously; longer spins produce farther-reaching lightning")
@@ -28,7 +28,7 @@ public class TumblerEnrichmentScepter : ModItem
             .AddSkillStrike(Language.Spanish, "Ataque de habilidad de chispas doradas de una rueda rápida");
         Item.staff[Type] = true;
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = Item.height = 36;
@@ -46,9 +46,9 @@ public class TumblerEnrichmentScepter : ModItem
         Item.master = true;
         Item.value = Item.sellPrice(gold: 2);
     }
-	
+
     public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] == 0;
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         Vector2 offset = Main.MouseWorld - player.Center;
@@ -73,7 +73,7 @@ public class EnrichmentWheel : ModProjectile
     public static float RollingAngleStep(float wheelStep) => wheelStep * WheelHalfWidth / BodyRadius;
     public static float AdvanceSpeed(float speed, bool coasting) => MathHelper.Clamp(coasting ? speed - 1f / 240f : speed + (1f - speed) * .0025f, 0f, 1f);
     public static bool Golden(float speed) => speed >= .65f;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 248;
@@ -84,10 +84,10 @@ public class EnrichmentWheel : ModProjectile
         Projectile.netImportant = true;
         Projectile.timeLeft = 2;
     }
-	
+
     public override bool? CanDamage() => false;
     public override bool ShouldUpdatePosition() => false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -155,7 +155,7 @@ public class EnrichmentWheel : ModProjectile
         if (golden && age % 12 == 0)
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + new Vector2(Main.rand.NextFloat(-32f, 32f), WheelRadius + 2f), new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), 2f), ModContent.ProjectileType<EnrichmentSpark>(), Projectile.damage, 1f, Projectile.owner);
     }
-	
+
     private void DrawWheel(Color color, float fade, bool foreground)
     {
         Texture2D slice = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Clear/GlowTrailSlice").Value;
@@ -187,7 +187,7 @@ public class EnrichmentWheel : ModProjectile
             Rail(Projectile.Center + radial - new Vector2(13f, 0f), Projectile.Center + radial + new Vector2(13f, 0f), inFront ? .7f : .28f, 2f);
         }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float speed = Projectile.ai[0];
@@ -228,7 +228,7 @@ public class EnrichmentWheel : ModProjectile
         DrawWheel(color, fade, true);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 18; i++) TumblerVFX.SpawnSpark(Projectile.Center + Main.rand.NextVector2Circular(100f, WheelRadius), Main.rand.NextVector2Circular(2f, 2f), TumblerVFX.PhaseColor(0));
@@ -240,7 +240,7 @@ public class EnrichmentArc : ModProjectile
     public override string Texture => "AerovelenceMod/Blank";
     private readonly EnrichmentLightning visual = new();
     private Vector2 end;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 8;
@@ -252,9 +252,9 @@ public class EnrichmentArc : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
-	
+
     public override void AI()
     {
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.UnitX);
@@ -263,15 +263,15 @@ public class EnrichmentArc : ModProjectile
         end = Projectile.Center + direction * Math.Min(length, Projectile.ai[0]);
         visual.Update(Projectile, Projectile.Center, end, .6f, true);
     }
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float collision = 0f;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, end, 12f, ref collision);
     }
-	
+
     public override bool? CanDamage() => Projectile.timeLeft > 7 ? null : false;
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         visual.Draw(Main.spriteBatch, TumblerVFX.PhaseColor(Projectile.ai[1]), Projectile.timeLeft / 14f, 2f);
@@ -283,7 +283,7 @@ public class EnrichmentSpark : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Assets/Pixel/CrispStarPMA";
     private readonly EnrichmentLightning visual = new();
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 10;
@@ -292,16 +292,16 @@ public class EnrichmentSpark : ModProjectile
         Projectile.timeLeft = 100;
         Projectile.penetrate = 1;
     }
-	
+
     public override void AI()
     {
         Projectile.velocity.Y = Math.Min(12f, Projectile.velocity.Y + .16f);
         visual.Update(Projectile, Projectile.Center - Projectile.velocity * 5f, Projectile.Center, .3f);
         if (Projectile.timeLeft % 4 == 0) TumblerVFX.SpawnSpark(Projectile.Center, -Projectile.velocity * .1f, Color.Gold);
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => SkillStrikeUtil.setSkillStrike(Projectile, 1.6f);
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         visual.Draw(Main.spriteBatch, Color.Gold, Math.Min(1f, Projectile.timeLeft / 15f), 1.5f);
@@ -309,7 +309,7 @@ public class EnrichmentSpark : ModProjectile
         Main.EntitySpriteDraw(texture, Projectile.Center - Main.screenPosition, null, TumblerVFX.Glow(Color.LightGoldenrodYellow), Projectile.velocity.ToRotation(), texture.Size() * .5f, new Vector2(.35f, .14f), SpriteEffects.None);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 5; i++) TumblerVFX.SpawnSpark(Projectile.Center, Main.rand.NextVector2Circular(2f, 2f), Color.Gold);
@@ -324,7 +324,7 @@ internal sealed class EnrichmentLightning
     private int ticks;
     private bool ready;
     private Color sparkColor = Color.Aqua;
-	
+
     public void Update(Projectile owner, Vector2 start, Vector2 end, float intensity = .55f, bool unused = false)
     {
         if (Main.dedServ) return;
@@ -359,7 +359,7 @@ internal sealed class EnrichmentLightning
             dust.noGravity = true;
         }
     }
-	
+
     public void Draw(SpriteBatch spriteBatch, Color color, float opacity, float width = 2f)
     {
         if (!ready || Main.dedServ || opacity <= 0f) return;

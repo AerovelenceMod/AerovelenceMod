@@ -349,37 +349,37 @@ public sealed class SilkenCacheMotion : ModSystem
         On_WorldGen.PlaceChestDirect -= ReceivePlacement;
         strands.Clear();
     }
-	public override void PostUpdateInput()
-	{
-		if (Main.dedServ || Main.gameMenu || Main.gamePaused || Main.LocalPlayer.mouseInterface || Main.LocalPlayer.dead) return;
-		Point mouse = Main.MouseWorld.ToTileCoordinates();
-		if (!WorldGen.InWorld(mouse.X, mouse.Y)) return;
-		if (!Main.LocalPlayer.InInteractionRange(mouse.X, mouse.Y, TileReachCheckSettings.Simple)) return;
-		foreach (var (root, strand) in strands)
-		{
-			if (!WorldGen.InWorld(root.X, root.Y)) continue;
-			Tile tileData = Main.tile[root.X, root.Y];
-			if (!tileData.HasTile || Main.GameUpdateCount - strand.Seen > 2) continue;
-			int end = tileData.TileFrameX / 36 == 4 ? 5 : strand.Nodes.Count;
-			bool hit = end == strand.Nodes.Count && Vector2.DistanceSquared(Main.MouseWorld, strand.Nodes[^1].currentPosition + new Vector2(0, 8)) < 18 * 18;
-			for (int n = 1; n < end && !hit; n++)
-			{
-				Vector2 a = strand.Nodes[n - 1].currentPosition;
-				Vector2 delta = strand.Nodes[n].currentPosition - a;
-				float t = MathHelper.Clamp(Vector2.Dot(Main.MouseWorld - a, delta) / Math.Max(.001f, delta.LengthSquared()), 0, 1);
-				hit = Vector2.DistanceSquared(Main.MouseWorld, a + delta * t) < 6 * 6;
-			}
-			if (!hit) continue;
-			ModTile tile = TileLoader.GetTile(tileData.TileType);
-			tile.MouseOver(root.X, root.Y);
-			if (Main.mouseRight && Main.mouseRightRelease)
-			{
-				tile.RightClick(root.X, root.Y);
-				Main.mouseRightRelease = false;
-			}
-			break;
-		}
-	}
+    public override void PostUpdateInput()
+    {
+        if (Main.dedServ || Main.gameMenu || Main.gamePaused || Main.LocalPlayer.mouseInterface || Main.LocalPlayer.dead) return;
+        Point mouse = Main.MouseWorld.ToTileCoordinates();
+        if (!WorldGen.InWorld(mouse.X, mouse.Y)) return;
+        if (!Main.LocalPlayer.InInteractionRange(mouse.X, mouse.Y, TileReachCheckSettings.Simple)) return;
+        foreach (var (root, strand) in strands)
+        {
+            if (!WorldGen.InWorld(root.X, root.Y)) continue;
+            Tile tileData = Main.tile[root.X, root.Y];
+            if (!tileData.HasTile || Main.GameUpdateCount - strand.Seen > 2) continue;
+            int end = tileData.TileFrameX / 36 == 4 ? 5 : strand.Nodes.Count;
+            bool hit = end == strand.Nodes.Count && Vector2.DistanceSquared(Main.MouseWorld, strand.Nodes[^1].currentPosition + new Vector2(0, 8)) < 18 * 18;
+            for (int n = 1; n < end && !hit; n++)
+            {
+                Vector2 a = strand.Nodes[n - 1].currentPosition;
+                Vector2 delta = strand.Nodes[n].currentPosition - a;
+                float t = MathHelper.Clamp(Vector2.Dot(Main.MouseWorld - a, delta) / Math.Max(.001f, delta.LengthSquared()), 0, 1);
+                hit = Vector2.DistanceSquared(Main.MouseWorld, a + delta * t) < 6 * 6;
+            }
+            if (!hit) continue;
+            ModTile tile = TileLoader.GetTile(tileData.TileType);
+            tile.MouseOver(root.X, root.Y);
+            if (Main.mouseRight && Main.mouseRightRelease)
+            {
+                tile.RightClick(root.X, root.Y);
+                Main.mouseRightRelease = false;
+            }
+            break;
+        }
+    }
     public override void PostUpdateEverything()
     {
         if (Main.dedServ) return;

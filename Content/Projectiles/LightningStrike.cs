@@ -7,6 +7,7 @@ using Terraria.ID;
 using AerovelenceMod.Content.Projectiles;
 using System;
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
+using AerovelenceMod.Common.Utilities;
 
 namespace AerovelenceMod.Content.Projectiles
 {
@@ -182,7 +183,7 @@ namespace AerovelenceMod.Content.Projectiles
 
             for (int i = 0; i < 2; i++)
             {
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SapperGasCloud>(), 0, Projectile.knockBack, Projectile.owner);
+                GasUtil.Emit(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, GasSettings.For(GasKind.Smoke) with { Color = new Color(100, 170, 255), Lifetime = 180 }, owner: Projectile.owner);
             }
 
             for (int i = 0; i < 5; i++)

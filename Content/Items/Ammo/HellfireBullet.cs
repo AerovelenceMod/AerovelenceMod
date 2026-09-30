@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Ammo
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Hellfire Bullet", "Pierces one enemy and sets them on fire\nFiring creates a short-lived superheated flare behind the bullet")
-			            .AddName(Language.Default, "Hellfire Bullet").AddTooltip(Language.Default, "Pierces one enemy and sets them on fire\nFiring creates a short-lived superheated flare behind the bullet");
+                        .AddName(Language.Default, "Hellfire Bullet").AddTooltip(Language.Default, "Pierces one enemy and sets them on fire\nFiring creates a short-lived superheated flare behind the bullet");
         }
 
         public override void SetDefaults()

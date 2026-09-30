@@ -56,7 +56,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             Item.shoot = ModContent.ProjectileType<WandOfExplodingHeldProj>();
             Item.rare = ItemRarities.MidPHM;
             Item.value = Item.sellPrice(0, 0, 75, 0);
- 
+
             Item.autoReuse = true;
             Item.noMelee = true;
             Item.channel = true;
@@ -145,7 +145,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
                 //Play boomerang spin sound
                 if (timer % 7 == 0)
                 {
-                    SoundStyle style = new SoundStyle("Terraria/Sounds/Item_7") with { Pitch = .45f, PitchVariance = 0.2f }; 
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Item_7") with { Pitch = .45f, PitchVariance = 0.2f };
                     SoundEngine.PlaySound(style, Projectile.Center);
                     SoundEngine.PlaySound(style, Projectile.Center);
                 }
@@ -153,7 +153,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             }
             #endregion
 
-            recoilProg = Math.Clamp(recoilProg- 0.05f, 0f, 1f);
+            recoilProg = Math.Clamp(recoilProg - 0.05f, 0f, 1f);
 
             //Held Proj Code
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
@@ -355,7 +355,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
                 Projectile.velocity *= 0.8f;
             else if (timer > 10)
                 Projectile.velocity *= 0.99f;
-            
+
             if (timer == 30)
                 Projectile.Kill();
 

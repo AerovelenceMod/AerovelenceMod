@@ -665,11 +665,11 @@ internal sealed class LivingTreeIslandLayout
                 int y = minY - random.Next(20, 40);
                 if (y - radius < 3) continue;
                 bool clear = true;
-            foreach (var tree in TreeSpots)
-                if (Math.Abs(x - tree.X) < radius + 9 && y + radius >= tree.Y - 30) clear = false;
-            for (int px = Math.Max(1, x - radius - 6); px <= Math.Min(Width - 2, x + radius + 6) && clear; px++)
-                for (int py = Math.Max(1, y - radius - 6); py <= Math.Min(Height - 2, y + radius + 6); py++)
-                    if (Tiles[px, py] is Material.Wood or Material.Leaves) { clear = false; break; }
+                foreach (var tree in TreeSpots)
+                    if (Math.Abs(x - tree.X) < radius + 9 && y + radius >= tree.Y - 30) clear = false;
+                for (int px = Math.Max(1, x - radius - 6); px <= Math.Min(Width - 2, x + radius + 6) && clear; px++)
+                    for (int py = Math.Max(1, y - radius - 6); py <= Math.Min(Height - 2, y + radius + 6); py++)
+                        if (Tiles[px, py] is Material.Wood or Material.Leaves) { clear = false; break; }
 
                 for (int px = x - radius - 3; px <= x + radius + 3 && clear; px++)
                     for (int py = y - radius - 3; py <= y + radius + 3; py++)

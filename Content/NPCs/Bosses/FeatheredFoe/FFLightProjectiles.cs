@@ -52,7 +52,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
         public override void AI()
         {
             Player targetPlayer = Main.player[Main.myPlayer];
-            
+
             //Orbit around player
             if (advancer == 0)
             {
@@ -76,16 +76,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                 float rot = MathHelper.Lerp(orbitVector.ToRotation(), orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1), Easings.easeInSine(rotProg));
                 Projectile.rotation = rot;
                 //if (lerpToPointProg < 0.75f)
-                  //  Projectile.rotation = ((targetPlayer.Center + orbitVector) - Projectile.Center).ToRotation();
+                //  Projectile.rotation = ((targetPlayer.Center + orbitVector) - Projectile.Center).ToRotation();
                 //else
-                  //  Projectile.rotation = orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1);
+                //  Projectile.rotation = orbitVector.ToRotation() + MathHelper.PiOver2 * (rotSpeed > 0 ? 1f : -1);
 
                 if (timer == timeToOrbit)
                 {
                     //SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/trident_twirl_01") with { Pitch = .75f, PitchVariance = 0.2f, MaxInstances = -1, Volume = 0.25f }; //0.2f
                     //SoundEngine.PlaySound(style, Projectile.Center);
 
-                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .60f, MaxInstances = -1, Volume = 0.35f, PitchVariance = 0.2f }; 
+                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .60f, MaxInstances = -1, Volume = 0.35f, PitchVariance = 0.2f };
                     SoundEngine.PlaySound(style2, Projectile.Center);
 
                     //SoundStyle style3 = new SoundStyle("AerovelenceMod/Sounds/Effects/glaive_shot_01") with { Volume = .35f, Pitch = .75f, PitchVariance = 0.25f, MaxInstances = -1 }; 
@@ -138,7 +138,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                     advancer++;
                 }
             }
-            
+
             // Dash 
             else if (advancer == 2)
             {
@@ -149,14 +149,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
 
                 if (timer == 30 && false)
                 {
-                    for (int i = 0; i < 4; i++) 
+                    for (int i = 0; i < 4; i++)
                     {
                         Projectile.NewProjectile(null, Projectile.Center, new Vector2(21f, 0f).RotatedBy(MathHelper.PiOver2 * i), ModContent.ProjectileType<StraightFeather>(),
                             Projectile.damage, 2f, Main.myPlayer);
                     }
                 }
             }
-            
+
             int trailCount = 10;
             previousRotations.Add(Projectile.rotation);
             previousPostions.Add(Projectile.Center);
@@ -347,7 +347,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                             previousRotations[i], FeatherGray.Size() / 2f, size2, SpriteEffects.None);
 
                     Vector2 vec2Scale = new Vector2(1.5f, 0.25f) * size;
-                    
+
                     Main.EntitySpriteDraw(FeatherWhite, previousPostions[i] - Main.screenPosition, null, col with { A = 0 } * 0.85f * alpha,
                             previousRotations[i], FeatherGray.Size() / 2f, vec2Scale, SpriteEffects.None);
                 }
@@ -582,7 +582,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe
                 Projectile.velocity *= 0.94f;
             else if (timer < 60)
                 Projectile.velocity *= 1.13f;
-            
+
             int trailCount = 10;
             previousRotations.Add(Projectile.rotation);
             previousPostions.Add(Projectile.Center);

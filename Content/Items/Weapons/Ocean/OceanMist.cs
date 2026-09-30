@@ -72,7 +72,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
             int a = Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<OceanMistHeldProj>(), damage, knockback, player.whoAmI);
-            
+
             if (player.statMana + player.GetManaCost(player.inventory[player.selectedItem]) == player.statManaMax2)
                 (Main.projectile[a].ModProjectile as OceanMistHeldProj).shouldSkillStrike = true;
 
@@ -120,7 +120,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
 
         public override bool? CanDamage() => false;
         public override bool? CanCutTiles() => false;
-        
+
         public bool shouldSkillStrike = false;
 
         public override void AI()
@@ -130,7 +130,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
             #region held proj stuff
 
             Projectile.velocity = Vector2.Zero;
-            Player.itemTime = 2; 
+            Player.itemTime = 2;
             Player.itemAnimation = 2;
 
             KillHeldProjIfPlayerDeadOrStunned(Projectile);
@@ -193,9 +193,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 //FX
                 glowAlpha = 1f;
                 justShotPower = 1f;
-                
+
                 Vector2 vel = new Vector2(12.5f, 0).RotatedBy(direction.ToRotation());
-                
+
                 for (int i = 0; i < 4; i++)
                 {
                     if (i < 4)
@@ -214,7 +214,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/CommonWaterFallLight00") with { Volume = .23f, Pitch = .54f, PitchVariance = .4f, MaxInstances = -1, };
                 SoundEngine.PlaySound(style2, Projectile.Center);
 
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ENV_water_splash_01") with { Pitch = 0.1f, PitchVariance = 0.1f, Volume = 0.75f, MaxInstances = -1 }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ENV_water_splash_01") with { Pitch = 0.1f, PitchVariance = 0.1f, Volume = 0.75f, MaxInstances = -1 };
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 //Spawn Proj
@@ -282,7 +282,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
     public class OceanMistShot : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
- 
+
         public override void SetDefaults()
         {
             Projectile.width = 20;
@@ -459,7 +459,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
             }
 
             //Dust on tip
-            for (int j = 0; j < Main.rand.Next(4, 7);  j++)
+            for (int j = 0; j < Main.rand.Next(4, 7); j++)
             {
                 Vector2 dustVel = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1f, 5f);
 
@@ -470,7 +470,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 d.velocity += Projectile.velocity * 0.1f;
             }
 
-            SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ENV_water_splash_01") with { Volume = 0.5f, Pitch = 0.5f, MaxInstances = -1 }; 
+            SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ENV_water_splash_01") with { Volume = 0.5f, Pitch = 0.5f, MaxInstances = -1 };
             SoundEngine.PlaySound(style, Projectile.Center);
         }
 
@@ -479,14 +479,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
         {
 
             Color dustCol = Projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike ? Color.Orange : Color.DeepSkyBlue;
-            for (int i = 0; i < 2 + Main.rand.Next(0,3); i++)
+            for (int i = 0; i < 2 + Main.rand.Next(0, 3); i++)
             {
                 Vector2 dustVel = Main.rand.NextVector2Circular(2f, 2f);
 
                 Dust.NewDustPerfect(target.Center, ModContent.DustType<GlowPixelCross>(), dustVel, newColor: dustCol, Scale: Main.rand.NextFloat(0.2f, 0.3f));
             }
 
-            
+
             if (maximumPierce % 2 == 0)
                 Projectile.damage = (int)(Projectile.damage * 0.95f);
             maximumPierce--;

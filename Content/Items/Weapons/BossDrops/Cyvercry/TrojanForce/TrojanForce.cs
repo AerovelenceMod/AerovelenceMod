@@ -18,15 +18,15 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 {
-	public class TrojanForce : ModItem
-	{
+    public class TrojanForce : ModItem
+    {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/BossDrops/Cyvercry/TrojanForce/TrojanForce";
 
         public override void SetDefaults()
-		{ 
+        {
             Item.DefaultToWhip(ModContent.ProjectileType<TrojanForceWhipProj>(), 65, 3f, 3.75f, 34);
         }
-		public override bool MeleePrefix() => true;
+        public override bool MeleePrefix() => true;
 
         bool isBlue = false;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             Projectile.Center = Main.GetPlayerArmPosition(Projectile) + Projectile.velocity * Timer;
-            
+
             if (Projectile.ai[1] == 0)
                 Projectile.spriteDirection = Projectile.velocity.X >= 0f ? 1 : -1;
             else
@@ -284,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             Color handleCol = Lighting.GetColor(list[0].ToTileCoordinates());
 
             float myRot = (list[1] - list[0]).ToRotation() - MathHelper.PiOver2;
-            Main.EntitySpriteDraw(Tex, list[0] - Main.screenPosition, new Rectangle(0, 0, 38, 18), handleCol, myRot,  new Vector2(19, 0), 1f, flip, 0);
+            Main.EntitySpriteDraw(Tex, list[0] - Main.screenPosition, new Rectangle(0, 0, 38, 18), handleCol, myRot, new Vector2(19, 0), 1f, flip, 0);
             Main.EntitySpriteDraw(Glowmask, list[0] - Main.screenPosition, new Rectangle(0, 0, 38, 18), Color.White, myRot, new Vector2(19, 0), 1f, flip, 0);
 
             //Who up playing wit they orb

@@ -13,15 +13,15 @@ using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Common.Globals.SkillStrikes
 {
-	public class SkillStrikeOldGProj : GlobalProjectile
-	{
-		public override bool InstancePerEntity => true;
+    public class SkillStrikeOldGProj : GlobalProjectile
+    {
+        public override bool InstancePerEntity => true;
 
-		public bool SkillStrike = false;
+        public bool SkillStrike = false;
 
-		public bool firstFrame = true;
+        public bool firstFrame = true;
 
-		public int storedDamage = 0;
+        public int storedDamage = 0;
 
         public bool shouldHideCT = false;
 
@@ -47,7 +47,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
             pixelPlayerCenter = 5,
             pixelTargetCenter = 6,
             pixelTargetCenterSticky = 7,
-            
+
         }
 
         public float hitSoundVolume = 1f;
@@ -81,11 +81,11 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
 
         int dustTimer = 0;
 
-        
+
         public override void AI(Projectile projectile)
-		{
-			if (SkillStrike)
-			{
+        {
+            if (SkillStrike)
+            {
                 /*
                 shouldHideCT = true;
                 if (shouldHideCT)
@@ -142,12 +142,12 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
 
             dustTimer++;
 
-		}
+        }
 
-		public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
-		{
+        public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
+        {
             if (SkillStrike)
-			{
+            {
                 //AerovelenceMod.shouldHide = true;
 
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Pitch = .46f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.5f * hitSoundVolume };
@@ -207,8 +207,8 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                         for (int i = 0; i < 12 * impactScale; i++)
                         {
                             Vector2 randomStart = Main.rand.NextVector2CircularEdge(6.5f, 6.5f) * impactScale;
-                            Dust gd = GlowDustHelper.DrawGlowDustPerfect(target.Center + randomStart, ModContent.DustType<LineGlow>(), randomStart * Main.rand.NextFloat(0.65f,1.35f), colToUse, 0.2f, 0.4f, 0f, dustShader2);
-                            gd.fadeIn = 42 + Main.rand.NextFloat(-3f,4f);
+                            Dust gd = GlowDustHelper.DrawGlowDustPerfect(target.Center + randomStart, ModContent.DustType<LineGlow>(), randomStart * Main.rand.NextFloat(0.65f, 1.35f), colToUse, 0.2f, 0.4f, 0f, dustShader2);
+                            gd.fadeIn = 42 + Main.rand.NextFloat(-3f, 4f);
                         }
                         break;
 

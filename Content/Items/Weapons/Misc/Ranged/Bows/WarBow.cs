@@ -19,8 +19,8 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 {
-	public class WarBow : TranslatableModItem
-	{
+    public class WarBow : TranslatableModItem
+    {
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("WarBow", "Hold to charge, increasing damage and velocity\nEmbeds a spike into enemies at full charge")
@@ -40,39 +40,39 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         }
 
         public override void SetDefaults()
-		{
-			Item.damage = 14;
+        {
+            Item.damage = 14;
             Item.knockBack = 6f; //Above average
 
-			Item.width = 20;
-			Item.height = 48;
-			Item.useAnimation = 20;
-			Item.useTime = 20;
+            Item.width = 20;
+            Item.height = 48;
+            Item.useAnimation = 20;
+            Item.useTime = 20;
             Item.shootSpeed = 15f;
 
             Item.useStyle = ItemUseStyleID.Shoot;
-			Item.DamageType = DamageClass.Ranged;
-			Item.value = Item.buyPrice(0, 1, 10, 0);
+            Item.DamageType = DamageClass.Ranged;
+            Item.value = Item.buyPrice(0, 1, 10, 0);
             Item.rare = ItemRarities.EarlyPHM;
 
             Item.shoot = ProjectileID.WoodenArrowFriendly;
-			Item.useAmmo = AmmoID.Arrow;
+            Item.useAmmo = AmmoID.Arrow;
 
-			Item.channel = true;
-			Item.noUseGraphic = true;
+            Item.channel = true;
+            Item.noUseGraphic = true;
             Item.autoReuse = true;
             Item.noMelee = true;
         }
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
-		{
-			Projectile proj2 = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<WarBowHeldProj>(), damage, 0, player.whoAmI);
+        {
+            Projectile proj2 = Projectile.NewProjectileDirect(source, position, Vector2.Zero, ModContent.ProjectileType<WarBowHeldProj>(), damage, 0, player.whoAmI);
 
-			if (proj2.ModProjectile is WarBowHeldProj wb)
+            if (proj2.ModProjectile is WarBowHeldProj wb)
             {
-				wb.projToShootID = type;
+                wb.projToShootID = type;
             }
-			return false;
+            return false;
         }
     }
 
@@ -123,7 +123,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
         public override bool? CanDamage() => false;
         public override bool? CanCutTiles() => false;
-        
+
 
         public int projToShootID = ProjectileID.WoodenArrowFriendly;
 
@@ -277,9 +277,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Texture2D arrowTexture = TextureAssets.Projectile[projToShootID].Value;
 
             Vector2 origin2 = new Vector2((float)arrowTexture.Width / 2f, (float)arrowTexture.Height / 2f);
-            
+
             Vector2 pos2 = Projectile.Center - (0.5f * (direction * OFFSET * -1.5f)) - Main.screenPosition + new Vector2(0f, Player.gfxOffY);
-            
+
             Vector2 chargeOffset = new Vector2(-5 * percentDrawnBack, 0).RotatedBy(direction.ToRotation());
 
             Vector2 lineOffsetRot1 = new Vector2(0f, -15f).RotatedBy(Projectile.rotation) + new Vector2(0f, Player.gfxOffY);
@@ -411,9 +411,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             if (!trailActive) return base.PreDraw(projectile, ref lightColor);
 
             fireTrail.TrailDrawing(Main.spriteBatch);
-           
+
             Vector2 scale = new Vector2(0.25f, 0.65f) * projectile.scale;
-            
+
             Texture2D glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/Flare").Value;
             Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, sparkColor with { A = 0 } * 0.25f, projectile.rotation, glow.Size() / 2, scale, SpriteEffects.None);
             Main.EntitySpriteDraw(glow, projectile.Center - Main.screenPosition, null, sparkColor with { A = 0 } * 0.75f, projectile.rotation, glow.Size() / 2, scale * 0.75f, SpriteEffects.None);
@@ -554,7 +554,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         }
 
         //7 Seconds
-        private int StickTime = 60 * 7; 
+        private int StickTime = 60 * 7;
 
         public override void OnKill(int timeLeft)
         {
@@ -576,8 +576,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Texture2D spike = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/Bows/WarBowSpike").Value;
             //Projectile.gfxOffY = Main.npc[npcTarget].gfxOffY;
 
-            Vector2 gfxYOffset = IsStickingToTarget ? new Vector2(0f, Main.npc[TargetWhoAmI].gfxOffY) : Vector2.Zero; 
-            
+            Vector2 gfxYOffset = IsStickingToTarget ? new Vector2(0f, Main.npc[TargetWhoAmI].gfxOffY) : Vector2.Zero;
+
             Main.EntitySpriteDraw(spike, Projectile.Center - Main.screenPosition + gfxYOffset, null, lightColor * alpha, Projectile.rotation, spike.Size() / 2, Projectile.scale * extraScaleMult, SpriteEffects.None);
             Main.EntitySpriteDraw(spike, Projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(1f, 1f) + gfxYOffset, null, Color.White with { A = 0 } * 0.25f * alpha, Projectile.rotation, spike.Size() / 2, new Vector2(Projectile.scale * 0.5f, Projectile.scale) * extraScaleMult, SpriteEffects.None);
 

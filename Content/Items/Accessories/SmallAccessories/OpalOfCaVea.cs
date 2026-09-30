@@ -137,10 +137,10 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         }
     }
 
-	public class OpalOfCaVeaNPC : GlobalNPC
-	{
-		public override bool InstancePerEntity => true;
-		
+    public class OpalOfCaVeaNPC : GlobalNPC
+    {
+        public override bool InstancePerEntity => true;
+
         public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone)
         {
             if (player != null && player.GetModPlayer<OpalOfCaVeaPlayer>().hasOpal)

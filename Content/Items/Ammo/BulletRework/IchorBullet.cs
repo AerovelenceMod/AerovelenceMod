@@ -21,32 +21,32 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
         public override string Texture => "Terraria/Images/Projectile_0";
 
         float timer = 0;
-		public Color color = Color.White;
-		public float overallSize = 1f;
-		public int lineWidth = 3;
+        public Color color = Color.White;
+        public float overallSize = 1f;
+        public int lineWidth = 3;
 
-		public override void SetStaticDefaults()
-		{
-			// DisplayName.SetDefault("Bullet Test");
-		}
+        public override void SetStaticDefaults()
+        {
+            // DisplayName.SetDefault("Bullet Test");
+        }
 
         public override void SetDefaults()
-		{
-			Projectile.width = 10;
-			Projectile.height = 10;
-			Projectile.friendly = true;
-			Projectile.hostile = false;
-			Projectile.penetrate = 2;
-			Projectile.timeLeft = 400;
-			Projectile.tileCollide = true;
-			Projectile.scale = 1f;
-			Projectile.extraUpdates = 2;
+        {
+            Projectile.width = 10;
+            Projectile.height = 10;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.penetrate = 2;
+            Projectile.timeLeft = 400;
+            Projectile.tileCollide = true;
+            Projectile.scale = 1f;
+            Projectile.extraUpdates = 2;
             Projectile.usesLocalNPCImmunity = true;
             Projectile.localNPCHitCooldown = -1;
         }
 
-		public float xScale = 1f;
-		public float yScale = 1f;
+        public float xScale = 1f;
+        public float yScale = 1f;
         public float storedRot = 0f;
 
         bool shouldFade = false;
@@ -124,34 +124,34 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
 
 
         public float widthIntensity = 0;
-		public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D Tex = Mod.Assets.Request<Texture2D>("Assets/Pixel/Starlight").Value;
-			Vector2 scale = new Vector2(Projectile.scale * 2, Projectile.scale) * 0.5f;
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D Tex = Mod.Assets.Request<Texture2D>("Assets/Pixel/Starlight").Value;
+            Vector2 scale = new Vector2(Projectile.scale * 2, Projectile.scale) * 0.5f;
 
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
-            float rotToUse = shouldFade ? storedRot : Projectile.rotation; 
+            float rotToUse = shouldFade ? storedRot : Projectile.rotation;
 
-            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1 ,1, 0, 0), Color.Goldenrod * fadeAmount, rotToUse + MathHelper.PiOver2, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1, 1, 0, 0), Color.Goldenrod * fadeAmount, rotToUse + MathHelper.PiOver2, Tex.Size() / 2, scale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + (Projectile.velocity.SafeNormalize(Vector2.UnitX) * -10), Tex.Frame(1, 1, 0, 0), Color.White * fadeAmount, rotToUse + MathHelper.PiOver2, Tex.Size() / 2, scale * 0.5f, SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             TrailDrawing();
 
             return false;
-		}
+        }
 
         public override float WidthFunction(float progress)
         {
-            
+
             float num = 1f;
             float lerpValue = Utils.GetLerpValue(0f, 0.4f, progress, clamped: true);
             num *= 1f - (1f - lerpValue) * (1f - lerpValue);
             return MathHelper.Lerp(0f, trailWidth, num) * 0.5f;
-            
+
         }
     }
 

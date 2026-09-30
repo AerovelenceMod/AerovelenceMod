@@ -25,7 +25,7 @@ namespace AerovelenceMod.Content.Items.Potions
             this.ModifyLocalization("Minerall", "Increases mining speed by 15%, movement speed by 10%, and mining reach by 1\nLasts 5 minutes and stacks with Mining Potion")
                 .AddName(Common.Systems.Language.Language.Spanish, "Minerall")
                 .AddTooltip(Common.Systems.Language.Language.Spanish, "Aumenta un 15% la velocidad de minería, un 10% la velocidad de movimiento y en 1 el alcance de minería\nDura 5 minutos y se acumula con la poción de minería");
-            
+
             base.SetStaticDefaults();
         }
         public override void SetDefaults()
@@ -42,10 +42,10 @@ namespace AerovelenceMod.Content.Items.Potions
             Item.UseSound = SoundID.Item3;
             Item.buffType = ModContent.BuffType<MinerallBoost>();
             Item.buffTime = 18000;
-            
+
         }
         public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.MiningPotion).AddIngredient<CavernCrystalItem>(2).AddTile(TileID.Bottles).Register();
-        
+
 
     }
     public class MinerallBoost : ModBuff

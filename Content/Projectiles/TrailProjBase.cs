@@ -12,8 +12,8 @@ using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public abstract class TrailProjBase : ModProjectile
-	{
+    public abstract class TrailProjBase : ModProjectile
+    {
         //TODO:
         // - Add presets for WidthFunction
         // - Make a pixelated trail shader actually work
@@ -132,7 +132,7 @@ namespace AerovelenceMod.Content.Projectiles
                     trailRotations[i - 2] = Vector2.Lerp(trailRotations[i - 3].ToRotationVector2(), trailRotations[i - 1].ToRotationVector2(), 0.5f).ToRotation();
                 }
             }
-            
+
             trailCurrentLength = CalculateLength();
 
 
@@ -176,7 +176,7 @@ namespace AerovelenceMod.Content.Projectiles
                 customEffect.Parameters["pixelation"].SetValue(pixelationAmount);
                 customEffect.Parameters["resolution"].SetValue(resolution);
 
-            } 
+            }
             else if (gradient)
             {
                 customEffect.Parameters["gradientTex"].SetValue(gradientTexture);
@@ -192,7 +192,7 @@ namespace AerovelenceMod.Content.Projectiles
             if (trailPositions != null)
             {
                 vertexStrip.PrepareStrip(trailPositions.ToArray(), trailRotations.ToArray(), ColorFunction, WidthFunction, -Main.screenPosition, includeBacksides: true);
-                
+
                 for (int i = 0; i < timesToDraw; i++)
                 {
                     vertexStrip.DrawTrail();
@@ -316,7 +316,7 @@ namespace AerovelenceMod.Content.Projectiles
                     return MathHelper.Lerp(0f, trailWidth, num) * 1f;
                 }
             }
-            
+
             return 0;
         }
 

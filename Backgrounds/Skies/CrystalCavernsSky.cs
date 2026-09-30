@@ -115,7 +115,7 @@ namespace AerovelenceMod.Backgrounds.Skies
             float blueMod = amount * 0.875f;
             return color.MultiplyRGB(new Color(1f - redMod, 1f - greenMod, 1f - blueMod));
         }
-        
+
         private void UpdateLightning()
         {
             if (bolts == null)
@@ -177,7 +177,7 @@ namespace AerovelenceMod.Backgrounds.Skies
                     scale: 5f / bolts[i].Depth,
                     effects: 0,
                     layerDepth: 0f
-                    );  
+                    );
             }
         }
     }

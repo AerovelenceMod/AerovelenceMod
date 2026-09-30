@@ -45,7 +45,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Item.height = 30;
             Item.useTime = 15;
             Item.useAnimation = 15;
-            Item.shootSpeed = 4f; 
+            Item.shootSpeed = 4f;
             Item.scale = 1.15f;
 
             Item.DamageType = DamageClass.Ranged;
@@ -102,7 +102,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 SoundStyle styleb = new SoundStyle("AerovelenceMod/Sounds/Effects/Item125Trim") with { Volume = .45f, Pitch = .93f, PitchVariance = .11f, MaxInstances = -1 };
                 SoundEngine.PlaySound(styleb, player.Center);
 
-                SoundStyle styla = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .44f, Volume = 0.9f, PitchVariance = 0.11f};
+                SoundStyle styla = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .44f, Volume = 0.9f, PitchVariance = 0.11f };
                 SoundEngine.PlaySound(styla, player.Center);
 
 
@@ -135,7 +135,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             }
             else
             {
-                SoundStyle styla = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .86f, PitchVariance = 0.11f};
+                SoundStyle styla = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .86f, PitchVariance = 0.11f };
                 SoundEngine.PlaySound(styla, player.Center);
                 return true;
             }
@@ -186,7 +186,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public override bool Update(Dust dust)
         {
             dust.position += dust.velocity;
-            dust.color = dust.GetAlpha(Color.Black);           
+            dust.color = dust.GetAlpha(Color.Black);
             dust.alpha += 2;
             dust.velocity.Y += -0.02f;
 

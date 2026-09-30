@@ -40,7 +40,8 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             Main.npcFrameCount[Type] = 26;
             NPCID.Sets.NPCBestiaryDrawOffset.Add(Type, new NPCID.Sets.NPCBestiaryDrawModifiers
             {
-                Position = new Vector2(0f, 8f), PortraitPositionXOverride = 0f
+                Position = new Vector2(0f, 8f),
+                PortraitPositionXOverride = 0f
             });
         }
 

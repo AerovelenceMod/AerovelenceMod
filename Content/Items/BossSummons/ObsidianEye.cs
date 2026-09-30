@@ -8,10 +8,10 @@ using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.BossSummons
 {
-	public class ObsidianEye : TranslatableModItem
-	{
-		public override void SetStaticDefaults()
-		{
+    public class ObsidianEye : TranslatableModItem
+    {
+        public override void SetStaticDefaults()
+        {
             this.ModifyLocalization("ObsidianEye", "Not consumable\nSummons Cyvercry\nOnly usable at night")
             .AddName(Language.Default, "Obsidian Eye").AddTooltip(Language.Default, "Not consumable\nSummons Cyvercry\nOnly usable at night")
             .AddName(Language.Spanish, "Ojo de Obsidiana").AddTooltip(Language.Spanish, "No consumible\nInvoca a Cyvercry\nSolo usable de noche")
@@ -26,35 +26,35 @@ namespace AerovelenceMod.Content.Items.BossSummons
         }
 
         public override void SetDefaults()
-		{
-			Item.consumable = false;
+        {
+            Item.consumable = false;
 
-			Item.maxStack = 1;
-			Item.useAnimation = 45;
-			Item.useTime = 45;
+            Item.maxStack = 1;
+            Item.useAnimation = 45;
+            Item.useTime = 45;
 
-			Item.useStyle = ItemUseStyleID.HoldUp;
-			Item.UseSound = SoundID.Item44;
-			Item.rare = ItemRarityID.Cyan;
-		}
+            Item.useStyle = ItemUseStyleID.HoldUp;
+            Item.UseSound = SoundID.Item44;
+            Item.rare = ItemRarityID.Cyan;
+        }
 
-		public override bool CanUseItem(Player player) => !Main.dayTime;// && !NPC.AnyNPCs(ModContent.NPCType<Cyvercry>());
+        public override bool CanUseItem(Player player) => !Main.dayTime;// && !NPC.AnyNPCs(ModContent.NPCType<Cyvercry>());
 
-		public override bool? UseItem(Player player)
-		{
-			NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Cyvercry>());
+        public override bool? UseItem(Player player)
+        {
+            NPC.SpawnOnPlayer(player.whoAmI, ModContent.NPCType<Cyvercry>());
 
-			return true;
-		}
+            return true;
+        }
 
-		public override void AddRecipes()
-		{
-			CreateRecipe(1)
+        public override void AddRecipes()
+        {
+            CreateRecipe(1)
                 .AddIngredient(ItemID.Obsidian, 10)
                 .AddIngredient(ItemID.SoulofNight, 10)
-				.AddIngredient(ItemID.ChlorophyteBar, 5)
-				.AddTile(TileID.MythrilAnvil)
-				.Register();
-		}
-	}
+                .AddIngredient(ItemID.ChlorophyteBar, 5)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
+        }
+    }
 }

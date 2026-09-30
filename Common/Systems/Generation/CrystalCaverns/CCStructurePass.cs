@@ -150,7 +150,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     PlaceStructureSafely("librarylightleft")
                     .ProtectStructure()
                     .ApplyItemConfigurationsToAll(rand, CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
-                } 
+                }
                 else
                 {
                     PlaceStructureSafely("librarylightright")
@@ -279,7 +279,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                         float heightPosition = (float)(worldY - minY) / heightRange;
                         float probability = 0.5f + (float)Math.Sin(heightPosition * Math.PI) * 0.5f;
 
-                        if (rand.NextFloat() < probability 
+                        if (rand.NextFloat() < probability
                             && (localX + boundRect.Width / 2 < boundRect.Width * (0.225 + mainPass.WorldSizeScale / (40.0f / 3f)) // .30 .375 .45
                             || localX + boundRect.Width / 2 > boundRect.Width * (0.775 - mainPass.WorldSizeScale / (40.0f / 3f)))) // .70 .625 .55
                         {
@@ -295,9 +295,9 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             }
 
             //logger?.Info($"Total valid points found- {_validPoints.Count}");
-                //logger?.Info($"X-coordinate range- {xValues.First()} to {xValues.Last()}");
-                //logger?.Info($"Points on left side- {leftPoints}");
-                //logger?.Info($"Points on right side- {rightPoints}");
+            //logger?.Info($"X-coordinate range- {xValues.First()} to {xValues.Last()}");
+            //logger?.Info($"Points on left side- {leftPoints}");
+            //logger?.Info($"Points on right side- {rightPoints}");
         }
 
         private AeroStructure PlaceStructureSafely(string name, int attempts = 1000)
@@ -330,7 +330,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 } while (triedPositions.Contains(randomPoint) && triedPositions.Count < _validPoints.Count);
 
                 triedPositions.Add(randomPoint);
-                Vector2 position = new( randomPoint.X - structureWidth / 2, randomPoint.Y - structureHeight / 2 );
+                Vector2 position = new(randomPoint.X - structureWidth / 2, randomPoint.Y - structureHeight / 2);
 
                 if (library)
                 {

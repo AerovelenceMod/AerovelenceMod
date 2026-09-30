@@ -14,7 +14,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean;
 public class ResurrectedAmmonite : ModItem
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmonite";
-	
+
     public override void SetStaticDefaults()
     {
         this.ModifyLocalization("Resurrected Ammonite", "Summons a reborn ammonite to fight for you")
@@ -24,7 +24,7 @@ public class ResurrectedAmmonite : ModItem
         ItemID.Sets.LockOnIgnoresCollision[Type] = true;
         ItemID.Sets.StaffMinionSlotsRequired[Type] = 1f;
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = Item.height = 34;
@@ -42,7 +42,7 @@ public class ResurrectedAmmonite : ModItem
         Item.value = Item.sellPrice(silver: 35);
         Item.UseSound = SoundID.Item44 with { Volume = .55f };
     }
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         player.AddBuff(Item.buffType, 2);
@@ -52,7 +52,7 @@ public class ResurrectedAmmonite : ModItem
         if (index < Main.maxProjectiles) Main.projectile[index].originalDamage = Item.damage;
         return false;
     }
-	
+
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.Seashell, 5).AddIngredient(ItemID.Amber, 2).AddIngredient(ItemID.DesertFossil, 10).AddTile(TileID.WorkBenches).Register();
 }
 
@@ -69,7 +69,7 @@ public class AmmoniteCompanion : ModBuff
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Ammonite resucitado", "es-ES");
         LocalizationManager.RegisterTranslation(Description.Key, "Una pequeña vida de un mar remoto lucha por ti", "es-ES");
     }
-	
+
     public override void Update(Player player, ref int buffIndex)
     {
         if (!player.dead && player.ownedProjectileCounts[ModContent.ProjectileType<AmmoniteMinion>()] > 0) player.buffTime[buffIndex] = 18000;
@@ -81,7 +81,7 @@ public class AmmoniteMinion : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmoniteAmmonite";
     private int age;
-	
+
     public override void SetStaticDefaults()
     {
         Main.projPet[Type] = true;
@@ -89,7 +89,7 @@ public class AmmoniteMinion : ModProjectile
         ProjectileID.Sets.MinionTargettingFeature[Type] = true;
         ProjectileID.Sets.CultistIsResistantTo[Type] = true;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = 30;
@@ -103,9 +103,9 @@ public class AmmoniteMinion : ModProjectile
         Projectile.timeLeft = 2;
         Projectile.netImportant = true;
     }
-	
+
     public override bool? CanDamage() => false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -156,7 +156,7 @@ public class AmmoniteMinion : ModProjectile
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), nozzle, aim * 3.4f, ModContent.ProjectileType<AmmoniteSpiralBubble>(), Projectile.damage, Projectile.knockBack, Projectile.owner, 0f, (Projectile.ai[0] - 60f) / 8f * MathHelper.TwoPi / 3f);
         }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Math.Min(1f, age / 20f);
@@ -180,7 +180,7 @@ public class AmmoniteMinion : ModProjectile
         Main.EntitySpriteDraw(shell, center, null, Color.Lerp(lightColor, Color.White, .15f) * fade, Projectile.rotation, shell.Size() * .5f, drawScale, flip);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 10; i++) ShellYeah.BubbleDust(Projectile.Center, Main.rand.NextVector2Circular(2f, 2f));
@@ -191,15 +191,15 @@ public class AmmoniteSpiralBubble : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/H2OBubble";
     private Vector2 previous;
-	
+
     public static Vector2 SpiralOffset(float age, float phase)
     {
         float radius = Math.Min(65f, 2.5f * (MathF.Exp(Math.Min(age, 90f) * .038f) - 1f));
         return (age * .16f + phase).ToRotationVector2() * radius;
     }
-	
+
     public override void SetStaticDefaults() => ProjectileID.Sets.MinionShot[Type] = true;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 16;
@@ -210,9 +210,9 @@ public class AmmoniteSpiralBubble : ModProjectile
         Projectile.timeLeft = 120;
         Projectile.penetrate = 1;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
-	
+
     public override void AI()
     {
         previous = Projectile.Center;
@@ -225,15 +225,15 @@ public class AmmoniteSpiralBubble : ModProjectile
         if (Projectile.timeLeft % 8 == 0) ShellYeah.BubbleDust(Projectile.Center, -movement * .1f);
         Lighting.AddLight(Projectile.Center, .04f, .12f, .15f);
     }
-	
+
     public override bool? CanDamage() => Projectile.timeLeft > 12 ? null : false;
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float point = 0f;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previous, Projectile.Center, 14f, ref point);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Math.Min(1f, Projectile.timeLeft / 20f) * Math.Min(1f, Projectile.ai[0] / 6f);
@@ -245,7 +245,7 @@ public class AmmoniteSpiralBubble : ModProjectile
         Main.EntitySpriteDraw(bubble, center, null, new Color(110, 230, 255, 0) * (.55f * fade), Projectile.rotation, bubble.Size() * .5f, .9f, SpriteEffects.None);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         SoundEngine.PlaySound(SoundID.Item54 with { Volume = .2f, Pitch = .5f }, Projectile.Center);
@@ -260,7 +260,7 @@ internal static class ShellYeah
         Vector2 delta = end - start;
         Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, start, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0f, .5f), new Vector2(delta.Length() + 1f, width), SpriteEffects.None);
     }
-	
+
     internal static void BubbleDust(Vector2 position, Vector2 velocity)
     {
         if (Main.dedServ) return;

@@ -14,52 +14,52 @@ namespace AerovelenceMod.Content.Projectiles.Other
 {
     public class HollowPulse : ModProjectile
     {
-		int timer = 0;
-		float opacity = 1f;
-		public Color color = Color.White;
-		public float size = 1f;
-		public bool oval = false;
+        int timer = 0;
+        float opacity = 1f;
+        public Color color = Color.White;
+        public float size = 1f;
+        public bool oval = false;
 
         public override void SetDefaults()
-		{
-			Projectile.width = 1;
-			Projectile.height = 1;
-			Projectile.friendly = true;
-			Projectile.hostile = false;
-			Projectile.penetrate = -1;
-			Projectile.scale = 1f;
-			Projectile.timeLeft = 200;
-			Projectile.tileCollide = false;
-			Projectile.scale = 0f;
-
-		}
-
-        public override bool? CanDamage() { return false; }
-	
-		public override void AI()
         {
-			Player player = Main.player[Projectile.owner];
-			timer++;
-
-			Projectile.scale = MathHelper.Clamp(MathHelper.Lerp(Projectile.scale, 0.75f * size, 0.08f), 0f, 0.5f * size);
-
-			if (Projectile.scale == 0.5f * size)
-				opacity = MathHelper.Clamp(MathHelper.Lerp(opacity, -0.2f, 0.1f), 0, 2);
-
-			if (opacity <= 0)
-				Projectile.active = false;
+            Projectile.width = 1;
+            Projectile.height = 1;
+            Projectile.friendly = true;
+            Projectile.hostile = false;
+            Projectile.penetrate = -1;
+            Projectile.scale = 1f;
+            Projectile.timeLeft = 200;
+            Projectile.tileCollide = false;
+            Projectile.scale = 0f;
 
         }
 
-		public override bool PreDraw(ref Color lightColor)
-		{
-			Texture2D Tex;
-			if (oval)
-				Tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/Other/HollowOvalPulse").Value;
-			else
-				Tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/Other/HollowPulse").Value;
+        public override bool? CanDamage() { return false; }
 
-			int frameHeight = Tex.Height / Main.projFrames[Projectile.type];
+        public override void AI()
+        {
+            Player player = Main.player[Projectile.owner];
+            timer++;
+
+            Projectile.scale = MathHelper.Clamp(MathHelper.Lerp(Projectile.scale, 0.75f * size, 0.08f), 0f, 0.5f * size);
+
+            if (Projectile.scale == 0.5f * size)
+                opacity = MathHelper.Clamp(MathHelper.Lerp(opacity, -0.2f, 0.1f), 0, 2);
+
+            if (opacity <= 0)
+                Projectile.active = false;
+
+        }
+
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D Tex;
+            if (oval)
+                Tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/Other/HollowOvalPulse").Value;
+            else
+                Tex = Mod.Assets.Request<Texture2D>("Content/Projectiles/Other/HollowPulse").Value;
+
+            int frameHeight = Tex.Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
 
             // Get this frame on texture
@@ -70,23 +70,23 @@ namespace AerovelenceMod.Content.Projectiles.Other
 
 
             Main.spriteBatch.End();
-			Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, sourceRectangle, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
-			Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, sourceRectangle, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, sourceRectangle, color * opacity, Projectile.rotation, origin, Projectile.scale, SpriteEffects.None, 0f);
 
-			return false;
-		}
-		public override void PostDraw(Color lightColor)
-		{
+            return false;
+        }
+        public override void PostDraw(Color lightColor)
+        {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-		}
+        }
 
 
     }
 
-	public class otherHollowPulseTestDearFutureMePleaseRewriteAndMoveThisInsteadOfUsingItInTheFutureDearGod : ModProjectile
-	{
+    public class otherHollowPulseTestDearFutureMePleaseRewriteAndMoveThisInsteadOfUsingItInTheFutureDearGod : ModProjectile
+    {
         public override string Texture => "Terraria/Images/Projectile_0";
 
 

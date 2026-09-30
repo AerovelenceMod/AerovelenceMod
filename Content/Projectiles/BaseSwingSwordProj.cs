@@ -12,8 +12,8 @@ using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public abstract class BaseSwingSwordProj : ModProjectile
-	{
+    public abstract class BaseSwingSwordProj : ModProjectile
+    {
 
         #region variables
 
@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.Projectiles
 
             //player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, currentAngle - MathHelper.PiOver2);
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Projectile.Center - player.Center).ToRotation() + MathHelper.PiOver2 + MathHelper.Pi);
-            
+
 
             //Delete proj if it shouldn't be there
             if (!player.active || player.dead || player.CCed || player.noItems || player.frozen)
@@ -179,7 +179,7 @@ namespace AerovelenceMod.Content.Projectiles
             timer++;
 
 
-            
+
             if (getProgress(easingProgress) >= progressToKill)
             {
                 if (storedTimeAfterEnd <= 0)

@@ -27,7 +27,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 
     public class CrystalMugItem : ModItem
     {
-		public override void SetStaticDefaults()
+        public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Crystal Mug");
         }
@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             Item.useTime = 10;
             Item.consumable = true;
             Item.useStyle = ItemUseStyleID.Swing;
-			Item.value = Item.sellPrice(0, 0, 0, 0);
+            Item.value = Item.sellPrice(0, 0, 0, 0);
             Item.createTile = ModContent.TileType<CrystalMugTile>();
         }
     }

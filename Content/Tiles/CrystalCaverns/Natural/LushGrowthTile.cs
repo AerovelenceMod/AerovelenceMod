@@ -111,7 +111,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
         }
     }
 
-    public class LushGrowthItem : ModItem 
+    public class LushGrowthItem : ModItem
     {
         public override void SetDefaults()
         {

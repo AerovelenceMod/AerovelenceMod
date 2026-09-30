@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {
     //Torch
     #region Torch
-	[LegacyName("GlimmerwoodTorchTile")]
+    [LegacyName("GlimmerwoodTorchTile")]
     public class CrystalTorchTile : ModTile
     {
         private Asset<Texture2D> flameTexture;
@@ -145,26 +145,27 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 
     //Campfire
     #region Campfire
-	public class CrystalCampfireTile : ModTile
-	{
-		private Asset<Texture2D> flameTexture;
+    public class CrystalCampfireTile : ModTile
+    {
+        private Asset<Texture2D> flameTexture;
 
-		public override void SetStaticDefaults() {
-			// Properties
-			Main.tileLighted[Type] = true;
-			Main.tileFrameImportant[Type] = true;
-			Main.tileWaterDeath[Type] = true;
-			Main.tileLavaDeath[Type] = true;
-			TileID.Sets.HasOutlines[Type] = true;
-			TileID.Sets.InteractibleByNPCs[Type] = true;
-			TileID.Sets.Campfire[Type] = true;
+        public override void SetStaticDefaults()
+        {
+            // Properties
+            Main.tileLighted[Type] = true;
+            Main.tileFrameImportant[Type] = true;
+            Main.tileWaterDeath[Type] = true;
+            Main.tileLavaDeath[Type] = true;
+            TileID.Sets.HasOutlines[Type] = true;
+            TileID.Sets.InteractibleByNPCs[Type] = true;
+            TileID.Sets.Campfire[Type] = true;
 
-			DustType = -1; // No dust when mined.
-			AdjTiles = [TileID.Campfire];
+            DustType = -1; // No dust when mined.
+            AdjTiles = [TileID.Campfire];
 
-			// Placement
-			TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.Campfire, 0));
-			/*  This is what is copied from the Campfire tile
+            // Placement
+            TileObjectData.newTile.CopyFrom(TileObjectData.GetTileData(TileID.Campfire, 0));
+            /*  This is what is copied from the Campfire tile
 			TileObjectData.newTile.CopyFrom(TileObjectData.Style3x2);
 			TileObjectData.newTile.StyleWrapLimit = 16;
 			TileObjectData.newTile.WaterPlacement = LiquidPlacement.NotAllowed;
@@ -173,168 +174,194 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 			TileObjectData.newTile.LavaDeath = true;
 			TileObjectData.newTile.DrawYOffset = 2;
 			*/
-			TileObjectData.newTile.StyleLineSkip = 9; // This needs to be added to work for modded tiles.
-			TileObjectData.addTile(Type);
+            TileObjectData.newTile.StyleLineSkip = 9; // This needs to be added to work for modded tiles.
+            TileObjectData.addTile(Type);
 
-			// Etc
-			AddMapEntry(new Color(254, 121, 2),Terraria.Localization.Language.GetText("ItemName.Campfire"));
+            // Etc
+            AddMapEntry(new Color(254, 121, 2), Terraria.Localization.Language.GetText("ItemName.Campfire"));
 
-			// Assets
-			flameTexture = ModContent.Request<Texture2D>(Texture + "_Flame");
-		}
+            // Assets
+            flameTexture = ModContent.Request<Texture2D>(Texture + "_Flame");
+        }
 
-		public override void NearbyEffects(int i, int j, bool closer) {
-			// HasCampfire is a gameplay effect, so we don't run the code if closer is true.
-			if (closer) {
-				return;
-			}
+        public override void NearbyEffects(int i, int j, bool closer)
+        {
+            // HasCampfire is a gameplay effect, so we don't run the code if closer is true.
+            if (closer)
+            {
+                return;
+            }
 
-			if (Main.tile[i, j].TileFrameY < 36) {
-				Main.SceneMetrics.HasCampfire = true;
-			}
-		}
+            if (Main.tile[i, j].TileFrameY < 36)
+            {
+                Main.SceneMetrics.HasCampfire = true;
+            }
+        }
 
-		public override void MouseOver(int i, int j) {
-			Player player = Main.LocalPlayer;
-			player.noThrow = 2;
-			player.cursorItemIconEnabled = true;
+        public override void MouseOver(int i, int j)
+        {
+            Player player = Main.LocalPlayer;
+            player.noThrow = 2;
+            player.cursorItemIconEnabled = true;
 
-			int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
-			player.cursorItemIconID = TileLoader.GetItemDropFromTypeAndStyle(Type, style);
-		}
+            int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+            player.cursorItemIconID = TileLoader.GetItemDropFromTypeAndStyle(Type, style);
+        }
 
-		public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) {
-			return true;
-		}
+        public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)
+        {
+            return true;
+        }
 
-		public override bool RightClick(int i, int j) {
-			SoundEngine.PlaySound(SoundID.Mech, new Vector2(i * 16, j * 16));
-			ToggleTile(i, j);
-			return true;
-		}
+        public override bool RightClick(int i, int j)
+        {
+            SoundEngine.PlaySound(SoundID.Mech, new Vector2(i * 16, j * 16));
+            ToggleTile(i, j);
+            return true;
+        }
 
-		public override void HitWire(int i, int j) {
-			ToggleTile(i, j);
-		}
+        public override void HitWire(int i, int j)
+        {
+            ToggleTile(i, j);
+        }
 
-		// ToggleTile is a method that contains code shared by HitWire and RightClick, since they both toggle the state of the tile.
-		// Note that TileFrameY doesn't necessarily match up with the image that is drawn, AnimateTile and AnimateIndividualTile contribute to the drawing decisions.
-		public void ToggleTile(int i, int j) {
-			Tile tile = Main.tile[i, j];
-			int topX = i - tile.TileFrameX % 54 / 18;
-			int topY = j - tile.TileFrameY % 36 / 18;
+        // ToggleTile is a method that contains code shared by HitWire and RightClick, since they both toggle the state of the tile.
+        // Note that TileFrameY doesn't necessarily match up with the image that is drawn, AnimateTile and AnimateIndividualTile contribute to the drawing decisions.
+        public void ToggleTile(int i, int j)
+        {
+            Tile tile = Main.tile[i, j];
+            int topX = i - tile.TileFrameX % 54 / 18;
+            int topY = j - tile.TileFrameY % 36 / 18;
 
-			short frameAdjustment = (short)(tile.TileFrameY >= 36 ? -36 : 36);
+            short frameAdjustment = (short)(tile.TileFrameY >= 36 ? -36 : 36);
 
-			for (int x = topX; x < topX + 3; x++) {
-				for (int y = topY; y < topY + 2; y++) {
-					Main.tile[x, y].TileFrameY += frameAdjustment;
+            for (int x = topX; x < topX + 3; x++)
+            {
+                for (int y = topY; y < topY + 2; y++)
+                {
+                    Main.tile[x, y].TileFrameY += frameAdjustment;
 
-					if (Wiring.running) {
-						Wiring.SkipWire(x, y);
-					}
-				}
-			}
+                    if (Wiring.running)
+                    {
+                        Wiring.SkipWire(x, y);
+                    }
+                }
+            }
 
-			if (Main.netMode != NetmodeID.SinglePlayer) {
-				NetMessage.SendTileSquare(-1, topX, topY, 3, 2);
-			}
-		}
+            if (Main.netMode != NetmodeID.SinglePlayer)
+            {
+                NetMessage.SendTileSquare(-1, topX, topY, 3, 2);
+            }
+        }
 
-		public override void AnimateTile(ref int frame, ref int frameCounter) {
-			if (++frameCounter >= 4) {
-				frameCounter = 0;
-				// We animate through the 1st 8 frames. The 9th frame is manually drawn if in the "off" state so it is not included in the animation logic here.
-				frame = ++frame % 8;
-			}
-		}
-		public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset) {
-			var tile = Main.tile[i, j];
-			if (tile.TileFrameY < 36) {
-				frameYOffset = Main.tileFrame[type] * 36;
-			}
-			else {
-				// When in the "off" state, TileFrameY of the top tile is 36.
-				// Since we want to draw the 9th animation frame when "off", we need to offset the TileFrameY value by 252. (Because 8 * 36 == 288 and 36 + 252 == 288)
-				frameYOffset = 252;
-			}
-		}
+        public override void AnimateTile(ref int frame, ref int frameCounter)
+        {
+            if (++frameCounter >= 4)
+            {
+                frameCounter = 0;
+                // We animate through the 1st 8 frames. The 9th frame is manually drawn if in the "off" state so it is not included in the animation logic here.
+                frame = ++frame % 8;
+            }
+        }
+        public override void AnimateIndividualTile(int type, int i, int j, ref int frameXOffset, ref int frameYOffset)
+        {
+            var tile = Main.tile[i, j];
+            if (tile.TileFrameY < 36)
+            {
+                frameYOffset = Main.tileFrame[type] * 36;
+            }
+            else
+            {
+                // When in the "off" state, TileFrameY of the top tile is 36.
+                // Since we want to draw the 9th animation frame when "off", we need to offset the TileFrameY value by 252. (Because 8 * 36 == 288 and 36 + 252 == 288)
+                frameYOffset = 252;
+            }
+        }
 
-		public override void EmitParticles(int i, int j, Tile tileCache, short tileFrameX, short tileFrameY, Color tileLight, bool visible) {
-			// Unlike a typical tile, campfire tiles intentionally still spawn dust even when the tile is invisible. This means we do NOT check visible as other examples do.
+        public override void EmitParticles(int i, int j, Tile tileCache, short tileFrameX, short tileFrameY, Color tileLight, bool visible)
+        {
+            // Unlike a typical tile, campfire tiles intentionally still spawn dust even when the tile is invisible. This means we do NOT check visible as other examples do.
 
-			Tile tile = Main.tile[i, j];
-			// Only emit dust from the top tiles, and only if toggled on. This logic limits dust spawning under different conditions.
-			if (tile.TileFrameY == 0 && Main.rand.NextBool(3)) {
-				Dust dust = Dust.NewDustDirect(new Vector2(i * 16 + 2, j * 16 - 4), 4, 8, DustID.Smoke, 0f, 0f, 100);
-				if (tile.TileFrameX == 0)
-					dust.position.X += Main.rand.Next(8);
+            Tile tile = Main.tile[i, j];
+            // Only emit dust from the top tiles, and only if toggled on. This logic limits dust spawning under different conditions.
+            if (tile.TileFrameY == 0 && Main.rand.NextBool(3))
+            {
+                Dust dust = Dust.NewDustDirect(new Vector2(i * 16 + 2, j * 16 - 4), 4, 8, DustID.Smoke, 0f, 0f, 100);
+                if (tile.TileFrameX == 0)
+                    dust.position.X += Main.rand.Next(8);
 
-				if (tile.TileFrameX == 36)
-					dust.position.X -= Main.rand.Next(8);
+                if (tile.TileFrameX == 36)
+                    dust.position.X -= Main.rand.Next(8);
 
-				dust.alpha += Main.rand.Next(100);
-				dust.velocity *= 0.2f;
-				dust.velocity.Y -= 0.5f + Main.rand.Next(10) * 0.1f;
-				dust.fadeIn = 0.5f + Main.rand.Next(10) * 0.1f;
-			}
-		}
+                dust.alpha += Main.rand.Next(100);
+                dust.velocity *= 0.2f;
+                dust.velocity.Y -= 0.5f + Main.rand.Next(10) * 0.1f;
+                dust.fadeIn = 0.5f + Main.rand.Next(10) * 0.1f;
+            }
+        }
 
-		public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-			Tile tile = Main.tile[i, j];
-			if (tile.TileFrameY < 36) {
-				float pulse = Main.rand.Next(28, 42) * 0.005f;
-				pulse += (270 - Main.mouseTextColor) / 700f;
-				r = 0.1f + pulse;
-				g = 0.9f + pulse;
-				b = 0.3f + pulse;
-			}
-		}
+        public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
+        {
+            Tile tile = Main.tile[i, j];
+            if (tile.TileFrameY < 36)
+            {
+                float pulse = Main.rand.Next(28, 42) * 0.005f;
+                pulse += (270 - Main.mouseTextColor) / 700f;
+                r = 0.1f + pulse;
+                g = 0.9f + pulse;
+                b = 0.3f + pulse;
+            }
+        }
 
-		public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
-			var tile = Main.tile[i, j];
+        public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
+        {
+            var tile = Main.tile[i, j];
 
-			if (!TileDrawing.IsVisible(tile)) {
-				return;
-			}
+            if (!TileDrawing.IsVisible(tile))
+            {
+                return;
+            }
 
-			if (tile.TileFrameY < 36) {
-				Color color = new Color(255, 255, 255, 0);
+            if (tile.TileFrameY < 36)
+            {
+                Color color = new Color(255, 255, 255, 0);
 
-				Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+                Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 
-				int width = 16;
-				int offsetY = 0;
-				int height = 16;
-				short frameX = tile.TileFrameX;
-				short frameY = tile.TileFrameY;
-				int addFrX = 0;
-				int addFrY = 0;
+                int width = 16;
+                int offsetY = 0;
+                int height = 16;
+                short frameX = tile.TileFrameX;
+                short frameY = tile.TileFrameY;
+                int addFrX = 0;
+                int addFrY = 0;
 
-				TileLoader.SetDrawPositions(i, j, ref width, ref offsetY, ref height, ref frameX, ref frameY); // calculates the draw offsets
-				TileLoader.SetAnimationFrame(Type, i, j, ref addFrX, ref addFrY); // calculates the animation offsets
+                TileLoader.SetDrawPositions(i, j, ref width, ref offsetY, ref height, ref frameX, ref frameY); // calculates the draw offsets
+                TileLoader.SetAnimationFrame(Type, i, j, ref addFrX, ref addFrY); // calculates the animation offsets
 
-				Rectangle drawRectangle = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrY, 16, 16);
+                Rectangle drawRectangle = new Rectangle(tile.TileFrameX, tile.TileFrameY + addFrY, 16, 16);
 
-				// The flame is manually drawn separate from the tile texture so that it can be drawn at full brightness.
-				spriteBatch.Draw(flameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y + offsetY) + zero, drawRectangle, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-			}
-		}
-	}
+                // The flame is manually drawn separate from the tile texture so that it can be drawn at full brightness.
+                spriteBatch.Draw(flameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X, j * 16 - (int)Main.screenPosition.Y + offsetY) + zero, drawRectangle, color, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            }
+        }
+    }
 
     public class CrystalCampfireItem : ModItem
-	{
-		public override void SetDefaults() {
-			Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCampfireTile>(), 0);
-		}
+    {
+        public override void SetDefaults()
+        {
+            Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCampfireTile>(), 0);
+        }
 
-		public override void AddRecipes() {
-			CreateRecipe()
-				.AddRecipeGroup(RecipeGroupID.Wood, 10)
-				.AddIngredient<CrystalTorchItem>(5)
-				.Register();
-		}
-	}
+        public override void AddRecipes()
+        {
+            CreateRecipe()
+                .AddRecipeGroup(RecipeGroupID.Wood, 10)
+                .AddIngredient<CrystalTorchItem>(5)
+                .Register();
+        }
+    }
     #endregion
 
     //Platform
@@ -350,7 +377,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodPlatformItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodPlatformTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe(2).AddIngredient(ModContent.ItemType<GlimmerwoodItem>()).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -396,7 +423,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         public class GlimmerwoodCandleItem : ModItem
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodCandleTile>());
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
 
@@ -422,7 +449,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         public class GlimmerwoodLanternItem : ModItem
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 10, 20, 150, ModContent.TileType<GlimmerwoodLanternTile>());
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -448,7 +475,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 10, 26, 150, ModContent.TileType<GlimmerwoodLampTile>());
 
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 10).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 3).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -487,7 +514,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 16, 32, 150, ModContent.TileType<GlimmerwoodCandelabraTile>());
 
-            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 15).AddTile(TileID.WorkBenches).Register();
+            public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 5).AddIngredient(ItemID.Torch).AddTile(TileID.WorkBenches).Register();
         }
     }
     #endregion
@@ -519,14 +546,14 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         {
             Tile tile = Main.tile[i, j];
             bool isOn = tile.TileFrameX < 54;
-            CommonTileHelper.HandlePostDraw(flameTexture, i, j, spriteBatch,isOn, flameWidth: 54, flameHeight: 54, frameSize: 54);
+            CommonTileHelper.HandlePostDraw(flameTexture, i, j, spriteBatch, isOn, flameWidth: 54, flameHeight: 54, frameSize: 54);
         }
     }
 
     public class GlimmerwoodChandelierItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChandelierTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddIngredient(ItemID.Torch, 4).AddIngredient(ItemID.Chain).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -556,7 +583,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodChairItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChairTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -584,7 +611,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodStoolItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodStoolTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 4).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -613,7 +640,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodToiletItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodToiletTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -642,7 +669,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodSofaItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodSofaTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 5).AddIngredient(ItemID.Silk, 2).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -650,7 +677,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     #region Chests
     public class GlimmerwoodChestTile : ModTile
     {
-        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodChestItem>(), DustID.BlueCrystalShard,false);
+        public override void SetStaticDefaults() => CommonTileHelper.SetupChest(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodChestItem>(), DustID.BlueCrystalShard, false);
         public override bool RightClick(int i, int j) { return CommonTileHelper.HandleRightClick(this, i, j, Main.LocalPlayer, ItemID.GoldenKey); }
         public override void MouseOver(int i, int j) => CommonTileHelper.HandleMouseOver(this, i, j, ModContent.ItemType<GlimmerwoodChestItem>(), ItemID.GoldenKey);
         public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => true;
@@ -659,7 +686,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CavernChestTile : ModTile
@@ -673,7 +700,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class CavernChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<CavernChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CitadelChestTile : ModTile
@@ -687,7 +714,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class CitadelChestItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<CitadelChestTile>());
-        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<CitadelChestItem>(), 8).AddTile(TileID.WorkBenches).Register(); }
+        public override void AddRecipes() { CreateRecipe().AddIngredient(ModContent.ItemType<CitadelChestItem>(), 8).AddRecipeGroup(RecipeGroupID.IronBar, 2).AddTile(TileID.WorkBenches).Register(); }
     }
 
     public class CitadelChestKey : ModItem
@@ -829,7 +856,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodDoorItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodDoorTileClosed>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -843,7 +870,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodSinkItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodSinkTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 6).AddIngredient(ItemID.WaterBucket).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 
@@ -853,7 +880,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodBookcaseItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 32, 22, 150, ModContent.TileType<GlimmerwoodBookcaseTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 15).AddIngredient(ItemID.Silk, 5).AddTile(ModContent.TileType<CrystallineFabricator>()).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 20).AddIngredient(ItemID.Book, 10).AddTile(ModContent.TileType<CrystallineFabricator>()).Register();
     }
     #endregion
 
@@ -877,7 +904,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
     public class GlimmerwoodBathtubItem : ModItem
     {
         public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 28, 14, 150, ModContent.TileType<GlimmerwoodBathtubTile>());
-        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 8).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient(ModContent.ItemType<GlimmerwoodItem>(), 14).AddTile(TileID.WorkBenches).Register();
     }
     #endregion
 }

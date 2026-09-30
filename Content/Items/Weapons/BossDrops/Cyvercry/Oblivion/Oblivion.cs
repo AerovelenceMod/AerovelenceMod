@@ -129,7 +129,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
             if (getProgress(easingProgress) >= 0.3f && !playedSound)
             {
-                SoundStyle styleaa = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/ShittySword2") with { Volume = 0.45f, Pitch = 0f, PitchVariance = 0.15f }; 
+                SoundStyle styleaa = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/ShittySword2") with { Volume = 0.45f, Pitch = 0f, PitchVariance = 0.15f };
                 SoundEngine.PlaySound(styleaa, Projectile.Center);
 
                 playedSound = true;
@@ -176,7 +176,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
             Vector2 armPosition = Main.player[Projectile.owner].GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, currentAngle);
             Vector2 otherOffset = new Vector2(
-                Projectile.spriteDirection == 1 ? 4 : 0, 
+                Projectile.spriteDirection == 1 ? 4 : 0,
                 Projectile.spriteDirection == 1 ? -8 : -10).RotatedBy(currentAngle);
 
             Vector2 drawPos = armPosition + otherOffset - Main.screenPosition + new Vector2(0f, Main.player[Projectile.owner].gfxOffY);
@@ -477,7 +477,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             {
                 player.GetModPlayer<AeroPlayer>().ScreenShakePower = Math.Clamp(player.GetModPlayer<AeroPlayer>().ScreenShakePower, 9f, 100f);
             }
-            
+
             //Stuff so the trail is relative to the player's position
             trailPoss.Clear();
             foreach (Vector2 pos in relativePoss)
@@ -511,10 +511,10 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             {
                 Main.player[Projectile.owner].GetModPlayer<AeroPlayer>().ScreenShakePower += 18;
 
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/ShittySword") with { Volume = 0.55f, Pitch = -0.2f, PitchVariance = 0.2f, }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/ShittySword") with { Volume = 0.55f, Pitch = -0.2f, PitchVariance = 0.2f, };
                 SoundEngine.PlaySound(style, player.Center);
 
-                SoundStyle style22 = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/UltraBlade3") with { Volume = 0.65f, Pitch = 0.25f, PitchVariance = 0.25f }; 
+                SoundStyle style22 = new SoundStyle("AerovelenceMod/Sounds/Effects/Tech/UltraBlade3") with { Volume = 0.65f, Pitch = 0.25f, PitchVariance = 0.25f };
                 SoundEngine.PlaySound(style22, player.Center);
 
                 playedSound = true;
@@ -560,9 +560,9 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
             //General stuff to make sure sword position is consistent to player arm
             Vector2 armPosition = Main.player[Projectile.owner].GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, currentAngle);
-            
+
             Vector2 otherOffset = new Vector2(
-                Projectile.spriteDirection == 1 ? 14 : 8, 
+                Projectile.spriteDirection == 1 ? 14 : 8,
                 Projectile.spriteDirection == 1 ? -8 : -14).RotatedBy(currentAngle);
 
             Vector2 drawPos = armPosition + otherOffset - Main.screenPosition + new Vector2(0f, Main.player[Projectile.owner].gfxOffY);
@@ -641,8 +641,8 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             Vector2 armPosition = Main.player[Projectile.owner].GetFrontHandPosition(Player.CompositeArmStretchAmount.Full, currentAngle);
 
             Vector2 otherOffset = new Vector2(
-                Projectile.spriteDirection == 1 ? 14 : 8, 
-                Projectile.spriteDirection == 1 ? -8 :-14).RotatedBy(currentAngle);
+                Projectile.spriteDirection == 1 ? 14 : 8,
+                Projectile.spriteDirection == 1 ? -8 : -14).RotatedBy(currentAngle);
 
             Vector2 drawPos = armPosition + otherOffset - Main.screenPosition + new Vector2(0f, Main.player[Projectile.owner].gfxOffY);
             float rot = currentAngle;
@@ -700,14 +700,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
             //Slash
             Texture2D slash = Mod.Assets.Request<Texture2D>("Assets/Slash/HalfSlashBig").Value;
-            
+
             float progBoost = (float)Math.Sin(getProgress(easingProgress) * Math.PI);
             float slashOpacity = progBoost;
-            
+
             float slashRot = Projectile.ai[0] == 1 ? rot + MathHelper.Pi : rot;
             Vector2 slashScale = new Vector2(1f, 2f) * 0.75f * slashOpacity;
             SpriteEffects SlashSE = Projectile.ai[0] == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-            
+
             Main.spriteBatch.Draw(slash, drawPos + rot.ToRotationVector2() * (10f * slashOpacity), null, Color.White, slashRot, slash.Size() / 2f, slashScale, SlashSE, 0f);
             //Main.spriteBatch.Draw(slash, drawPos + rot.ToRotationVector2() * (20f * slashOpacity), null, Color.White, slashRot, slash.Size() / 2f, slashScale, SlashSE, 0f);
 
@@ -1098,7 +1098,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
                 float alphaEaseValue = Easings.easeOutSine(easeProg);
                 swordAlpha = alphaEaseValue;
-            } 
+            }
 
             float offsetRot = MathHelper.Lerp(startRot, goalRotation, Easings.easeOutCubic(easeProg));
             Vector2 offsetPos = player.MountedCenter + offsetRot.ToRotationVector2() * 50f * Easings.easeOutQuad(easeProg);
@@ -1208,7 +1208,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
             Projectile.velocity = Vector2.Zero;
 
-            
+
 
             timer++;
         }

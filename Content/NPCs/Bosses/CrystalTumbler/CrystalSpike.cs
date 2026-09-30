@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             int totalFrames = 6;
             int frameDuration;
 
-            if (Projectile.frame == 0 || Projectile.frame == 6 || Projectile.frame == 12) 
+            if (Projectile.frame == 0 || Projectile.frame == 6 || Projectile.frame == 12)
             {
                 frameDuration = 60;
             }

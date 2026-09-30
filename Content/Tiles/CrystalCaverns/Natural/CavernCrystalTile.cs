@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             CommonTileHelper.SetTileProtection(this);
             AddMapEntry(new Color(115, 230, 250));
         }
-        
+
         public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
         {
             float lightFactor = MathHelper.Lerp(0.3f, 2f, ((float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.02f, j * 0.02f), Main.GlobalTimeWrappedHourly * 0.2f)), 2)));

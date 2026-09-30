@@ -6,18 +6,18 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace AerovelenceMod.Content.Dusts
 {
-	public class SmokeDust : ModDust
-	{
+    public class SmokeDust : ModDust
+    {
         public override string Texture => "AerovelenceMod/Content/Dusts/WhiteSmoke";
 
         public override void OnSpawn(Dust dust)
-		{
-			Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/WhiteSmoke").Value;
-			dust.frame = new Rectangle(0, texture.Height / 5 * Main.rand.Next(5), texture.Width, texture.Height / 5);
-		}
+        {
+            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/WhiteSmoke").Value;
+            dust.frame = new Rectangle(0, texture.Height / 5 * Main.rand.Next(5), texture.Width, texture.Height / 5);
+        }
 
-		public override bool Update(Dust dust)
-		{
+        public override bool Update(Dust dust)
+        {
 
             dust.color = Color.Lerp(dust.color, Color.Black, 0.02f);
             Lighting.AddLight((int)(dust.position.X / 16f), (int)(dust.position.Y / 16f), dust.color.R * 0.002f, dust.color.G * 0.002f, dust.color.B * 0.002f);
@@ -41,8 +41,8 @@ namespace AerovelenceMod.Content.Dusts
 
             return false;
 
-		}
-	}
+        }
+    }
 
     public class SmokeDustFade : ModDust
     {

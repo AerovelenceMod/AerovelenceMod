@@ -32,6 +32,7 @@ namespace AerovelenceMod.Content.Items.Mounts
             MountData.fallDamage = 0f;
             MountData.spawnDust = DustID.GemSapphire;
             MountData.spawnDustNoGravity = true;
+
             if (!Main.dedServ)
             {
                 MountData.textureWidth = MountData.frontTexture.Width();
@@ -78,12 +79,15 @@ namespace AerovelenceMod.Content.Items.Mounts
             rotation = rider.Rotation;
             spriteEffects = SpriteEffects.None;
             drawScale = 1f;
+
             if (shadow == 0f && rider.Charge > 0.01f)
             {
                 Color color = TumblerVFX.Glow(TumblerVFX.PhaseColor(0f), rider.Charge * 0.2f);
+
                 for (int i = 0; i < 4; i++)
                     playerDrawData.Add(new DrawData(texture, drawPosition + (MathHelper.PiOver2 * i).ToRotationVector2() * 1.5f, frame, color, rotation, drawOrigin, 1.04f, SpriteEffects.None, 0f));
             }
+
             DrawData body = new(texture, drawPosition, frame, drawColor, rotation, drawOrigin, drawScale, SpriteEffects.None, 0f);
             body.shader = drawPlayer.cMount;
             playerDrawData.Add(body);

@@ -41,6 +41,12 @@ namespace AerovelenceMod.Common.Systems.Language
             values[language] = text;
         }
 
+        public static LocalizedText RegisterTranslation(string key, string text, Language language)
+        {
+            RegisterTranslation(key, text, language.ToCultureCode());
+            return Bind(key, LanguageManager.Instance.GetOrRegister(key, () => text));
+        }
+
         public static bool TryGetTranslation(string key, out string text)
         {
             text = null;
@@ -187,6 +193,15 @@ namespace AerovelenceMod.Common.Systems.Language
             return item;
         }
 
+        public static T AddText<T>(this T item, Language language, string property, string text) where T : ModItem
+        {
+            RegisterItemText(item, property, text, language, item.GetLocalization(property));
+            return item;
+        }
+
+        public static string GetLocalizedText(this ModItem item, string property)
+            => LocalizationManager.GetTranslation(ItemKey(item, property));
+
         public static T AddSkillStrike<T>(this T item, Language language, string text) where T : ModItem
         {
             if (!text.Contains("[i:" + ItemID.FallenStar) && !text.Contains("[i:16]"))
@@ -246,6 +261,17 @@ namespace AerovelenceMod.Common.Systems.Language
             LocalizationManager.RegisterTranslation(key, flavor, language.ToCultureCode());
             LocalizationManager.Bind(key, npc.GetLocalization("BestiaryFlavor"));
             return npc;
+        }
+    }
+
+    public static class ProjectileLocalizationExtensions
+    {
+        public static T AddName<T>(this T projectile, Language language, string name) where T : ModProjectile
+        {
+            string key = $"{projectile.Mod.Name}.{projectile.Name}.DisplayName";
+            LocalizationManager.RegisterTranslation(key, name, language.ToCultureCode());
+            LocalizationManager.Bind(key, projectile.DisplayName);
+            return projectile;
         }
     }
 

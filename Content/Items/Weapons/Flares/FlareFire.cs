@@ -79,8 +79,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares
                 //looks dumb now but will prolly need for skill crit system
                 if (FlareFireTime % 30 == 0)
                 {
-                    Terraria.Audio.SoundStyle style = 
-                        new Terraria.Audio.SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f,  PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1} ;
+                    Terraria.Audio.SoundStyle style =
+                        new Terraria.Audio.SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
 
                     Terraria.Audio.SoundStyle? storedHitsound = npc.HitSound;
 

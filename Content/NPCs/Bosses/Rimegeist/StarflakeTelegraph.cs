@@ -21,7 +21,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
         float rotationBonus = 0f;
         public float numOfBarrages = 1f;
         public float numOfShots = 12f;
-        public int tetheredNPC = 0; 
+        public int tetheredNPC = 0;
 
         public override void SetStaticDefaults()
         {
@@ -48,7 +48,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
         public override void AI()
         {
             //Lighting.AddLight(Projectile.Center, new Vector3(255, 255, 255) * 0.0005f);
-            Projectile.Center = Main.npc[tetheredNPC].Center + new Vector2(-10,0);
+            Projectile.Center = Main.npc[tetheredNPC].Center + new Vector2(-10, 0);
 
             if (timer < 40)
             {
@@ -101,7 +101,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             for (float i = 0f; i < 6.28f; i += 6.28f / numOfShots)
             {
                 Texture2D RayTex = Mod.Assets.Request<Texture2D>("Content/NPCs/Bosses/Cyvercry/Textures/Medusa_Gray").Value;
-                Main.spriteBatch.Draw(RayTex, Projectile.Center - Main.screenPosition + new Vector2(50 * teleScale, 0).RotatedBy(initialRotation + i), RayTex.Frame(1, 1, 0, 0), Color.Black * drawAlpha * 2f, initialRotation + i, RayTex.Size() / 2, teleScale, SpriteEffects.None, 0);;
+                Main.spriteBatch.Draw(RayTex, Projectile.Center - Main.screenPosition + new Vector2(50 * teleScale, 0).RotatedBy(initialRotation + i), RayTex.Frame(1, 1, 0, 0), Color.Black * drawAlpha * 2f, initialRotation + i, RayTex.Size() / 2, teleScale, SpriteEffects.None, 0); ;
             }
 
             Main.spriteBatch.End();
@@ -158,7 +158,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             {
                 Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + drawOrigin + new Vector2(0f, Projectile.gfxOffY);
                 Color color = Projectile.GetAlpha(Color.SkyBlue) * ((float)(Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
-                Main.EntitySpriteDraw((Texture2D)TextureAssets.Projectile[Projectile.type], drawPos + new Vector2(-19,0).RotatedBy(Projectile.rotation + MathHelper.PiOver2), frame, color, Projectile.rotation, drawOrigin, Projectile.scale - (k * 0f), SpriteEffects.None, 0);
+                Main.EntitySpriteDraw((Texture2D)TextureAssets.Projectile[Projectile.type], drawPos + new Vector2(-19, 0).RotatedBy(Projectile.rotation + MathHelper.PiOver2), frame, color, Projectile.rotation, drawOrigin, Projectile.scale - (k * 0f), SpriteEffects.None, 0);
             }
 
             Main.spriteBatch.End();
@@ -168,4 +168,4 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             return false;
         }
     }
-} 
+}

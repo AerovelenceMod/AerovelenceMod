@@ -23,7 +23,7 @@ public class Hellfrost : ModItem
             .AddSkillStrike(Language.Default, "Explosions caused by striking terrain")
             .AddSkillStrike(Language.Spanish, "Las explosiones causadas al golpear el terreno");
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = Item.height = 56;
@@ -39,7 +39,7 @@ public class Hellfrost : ModItem
         Item.rare = ItemRarityID.Orange;
         Item.value = Item.sellPrice(gold: 2);
     }
-	
+
     public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] == 0;
     public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.HellstoneBar, 15).AddIngredient(ItemID.IceBlock, 50).AddIngredient(ItemID.Shiverthorn, 3).AddTile(TileID.Anvils).Register();
 }
@@ -60,7 +60,7 @@ public class HellfrostHead : ModProjectile
     public override void ReceiveExtraAI(BinaryReader reader) { swingAngle = reader.ReadSingle(); spinDirection = reader.ReadInt32(); angularSpeed = reader.ReadSingle(); swingRadius = reader.ReadSingle(); }
     public const float MaximumReach = 340f;
     public static bool ImpactReady(int cooldown, float speed) => cooldown <= 0 && speed >= 3f;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = 30;
@@ -75,10 +75,10 @@ public class HellfrostHead : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = 24;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Projectile.ai[0] == 3f || age < 6 ? false : null;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -173,7 +173,7 @@ public class HellfrostHead : ModProjectile
             HellfrostEffects.Steam(Vector2.Lerp(previousCenter, Projectile.Center, .5f), -movement * .035f - Vector2.UnitY * .7f, .35f);
         Lighting.AddLight(Projectile.Center, .3f, .3f, .4f);
     }
-	
+
     public static Vector2 ReturnVelocity(Vector2 velocity, Vector2 delta, float speed, float ticks)
     {
         if (ticks < 0f) return velocity * .98f;
@@ -183,7 +183,7 @@ public class HellfrostHead : ModProjectile
         if (force.Length() > maximumForce) force = force.SafeNormalize(Vector2.Zero) * maximumForce;
         return velocity + force;
     }
-	
+
     private void MoveWithCollision(Vector2 movement, bool thrown)
     {
         int steps = Math.Clamp((int)Math.Ceiling(movement.Length() / 6f), 1, 40);
@@ -204,7 +204,7 @@ public class HellfrostHead : ModProjectile
             break;
         }
     }
-	
+
     private void Explode(bool terrain)
     {
         if (impactCooldown > 0) return;
@@ -212,20 +212,20 @@ public class HellfrostHead : ModProjectile
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<HellfrostBurst>(), Math.Max(1, (int)(Projectile.damage * .7f)), 4f, Projectile.owner, terrain ? 1f : 0f);
     }
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         if (!Collision.CanHitLine(Projectile.Center, 1, 1, targetHitbox.Center.ToVector2(), 1, 1)) return false;
         float distance = 0f;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), previousCenter, Projectile.Center, 28f, ref distance);
     }
-	
+
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Main.rand.NextBool(3)) target.AddBuff(BuffID.Frostburn, 240);
         Explode(false);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Player player = Main.player[Projectile.owner];
@@ -243,7 +243,7 @@ public class HellfrostHead : ModProjectile
         Main.EntitySpriteDraw(head, Projectile.Center - Main.screenPosition, null, Color.Lerp(lightColor, Color.White, .25f) * fade, Projectile.rotation, head.Size() * .5f, 1f, SpriteEffects.None);
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 4; i++) HellfrostEffects.Steam(Projectile.Center, Main.rand.NextVector2Circular(1f, 1f) - Vector2.UnitY, .3f);
@@ -254,7 +254,7 @@ public class HellfrostBurst : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
     public const float Radius = 72f;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 148;
@@ -266,15 +266,15 @@ public class HellfrostBurst : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool? CanDamage() => Projectile.timeLeft >= 20 ? null : false;
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         Vector2 closest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
         return Vector2.DistanceSquared(closest, Projectile.Center) <= Radius * Radius && Collision.CanHitLine(Projectile.Center, 1, 1, closest, 1, 1);
     }
-	
+
     public override void AI()
     {
         if (Projectile.timeLeft == 26 && !Main.dedServ)
@@ -295,17 +295,17 @@ public class HellfrostBurst : ModProjectile
         }
         Lighting.AddLight(Projectile.Center, new Vector3(.65f, .4f, .55f) * (Projectile.timeLeft / 26f));
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         if (Projectile.ai[0] == 1f) SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, 1, .4f, .7f);
     }
-	
+
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
     {
         if (Main.rand.NextBool(3)) target.AddBuff(BuffID.Frostburn, 240);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float progress = 1f - Projectile.timeLeft / 26f;

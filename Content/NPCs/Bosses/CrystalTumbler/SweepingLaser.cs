@@ -195,7 +195,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Vector2 origin2 = new Vector2(0, texBeam.Height / 2);
 
                 float height = 30f * Projectile.scale * (sweepTell ? 0.5f : 1);
-                float height2 = 15f * Projectile.scale * (sweepTell ? 0.5f : 1); 
+                float height2 = 15f * Projectile.scale * (sweepTell ? 0.5f : 1);
 
                 if (height == 0)
                     Projectile.active = false;

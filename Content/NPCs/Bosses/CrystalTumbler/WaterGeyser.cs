@@ -115,13 +115,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             myEffect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * 0.018f);
             #endregion
 
-           
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
 
             myEffect.CurrentTechnique.Passes[0].Apply();
 
-            
+
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 

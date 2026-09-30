@@ -26,7 +26,7 @@ public class Rubbleswarm : ModItem
         ItemID.Sets.LockOnIgnoresCollision[Type] = true;
         ItemID.Sets.StaffMinionSlotsRequired[Type] = 1f;
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = Item.height = 30;
@@ -44,7 +44,7 @@ public class Rubbleswarm : ModItem
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item44;
     }
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         player.AddBuff(Item.buffType, 2);
@@ -69,7 +69,7 @@ public class RubbleboundBuff : ModBuff
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Enjambre de escombros", "es-ES");
         LocalizationManager.RegisterTranslation(Description.Key, "Los escombros magnetizados luchan por ti", "es-ES");
     }
-	
+
     public override void Update(Player player, ref int buffIndex)
     {
         if (!player.dead && player.ownedProjectileCounts[ModContent.ProjectileType<RubbleboundMinion>()] > 0) player.buffTime[buffIndex] = 18000;
@@ -88,7 +88,7 @@ public class RubbleboundMinion : ModProjectile
     private float trailStrength = .4f;
     private int historyCount;
     private int age;
-	
+
     public static Vector2 FragmentOffset(float ticks, int piece, float heading)
     {
         float t = MathHelper.Clamp(ticks / ReassemblyTime, 0f, 1f);
@@ -99,7 +99,7 @@ public class RubbleboundMinion : ModProjectile
         Vector2 curl = (angle + MathHelper.PiOver2).ToRotationVector2() * (MathF.Sin(t * MathHelper.Pi) * (piece % 2 == 0 ? 30f : -24f));
         return (outward + curl) * reach;
     }
-	
+
     public static Vector2 ReturnVelocity(Vector2 velocity, Vector2 home, float ticks, int identity)
     {
         float turn = (identity % 2 == 0 ? 1f : -1f) * .023f * (1f - MathHelper.Clamp(ticks / 35f, 0f, 1f));
@@ -107,16 +107,16 @@ public class RubbleboundMinion : ModProjectile
         if (desired.Length() > 16f) desired = desired.SafeNormalize(Vector2.UnitX) * 16f;
         return Vector2.Lerp(velocity.RotatedBy(turn), desired, MathHelper.SmoothStep(.004f, .16f, MathHelper.Clamp(ticks / 60f, 0f, 1f)));
     }
-	
+
     private Vector2 PiecePosition(int piece)
     {
         Vector2 cluster = (Projectile.rotation + piece * 2.399f).ToRotationVector2() * (piece == 0 ? 0f : 6f + piece % 2 * 2f);
         return Projectile.Center + cluster + (Projectile.ai[0] == 2f ? FragmentOffset(Projectile.ai[1], piece, Projectile.ai[2]) : Vector2.Zero);
     }
-	
+
     private float PieceRotation(int piece) => Projectile.rotation + piece * 1.7f + (Projectile.ai[0] == 2f ? MathF.Sin(Projectile.ai[1] / ReassemblyTime * MathHelper.Pi) * Projectile.ai[1] * (.09f + piece * .022f) : 0f);
     public override bool ShouldUpdatePosition() => false;
-	
+
     public override void SetStaticDefaults()
     {
         Main.projPet[Type] = true;
@@ -125,7 +125,7 @@ public class RubbleboundMinion : ModProjectile
         ProjectileID.Sets.CultistIsResistantTo[Type] = true;
         ProjectileID.Sets.DrawScreenCheckFluff[Type] = 300;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 26;
@@ -143,7 +143,7 @@ public class RubbleboundMinion : ModProjectile
     }
     public override bool MinionContactDamage() => true;
     public override bool? CanDamage() => Projectile.ai[0] == 1f || Projectile.ai[0] == 2f && Projectile.ai[1] < ReassemblyTime - 10 ? null : false;
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         if (Projectile.ai[0] != 2f) return projHitbox.Intersects(targetHitbox);
@@ -155,15 +155,15 @@ public class RubbleboundMinion : ModProjectile
         }
         return false;
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         Projectile.GetGlobalProjectile<Common.Globals.SkillStrikes.SkillStrikeGProj>().SkillStrike = false;
         if (Projectile.ai[0] == 2f && Projectile.ai[1] < 30f) SkillStrikeUtil.setSkillStrike(Projectile, 1.6f);
     }
-	
+
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => Shatter(Projectile.velocity);
-	
+
     private void Shatter(Vector2 velocity)
     {
         if (Projectile.ai[0] != 1f) return;
@@ -175,7 +175,7 @@ public class RubbleboundMinion : ModProjectile
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<RubbleReassemblyBurst>(), 0, 0f, Projectile.owner);
     }
-	
+
     public override bool OnTileCollide(Vector2 oldVelocity)
     {
         Vector2 reflected = new Vector2(Math.Abs(Projectile.velocity.X - oldVelocity.X) > .01f ? -oldVelocity.X * .65f : oldVelocity.X,
@@ -183,7 +183,7 @@ public class RubbleboundMinion : ModProjectile
         Shatter(reflected);
         return false;
     }
-	
+
     public override void PostAI()
     {
         if (!Projectile.active) return;
@@ -211,7 +211,7 @@ public class RubbleboundMinion : ModProjectile
         }
         historyCount = Math.Min(12, historyCount + 1);
     }
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -279,7 +279,7 @@ public class RubbleboundMinion : ModProjectile
             SoundEngine.PlaySound(SoundID.Item1 with { Volume = .3f, Pitch = .4f }, Projectile.Center);
         }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D rock = TextureAssets.Projectile[Type].Value;
@@ -308,7 +308,7 @@ public class RubbleboundMinion : ModProjectile
         }
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         if (Main.dedServ) return;
@@ -325,7 +325,7 @@ public class RubbleReassemblyBurst : ModProjectile
     public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
     public override void SetDefaults() { Projectile.width = Projectile.height = 2; Projectile.tileCollide = false; Projectile.timeLeft = 24; }
     public override bool? CanDamage() => false;
-	
+
     public override void AI()
     {
         if (Projectile.timeLeft != 24 || Main.dedServ) return;
@@ -337,7 +337,7 @@ public class RubbleReassemblyBurst : ModProjectile
             dust.noGravity = true;
         }
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Projectile.timeLeft / 24f;

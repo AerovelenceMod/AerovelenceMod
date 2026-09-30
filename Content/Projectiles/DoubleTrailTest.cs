@@ -15,8 +15,8 @@ using Terraria.Graphics;
 
 namespace AerovelenceMod.Content.Projectiles
 {
-	public class DoubleTrailTest : ModProjectile
-	{
+    public class DoubleTrailTest : ModProjectile
+    {
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public override void SetDefaults()
@@ -81,7 +81,7 @@ namespace AerovelenceMod.Content.Projectiles
             //Projectile.velocity.Y -= 0.02f;
 
             //if (timer < 60)
-                //Projectile.velocity *= 1.05f;
+            //Projectile.velocity *= 1.05f;
 
             Projectile.velocity = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 8;
 
@@ -275,7 +275,7 @@ namespace AerovelenceMod.Content.Projectiles
             Matrix projection = Matrix.CreateOrthographic(width, height, 0, 1000);
             customEffect.Parameters["WorldViewProjection"].SetValue(view * projection);
             customEffect.Parameters["progress"].SetValue(trailTime);
-            
+
             if (gradient)
             {
                 customEffect.Parameters["gradientTex"].SetValue(gradientTexture);
@@ -307,10 +307,10 @@ namespace AerovelenceMod.Content.Projectiles
         }
     }
 
-   //ball7
-   //orange grad
-   //noise
-   //Trail2
-   //Rotating in opposite directions
-   //Core in center, 2 black in back, one solid in middle and one bigger but faded
+    //ball7
+    //orange grad
+    //noise
+    //Trail2
+    //Rotating in opposite directions
+    //Core in center, 2 black in back, one solid in middle and one bigger but faded
 }

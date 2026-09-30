@@ -16,7 +16,7 @@ using AerovelenceMod.Content.Projectiles;
 using System.Collections.Generic;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
-{   
+{
     public class StretchLaser : ModProjectile
     {
         public int timer = 0;
@@ -51,7 +51,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             if (timer < accelerateTime)
                 Projectile.velocity *= accelerateStrength;
 
-            Projectile.ai[0] = Math.Clamp(MathHelper.Lerp(Projectile.ai[0], Projectile.scale + 0.2f, 0.12f), 0, Projectile.scale); 
+            Projectile.ai[0] = Math.Clamp(MathHelper.Lerp(Projectile.ai[0], Projectile.scale + 0.2f, 0.12f), 0, Projectile.scale);
             timer++;
 
         }
@@ -82,7 +82,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             //Main.spriteBatch.End();
             //Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-            
+
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + Projectile.velocity.SafeNormalize(Vector2.UnitX), null, newPink with { A = 0 } * 0.8f, Projectile.rotation, Tex.Size() / 2, vscale, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(softGlow, Projectile.Center - Main.screenPosition, null, pinkToUse with { A = 0 } * 0.65f, Projectile.rotation, softGlow.Size() / 2, vscale3, SpriteEffects.None, 0f);
 
@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             //Activate Shader
             myEffect.CurrentTechnique.Passes["Glow"].Apply();
 
-            
+
 
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + Projectile.velocity.SafeNormalize(Vector2.UnitX), null, Color.LightPink with { A = 0 } * 0.85f, Projectile.rotation, Tex.Size() / 2, vscale2, SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition + Projectile.velocity.SafeNormalize(Vector2.UnitX), null, Color.LightPink with { A = 0 } * 0.35f, Projectile.rotation, Tex.Size() / 2, vscale2, SpriteEffects.None, 0f);
@@ -196,7 +196,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Projectile.Center = parent.Center + (parent.rotation.ToRotationVector2() * -96);
             endPoint = Projectile.Center + (parent.rotation.ToRotationVector2() * -1200);
             LaserRotation = direction + MathHelper.Pi;
-            
+
             if (timer > 20)
             {
                 for (int i = 0; i < 1; i++)
@@ -345,7 +345,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             if (timer < 20) //20
                 Projectile.velocity *= 1.088f;
 
-            int timeToStart = isMaster ? 5: 10;
+            int timeToStart = isMaster ? 5 : 10;
 
 
             int timerMod = (!isExpert && !isMaster) ? 12 : 9;
@@ -639,13 +639,13 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             myEffect.Parameters["satPower"].SetValue(1f);
             myEffect.Parameters["uTime"].SetValue((float)Main.timeForVisualEffects * -0.03f);
-            
+
         }
 
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
             float range = 325f; //345
-            
+
             Vector2 unit = Projectile.rotation.ToRotationVector2();
             float point = 0f;
             float bonusWidth = MathF.Pow(MathF.Sin(MathF.PI * progress), 3) * 250;
@@ -653,7 +653,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             if (laserWidth > 5)
             {
                 return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
-                    Projectile.Center + unit * range, 80 + bonusWidth , ref point);
+                    Projectile.Center + unit * range, 80 + bonusWidth, ref point);
             }
 
             return false;

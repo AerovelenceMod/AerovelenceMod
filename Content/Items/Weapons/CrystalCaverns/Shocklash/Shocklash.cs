@@ -18,8 +18,8 @@ using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 {
-	public class Shocklash : ModItem
-	{
+    public class Shocklash : ModItem
+    {
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Shocklash/Shocklash";
 
         public override void SetStaticDefaults()
@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
         }
 
         public override void SetDefaults()
-		{
+        {
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = 20;
             Item.knockBack = 2;
@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
             Item.shootSpeed = 4;
 
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTime = 13; 
+            Item.useTime = 13;
             Item.useAnimation = 26; //26
             Item.reuseDelay = 30;
 
@@ -50,17 +50,17 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
             Item.noUseGraphic = true;
         }
 
-		public override void AddRecipes()
-		{
-			//CreateRecipe()
-				//.AddIngredient<Items.Crafting.BurnshockBar>(10)
-				//.AddTile(TileID.WorkBenches)
-				//.Register();
-		}
+        public override void AddRecipes()
+        {
+            //CreateRecipe()
+            //.AddIngredient<Items.Crafting.BurnshockBar>(10)
+            //.AddTile(TileID.WorkBenches)
+            //.Register();
+        }
 
         public override bool MeleePrefix() => true;
-		
-	}
+
+    }
 
     public class ShocklashProjectile : ModProjectile
     {

@@ -62,7 +62,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
                 float yScale = Math.Clamp(timer * 0.01f, 0, 0.7f);
                 scale = new Vector2(yScale, (Projectile.velocity.Length() * 0.075f)) * 0.15f;
                 Projectile.velocity *= 1.083f;
-            } 
+            }
             else if (timer < 65)
             {
                 Projectile.velocity *= 0.92f;
@@ -71,7 +71,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
             {
                 Projectile.velocity *= 0.94f;
 
-                scale = Vector2.Lerp(scale, new Vector2(-1,-1), 0.01f);
+                scale = Vector2.Lerp(scale, new Vector2(-1, -1), 0.01f);
                 if (scale.Y <= 0)
                 {
                     Projectile.Kill();
@@ -145,4 +145,4 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
         }
 
     }
-} 
+}

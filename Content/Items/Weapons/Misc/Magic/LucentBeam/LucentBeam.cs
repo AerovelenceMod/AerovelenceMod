@@ -21,7 +21,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.LucentBeam
     public class LucentBeam : ModItem
     {
         private int shotCounter = 0;
-        
+
         public override void SetDefaults()
         {
             Item.damage = 26;
@@ -53,7 +53,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.LucentBeam
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/starUIToss") with { Volume = .1f, Pitch = .1f, PitchVariance = .12f, }; 
+            SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/starUIToss") with { Volume = .1f, Pitch = .1f, PitchVariance = .12f, };
             SoundEngine.PlaySound(style, player.Center);
 
             return true;

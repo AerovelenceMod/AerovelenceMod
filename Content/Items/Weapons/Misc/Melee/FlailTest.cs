@@ -117,11 +117,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
 
             if (timer % 120 == 0) //120
             {
-                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Flail2") with { PitchVariance = .16f, MaxInstances = 1, Pitch = -0.2f, Volume = 0.3f }; 
+                SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/Flail2") with { PitchVariance = .16f, MaxInstances = 1, Pitch = -0.2f, Volume = 0.3f };
                 SoundEngine.PlaySound(style, Projectile.Center);
                 //Dust.NewDustPerfect(Projectile.rotation.ToRotationVector2() * (offset - 10) + owner.Center, ModContent.DustType<DashTrailDust>(), Velocity: (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * 2);
             }
-                
+
             timer++;
 
             //ThinGlowLine

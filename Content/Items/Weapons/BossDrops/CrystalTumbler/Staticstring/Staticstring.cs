@@ -26,7 +26,7 @@ public class Staticstring : ModItem
             .AddSkillStrike(Language.Default, "Ball lightning Skill Strikes")
             .AddSkillStrike(Language.Spanish, "Ataques de habilidad de rayo globular");
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = 22;
@@ -44,9 +44,9 @@ public class Staticstring : ModItem
         Item.rare = ItemRarityID.Green;
         Item.value = Item.sellPrice(gold: 1);
     }
-	
+
     public override bool CanUseItem(Player player) => player.ownedProjectileCounts[ModContent.ProjectileType<StaticstringHeld>()] == 0;
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         int index = Projectile.NewProjectile(source, player.MountedCenter, Vector2.Zero, ModContent.ProjectileType<StaticstringHeld>(), damage, knockback, player.whoAmI, type, 0f, velocity.ToRotation());
@@ -69,7 +69,7 @@ public class StaticstringHeld : ModProjectile
     private float Charge => MathHelper.Clamp(Projectile.ai[1] / DrawTime, 0f, 1f);
     public override void SendExtraAI(BinaryWriter writer) { writer.Write(ArrowSpeed); writer.Write(released); writer.Write(releaseAge); }
     public override void ReceiveExtraAI(BinaryReader reader) { ArrowSpeed = reader.ReadSingle(); released = reader.ReadBoolean(); releaseAge = reader.ReadInt32(); }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -78,10 +78,10 @@ public class StaticstringHeld : ModProjectile
         Projectile.netImportant = true;
         Projectile.DamageType = DamageClass.Ranged;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -128,7 +128,7 @@ public class StaticstringHeld : ModProjectile
             TumblerVFX.SpawnSpark(Projectile.Center + new Vector2(-8f - Charge * 10f, Main.rand.NextFloat(-15f, 15f)).RotatedBy(Projectile.rotation), direction * .5f, Color.Cyan, .15f + Charge * .08f);
         Lighting.AddLight(Projectile.Center, new Vector3(.06f, .2f, .28f) * Charge);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D bow = TextureAssets.Projectile[Type].Value;
@@ -173,7 +173,7 @@ public class StaticstringBall : ModProjectile
     private int struckNPC = -1;
     private readonly StaticstringLightning[] surface = { new(), new() };
     public override void SetStaticDefaults() => Main.projFrames[Type] = 4;
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 28;
@@ -185,9 +185,9 @@ public class StaticstringBall : ModProjectile
         Projectile.timeLeft = 210;
         Projectile.netImportant = true;
     }
-	
+
     public static bool IsArrow(Projectile candidate, int owner, int trackedIdentity) => candidate.active && candidate.owner == owner && candidate.friendly && (candidate.arrow || candidate.identity == trackedIdentity) && candidate.velocity.LengthSquared() > .01f;
-	
+
     public override void AI()
     {
         Projectile.ai[1]++;
@@ -221,16 +221,16 @@ public class StaticstringBall : ModProjectile
         }
         Lighting.AddLight(Projectile.Center, .12f, .5f, .7f);
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => SkillStrikeUtil.setSkillStrike(Projectile, 1.6f);
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) => struckNPC = target.whoAmI;
-	
+
     public override void OnKill(int timeLeft)
     {
         if (Projectile.owner == Main.myPlayer)
             Projectile.NewProjectile(Projectile.GetSource_Death(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<StaticstringBurst>(), Projectile.damage, Projectile.knockBack, Projectile.owner, struckNPC);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Texture2D texture = TextureAssets.Projectile[Type].Value;
@@ -247,7 +247,7 @@ public class StaticstringZap : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
     private readonly StaticstringLightning lightning = new();
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 2;
@@ -259,17 +259,17 @@ public class StaticstringZap : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Projectile.timeLeft >= 11 ? null : false;
     public override void AI() => lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, .65f, true);
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         float distance = 0f;
         return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center, Projectile.Center + Projectile.velocity, 7f, ref distance);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         lightning.Draw(Main.spriteBatch, Color.Cyan, Projectile.timeLeft / 14f, 1.7f);
@@ -281,7 +281,7 @@ public class StaticstringBurst : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Assets/Orbs/SoftGlow";
     private readonly StaticstringLightning[] arcs = { new(), new(), new(), new(), new(), new() };
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 128;
@@ -293,17 +293,17 @@ public class StaticstringBurst : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool? CanDamage() => Projectile.timeLeft >= 19 ? null : false;
     public override bool? CanHitNPC(NPC target) => target.whoAmI == (int)Projectile.ai[0] ? false : null;
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         Vector2 closest = Vector2.Clamp(Projectile.Center, targetHitbox.TopLeft(), targetHitbox.BottomRight());
         return Vector2.DistanceSquared(closest, Projectile.Center) <= 64f * 64f && Collision.CanHitLine(Projectile.Center, 1, 1, closest, 1, 1);
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) => SkillStrikeUtil.setSkillStrike(Projectile, 1.6f);
-	
+
     public override void AI()
     {
         float progress = 1f - Projectile.timeLeft / 24f;
@@ -313,7 +313,7 @@ public class StaticstringBurst : ModProjectile
         SoundEngine.PlaySound(SoundID.Item93 with { Volume = .55f, Pitch = -.25f }, Projectile.Center);
         for (int i = 0; i < 25; i++) TumblerVFX.SpawnSpark(Projectile.Center, Main.rand.NextVector2Circular(7f, 7f), i % 3 == 0 ? Color.White : Color.Cyan, .35f);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         float fade = Projectile.timeLeft / 24f;
@@ -332,7 +332,7 @@ internal sealed class StaticstringLightning
     private int ticks;
     private bool ready;
     private Color sparkColor = Color.Aqua;
-	
+
     public void Update(Projectile owner, Vector2 start, Vector2 end, float intensity = .55f, bool unused = false)
     {
         if (Main.dedServ) return;
@@ -367,7 +367,7 @@ internal sealed class StaticstringLightning
             dust.noGravity = true;
         }
     }
-	
+
     public void Draw(SpriteBatch spriteBatch, Color color, float opacity, float width = 2f)
     {
         if (!ready || Main.dedServ || opacity <= 0f) return;

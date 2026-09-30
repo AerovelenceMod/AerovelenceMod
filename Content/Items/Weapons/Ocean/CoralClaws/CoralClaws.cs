@@ -20,7 +20,7 @@ public class CoralClaws : ModItem
 {
     private int nextSide = -1;
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/CoralClaws/CoralClaws";
-	
+
     public override void SetStaticDefaults()
     {
         this.ModifyLocalization("Coral Claws", "Alternating coral claws reach toward your cursor and snip")
@@ -29,7 +29,7 @@ public class CoralClaws : ModItem
             .AddSkillStrike(Language.Default, "Snip enemies almost directly above you")
             .AddSkillStrike(Language.Spanish, "Corta a enemigos situados casi directamente encima de ti");
     }
-	
+
     public override void SetDefaults()
     {
         Item.width = 38;
@@ -46,13 +46,13 @@ public class CoralClaws : ModItem
         Item.rare = ItemRarityID.Blue;
         Item.value = Item.sellPrice(silver: 40);
     }
-	
+
     public override void HoldItem(Player player)
     {
         if (player.whoAmI != Main.myPlayer || player.dead || player.CCed || player.noItems) return;
         EnsureClaws(player);
     }
-	
+
     private void EnsureClaws(Player player)
     {
         for (int side = -1; side <= 1; side += 2)
@@ -64,7 +64,7 @@ public class CoralClaws : ModItem
                 Projectile.NewProjectile(player.GetSource_ItemUse(Item), player.MountedCenter + new Vector2(side * 42f, -6f), Vector2.Zero, Item.shoot, player.GetWeaponDamage(Item), player.GetWeaponKnockback(Item), player.whoAmI, side);
         }
     }
-	
+
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
     {
         EnsureClaws(player);
@@ -100,7 +100,7 @@ public class CoralClawHand : ModProjectile
     public static bool Overhead(Vector2 relativeTarget) => relativeTarget.Y < -24f && Math.Abs(relativeTarget.X) <= -relativeTarget.Y * .55f;
     public static bool DamageWindow(float progress) => progress >= .46f && progress <= .63f;
     public static Vector2 ClampReach(Vector2 aim) => aim.LengthSquared() > Reach * Reach ? aim.SafeNormalize(-Vector2.UnitY) * Reach : aim;
-	
+
     public void Snip(Vector2 aim, int damage, float knockback, int ticks)
     {
         reachOffset = ClampReach(aim);
@@ -114,19 +114,19 @@ public class CoralClawHand : ModProjectile
         Projectile.netUpdate = true;
         SoundEngine.PlaySound(SoundID.Item1 with { Volume = .5f, Pitch = .15f }, Projectile.Center);
     }
-	
+
     public override void SendExtraAI(BinaryWriter writer)
     {
         writer.Write(reachOffset.X); writer.Write(reachOffset.Y); writer.Write(duration);
     }
-	
+
     public override void ReceiveExtraAI(BinaryReader reader)
     {
         reachOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         duration = Math.Max(8, reader.ReadInt32());
         if (Progress < .46f) snapped = false;
     }
-	
+
     public override void SetDefaults()
     {
         Projectile.width = Projectile.height = 36;
@@ -140,10 +140,10 @@ public class CoralClawHand : ModProjectile
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
     }
-	
+
     public override bool ShouldUpdatePosition() => false;
     public override bool? CanDamage() => Projectile.ai[2] == 0f && DamageWindow(Progress) ? null : false;
-	
+
     public override void AI()
     {
         Player player = Main.player[Projectile.owner];
@@ -182,7 +182,7 @@ public class CoralClawHand : ModProjectile
             if (Projectile.ai[1] > duration) { Projectile.ai[1] = 0f; snapped = false; Projectile.netUpdate = true; }
         }
     }
-	
+
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
     {
         Player player = Main.player[Projectile.owner];
@@ -190,13 +190,13 @@ public class CoralClawHand : ModProjectile
         Vector2 closest = Vector2.Clamp(mouth, targetHitbox.TopLeft(), targetHitbox.BottomRight());
         return Vector2.DistanceSquared(closest, mouth) <= 24f * 24f;
     }
-	
+
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers)
     {
         Projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = false;
         if (Overhead(target.Center - Main.player[Projectile.owner].MountedCenter)) SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, 1, .45f, .7f);
     }
-	
+
     public override bool PreDraw(ref Color lightColor)
     {
         Player player = Main.player[Projectile.owner];
@@ -228,7 +228,7 @@ public class CoralClawHand : ModProjectile
         }
         return false;
     }
-	
+
     public override void OnKill(int timeLeft)
     {
         for (int i = 0; i < 5; i++) CoralClawArt.Dust(Projectile.Center, Main.rand.NextVector2Circular(1f, 1f), false);
@@ -242,7 +242,7 @@ internal static class CoralClawArt
         Vector2 delta = end - start;
         Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, start, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0f, .5f), new Vector2(delta.Length() + 1f, width), SpriteEffects.None);
     }
-	
+
     internal static void Draw(Vector2 center, float rotation, float open, float scale, float fade, Color light, bool golden)
     {
         const string path = "AerovelenceMod/Content/Items/Weapons/Ocean/CoralClaws/CoralClaws";

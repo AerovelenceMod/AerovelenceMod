@@ -181,7 +181,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Vector2 scale2 = new Vector2(0.95f, 1f) * scale;
 
             Main.spriteBatch.Draw(Orb, Projectile.Center - Main.screenPosition, null, Color.Black * 0.8f, Projectile.rotation, Orb.Size() / 2, scale * 3f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(Orb, Projectile.Center - Main.screenPosition, null, Color.Black * 0.35f, Projectile.rotation -1, Orb.Size() / 2, scale * 2.85f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Orb, Projectile.Center - Main.screenPosition, null, Color.Black * 0.35f, Projectile.rotation - 1, Orb.Size() / 2, scale * 2.85f, SpriteEffects.None, 0f);
 
 
             if (myEffect == null)
@@ -220,7 +220,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
         }
-        
+
 
     }
 

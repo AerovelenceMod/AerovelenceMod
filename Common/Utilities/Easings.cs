@@ -49,7 +49,7 @@ namespace AerovelenceMod.Common.Utilities
         public static float easeInOutQuad(float progress)
         {
             float toReturn = 0f;
-            toReturn = progress < 0.5f ? 2f * progress * progress 
+            toReturn = progress < 0.5f ? 2f * progress * progress
                 : 1f - MathF.Pow(-2f * progress + 2f, 2f) / 2f;
             return toReturn;
         }
@@ -74,7 +74,7 @@ namespace AerovelenceMod.Common.Utilities
             //something feels off here
             float toReturn = 0f;
 
-            toReturn = progress < 0.5f ? 4f * progress * progress * progress 
+            toReturn = progress < 0.5f ? 4f * progress * progress * progress
                 : 1f - MathF.Pow(-2f * progress + 2f, 3f) / 2f;
             return toReturn;
         }
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Common.Utilities
         public static float easeInOutQuint(float progress)
         {
             float toReturn = 0f;
-            toReturn = progress < 0.5 ? 16 * MathF.Pow(progress, 5f) : 
+            toReturn = progress < 0.5 ? 16 * MathF.Pow(progress, 5f) :
                 1f - MathF.Pow(-2f * progress + 2, 5) / 2;
             return toReturn;
         }
@@ -156,7 +156,7 @@ namespace AerovelenceMod.Common.Utilities
         public static float easeInCirc(float progress)
         {
             float toReturn = 0f;
-            toReturn = 1f - MathF.Sqrt(1f - MathF.Pow(progress , 2f));
+            toReturn = 1f - MathF.Sqrt(1f - MathF.Pow(progress, 2f));
             return toReturn;
         }
 
@@ -170,7 +170,7 @@ namespace AerovelenceMod.Common.Utilities
         public static float easeInOutCirc(float progress)
         {
             float toReturn = 0f;
-            toReturn = progress < 0.5f ? (1f - MathF.Sqrt(1f - MathF.Pow(2f * progress, 2f))) / 2f 
+            toReturn = progress < 0.5f ? (1f - MathF.Sqrt(1f - MathF.Pow(2f * progress, 2f))) / 2f
                 : (MathF.Sqrt(1f - MathF.Pow(-2f * progress + 2f, 2f)) + 1f) / 2f;
             return toReturn;
         }

@@ -22,7 +22,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        private enum AttackType 
+        private enum AttackType
         {
             StrongStab,
             QuickStab,
@@ -105,14 +105,14 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                         SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/lightning_flash_01") with { Pitch = 1f, PitchVariance = 0.2f, Volume = 0.7f };
                         SoundEngine.PlaySound(style, Projectile.Center);
 
-                        SoundStyle style2 = new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = .4f, Pitch = .6f, PitchVariance = .22f, }; 
+                        SoundStyle style2 = new SoundStyle("Terraria/Sounds/Thunder_0") with { Volume = .4f, Pitch = .6f, PitchVariance = .22f, };
                         SoundEngine.PlaySound(style2, Projectile.Center);
 
                         owner.GetModPlayer<AeroPlayer>().ScreenShakePower = 6;
 
                         thrusting = true;
 
-                        
+
                     }
                     else if (timer == 29)
                     {
@@ -300,7 +300,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
             Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTipGlow");
             Texture2D Star = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/flare_1");
             Texture2D Tip = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTip");
-			
+
             Vector2 tipGlowOffset = new Vector2(0, 10f).RotatedBy(Projectile.rotation);
 
             Main.spriteBatch.End();
@@ -311,7 +311,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 
 
             Main.spriteBatch.Draw(Glow, Projectile.Center - Main.screenPosition + tipGlowOffset, null, Color.DeepSkyBlue * 0.8f * (extraVFXIntensity - 1), Projectile.rotation - MathHelper.PiOver4, Glow.Size() / 2, Projectile.scale, SpriteEffects.None, 0f);
-            
+
             Main.spriteBatch.Draw(Star, Projectile.Center - Main.screenPosition + tipGlowOffset + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 14, null, Color.DeepSkyBlue * 1f * (extraVFXIntensity - 1), Projectile.rotation - MathHelper.PiOver4 + (vfxTimer * 0.15f), Star.Size() / 2, Projectile.scale * 0.27f * (1 - extraVFXIntensity), SpriteEffects.None, 0f);
             Main.spriteBatch.Draw(Star, Projectile.Center - Main.screenPosition + tipGlowOffset + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 14, null, Color.White * 1f * (extraVFXIntensity - 1), Projectile.rotation - MathHelper.PiOver4 + (vfxTimer * -0.15f), Star.Size() / 2, Projectile.scale * 0.2f * (1 - extraVFXIntensity), SpriteEffects.None, 0f);
 
@@ -368,11 +368,11 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 
     }
 
-    
+
     /*
     public class ThunderLanceSpin : ModProjectile
     {
 
     }*/
-    
+
 }

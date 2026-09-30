@@ -47,7 +47,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
         public override void AI()
         {
-            
+
             if (timer == 0)
             {
                 randomSmoke = Main.rand.NextBool() ? 1 : 2;
