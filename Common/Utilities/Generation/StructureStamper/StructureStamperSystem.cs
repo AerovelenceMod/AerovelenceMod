@@ -118,11 +118,10 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
             return Point2;
         }
 
-        public void ToggleStructurePicker()
+        public void OpenStructurePicker()
         {
             if (structurePickerOpen)
             {
-                structurePickerOpen = false;
                 return;
             }
 

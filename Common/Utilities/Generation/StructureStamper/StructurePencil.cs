@@ -32,7 +32,7 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 
             if (player.altFunctionUse == 2)
             {
-                system.ToggleStructurePicker();
+                system.OpenStructurePicker();
             }
             else
             {
