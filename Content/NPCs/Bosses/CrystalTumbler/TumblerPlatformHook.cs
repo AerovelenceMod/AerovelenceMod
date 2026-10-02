@@ -1,20 +1,18 @@
 using System.IO;
+using AerovelenceMod.Common.Systems.Traversal;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerPlatformHook : GlobalProjectile
+    public class TumblerPlatformHook : MovingGrappleHook
     {
         private int platformIndex = -1;
         private int platformIdentity = -1;
         private int platformOwner = -1;
         private Vector2 offset;
-        public override bool InstancePerEntity => true;
-        public override bool AppliesToEntity(Projectile entity, bool lateInstantiation) => entity.aiStyle == ProjAIStyleID.Hook;
 
         public override bool PreAI(Projectile projectile)
         {
@@ -68,17 +66,20 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             {
                 platformIndex = -1;
                 platformIdentity = -1;
-                projectile.ai[0] = 1f;
-                projectile.timeLeft = 3600;
-                projectile.netUpdate = true;
-                return true;
+                return Retract(projectile);
             }
-            projectile.Center = platform.Center + offset;
-            projectile.velocity = Vector2.Zero;
-            projectile.timeLeft = 2;
-            if (player.grapCount < player.grappling.Length)
-                player.grappling[player.grapCount++] = projectile.whoAmI;
+            Hold(projectile, player, platform.Center + offset);
             return false;
+        }
+
+        internal override bool TryGetAnchor(Projectile projectile, out Vector2 anchor)
+        {
+            anchor = default;
+            if (platformIndex < 0 || platformIndex >= Main.maxProjectiles) return false;
+            Projectile platform = Main.projectile[platformIndex];
+            if (!TumblerMagneticPlatform.IsArenaPlatform(platform) || platform.identity != platformIdentity || platform.owner != platformOwner || !((TumblerMagneticPlatform)platform.ModProjectile).CanStand) return false;
+            anchor = platform.Center + offset;
+            return true;
         }
 
         public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer)
