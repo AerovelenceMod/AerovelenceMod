@@ -474,7 +474,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             Vector2 normal;
             if (NPC.collideX && Math.Abs(impact.X) > (attack ? 2 : 5))
                 normal = new Vector2(-Math.Sign(impact.X), 0);
-            else if (NPC.collideY && impact.Y > (attack ? 1 : 6.5f))
+            else if ((NPC.collideY || SlimeSurface.IsGrounded(NPC)) && impact.Y > (attack ? 1 : 6.5f))
                 normal = -Vector2.UnitY;
             else if (NPC.collideY && impact.Y < (attack ? -2 : -5) && CurrentState != ActionState.Ceiling)
                 normal = Vector2.UnitY;
