@@ -33,6 +33,8 @@ namespace AerovelenceMod.Common.Utilities
         public Color BodyMid { get; set; }
         public Color BodyHighlight { get; set; }
         public SlimeFacetStyle FacetStyle { get; set; }
+        public SlimePixelStyle PixelStyle { get; set; }
+        public bool UniformOutline { get; set; }
         public Func<Vector2, float, Color, Color> ColorTransform { get; set; }
     }
 

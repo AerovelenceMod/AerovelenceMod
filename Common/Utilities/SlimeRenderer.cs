@@ -21,6 +21,9 @@ namespace AerovelenceMod.Common.Utilities
         private float[] field = Array.Empty<float>();
         private float[] bodyField = Array.Empty<float>();
         private float[] shadeAcross = Array.Empty<float>();
+        private Vector2[] bodyLocal = Array.Empty<Vector2>();
+        private byte[] contourShade = Array.Empty<byte>();
+        private byte[] spikeMask = Array.Empty<byte>();
         private bool[] tendrilMask = Array.Empty<bool>();
         private Vector2 origin;
         private int width, height;
@@ -37,7 +40,7 @@ namespace AerovelenceMod.Common.Utilities
             lastUsed = Main.GameUpdateCount;
             if (lastRendered != lastUsed || texture == null)
             {
-                Rasterize(shape, light);
+                Rasterize(shape, light, opacity);
                 if (texture == null || texture.Width != width || texture.Height != height)
                 {
                     texture?.Dispose();
@@ -48,19 +51,26 @@ namespace AerovelenceMod.Common.Utilities
                 lastRendered = lastUsed;
             }
             Vector2 drawPosition = position + origin;
-            drawPosition = new Vector2(MathF.Round(drawPosition.X), MathF.Round(drawPosition.Y));
-            batch.Draw(texture, drawPosition, null, Color.White * opacity, 0f, Vector2.Zero, PixelScale, SpriteEffects.None, 0f);
+            drawPosition = SnapToGrid(drawPosition, PixelScale);
+            batch.Draw(texture, drawPosition, null, Color.White, 0f, Vector2.Zero, PixelScale, SpriteEffects.None, 0f);
         }
-        public void Rasterize(SlimeShape shape, Color light)
+        public void Rasterize(SlimeShape shape, Color light, float opacity = 1f)
         {
             lighting = light;
-            Vector2 minimum = shape.Center - shape.Size - new Vector2(12f);
-            Vector2 maximum = shape.Center + shape.Size + new Vector2(12f);
+            Vector2 minimum = shape.Center - shape.BodyExtent(shape.Size) - new Vector2(12f);
+            Vector2 maximum = shape.Center + shape.BodyExtent(shape.Size) + new Vector2(12f);
             for (int i = 0; i < shape.LobeCount; i++)
             {
                 SlimeShape.Lobe lobe = shape.Lobes[i];
-                minimum = Vector2.Min(minimum, lobe.Center - lobe.Size - new Vector2(12f));
-                maximum = Vector2.Max(maximum, lobe.Center + lobe.Size + new Vector2(12f));
+                minimum = Vector2.Min(minimum, lobe.Center - shape.BodyExtent(lobe.Size) - new Vector2(12f));
+                maximum = Vector2.Max(maximum, lobe.Center + shape.BodyExtent(lobe.Size) + new Vector2(12f));
+            }
+            for (int i = 0; i < shape.SpikeCount; i++)
+            {
+                SlimeShape.Spike spike = shape.Spikes[i];
+                Vector2 margin = new(spike.HalfWidth + 4f);
+                minimum = Vector2.Min(minimum, Vector2.Min(spike.Root, spike.Tip) - margin);
+                maximum = Vector2.Max(maximum, Vector2.Max(spike.Root, spike.Tip) + margin);
             }
             for (int i = 0; i < shape.SurfaceCount; i++)
             {
@@ -90,17 +100,23 @@ namespace AerovelenceMod.Common.Utilities
                 field = new float[pixels.Length];
                 bodyField = new float[pixels.Length];
                 shadeAcross = new float[pixels.Length];
+                bodyLocal = new Vector2[pixels.Length];
+                contourShade = new byte[pixels.Length];
+                spikeMask = new byte[pixels.Length];
                 tendrilMask = new bool[pixels.Length];
                 facetCoverage = new float[pixels.Length];
             }
             Array.Clear(pixels);
             Array.Clear(shadeAcross);
             Array.Clear(tendrilMask);
+            Array.Clear(contourShade);
+            Array.Clear(spikeMask);
             Array.Fill(field, 1000f);
             Array.Fill(bodyField, 1000f);
             StampBody(shape);
             if (shape.SurfaceCount > 0) StampSurface(shape);
             Array.Copy(field, bodyField, field.Length);
+            StampSpikes(shape);
             for (int i = 0; i < shape.TendrilCount; i++)
             {
                 SlimeShape.Tendril tendril = shape.Tendrils[i];
@@ -146,6 +162,16 @@ namespace AerovelenceMod.Common.Utilities
                         if (pixels[index].A > 0 && SlimeSurface.IsSolidAt(shape.WorldPosition + PixelPoint(x, y)))
                             pixels[index] = Color.Transparent;
                     }
+            opacity = MathHelper.Clamp(opacity, 0f, 1f);
+            for (int y = 1; y < height - 1; y++)
+                for (int x = 1; x < width - 1; x++)
+                {
+                    int index = y * width + x;
+                    if (pixels[index].A == 0) continue;
+                    float gain = contourShade[index] > 0 ? 1.45f : 1f;
+                    float alpha = Math.Min(1f, opacity * gain);
+                    pixels[index] *= alpha;
+                }
         }
         private void StampSurface(SlimeShape shape)
         {
@@ -177,13 +203,28 @@ namespace AerovelenceMod.Common.Utilities
         }
         private void StampBodyPart(SlimeShape shape, Vector2 center, Vector2 size, float bodyDome, float bottomCutoff, float rippleStrength, float phase)
         {
-            GetBounds(center, size + new Vector2(8f), out int left, out int top, out int right, out int bottom);
+            GetBounds(center, shape.BodyExtent(size * (palette.PixelStyle != null ? 1.12f : 1f)) + new Vector2(8f), out int left, out int top, out int right, out int bottom);
+            Vector2 flowDirection = shape.AirborneBlend > 0f ? SafeNormalize(shape.ToBodySpace(shape.Flow) / size, Vector2.UnitY) : Vector2.UnitY;
             for (int y = top; y <= bottom; y++)
             {
                 for (int x = left; x <= right; x++)
                 {
-                    Vector2 offset = PixelPoint(x, y) - center;
+                    Vector2 offset = shape.ToBodySpace(PixelPoint(x, y) - center);
                     Vector2 normalized = offset / size;
+                    float crown = MathHelper.Clamp((1f - normalized.Y) * .5f, 0f, 1f);
+                    float wave = MathF.Sin(crown * MathHelper.Pi);
+                    normalized.X -= shape.Shear * crown + shape.Wobble.X * wave;
+                    normalized.Y -= shape.Wobble.Y * MathF.Cos(normalized.X * MathHelper.Pi) * wave;
+                    if (palette.PixelStyle != null)
+                    {
+                        float gelDistance = SlimeGelGeometry.Distance(normalized, flowDirection, shape.AirborneBlend, shape.Time, phase, shape.SuspensionTension) * Math.Min(size.X, size.Y);
+                        int gelIndex = y * width + x;
+                        float blendRadius = MathHelper.Clamp(Math.Min(size.X, size.Y) * .16f, .4f, 5f);
+                        float blend = MathHelper.Clamp(.5f + .5f * (field[gelIndex] - gelDistance) / blendRadius, 0f, 1f);
+                        bodyLocal[gelIndex] = Vector2.Lerp(bodyLocal[gelIndex], normalized, blend);
+                        field[gelIndex] = SlimeGelGeometry.SmoothMin(field[gelIndex], gelDistance, blendRadius);
+                        continue;
+                    }
                     float dome = MathHelper.Clamp(bodyDome, 0f, 1f);
                     float belly = MathHelper.Clamp((normalized.Y + .08f) / 1.08f, 0f, 1f);
                     belly = belly * belly * (3f - 2f * belly);
@@ -231,6 +272,27 @@ namespace AerovelenceMod.Common.Utilities
                 }
             }
         }
+        private void StampSpikes(SlimeShape shape)
+        {
+            for (int slot = 0; slot < shape.SpikeCount; slot++)
+            {
+                SlimeShape.Spike spike = shape.Spikes[slot];
+                if (spike.HalfWidth < .1f || Vector2.DistanceSquared(spike.Root, spike.Tip) < .25f) continue;
+                Vector2 center = (spike.Root + spike.Tip) * .5f;
+                Vector2 extent = new(Math.Abs(spike.Tip.X - spike.Root.X) * .5f + spike.HalfWidth + 2f,
+                    Math.Abs(spike.Tip.Y - spike.Root.Y) * .5f + spike.HalfWidth + 2f);
+                GetBounds(center, extent, out int left, out int top, out int right, out int bottom);
+                for (int y = top; y <= bottom; y++)
+                    for (int x = left; x <= right; x++)
+                    {
+                        int index = y * width + x;
+                        float distance = SlimeSpikeGeometry.Distance(PixelPoint(x, y), spike.Root, spike.Tip, spike.HalfWidth);
+                        if (distance >= field[index]) continue;
+                        spikeMask[index] = (byte)(slot + 1);
+                        field[index] = SlimeGelGeometry.SmoothMin(field[index], distance, .6f);
+                    }
+            }
+        }
         private void DrawGel(SlimeShape shape)
         {
             for (int y = 2; y < height - 2; y++)
@@ -242,6 +304,36 @@ namespace AerovelenceMod.Common.Utilities
                     if (distance > 0f)
                         continue;
                     bool tendril = tendrilMask[index];
+                    if (palette.UniformOutline && IsOutlineCell(x, y))
+                    {
+                        Vector2 normal = SafeNormalize(new Vector2(field[index + 1] - field[index - 1], field[index + width] - field[index - width]), Vector2.UnitX);
+                        float facing = Vector2.Dot(normal, LightDirection);
+                        int outlineShade = facing > .25f ? 2 : 1;
+                        Vector2 local = bodyLocal[index];
+                        if (palette.BodyBacklight && local.X > .02f && local.Y > -.12f && local.Y < .85f)
+                        {
+                            float backlight = Vector2.Dot(normal, BacklightDirection(shape));
+                            if (backlight > .64f) outlineShade = 2;
+                        }
+                        contourShade[index] = (byte)outlineShade;
+                        Color outline = palette.PixelStyle != null ? outlineShade == 2 ? palette.PixelStyle.OutlineLight : palette.PixelStyle[1]
+                            : outlineShade == 2 ? palette.BodyAA : palette.Outline;
+                        pixels[index] = Lit(outline);
+                        continue;
+                    }
+                    if (palette.PixelStyle != null && !tendril && bodyField[index] <= 0f)
+                    {
+                        Color body = ShadePixelBody(shape, x, y);
+                        float emission = palette.PixelStyle.Material == SlimeMaterial.Lava && (body == palette.PixelStyle[4] || body == palette.PixelStyle[5]) ? .8f : 0f;
+                        pixels[index] = Lit(body, emission);
+                        continue;
+                    }
+                    if (spikeMask[index] > 0 && palette.PixelStyle != null)
+                    {
+                        SlimeShape.Spike spike = shape.Spikes[spikeMask[index] - 1];
+                        pixels[index] = Lit(SlimeSpikeGeometry.Shade(PixelPoint(x, y), spike.Root, spike.Tip, spike.HalfWidth, palette.PixelStyle));
+                        continue;
+                    }
                     bool checker = palette.DitherShading && ((x + y) & 1) == 0;
                     float depth = -distance;
                     bool edge = IsFieldEdge(field, x, y);
@@ -250,7 +342,7 @@ namespace AerovelenceMod.Common.Utilities
                     Color color;
                     if (edge)
                     {
-                        pixels[index] = Lit(palette.Outline, 0f);
+                        pixels[index] = Lit(palette.PixelStyle != null && shade > .4f ? palette.BodyAA : palette.Outline, 0f);
                         continue;
                     }
                     if (shade < -.43f)
@@ -287,7 +379,87 @@ namespace AerovelenceMod.Common.Utilities
                     pixels[index] = Lit(color);
                 }
             }
-            if (palette.BodyBacklight) DrawBodyBacklight(shape);
+            if (palette.BodyBacklight && palette.PixelStyle == null) DrawBodyBacklight(shape);
+        }
+        private Color ShadePixelBody(SlimeShape shape, int x, int y)
+        {
+            int index = y * width + x;
+            SlimePixelStyle style = palette.PixelStyle;
+            Vector2 local = bodyLocal[index];
+            Vector2 gradient = new(bodyField[index + 1] - bodyField[index - 1], bodyField[index + width] - bodyField[index - width]);
+            Vector2 normal = SafeNormalize(gradient, Vector2.UnitX);
+            float depth = -bodyField[index] * 2f / Math.Max(.001f, gradient.Length());
+            Vector2 volume = Vector2.Lerp(new Vector2(local.X, (local.Y - .18f) / 1.18f), local, shape.AirborneBlend);
+            float front = MathF.Sqrt(Math.Max(0f, 1f - volume.LengthSquared()));
+            float diffuse = Vector2.Dot(normal, LightDirection) * Math.Min(1f, volume.Length()) * .75f + front * .66f;
+            float phase = shape.Time * .42f + shape.LightPhase;
+            int shade = diffuse > .53f ? 4 : diffuse > .25f ? 3 : 2;
+            Vector2 shadowPoint = (local - new Vector2(.23f - (.49f - style.ShadowWidth) * .5f, .4f) - shape.Wobble * .1f) / new Vector2(style.ShadowWidth, .42f);
+            shadowPoint.X += shadowPoint.Y * .16f + MathF.Sin(shadowPoint.Y * 3f + phase * .15f) * .06f;
+            float shadow = shadowPoint.LengthSquared();
+            if (shadow < .4f) shade = 0;
+            else if (shadow < .86f) shade = 2;
+            else if (shadow < 1.22f) shade = Math.Min(shade, 3);
+            Vector2 highlightCenter = new(-.2f - MathF.Sin(phase) * .025f, -.49f + MathF.Cos(phase) * .015f);
+            Vector2 highlight = (local - highlightCenter) / new Vector2(.24f, .15f);
+            Vector2 accent = (local - highlightCenter - new Vector2(.3f, .09f)) / new Vector2(.1f, .12f);
+            float highlightDistance = Math.Min(highlight.LengthSquared(), accent.LengthSquared());
+            if (style.JoinHighlights)
+            {
+                Vector2 bridge = (local - highlightCenter - new Vector2(.1f, .055f)) / new Vector2(.24f, .15f);
+                highlightDistance = Math.Min(highlightDistance, bridge.LengthSquared());
+            }
+            if (palette.BodyHighlights && highlightDistance < 1f) shade = 5;
+            if (!palette.BodyBacklight) return ShadeMaterial(shape, local, depth, shade, x, y, false);
+            float facing = Vector2.Dot(normal, BacklightDirection(shape));
+            float band = 1.6f + MathF.Sin(phase + local.Y * 3f) * .25f;
+            float gate = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(local.X / .2f, 0f, 1f))
+                * MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((local.Y + .18f) / .26f, 0f, 1f))
+                * MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((.95f - local.Y) / .23f, 0f, 1f));
+            float rim = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((facing - .45f) / .4f, 0f, 1f))
+                * MathHelper.Clamp(1f - (depth - band) / 2.2f, 0f, 1f) * gate;
+            if (rim > .7f) shade = 5;
+            else if (rim > .36f) shade = 4;
+            else if (rim > .15f) shade = Math.Max(shade, 3);
+            return ShadeMaterial(shape, local, depth, shade, x, y, rim > .7f);
+        }
+        private Color ShadeMaterial(SlimeShape shape, Vector2 local, float depth, int shade, int x, int y, bool backlight)
+        {
+            SlimePixelStyle style = palette.PixelStyle;
+            Vector2 point = local - shape.Wobble * .12f;
+            if (style.Material == SlimeMaterial.Ice)
+            {
+                float frost = Math.Abs(point.X + .16f) * .85f + Math.Abs(point.Y + .39f) * 1.25f;
+                if (frost < .48f) shade = Math.Max(shade, 4);
+                float seam = Math.Abs(point.X + .13f + point.Y * .32f);
+                float branch = Math.Abs(point.X - .12f - (point.Y - .12f) * .72f);
+                float width = 1f / Math.Max(2f, shape.Size.X);
+                if (depth > 1f && point.Y > -.16f && point.Y < .68f
+                    && (seam < width || point.X > .12f && point.X < .45f && point.Y > .12f && branch < width))
+                    shade = Math.Max(shade, 4);
+                float glint = Math.Abs(point.X + .27f) * 1.3f + Math.Abs(point.Y + .44f) * 1.65f;
+                if (glint < .23f) shade = 5;
+            }
+            else if (style.Material == SlimeMaterial.Lava)
+            {
+                float phase = shape.Time * .55f + shape.LightPhase;
+                point.X += MathF.Sin(point.Y * 3f + phase) * .12f;
+                point.Y += MathF.Sin(phase * .63f) * .06f;
+                float heat = MathF.Sin(point.X * 4.3f + MathF.Sin(point.Y * 5f + phase) * .5f)
+                    + MathF.Cos(point.Y * 5.1f - phase * .6f) * .8f + (shade - 3) * .12f;
+                if (depth < 1.3f) heat -= .3f;
+                shade = heat > .95f ? 5 : heat > .1f ? 4 : heat > -.65f ? 3 : heat > -1.15f ? 2 : 0;
+            }
+            if (style.Material != SlimeMaterial.Lava && shade == 4 && local.Y < .3f && local.X < .6f
+                && (IsOutlineCell(x - 1, y) || IsOutlineCell(x + 1, y))
+                && (IsOutlineCell(x, y - 1) || IsOutlineCell(x, y + 1))) shade = 3;
+            return backlight && shade == 5 ? style.Backlight : style[shade];
+        }
+        private static Vector2 BacklightDirection(SlimeShape shape)
+        {
+            float phase = shape.Time * .42f + shape.LightPhase;
+            return SafeNormalize(new Vector2(.85f + MathF.Sin(phase) * .12f + shape.Flow.X * .012f,
+                .44f + MathF.Cos(phase * .83f) * .13f + shape.Flow.Y * .012f) + shape.Wobble * .5f, Vector2.UnitX);
         }
         private void DrawBodyBacklight(SlimeShape shape)
         {
@@ -337,6 +509,10 @@ namespace AerovelenceMod.Common.Utilities
             if (source[index] > 0f)
                 return false;
             return source[index - 1] > 0f || source[index + 1] > 0f || source[index - width] > 0f || source[index + width] > 0f;
+        }
+        private bool IsOutlineCell(int x, int y)
+        {
+            return IsFieldEdge(field, x, y);
         }
         private bool HighlightCell(SlimeShape shape, int x, int y, bool tendril, bool accent)
         {
@@ -567,6 +743,11 @@ namespace AerovelenceMod.Common.Utilities
             return result;
         }
         private Vector2 ToRaster(Vector2 point) => (point - origin) / PixelScale - new Vector2(.5f);
+        public static Vector2 SnapToGrid(Vector2 point, float pixelSize = 2f)
+        {
+            pixelSize = MathHelper.Clamp(pixelSize, 1f, 4f);
+            return new Vector2(MathF.Round(point.X / pixelSize), MathF.Round(point.Y / pixelSize)) * pixelSize;
+        }
         private static float Cross(Vector2 a, Vector2 b) => a.X * b.Y - a.Y * b.X;
         private static Vector2 SafeNormalize(Vector2 value, Vector2 fallback)
         {

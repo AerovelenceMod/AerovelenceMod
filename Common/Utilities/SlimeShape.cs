@@ -5,6 +5,11 @@ namespace AerovelenceMod.Common.Utilities
 {
     public sealed class SlimeShape
     {
+        public sealed class Spike
+        {
+            public Vector2 Root, Tip;
+            public float HalfWidth;
+        }
         public sealed class Tendril
         {
             public Vector2 Root, Bend, Tip;
@@ -33,10 +38,21 @@ namespace AerovelenceMod.Common.Utilities
         }
         public readonly Tendril[] Tendrils;
         public readonly Lobe[] Lobes;
+        public Spike[] Spikes { get; } = [new(), new(), new(), new()];
+        public int SpikeCount;
         public int TendrilCount;
         public int LobeCount;
         public bool Initialized;
         public Vector2 Center, Size;
+        public Vector2 Wobble;
+        public float Shear;
+        public Vector2 Flow;
+        public float LightPhase;
+        public Vector2 TravelDirection = Vector2.UnitX;
+        public float TravelStretch = 1f;
+        public float AirborneBlend;
+        public float SuspensionTension;
+        public float BodyRotation;
         public float Time;
         public Vector2[] SurfacePoints { get; } = new Vector2[17];
         public Vector2[] SurfaceNormals { get; } = new Vector2[17];
@@ -63,6 +79,9 @@ namespace AerovelenceMod.Common.Utilities
             Time = time;
             TendrilCount = 0;
             LobeCount = 0;
+            SpikeCount = 0;
+            SuspensionTension = 0f;
+            BodyRotation = 0f;
             SurfaceCount = 0;
             SurfaceBlend = 0f;
             displacement = Initialized ? position - previousPosition : Vector2.Zero;
@@ -127,9 +146,56 @@ namespace AerovelenceMod.Common.Utilities
                 tendril.TipDirection = new Vector2(MathF.Cos(rotation), MathF.Sin(rotation));
             }
         }
-        public Vector2 GetBodyPoint(Vector2 normalizedPoint) => Center + normalizedPoint * Size;
+        private Vector2 TravelAxis => TravelDirection.LengthSquared() > .0001f ? Vector2.Normalize(TravelDirection) : Vector2.UnitX;
+        public Vector2 ToBodySpace(Vector2 offset)
+        {
+            if (BodyRotation != 0f) offset = offset.RotatedBy(-BodyRotation);
+            if (TravelStretch == 1f) return offset;
+            Vector2 axis = TravelAxis;
+            Vector2 side = new(-axis.Y, axis.X);
+            float stretch = MathHelper.Clamp(TravelStretch, .65f, 1.6f);
+            return axis * (Vector2.Dot(offset, axis) / stretch) + side * (Vector2.Dot(offset, side) * stretch);
+        }
+        public Vector2 TransformBodyOffset(Vector2 offset)
+        {
+            if (TravelStretch != 1f)
+            {
+                Vector2 axis = TravelAxis;
+                Vector2 side = new(-axis.Y, axis.X);
+                float stretch = MathHelper.Clamp(TravelStretch, .65f, 1.6f);
+                offset = axis * (Vector2.Dot(offset, axis) * stretch) + side * (Vector2.Dot(offset, side) / stretch);
+            }
+            return BodyRotation != 0f ? offset.RotatedBy(BodyRotation) : offset;
+        }
+        public Vector2 BodyExtent(Vector2 size)
+        {
+            Vector2 horizontal = TransformBodyOffset(new Vector2(size.X, 0f));
+            Vector2 vertical = TransformBodyOffset(new Vector2(0f, size.Y));
+            return new Vector2(Math.Abs(horizontal.X) + Math.Abs(vertical.X), Math.Abs(horizontal.Y) + Math.Abs(vertical.Y));
+        }
+        public Vector2 GetBodyPoint(Vector2 normalizedPoint) => Center + TransformBodyOffset(normalizedPoint * Size);
+        public Vector2 GetGelPoint(Vector2 normalizedPoint)
+        {
+            Vector2 point = normalizedPoint;
+            for (int step = 0; step < 4; step++)
+            {
+                float crown = MathHelper.Clamp((1f - point.Y) * .5f, 0f, 1f);
+                float wave = MathF.Sin(crown * MathHelper.Pi);
+                point.Y = normalizedPoint.Y + Wobble.Y * MathF.Cos(normalizedPoint.X * MathHelper.Pi) * wave;
+                point.X = normalizedPoint.X + Shear * crown + Wobble.X * wave;
+            }
+            return GetBodyPoint(point);
+        }
+        public void SetSpike(int slot, Vector2 root, Vector2 tip, float halfWidth)
+        {
+            Spike spike = Spikes[slot];
+            spike.Root = root;
+            spike.Tip = tip;
+            spike.HalfWidth = halfWidth;
+            SpikeCount = Math.Max(SpikeCount, slot + 1);
+        }
         public Vector2 GetWorldBodyPoint(Vector2 normalizedPoint) => worldPosition + GetBodyPoint(normalizedPoint);
-        public Vector2 GetLobePoint(int index, Vector2 normalizedPoint) => Lobes[index].Center + normalizedPoint * Lobes[index].Size;
+        public Vector2 GetLobePoint(int index, Vector2 normalizedPoint) => Lobes[index].Center + TransformBodyOffset(normalizedPoint * Lobes[index].Size);
         public Vector2 GetWorldLobePoint(int index, Vector2 normalizedPoint) => worldPosition + GetLobePoint(index, normalizedPoint);
         public Vector2 GetTendrilPoint(int index, float t) => Tendrils[index].Point(MathHelper.Clamp(t, 0f, 1f));
         public Vector2 GetWorldTendrilPoint(int index, float t) => worldPosition + GetTendrilPoint(index, t);
