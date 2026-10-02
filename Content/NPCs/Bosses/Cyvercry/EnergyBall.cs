@@ -48,8 +48,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
             return Color.White;
         }
 
-        TrailInfo trail1 = new TrailInfo();
-        TrailInfo trail2 = new TrailInfo();
+        BaseTrailInfo trail1 = new BaseTrailInfo();
+        BaseTrailInfo trail2 = new BaseTrailInfo();
         public override void AI()
         {
             Lighting.AddLight(Projectile.Center, (255 - Projectile.alpha) * 0.9f / 255f, (255 - Projectile.alpha) * 0.5f / 255f, (255 - Projectile.alpha) * 0.7f / 255f);
@@ -105,7 +105,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                 trail1.trailWidth = 15;
                 trail1.trailMaxLength = 600;
                 trail1.timesToDraw = 1;
-                trail1.usePinchedWidth = true;
+                trail1.pinch = true;
                 trail1.trailTime = Projectile.ai[2] * 0.021f;
                 trail1.trailRot = Projectile.velocity.ToRotation();
                 trail1.trailPos = Projectile.Center;
@@ -118,7 +118,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                 trail2.trailWidth = 45;
                 trail2.trailMaxLength = 600;
                 trail2.timesToDraw = 2;
-                trail2.usePinchedWidth = true;
+                trail2.pinch = true;
 
                 trail2.gradient = true;
                 trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;

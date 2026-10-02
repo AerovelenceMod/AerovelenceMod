@@ -107,99 +107,6 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
         }
     }
 
-    public class LightningTrailTest : ModProjectile
-    {
-        public override string Texture => "Terraria/Images/Projectile_0";
-
-        public override void SetDefaults()
-        {
-            Projectile.width = 20;
-            Projectile.height = 20;
-            Projectile.friendly = true;
-            Projectile.hostile = false;
-
-            Projectile.tileCollide = false;
-            Projectile.ignoreWater = true;
-
-            Projectile.timeLeft = 600;
-            Projectile.penetrate = -1;
-
-        }
-
-        BaseTrailInfo trail1 = new BaseTrailInfo();
-        BaseTrailInfo trail2 = new BaseTrailInfo();
-
-        int timer = 0;
-
-        //bool chase = false;
-        public override void AI()
-        {
-            //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value;
-            trail1.trailColor = Color.White * 0.7f;
-            trail1.trailPointLimit = 300;
-            trail1.trailWidth = 22;
-            trail1.trailMaxLength = 600;
-            trail1.timesToDraw = 2;
-            trail1.pinch = true;
-            trail1.pinchAmount = 0.1f;
-
-
-            trail1.trailTime = timer * 0.02f;
-            trail1.trailRot = Projectile.velocity.ToRotation();
-            trail1.trailPos = Projectile.Center + Projectile.velocity;
-            trail1.TrailLogic();
-
-            //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/fireTrailGamma-export").Value;
-            trail2.trailColor = Color.DeepSkyBlue;
-            trail2.trailPointLimit = 300;
-            trail2.trailWidth = 80;
-            trail2.trailMaxLength = 600;
-            trail2.timesToDraw = 2;
-            trail2.pinch = true;
-            trail2.pinchAmount = 0.1f;
-
-
-            //trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
-            trail2.shouldScrollColor = true;
-            trail2.gradientTime = timer * 0.03f;
-
-            trail2.trailTime = timer * 0.03f;
-            trail2.trailRot = Projectile.velocity.ToRotation();
-            trail2.trailPos = Projectile.Center + Projectile.velocity;
-            trail2.TrailLogic();
-
-            Projectile.velocity.Y += 0.02f;
-
-            //Projectile.velocity = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 15;
-
-            timer++;
-        }
-
-        public override bool PreDraw(ref Color lightColor)
-        {
-            trail1.TrailDrawing(Main.spriteBatch);
-            trail2.TrailDrawing(Main.spriteBatch);
-
-            Texture2D Ball = Mod.Assets.Request<Texture2D>("Assets/Orbs/bigCircle2").Value;
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-
-            //Main.spriteBatch.Draw(Ball, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, Ball.Size() / 2, Projectile.scale * 0.1f, SpriteEffects.None, 0f);
-
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-
-
-
-            return false;
-        }
-    }
-
     public class ThunderPop : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
@@ -438,9 +345,9 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                     return;
                 for (int index1 = 0; index1 < 2; ++index1)
                 {
-                    float num1 = Projectile.rotation + (float)((Main.rand.NextBool(2) ? -1.0 : 1.0) * 1.57079637050629);
+                    float rot = Projectile.rotation + (float)((Main.rand.NextBool(2) ? -1.0 : 1.0) * 1.57079637050629);
                     float num2 = (float)(Main.rand.NextDouble() * 0.800000011920929 + 1.0);
-                    Vector2 vector2 = new((float)Math.Cos(num1) * num2, (float)Math.Sin(num1) * num2);
+                    Vector2 vector2 = new((float)Math.Cos(rot) * num2, (float)Math.Sin(rot) * num2);
                     int index2 = Dust.NewDust(Projectile.Center, 0, 0, DustID.Electric, vector2.X, vector2.Y, 0, new Color(), 1f);
                     Main.dust[index2].noGravity = true;
                     Main.dust[index2].scale = 1.2f;
@@ -457,7 +364,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                 if (Projectile.frameCounter < Projectile.extraUpdates * 2)
                     return;
                 Projectile.frameCounter = 0;
-                float num1 = Projectile.velocity.Length();
+                float vel = Projectile.velocity.Length();
                 UnifiedRandom unifiedRandom = new((int)Projectile.ai[1]);
                 int num2 = 0;
                 Vector2 spinningpoint = -Vector2.UnitY;
@@ -473,9 +380,9 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                     bool flag = false;
                     if (rotationVector2.Y > -0.0199999995529652)
                         flag = true;
-                    if (rotationVector2.X * (double)(Projectile.extraUpdates + 1) * 2.0 * num1 + Projectile.localAI[0] > 40.0)
+                    if (rotationVector2.X * (double)(Projectile.extraUpdates + 1) * 2.0 * vel + Projectile.localAI[0] > 40.0)
                         flag = true;
-                    if (rotationVector2.X * (double)(Projectile.extraUpdates + 1) * 2.0 * num1 + Projectile.localAI[0] < -40.0)
+                    if (rotationVector2.X * (double)(Projectile.extraUpdates + 1) * 2.0 * vel + Projectile.localAI[0] < -40.0)
                         flag = true;
                     if (flag)
                     {
@@ -498,8 +405,8 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                     Projectile.ai[1] = Main.rand.Next(100);
                     return;
                 }
-                Projectile.localAI[0] += (float)(spinningpoint.X * (double)(Projectile.extraUpdates + 1) * 2.0) * num1;
-                Projectile.velocity = spinningpoint.RotatedBy(Projectile.ai[0] + 1.57079637050629, new Vector2()) * num1;
+                Projectile.localAI[0] += (float)(spinningpoint.X * (double)(Projectile.extraUpdates + 1) * 2.0) * vel;
+                Projectile.velocity = spinningpoint.RotatedBy(Projectile.ai[0] + 1.57079637050629, new Vector2()) * vel;
                 Projectile.rotation = Projectile.velocity.ToRotation() + 1.570796f;
             }
         }

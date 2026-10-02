@@ -78,9 +78,9 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             float scale = (float)Math.Sin(Main.GlobalTimeWrappedHourly * TwoPi / 1f) * 0.3f + 0.7f;
             Color effectColor = Color.SkyBlue;
             effectColor = effectColor * 0.1f * scale;
-            for (float num5 = 0f; num5 < 1f; num5 += 355f / (678f * (float)Math.PI))
+            for (float i = 0f; i < 1f; i += 355f / (678f * (float)Math.PI))
             {
-                Main.spriteBatch.Draw(Tex, Projectile.Center + (TwoPi * num5).ToRotationVector2() * (6f + offset * 1.5f) - Main.screenPosition + aeOffset, Tex.Frame(1, 1, 0, 0), effectColor, 0f, Tex.Size(), 1f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Tex, Projectile.Center + (TwoPi * i).ToRotationVector2() * (6f + offset * 1.5f) - Main.screenPosition + aeOffset, Tex.Frame(1, 1, 0, 0), effectColor, 0f, Tex.Size(), 1f, SpriteEffects.None, 0f);
             }
 
             Main.spriteBatch.Draw(Tex, Projectile.Center - Main.screenPosition, Tex.Frame(1, 1, 0, 0), Color.White, Projectile.rotation, Tex.Size() / 2, 1f, SpriteEffects.None, 0f);

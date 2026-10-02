@@ -109,14 +109,14 @@ namespace AerovelenceMod.Content.Items.Pets
                 Projectile.height = 30;
                 Projectile.position.X = Projectile.position.X - (Projectile.width / 2.0f);
                 Projectile.position.Y = Projectile.position.Y - (Projectile.height / 2.0f);
-                for (int num621 = 0; num621 < 10; num621++)
+                for (int i = 0; i < 10; i++)
                 {
-                    int num622 = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 226, 0f, 0f, 100, new Color(112, 244, 250), 2f);
-                    Main.dust[num622].velocity *= 1f;
+                    int dust = Dust.NewDust(new Vector2(Projectile.position.X, Projectile.position.Y), Projectile.width, Projectile.height, 226, 0f, 0f, 100, new Color(112, 244, 250), 2f);
+                    Main.dust[dust].velocity *= 1f;
                     if (Main.rand.Next(2) == 0)
                     {
-                        Main.dust[num622].scale = 0.3f;
-                        Main.dust[num622].fadeIn = 1f + (float)Main.rand.Next(10) * 0.1f;
+                        Main.dust[dust].scale = 0.3f;
+                        Main.dust[dust].fadeIn = 1f + (float)Main.rand.Next(10) * 0.1f;
                     }
                 }
                 Projectile.Center = player.velocity * .25f;

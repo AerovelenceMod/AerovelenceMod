@@ -52,7 +52,6 @@ namespace AerovelenceMod
 
         public const bool DEBUG = true;
 
-        internal static string PLACEHOLDER_TEXTURE = "AerovelenceMod/Blank";
         public const string ProjectileAssets = "AerovelenceMod/Assets/Projectiles/";
         public const string CrystalCavernsAssets = "AerovelenceMod/Assets/CrystalCaverns/";
 
