@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Security.Cryptography;
+using System.Text;
 using Terraria;
 using Terraria.ID;
 using Terraria.Localization;
@@ -178,6 +180,19 @@ namespace AerovelenceMod.Common.Systems.Language
 
     public static class LocalizationExtensions
     {
+        public static LocalizedText Localize(this ModType owner, string defaultText)
+        {
+            string id = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(defaultText)));
+            string key = owner.Mod.GetLocalizationKey($"Text.{owner.GetType().FullName}.{id}");
+            return LocalizationManager.RegisterTranslation(key, defaultText, Language.Default);
+        }
+
+        public static LocalizedText AddTranslation(this LocalizedText text, Language language, string translation)
+        {
+            LocalizationManager.RegisterTranslation(text.Key, translation, language.ToCultureCode());
+            return LocalizationManager.Bind(text.Key, text);
+        }
+
         public static T ModifyLocalization<T>(this T item, string defaultName, string defaultTooltip = "") where T : ModItem
             => item.AddName(Language.Default, defaultName).AddTooltip(Language.Default, defaultTooltip);
 

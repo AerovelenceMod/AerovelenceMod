@@ -30,6 +30,12 @@ public static class LushReservoirGenerator
         return false;
     }
 
+    internal static void RegisterSurfaceLake(Rectangle area)
+    {
+        EnsureWorld();
+        reservoirs.Add(area);
+    }
+
     public static int GenerateCrystalCaverns(CCTerrainPass caverns)
     {
         EnsureWorld();
@@ -408,7 +414,7 @@ public static class LushReservoirGenerator
         return caverns.StoneTile;
     }
 
-    private static double ValueNoise(int x, int y, int seed, double scale)
+    internal static double ValueNoise(int x, int y, int seed, double scale)
     {
         double fx = x * scale, fy = y * scale;
         int x0 = (int)Math.Floor(fx), y0 = (int)Math.Floor(fy);

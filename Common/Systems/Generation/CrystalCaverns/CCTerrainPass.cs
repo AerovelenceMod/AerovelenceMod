@@ -133,9 +133,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
         protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
         {
-            //TODO: localize
-            //progress.Message = WorldGenSystem.CrystalCavernsTerrainPassMessage.Value; 
-            progress.Message = "Generating the Crystal Caverns";
+            progress.Message = WorldGenSystem.CrystalCavernsTerrainPassMessage.Value;
 
             WorldSizeScale = Main.maxTilesY / 1200.0f;
 

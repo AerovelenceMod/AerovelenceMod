@@ -49,8 +49,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
         protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
         {
-            //progress.Message = WorldGenSystem.CrystalCavernsTerrainPassMessage.Value;
-            progress.Message = "Generating Crystal Caverns Rubble";
+            progress.Message = WorldGenSystem.CrystalCavernsRubblePassMessage.Value;
 
             CCTerrainPass mainPass = CCTerrainPass.Instance();
 

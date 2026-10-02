@@ -1,8 +1,9 @@
 ﻿using Terraria.ModLoader;
 using System.Collections.Generic;
 using Terraria.WorldBuilding;
-using Terraria.Localization;
+using LocalizedText = Terraria.Localization.LocalizedText;
 using AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
+using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Common.Systems.Generation
 {
@@ -13,13 +14,17 @@ namespace AerovelenceMod.Common.Systems.Generation
         public static LocalizedText LivingTreeIslandsPassMessage { get; private set; }
         public static LocalizedText CrystalCavernsRubblePassMessage { get; private set; }
 
+        public static LocalizedText CrystalFieldsPassMessage { get; private set; }
+        public static LocalizedText CavernCrossingsPassMessage { get; private set; }
+
         public override void SetStaticDefaults()
         {
-            LivingTreeIslandsPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(LivingTreeIslandsPassMessage)}"),
-                () => "Growing living tree sky islands");
-            CrystalCavernsTerrainPassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsTerrainPassMessage)}"));
-            CrystalCavernsStructurePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsStructurePassMessage)}"));
-            CrystalCavernsRubblePassMessage = Terraria.Localization.Language.GetOrRegister(Mod.GetLocalizationKey($"WorldGen.{nameof(CrystalCavernsRubblePassMessage)}"));
+            LivingTreeIslandsPassMessage = this.Localize("Growing living tree sky islands");
+            CrystalCavernsTerrainPassMessage = this.Localize("Shaping Crystal Caverns");
+            CrystalCavernsStructurePassMessage = this.Localize("Placing Crystal Caverns structures");
+            CrystalCavernsRubblePassMessage = this.Localize("Decorating Crystal Caverns");
+            CrystalFieldsPassMessage = this.Localize("Growing Crystal Fields and carving lakes");
+            CavernCrossingsPassMessage = this.Localize("Laying cavern bridges and ziplines");
         }
 
         public override void ModifyWorldGenTasks(List<GenPass> tasks, ref double totalWeight)
@@ -27,7 +32,7 @@ namespace AerovelenceMod.Common.Systems.Generation
             totalWeight += InsertAfter(tasks, "Jungle Chests",
                 CCTerrainPass.Instance("Crystal Caverns Terrain", 100f),
                 new SilkenCitadelPass(),
-                new CCStructurePass("Crystal Caverns Polish", 101f));
+                new CCStructurePass("Crystal Caverns Polish", 101f), new CrystalFieldsPass());
             totalWeight += InsertAfter(tasks, "Tile Cleanup",
                 new CCRubblePass("Crystal Caverns Rubble", 102f));
             LivingTreeIslandPass islands = new();
@@ -36,7 +41,7 @@ namespace AerovelenceMod.Common.Systems.Generation
             totalWeight += InsertAfter(tasks, "Floating Island Houses",
                 new Terraria.GameContent.Generation.PassLegacy("Living Tree Island Structures", islands.Finish, 10f));
             totalWeight += InsertAfter(tasks, "Final Cleanup",
-                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass());
+                new global::AerovelenceMod.Content.Tiles.Citadel.SilkenCachePass(), new CrystalFieldsPass(true));
         }
 
         private static double InsertAfter(List<GenPass> tasks, string name, params GenPass[] passes)
