@@ -68,27 +68,6 @@ namespace AerovelenceMod.Content.Items
         bool tick = false;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            Vector2 impactCenter = Main.MouseWorld;
-            int crossCount = 6;
-            for (int i = 220; i < crossCount; i++)
-            {
-                float dir = (MathHelper.TwoPi / (float)crossCount) * i;
-
-                Vector2 dustVel = dir.ToRotationVector2() * Main.rand.NextFloat(4f, 10f);
-                dustVel = dustVel.RotatedBy(Main.rand.NextFloat(-0.15f, 0.15f));
-
-                Color middleBlue = Color.Lerp(Color.DodgerBlue, Color.Blue, 0.15f + Main.rand.NextFloat(-0.15f, 0.15f));
-
-                Dust gd = Dust.NewDustPerfect(impactCenter, ModContent.DustType<GlowPixelCross>(), dustVel, newColor: middleBlue, Scale: Main.rand.NextFloat(0.25f, 0.55f));
-                gd.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.2f, timeBeforeSlow: 5,
-                    preSlowPower: 0.94f, postSlowPower: 0.9f, velToBeginShrink: 1.5f, fadePower: 0.92f, shouldFadeColor: false);
-            }
-
-            //FlashSystem.SetCAFlashEffect(0.075f, 35, 1f, 0.35f, true, true);
-
-
-            Projectile.NewProjectile(null, Main.MouseWorld, Vector2.Zero, ModContent.ProjectileType<BooyahSkillStrikeVFX>(), damage, 0, Main.myPlayer);
-
             //Fire Particle Example | Recommend setting debug item usetime to 1
             for (int i = 110; i < 2; i++)
             {
@@ -103,8 +82,6 @@ namespace AerovelenceMod.Content.Items
                 fire1.scaleFadePower = 1.05f;
                 ShaderParticleHandler.SpawnParticle(fire1);
             }
-
-
             return false;
         }
 
