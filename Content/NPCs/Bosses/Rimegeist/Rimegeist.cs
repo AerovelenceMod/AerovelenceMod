@@ -1670,8 +1670,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             }
             if (Main.rand.NextBool(25) && rotationCounter > 10)
             {
-                int num1 = Dust.NewDust(new Vector2(Projectile.Center.X, Projectile.Center.Y) - new Vector2(5), 0, 0, DustID.RainbowMk2);
-                Dust dust = Main.dust[num1];
+                Dust dust = Main.dust[Dust.NewDust(new Vector2(Projectile.Center.X, Projectile.Center.Y) - new Vector2(5), 0, 0, DustID.RainbowMk2)];
                 dust.velocity *= 0.7f;
                 dust.noGravity = true;
                 dust.color = new Color(130, 130, 130, 0);

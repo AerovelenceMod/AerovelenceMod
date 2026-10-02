@@ -106,7 +106,11 @@ NPCs: {
 		BestiaryFlavor: These smaller tumblers come in many different shapes and sizes. They can grow to enormous sizes, and exhibit magnetic properties.
 	}
 
-	Sapper.DisplayName: Sapper
+	Sapper: {
+		DisplayName: Sapper
+		BestiaryFlavor: A flower-like creature that sways with the currents of the Crystal Caverns. Its benign appearance belies its aggressive nature.
+	}
+
 	Condurtle.DisplayName: Condurtle
 	Charger.DisplayName: Charger
 	Commander.DisplayName: Commander
@@ -2180,6 +2184,58 @@ Items: {
 		DisplayName: Thunder Crate
 		Tooltip: Right click to open
 	}
+
+	GasVacuum: {
+		DisplayName: Gas Vacuum
+		Tooltip:
+			'''
+			Pulls gas towards the nozezl
+			Right-click pulls gas inward from every direction
+			'''
+	}
+
+	GasVfxWand: {
+		DisplayName: Gas VFX Wand
+		Tooltip:
+			'''
+			Left-click spawns selected gas type
+			Right-click to cycle visual style
+			Up + right-click to clear gas
+			'''
+		Status: Visual style: {0}
+		GroundMist: Ground mist
+		Steam: Steam
+		Wispies: Wispies
+		Embers: Embers
+		Nebula: Nebula
+	}
+
+	CryoCan: {
+		DisplayName: Cryo Can
+		Tooltip:
+			'''
+			Sprays freezing aerosol
+			Right-click to blow gas away with compressed air
+			'''
+	}
+
+	ThisIsGas: {
+		DisplayName: This Is Gas
+		Tooltip:
+			'''
+			Left-click to spray gas
+			Right-click to cycle gas types
+			Up + right-click to toggle tile collision
+			Down + right-click to toggle buoyancy
+			Ctrl + right-click to toggle turbulence
+			'''
+		Status: Gas: {0} | Tile collision: {1} | Buoyancy: {2} | Turbulence: {3}
+		Fog: Fog
+		Smoke: Smoke
+		Sapfog: Sapfog
+		On: On
+		Off: Off
+	}
 }
 
 Projectiles: {
@@ -2753,6 +2809,7 @@ Projectiles: {
 	ReaperProjectile.DisplayName: Reaper Projectile
 	LumberjackAxe.DisplayName: Lumberjack Axe
 	CrystalSlimeHazard.DisplayName: Crystal Slime Hazard
+	GasCloud.DisplayName: Gas Cloud
 }
 
 Configs: {
@@ -2819,6 +2876,8 @@ Tiles: {
 	SilkenCacheTile.MapEntry: Silken Cache Tile
 	CrystalCrateTile.MapEntry: Crystal Crate Tile
 	ThunderCrateTile.MapEntry: Thunder Crate Tile
+	CrystalTumblerRelicTile.MapEntry: ""
+	CyvercryRelicTile.MapEntry: ""
 }
 
 Emotes: {
@@ -4589,3 +4648,15 @@ CyvercryBoxItem: {
 }
 
 Conditions.InCrystalCaverns: Mods.AerovelenceMod.Conditions.InCrystalCaverns
+
+Commands: {
+	GasPerf: {
+		Off: off
+		On: on
+		Status: Gas: simulation={0}, rendering={1}, lighting={2}
+		Description: Profiles and isolates Aerovelence gas performance
+		Usage: /gasperf [status|sim|render|lights|off|on]
+	}
+}
+
+Gas.Death: "{0} suffocated in crystal gas."

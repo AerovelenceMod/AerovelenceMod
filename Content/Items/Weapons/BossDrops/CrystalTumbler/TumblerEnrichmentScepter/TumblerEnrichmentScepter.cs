@@ -237,7 +237,7 @@ public class EnrichmentWheel : ModProjectile
 
 public class EnrichmentArc : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
     private readonly EnrichmentLightning visual = new();
     private Vector2 end;
 

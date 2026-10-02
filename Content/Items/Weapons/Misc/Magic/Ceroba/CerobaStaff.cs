@@ -337,11 +337,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 return false;
 
             string path = "Content/Items/Weapons/Misc/Magic/Ceroba/";
-            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffProj").Value;
+            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffItem").Value;
             Texture2D Stick = Mod.Assets.Request<Texture2D>(path + "CerobaStaffStick").Value;
 
             Texture2D White = Mod.Assets.Request<Texture2D>(path + "CerobaStaffWhiteBell").Value;
-            Texture2D Glowmask = Mod.Assets.Request<Texture2D>(path + "CerobaStaffGlowMask").Value;
 
             Texture2D Swirl = Mod.Assets.Request<Texture2D>("Assets/Slash/TerraOrbC").Value;
             Texture2D SwirlD = Mod.Assets.Request<Texture2D>("Assets/Slash/TerraSwingD").Value;
@@ -350,7 +349,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
             Player player = Main.player[Projectile.owner];
             Vector2 origin = Staff.Size() / 2;
-            Vector2 bellOff = new Vector2(21f, -21f).RotatedBy(Projectile.rotation);
 
             float xOffset = (player.velocity.X * 0.02f);// * player.direction;
             float yOffset = player.velocity.Y * -0.02f;// * player.direction;
@@ -385,51 +383,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                     Main.EntitySpriteDraw(Stick, armPos, null, col * 0.55f * alpha * swirlAlpha, adjustedRot, origin, Projectile.scale, SpriteEffects.None);
 
-                    Main.EntitySpriteDraw(White, armPos + new Vector2(21f, -21f).RotatedBy(adjustedRot), null, Color.Gold with { A = 0 } * 0.3f * alpha * swirlAlpha * Easings.easeOutCirc(progress), adjustedRot, White.Size() / 2f, Projectile.scale, SpriteEffects.None);
+                    Main.EntitySpriteDraw(White, armPos + new Vector2(13f, -13f).RotatedBy(adjustedRot), null, Color.Gold with { A = 0 } * 0.3f * alpha * swirlAlpha * Easings.easeOutCirc(progress), adjustedRot, White.Size() / 2f, Projectile.scale, SpriteEffects.None);
                 }
 
             }
-
-            #region Ribbons
-            Texture2D RibbonBottom = Mod.Assets.Request<Texture2D>(path + "RibbonBottom").Value;
-            Texture2D RibbonTop = Mod.Assets.Request<Texture2D>(path + "RibbonTop").Value;
-
-            Vector2 bottomOrigin = new Vector2(9f, 0f);
-            Vector2 topOrigin = new Vector2(RibbonTop.Width, 8f);
-
-            float scalePercent = Easings.easeOutQuad(0.35f + (0.65f * animProgress));
-            SpriteEffects ribbonSpriteFXTop = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            SpriteEffects ribbonSpriteFXBottom = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-            Vector2 ribbonBottomPos = armPos + new Vector2((dir == 1 ? 15f : 14f) * player.direction, (dir == 1 ? -11f : -11.5f)).RotatedBy(Projectile.rotation + faceLeftBonus);
-            Vector2 ribbonTopPos = armPos + new Vector2(11f * player.direction, -15f).RotatedBy(Projectile.rotation + faceLeftBonus);
-
-            float ribbonLeftBonusBottom = dir == 1 ? 0f : 0f;
-            float ribbonLeftBonusTop = dir == 1 ? 0f : -3.14f;
-
-            float ribbonBottomSinRot = dir == 1 ?
-                (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.15f) + yOffset + (xOffset > 0 ? xOffset : 0f)
-                : (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.15f) + (-yOffset * 0.5f) + (xOffset < 0 ? xOffset : 0f);
-
-            float ribbonTopSinRot = (MathF.Sin((float)Main.timeForVisualEffects * 0.03f) * 0.05f) + (yOffset * 0.5f * dir) + xOffset;
-
-            Vector2 bottomScale = dir == 1 ?
-                new Vector2(scalePercent - (ribbonBottomSinRot < 0 ? ribbonBottomSinRot : ribbonBottomSinRot * 0.5f) - (justShotValue * 0.1f), 1f)
-                : new Vector2(scalePercent - (ribbonBottomSinRot > 0 ? -ribbonBottomSinRot * 0.75f : -ribbonBottomSinRot * 0.5f) - (justShotValue * 0.1f), 1f);
-
-            Vector2 topScale = new Vector2(1f, scalePercent - (ribbonTopSinRot < 0 ? ribbonTopSinRot : ribbonTopSinRot * 0.5f) - (justShotValue * 0.1f));
-
-
-            Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, lightColor * alpha, Projectile.rotation + ribbonBottomSinRot + faceLeftBonus + ribbonLeftBonusBottom, bottomOrigin, bottomScale * Projectile.scale, ribbonSpriteFXBottom);
-            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, lightColor * alpha, Projectile.rotation + ribbonTopSinRot + faceLeftBonus + ribbonLeftBonusTop, topOrigin, topScale * Projectile.scale, ribbonSpriteFXTop);
-
-            //Glow Ribbons
-            float glowRibbonBonusScale = 1f + (justShotValue * 0.05f);
-            Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, Projectile.rotation + ribbonBottomSinRot + faceLeftBonus + ribbonLeftBonusBottom, bottomOrigin, bottomScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXBottom);
-            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, Projectile.rotation + ribbonTopSinRot + faceLeftBonus + ribbonLeftBonusTop, topOrigin, topScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXTop); ;
-
-            #endregion
-
 
             //Draw Underglow
             Color underGlowColor = Color.Lerp(Color.Gold with { A = 0 } * 0.2f, Color.HotPink with { A = 0 }, justShotValue);
@@ -438,7 +395,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             float underGlowAdjustedRot = Projectile.rotation + faceLeftBonus + (dir == 1 ? 0f : -MathHelper.PiOver2);
             for (int i = 0; i < 3; i++)
             {
-                Main.EntitySpriteDraw(White, armPos + Main.rand.NextVector2Circular(1.5f, 1.5f) + new Vector2(21f, -21f).RotatedBy(underGlowAdjustedRot), null, underGlowColor * alpha, underGlowAdjustedRot, White.Size() / 2, Projectile.scale + underGlowExtraScale, SpriteEffects.None);
+                Main.EntitySpriteDraw(White, armPos + Main.rand.NextVector2Circular(1.5f, 1.5f) + new Vector2(13f, -13f).RotatedBy(underGlowAdjustedRot), null, underGlowColor * alpha, underGlowAdjustedRot, White.Size() / 2, Projectile.scale + underGlowExtraScale, SpriteEffects.None);
             }
 
             //Draw Stars
@@ -449,7 +406,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             Main.EntitySpriteDraw(Star, armPos + new Vector2(21f, -21f).RotatedBy(underGlowAdjustedRot), null, Color.HotPink with { A = 0 } * starAlpha, starRot, Star.Size() / 2, starScale, SpriteEffects.None);
 
             Main.EntitySpriteDraw(Staff, armPos, null, lightColor * alpha * Easings.easeOutQuart(animProgress), Projectile.rotation + faceLeftBonus, origin, Projectile.scale, spriteFX);
-            Main.EntitySpriteDraw(Glowmask, armPos, null, Color.White * alpha * Easings.easeOutQuart(animProgress), Projectile.rotation + faceLeftBonus, origin, Projectile.scale, spriteFX);
 
             return false;
         }
@@ -1012,11 +968,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         public override bool PreDraw(ref Color lightColor)
         {
             string path = "Content/Items/Weapons/Misc/Magic/Ceroba/";
-            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffProj").Value;
+            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffItem").Value;
             Texture2D Stick = Mod.Assets.Request<Texture2D>(path + "CerobaStaffStick").Value;
 
             Texture2D White = Mod.Assets.Request<Texture2D>(path + "CerobaStaffWhiteBell").Value;
-            Texture2D Glowmask = Mod.Assets.Request<Texture2D>(path + "CerobaStaffGlowMask").Value;
 
             Texture2D Swirl = Mod.Assets.Request<Texture2D>("Assets/Pixel/TerraOrbC").Value;
 
@@ -1046,12 +1001,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             for (int i = 0; i < 4; i++)
             {
                 float underGlowAdjustedRot = Projectile.rotation + MathHelper.PiOver4;
-                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f) + new Vector2(21f, -21f).RotatedBy(underGlowAdjustedRot),
+                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f) + new Vector2(13f, -13f).RotatedBy(underGlowAdjustedRot),
                     null, Color.Gold with { A = 0 } * alpha * 1f * intensity, underGlowAdjustedRot, White.Size() / 2, Projectile.scale, SpriteEffects.None);
             }
 
             Main.EntitySpriteDraw(Staff, offset - Main.screenPosition, null, lightColor * alpha, Projectile.rotation + MathHelper.PiOver4, origin, Projectile.scale, SpriteEffects.None);
-            Main.EntitySpriteDraw(Glowmask, offset - Main.screenPosition, null, Color.White * alpha, Projectile.rotation + MathHelper.PiOver4, origin, Projectile.scale, SpriteEffects.None);
 
             return false;
         }
@@ -1279,11 +1233,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 return false;
 
             string path = "Content/Items/Weapons/Misc/Magic/Ceroba/";
-            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffProj").Value;
+            Texture2D Staff = Mod.Assets.Request<Texture2D>(path + "CerobaStaffItem").Value;
             Texture2D Stick = Mod.Assets.Request<Texture2D>(path + "CerobaStaffStick").Value;
 
             Texture2D White = Mod.Assets.Request<Texture2D>(path + "CerobaStaffWhiteBell").Value;
-            Texture2D Glowmask = Mod.Assets.Request<Texture2D>(path + "CerobaStaffGlowMask").Value;
 
             Texture2D Swirl = Mod.Assets.Request<Texture2D>("Assets/Slash/TerraOrbC").Value;
             Texture2D SwirlD = Mod.Assets.Request<Texture2D>("Assets/Slash/TerraSwingD").Value;
@@ -1324,50 +1277,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                     Main.EntitySpriteDraw(Stick, offset - Main.screenPosition, null, col * 0.75f * alpha * swirlAlpha, adjustedRot + leftRotBonus, origin, Projectile.scale, sFX);
 
-                    Main.EntitySpriteDraw(White, offset + new Vector2(21f, -21f).RotatedBy(adjustedRot) - Main.screenPosition, null, Color.Gold with { A = 0 } * 0.3f * alpha * swirlAlpha * Easings.easeOutCirc(progress), adjustedRot + leftRotBonus, White.Size() / 2f, Projectile.scale, sFX);
+                    Main.EntitySpriteDraw(White, offset + new Vector2(13f, -13f).RotatedBy(adjustedRot) - Main.screenPosition, null, Color.Gold with { A = 0 } * 0.3f * alpha * swirlAlpha * Easings.easeOutCirc(progress), adjustedRot + leftRotBonus, White.Size() / 2f, Projectile.scale, sFX);
                 }
             }
-
-            #region Ribbons
-            Texture2D RibbonBottom = Mod.Assets.Request<Texture2D>(path + "RibbonBottom").Value;
-            Texture2D RibbonTop = Mod.Assets.Request<Texture2D>(path + "RibbonTop").Value;
-
-            Vector2 bottomOrigin = new Vector2(9f, 0f);
-            Vector2 topOrigin = new Vector2(RibbonTop.Width, 8f);
-
-            float scalePercent = Easings.easeOutQuad(0f + (1f * animProgress));
-            SpriteEffects ribbonSpriteFXTop = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipVertically;
-            SpriteEffects ribbonSpriteFXBottom = dir == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
-
-            Vector2 ribbonBottomPos = offset - Main.screenPosition + (dir == 1 ? new Vector2(15f, -11f) : new Vector2(11f, -15f)).RotatedBy(correctRot);
-            Vector2 ribbonTopPos = offset - Main.screenPosition + (dir == 1 ? new Vector2(11, -15f) : new Vector2(15f, -11f)).RotatedBy(correctRot);
-
-
-            Vector2 bottomScale = new Vector2((scalePercent * 0.85f) - (justShotValue * 0.2f), 1f);
-            Vector2 topScale = new Vector2(1f, (scalePercent * 0.85f) - (justShotValue * 0.2f));
-
-            float ribbonBottomRot = correctRot + (dir == 1 ? 0.15f + (justShotValue * 0.3f) : -0.15f + (justShotValue * -0.3f)) + (dir == 1 ? 0f : MathHelper.PiOver2);
-            float ribbonTopRot = correctRot - (dir == 1 ? 0.15f + (justShotValue * 0.3f) : -0.15f + (justShotValue * -0.3f)) - (dir == 1 ? 0f : MathHelper.PiOver2);
-
-            //float ribbonBottomRot =  + (dir == 1 ? 0f : MathHelper.PiOver2);
-            //float ribbonTopRot = correctRot - 0.15f - (justShotValue * 0.2f) - (dir == 1 ? 0f : MathHelper.PiOver2);
-
-            Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, lightColor * alpha, ribbonBottomRot, bottomOrigin, bottomScale * Projectile.scale, ribbonSpriteFXBottom);
-            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, lightColor * alpha, ribbonTopRot, topOrigin, topScale * Projectile.scale, ribbonSpriteFXTop);
-
-            //Glow Ribbons
-            float glowRibbonBonusScale = 1f + (justShotValue * 0.05f);
-            Main.EntitySpriteDraw(RibbonBottom, ribbonBottomPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, ribbonBottomRot, bottomOrigin, bottomScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXBottom);
-            Main.EntitySpriteDraw(RibbonTop, ribbonTopPos, null, Color.Pink with { A = 0 } * justShotValue * 0.75f, ribbonTopRot, topOrigin, topScale * Projectile.scale * glowRibbonBonusScale, ribbonSpriteFXTop); ;
-
-            #endregion
 
             Color underGlowColor = Color.Lerp(Color.Gold with { A = 0 } * 0.25f, Color.HotPink with { A = 0 } * 0.75f, justShotValue);
             float underGlowExtraScale = justShotValue * 0.2f;
 
             for (int i = 0; i < 3; i++)
             {
-                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(1.5f, 1.5f) + new Vector2(21f, -21f).RotatedBy(correctRot), null, underGlowColor * alpha, correctRot, White.Size() / 2, Projectile.scale + underGlowExtraScale, SpriteEffects.None);
+                Main.EntitySpriteDraw(White, offset - Main.screenPosition + Main.rand.NextVector2Circular(1.5f, 1.5f) + new Vector2(13f, -13f).RotatedBy(correctRot), null, underGlowColor * alpha, correctRot, White.Size() / 2, Projectile.scale + underGlowExtraScale, SpriteEffects.None);
             }
 
             float starAlpha = justShotValue * alpha;
@@ -1379,7 +1298,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
 
             Main.EntitySpriteDraw(Staff, offset - Main.screenPosition, null, lightColor * alpha, Projectile.rotation + MathHelper.PiOver4 + leftRotBonus, origin, Projectile.scale, sFX);
-            Main.EntitySpriteDraw(Glowmask, offset - Main.screenPosition, null, Color.White * alpha, Projectile.rotation + MathHelper.PiOver4 + leftRotBonus, origin, Projectile.scale, sFX);
 
             return false;
         }

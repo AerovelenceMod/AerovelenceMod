@@ -10,7 +10,7 @@ namespace AerovelenceMod.Content.Projectiles.Gas;
 
 public sealed class GasCloud : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
     private GasSettings settings = GasSettings.For(GasKind.Fog);
     private bool ready;
     private int age;

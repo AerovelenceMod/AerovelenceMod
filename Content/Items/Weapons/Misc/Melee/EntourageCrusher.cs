@@ -300,9 +300,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
                 AfterImageCol *= 1.5f;
 
             AfterImageCol *= scale;
-            for (float num5 = 0f; num5 < 1f; num5 += 355f / (678f * (float)Math.PI))
+            for (float i = 0f; i < 1f; i += 355f / (678f * (float)Math.PI))
             {
-                Main.spriteBatch.Draw(JustBlade, armPosition - Main.screenPosition + otherOffset - gfxOffset + (TwoPi * num5).ToRotationVector2() * (4f + offset * 1f), null, AfterImageCol,
+                Main.spriteBatch.Draw(JustBlade, armPosition - Main.screenPosition + otherOffset - gfxOffset + (TwoPi * i).ToRotationVector2() * (4f + offset * 1f), null, AfterImageCol,
                     Projectile.rotation + rotationOffset, origin,
                     Projectile.scale + ((float)Math.Sin(getProgress(easingProgress) * Math.PI) * 0.3f), effects, 0f);
             }

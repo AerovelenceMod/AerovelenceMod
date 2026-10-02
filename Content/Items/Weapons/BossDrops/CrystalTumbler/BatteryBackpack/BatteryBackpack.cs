@@ -86,7 +86,7 @@ public class BatteryBackpack : ModItem
 
 public class BatteryCircuit : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
 
     public static Projectile Find(int owner)
     {
@@ -300,7 +300,8 @@ public class BatteryClamp : ModProjectile
 
 public class BatteryDischarge : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
+
     private readonly TumblerLightningVisual visual = new();
 
     public override void SetDefaults()
@@ -339,7 +340,7 @@ public class BatteryDischarge : ModProjectile
 
 public class BatteryOverflowStrike : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
     private readonly TumblerLightningVisual visual = new();
     private readonly TumblerLightningVisual antenna = new();
     private Vector2 end;

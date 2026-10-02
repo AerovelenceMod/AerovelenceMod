@@ -985,9 +985,9 @@ namespace AerovelenceMod.Common.Utilities
             SetupCommonProperties(modTile, itemType, dustType, lavaDeath, waterDeath, styleHorizontal, isChair: false);
         }
 
-        public static void SetupBossRelic(ModTile modTile, Color mapColor, int itemDropType, int dustType, bool lavaDeath, bool waterDeath, bool styleHorizontal)
+        public static void SetupBossRelic(ModTile modTile, int itemDropType)
         {
-            modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
+            modTile.AddMapEntry(new Color(233, 207, 94), modTile.MapNameFromItem(itemDropType));
             Main.tileShine[modTile.Type] = 400;
             TileID.Sets.InteractibleByNPCs[modTile.Type] = true;
 
@@ -1006,10 +1006,10 @@ namespace AerovelenceMod.Common.Utilities
 
             TileObjectData.addTile(modTile.Type);
 
-            SetupCommonProperties(modTile, itemDropType, dustType, lavaDeath, waterDeath, styleHorizontal, isChair: false);
+            SetupCommonProperties(modTile, itemDropType, -1, false, false, false, isChair: false);
         }
 
-        public static void drawRelics(ModTile modTile, Texture2D texture, int frameWidth, int frameHeight, int horizontalFrames, int verticalFrames, int i, int j, SpriteBatch spriteBatch)
+        public static void DrawRelics(ModTile modTile, Texture2D texture, int frameWidth, int frameHeight, int horizontalFrames, int verticalFrames, int i, int j, SpriteBatch spriteBatch)
         {
             Vector2 offScreen = new(Main.offScreenRange);
             if (Main.drawToScreen)
@@ -1039,9 +1039,9 @@ namespace AerovelenceMod.Common.Utilities
             Color effectColor = color;
             effectColor.A = 0;
             effectColor = effectColor * 0.1f * scale;
-            for (float num5 = 0f; num5 < 1f; num5 += 355f / (678f * (float)Math.PI))
+            for (float k = 0f; k < 1f; k += 355f / (678f * (float)Math.PI))
             {
-                spriteBatch.Draw(texture, drawPos + (TwoPi * num5).ToRotationVector2() * (6f + offset * 2f), frame, effectColor, 0f, origin, 1f, effects, 0f);
+                spriteBatch.Draw(texture, drawPos + (TwoPi * k).ToRotationVector2() * (6f + offset * 2f), frame, effectColor, 0f, origin, 1f, effects, 0f);
             }
         }
         public static void PlatformHangOffset(int i, int j, ref int offsetY)

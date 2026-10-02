@@ -199,8 +199,8 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             Projectile.ignoreWater = true;
             Projectile.tileCollide = true;
         }
-        TrailInfo trail1 = new TrailInfo();
-        TrailInfo trail2 = new TrailInfo();
+        BaseTrailInfo trail1 = new BaseTrailInfo();
+        BaseTrailInfo trail2 = new BaseTrailInfo();
         public override void AI()
         {
 
@@ -211,7 +211,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.trailWidth = 60;
             trail1.trailMaxLength = 200;
             trail1.timesToDraw = 1;
-            trail1.usePinchedWidth = true;
+            trail1.pinch = true;
 
 
             trail1.trailTime = timer * 0.02f;
@@ -226,7 +226,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail2.trailWidth = 40;
             trail2.trailMaxLength = 600;
             trail2.timesToDraw = 2;
-            trail2.usePinchedWidth = true;
+            trail2.pinch = true;
 
             trail2.gradient = true;
             trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/FireGradLoop").Value;

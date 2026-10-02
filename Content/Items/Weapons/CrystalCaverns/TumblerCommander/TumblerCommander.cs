@@ -218,7 +218,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TumblerCommander
                 Vector2 hand = player.MountedCenter + new Vector2(player.direction * 16f, -4f * player.gravDir);
                 float rodAngle = player.direction * -0.12f * player.gravDir;
                 Main.EntitySpriteDraw(rod, hand - Main.screenPosition, null, lightColor * fade, rodAngle, grip, 1f, flip);
-                Vector2 tipOffset = new(player.direction * 22f, -18f);
+                Vector2 tipOffset = new(player.direction * 32f, -8f);
                 Vector2 rodTip = hand + tipOffset.RotatedBy(rodAngle);
                 TumblerCommanderVFX.Glow(rodTip, new Vector2(20f), TumblerCommanderVFX.Aqua, (0.2f + charge * 0.15f) * fade);
             }

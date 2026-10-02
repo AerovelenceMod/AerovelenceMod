@@ -173,6 +173,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 
             Color between = Color.Lerp(Color.DodgerBlue, Color.DeepSkyBlue, 0.5f);
 
+            Texture2D bomb = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/BooyahBomb/BooyahHeldProj");
+            Main.EntitySpriteDraw(bomb, drawPos, null, Color.White, 0f, bomb.Size(), 1f, SpriteEffects.None);
+
             Vector2 gashScale = new Vector2(1f * Easings.easeOutCubic(postFullChargeProg) * sineScale2, 0.45f * sineScale1) * Projectile.scale;
             Main.EntitySpriteDraw(gash, drawPos, null, between with { A = 0 } * 0.35f, 0f, gash.Size() / 2f, gashScale * 2f, SpriteEffects.None);
             Main.EntitySpriteDraw(gash, drawPos, null, Color.White with { A = 0 } * 0.35f, 0f, gash.Size() / 2f, gashScale * 1f, SpriteEffects.None);
@@ -187,7 +190,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
                 DrawBall(false);
             });
 
-            return true;
+            return false;
         }
 
         //This is the non-shader part of the orb, just some stacked bloom orbs

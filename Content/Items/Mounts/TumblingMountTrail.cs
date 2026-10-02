@@ -12,6 +12,7 @@ namespace AerovelenceMod.Content.Items.Mounts
 {
     public class TumblingMountTrail : ModProjectile
     {
+        public override string Texture => "Terraria/Images/Projectile_0";
         private readonly List<RailPoint> rail = new();
         private readonly TumblerLightningVisual electricity = new();
         private readonly record struct RailPoint(Vector2 Center, Vector2 Normal, ulong FadeAt, int Run, int Sample);
@@ -23,7 +24,6 @@ namespace AerovelenceMod.Content.Items.Mounts
         private int age;
         private int rampAge;
         private float speed;
-        public override string Texture => "AerovelenceMod/Blank";
 
         public override void SetDefaults()
         {

@@ -82,7 +82,6 @@ namespace AerovelenceMod.Content.Items
                 fire1.scaleFadePower = 1.05f;
                 ShaderParticleHandler.SpawnParticle(fire1);
             }
-
             return false;
         }
 

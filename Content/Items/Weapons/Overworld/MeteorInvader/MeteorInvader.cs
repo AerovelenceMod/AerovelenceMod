@@ -121,7 +121,7 @@ public sealed class MeteorInvaderPattern
 
 public class MeteorInvaderFleet : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
     internal readonly MeteorInvaderPattern Pattern = new();
     private Vector2 anchor;
     private int highestRow;
@@ -231,7 +231,7 @@ public class MeteorInvaderFleet : ModProjectile
 
 public class MeteorInvaderMinion : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Blank";
+    public override string Texture => "Terraria/Images/Projectile_0";
     private int age;
     private float heat;
     private int marchFrame;

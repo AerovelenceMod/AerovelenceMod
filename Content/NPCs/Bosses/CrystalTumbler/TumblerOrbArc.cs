@@ -103,15 +103,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (Projectile.frameCounter >= Projectile.extraUpdates * 2)
                 {
                     Projectile.frameCounter = 0;
-                    bool flag34 = true;
-                    for (int num874 = 1; num874 < Projectile.oldPos.Length; num874++)
+                    bool kill = true;
+                    for (int i = 1; i < Projectile.oldPos.Length; i++)
                     {
-                        if (Projectile.oldPos[num874] != Projectile.oldPos[0])
+                        if (Projectile.oldPos[i] != Projectile.oldPos[0])
                         {
-                            flag34 = false;
+                            kill = false;
                         }
                     }
-                    if (flag34)
+                    if (kill)
                     {
                         Projectile.Kill();
                         return;
@@ -140,43 +140,43 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                     return;
                 }
                 Projectile.frameCounter = 0;
-                float num880 = Projectile.velocity.Length();
+                float vel = Projectile.velocity.Length();
                 UnifiedRandom unifiedRandom = new UnifiedRandom((int)Projectile.ai[1]);
-                int num881 = 0;
-                Vector2 spinningpoint14 = -Vector2.UnitY;
+                int timer2 = 0;
+                Vector2 spinningpoint = -Vector2.UnitY;
 
                 while (true)
                 {
-                    int num882 = unifiedRandom.Next();
-                    Projectile.ai[1] = num882;
-                    num882 %= 100;
-                    float f = (float)num882 / 100f * MathHelper.TwoPi;
-                    Vector2 vector72 = f.ToRotationVector2();
+                    int rand = unifiedRandom.Next();
+                    Projectile.ai[1] = rand;
+                    rand %= 100;
+                    float f = (float)rand / 100f * MathHelper.TwoPi;
+                    Vector2 rot = f.ToRotationVector2();
 
-                    if (vector72.Y > 0f)
+                    if (rot.Y > 0f)
                     {
-                        vector72.Y *= -1f;
+                        rot.Y *= -1f;
                     }
 
-                    bool flag35 = false;
-                    if (vector72.Y > -0.02f)
+                    bool reset = false;
+                    if (rot.Y > -0.02f)
                     {
-                        flag35 = true;
+                        reset = true;
                     }
 
-                    if (vector72.X * (Projectile.extraUpdates + 1) * 2f * num880 + Projectile.localAI[0] > 40f)
+                    if (rot.X * (Projectile.extraUpdates + 1) * 2f * vel + Projectile.localAI[0] > 40f)
                     {
-                        flag35 = true;
+                        reset = true;
                     }
 
-                    if (vector72.X * (Projectile.extraUpdates + 1) * 2f * num880 + Projectile.localAI[0] < -40f)
+                    if (rot.X * (Projectile.extraUpdates + 1) * 2f * vel + Projectile.localAI[0] < -40f)
                     {
-                        flag35 = true;
+                        reset = true;
                     }
 
-                    if (flag35)
+                    if (reset)
                     {
-                        if (num881++ >= 100)
+                        if (timer2++ >= 100)
                         {
                             Projectile.velocity = Vector2.Zero;
                             Projectile.localAI[1] = 1f;
@@ -185,14 +185,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                         continue;
                     }
 
-                    spinningpoint14 = vector72;
+                    spinningpoint = rot;
                     break;
                 }
 
                 if (Projectile.velocity != Vector2.Zero)
                 {
-                    Projectile.localAI[0] += spinningpoint14.X * (Projectile.extraUpdates + 1) * 2f * num880;
-                    Projectile.velocity = spinningpoint14.RotatedBy(Projectile.ai[0] + MathHelper.PiOver2) * num880;
+                    Projectile.localAI[0] += spinningpoint.X * (Projectile.extraUpdates + 1) * 2f * vel;
+                    Projectile.velocity = spinningpoint.RotatedBy(Projectile.ai[0] + MathHelper.PiOver2) * vel;
                     Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
                 }
             }
