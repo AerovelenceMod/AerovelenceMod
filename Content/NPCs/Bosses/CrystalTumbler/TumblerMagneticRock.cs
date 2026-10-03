@@ -11,8 +11,10 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerMagneticRock : ModProjectile
+    public class TumblerMagneticRock : TumblerProjectile
     {
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private int timer;
         private int bounces;
         private readonly TumblerLightningVisual tether = new();

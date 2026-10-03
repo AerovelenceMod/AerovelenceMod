@@ -159,5 +159,127 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             spriteBatch.Draw(eye, center, frame, core, 0f, origin, NPC.scale, SpriteEffects.None, 0f);
             TumblerVFX.EndAdditive(spriteBatch);
         }
+
+        private void UpdateRotation()
+        {
+            float targetRoll = spinTarget ?? NPC.velocity.X / (NPC.width * 0.5f);
+            if (!spinTarget.HasValue && !OnGround() && State != TumblerState.Despawn)
+                targetRoll = rollVelocity * 0.995f;
+            rollVelocity = Approach(rollVelocity, targetRoll, spinTarget.HasValue ? 0.012f : 0.025f);
+            NPC.rotation += rollVelocity;
+        }
+
+        private void DrawAttackEffects(SpriteBatch spriteBatch, Vector2 screenPos, Texture2D texture, Rectangle frame, Vector2 origin)
+        {
+            if (State == TumblerState.RippleSlam && substate is 1 or 2)
+            {
+                Vector2 ground = new(rampStart.X, FloorY);
+                float charge = substate == 1 ? MathHelper.Clamp(StateTimer / 75f, 0f, 1f) : 1f;
+                TumblerVFX.DrawCharge(spriteBatch, ground - screenPos, PhaseColor, charge, 90f, StateTimer * 0.045f);
+                TumblerVFX.DrawTelegraph(spriteBatch, ground - screenPos, ground - screenPos - new Vector2(0f, 290f), PhaseColor, 0.4f + charge * 0.45f, 100f);
+                for (int side = -1; side <= 1; side += 2)
+                    TumblerVFX.DrawTelegraph(spriteBatch, ground - screenPos, ground - screenPos + new Vector2(side * 520f, 0f), PhaseColor, charge * 0.65f, 100f);
+            }
+            if (State == TumblerState.Overload && StateTimer >= 120 && StateTimer < 205)
+            {
+                int count = StateTimer < 180 ? 10 : 14;
+                float start = StateTimer < 180 ? 120f : 180f;
+                float end = StateTimer < 180 ? 180f : 205f;
+                float rotation = StateTimer < 180 ? 0f : 0.12f;
+                float charge = MathHelper.Clamp((StateTimer - start) / (end - start), 0f, 1f);
+                float radius = Math.Min(720f, Math.Max(RightOuter - LeftOuter, FloorY - ArenaData.WorldBounds.Top));
+                Vector2 center = NPC.Center - screenPos;
+                for (int i = 0; i < count; i++)
+                {
+                    Vector2 endPoint = center + (MathHelper.TwoPi * i / count + rotation).ToRotationVector2() * radius;
+                    TumblerVFX.DrawTelegraph(spriteBatch, center, endPoint, PhaseColor, 0.18f + charge * 0.62f, 58f);
+                }
+                TumblerVFX.DrawCharge(spriteBatch, center, PhaseColor, charge, 36f - charge * 10f, StateTimer * 0.035f);
+            }
+            if (State == TumblerState.Stunned)
+            {
+                float fade = MathHelper.Clamp((stunReturnTimer - StateTimer) / 25f, 0f, 1f);
+                Texture2D star = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/CrispStarPMA").Value;
+                for (int i = 0; i < 4; i++)
+                {
+                    float angle = StateTimer * 0.065f + i * MathHelper.PiOver2;
+                    Vector2 position = NPC.Top - screenPos + new Vector2(MathF.Cos(angle) * 40f, -22f + MathF.Sin(angle) * 10f);
+                    spriteBatch.Draw(star, position, null, TumblerVFX.Glow(Color.Lerp(PhaseColor, Color.White, 0.7f), fade), angle, star.Size() * 0.5f, 17f / star.Width, SpriteEffects.None, 0f);
+                }
+            }
+            if (State == TumblerState.Teleport && StateTimer >= 50 && StateTimer < 108)
+            {
+                Vector2 start = StateTimer < 70 ? NPC.Center : teleportOrigin;
+                float progress = MathHelper.Clamp((StateTimer - 50f) / 36f, 0f, 1f);
+                float fade = MathHelper.Clamp((108f - StateTimer) / 28f, 0f, 1f);
+                for (int i = 0; i < 12; i++)
+                {
+                    float position = i / 11f;
+                    float brightness = Math.Max(0f, 1f - Math.Abs(position - progress) * 4f) * fade;
+                    Vector2 point = Vector2.Lerp(start, teleportDestination, position) - screenPos;
+                    spriteBatch.Draw(texture, point, frame, TumblerVFX.Glow(PhaseColor, brightness * 0.45f), NPC.rotation - position * 2f, origin, BodyDrawScale(frame) * (0.8f + brightness * 0.2f), SpriteEffects.None, 0f);
+                }
+                TumblerVFX.DrawElectricLine(spriteBatch, start - screenPos, teleportDestination - screenPos, PhaseColor, fade * 0.32f, 32, NPC.whoAmI);
+            }
+            if (State == TumblerState.LoopSlam && substate is 2 or 4)
+            {
+                Vector2 tip = TumblerLoopRail.Point(rampStart, storedDirection, 1f);
+                Vector2 ground = new(tip.X, FloorY);
+                float strength = substate == 4 ? 0.8f : 0.35f;
+                TumblerVFX.DrawTelegraph(spriteBatch, ground - screenPos, tip - screenPos, PhaseColor, strength, 60f);
+                TumblerVFX.DrawCharge(spriteBatch, ground - screenPos, PhaseColor, substate == 4 ? 1f : railProgress, 45f, StateTimer * 0.035f);
+            }
+            if (State == TumblerState.PhaseTransition)
+            {
+                Vector2 position = NPC.Top - screenPos - new Vector2(0f, 40f);
+                Utils.DrawBorderString(spriteBatch, shieldHits + "!", position, Color.Lerp(PhaseColor, Color.White, shieldFlash), 1.2f + shieldFlash * 0.22f, 0.5f, 0.5f);
+            }
+        }
+
+        internal static void DrawBackgroundOverlay(Texture2D texture)
+        {
+            bool bossIsActive = NPC.AnyNPCs(ModContent.NPCType<CrystalTumbler>());
+            if (!bossIsActive || texture == null)
+                return;
+
+            try
+            {
+                ModContent.GetInstance<AerovelenceMod>()?.Logger.Warn("Tumbler active");
+
+                var currentState = Main.spriteBatch.GraphicsDevice.BlendState;
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(
+                    SpriteSortMode.Deferred,
+                    BlendState.Additive,
+                    SamplerState.LinearClamp,
+                    DepthStencilState.DepthRead,
+                    RasterizerState.CullNone,
+                    null,
+                    Main.GameViewMatrix.TransformationMatrix
+                );
+
+                Main.spriteBatch.Draw(
+                    texture,
+                    new Rectangle(0, 0, Main.screenWidth, Main.screenHeight),
+                    Color.White * 0.8f
+                );
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(
+                    SpriteSortMode.Immediate,
+                    currentState,
+                    SamplerState.LinearClamp,
+                    DepthStencilState.Default,
+                    RasterizerState.CullNone,
+                    null,
+                    Main.GameViewMatrix.TransformationMatrix
+                );
+            }
+            catch (Exception ex)
+            {
+                ModContent.GetInstance<AerovelenceMod>()?.Logger.Warn("Error drawing overlay: " + ex.Message);
+            }
+        }
     }
 }

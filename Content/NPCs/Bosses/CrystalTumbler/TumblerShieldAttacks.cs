@@ -12,8 +12,10 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerShieldStorm : ModProjectile
+    public class TumblerShieldStorm : TumblerProjectile
     {
+        internal override float RetirementPhase => 1f;
+
         private int timer;
         private readonly Vector2[] endpoints = new Vector2[3];
         private readonly bool[] locked = new bool[3];
@@ -193,8 +195,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerPulseShield : ModProjectile
+    public class TumblerPulseShield : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool TryRetire()
+        {
+            Retire();
+            return true;
+        }
+
         private int timer;
         private int retirement;
         private float phase;

@@ -8,8 +8,10 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class CrystalShard : ModProjectile
+    public class CrystalShard : TumblerProjectile
     {
+        internal override bool ClearForEdgeCharge => true;
+
         public override void SetDefaults()
         {
             Projectile.width = 10;

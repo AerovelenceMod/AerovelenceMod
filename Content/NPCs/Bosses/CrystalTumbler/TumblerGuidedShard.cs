@@ -10,8 +10,10 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerGuidedShard : ModProjectile
+    public class TumblerGuidedShard : TumblerProjectile
     {
+        internal override bool ClearForEdgeCharge => true;
+
         private int timer;
         private Vector2 launchVelocity;
         private Vector2 lockPosition;

@@ -151,8 +151,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerSpark : ModProjectile
+    public class TumblerSpark : TumblerProjectile
     {
+        internal override bool EmitsRetirementSparks => false;
+
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public override void SetDefaults()
@@ -181,8 +183,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerStar : ModProjectile
+    public class TumblerStar : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[0];
+        internal override bool ClearForEdgeCharge => true;
+
         private int timer;
         private int orbitSlot;
         private bool initialized;
@@ -360,8 +365,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerAimLine : ModProjectile
+    public class TumblerAimLine : TumblerProjectile
     {
+        internal override bool EmitsRetirementSparks => false;
+        internal override bool ClearForEdgeCharge => true;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color)
+        {
+            Vector2 center = Projectile.Center - Main.screenPosition;
+            Vector2 end = velocity.SafeNormalize(Vector2.UnitY) * 1100f;
+            TumblerVFX.DrawTelegraph(Main.spriteBatch, center, center + end, color, opacity * 0.65f);
+            return false;
+        }
+
         private int timer;
 
         public override string Texture => "Terraria/Images/Projectile_0";
@@ -426,7 +441,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerLightningBolt : ModProjectile
+    public class TumblerLightningBolt : TumblerProjectile
     {
         private const int FenceMarker = 1000;
         private int timer;
@@ -570,8 +585,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerConductiveField : ModProjectile
+    public class TumblerConductiveField : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -689,7 +706,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerPlatformField : ModProjectile
+    public class TumblerPlatformField : TumblerProjectile
     {
         private int timer;
 
@@ -764,7 +781,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerKnifeCrystal : ModProjectile
+    public class TumblerKnifeCrystal : TumblerProjectile
     {
         private int timer;
 
@@ -846,7 +863,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerChargeBall : ModProjectile
+    public class TumblerChargeBall : TumblerProjectile
     {
         private int timer;
 
@@ -938,8 +955,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerKnifeBall : ModProjectile
+    public class TumblerKnifeBall : TumblerProjectile
     {
+        internal override bool ClearForEdgeCharge => true;
+
         private int timer;
         protected virtual bool Charged => false;
 
@@ -1025,11 +1044,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
     public class TumblerChargedKnifeBall : TumblerKnifeBall
     {
+        internal override float RetirementPhase => 1f;
+
         protected override bool Charged => true;
     }
 
-    public class TumblerBossAura : ModProjectile
+    public class TumblerBossAura : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -1116,8 +1140,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerAuraPulse : ModProjectile
+    public class TumblerAuraPulse : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+        internal override bool EmitsRetirementSparks => false;
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)

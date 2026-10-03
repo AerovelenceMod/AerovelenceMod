@@ -13,8 +13,16 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerMagneticPlatform : ModProjectile
+    public class TumblerMagneticPlatform : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool TryRetire()
+        {
+            BeginCollapse();
+            return true;
+        }
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private int age;
         private int crushTimer = -1;
         private int warningTicks = 90;
@@ -238,7 +246,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                     TumblerVFX.SpawnSpark(Projectile.Top + Main.rand.NextVector2Circular(48f, 4f), new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), -2f), Color.Lerp(TumblerVFX.PhaseColor(colorCharge), Color.White, instability), 0.2f + instability * 0.15f);
             }
             float proximity = MathHelper.Clamp(1f - Math.Abs(Main.npc[bossIndex].Center.X - Projectile.Center.X) / 240f, 0f, 1f);
-            float targetSink = Main.npc[bossIndex].ai[0] == (float)TumblerState.ConductiveField ? 0f : proximity * 46f;
+            float targetSink = Main.npc[bossIndex].ai[0] == (float)TumblerState.ConductiveFenceField ? 0f : proximity * 46f;
             proximitySink = MathHelper.Lerp(proximitySink, targetSink, 0.035f);
             springVelocity = (springVelocity + (load - compression) * 0.07f) * 0.78f;
             compression = MathHelper.Clamp(compression + springVelocity, -2f, 10f);
@@ -416,11 +424,19 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         public override void Load()
         {
             On_Player.SlopingCollision += ResolvePlatforms;
+            On_Player.PlayerFrame += GroundedFrame;
         }
 
         public override void Unload()
         {
             On_Player.SlopingCollision -= ResolvePlatforms;
+            On_Player.PlayerFrame -= GroundedFrame;
+        }
+
+        private static void GroundedFrame(On_Player.orig_PlayerFrame orig, Player player)
+        {
+            player.GetModPlayer<TumblerPlatformPlayer>().RestoreStanding();
+            orig(player);
         }
 
         private static void ResolvePlatforms(On_Player.orig_SlopingCollision orig, Player player, bool fallThrough, bool ignorePlats)
@@ -458,6 +474,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Detach(3);
                 return;
             }
+            if (Math.Abs(Player.Bottom.Y - (previousPlatformCenter.Y - platform.Projectile.height * 0.5f)) > 8f)
+            {
+                Detach(3);
+                return;
+            }
             Vector2 carry = platform.Projectile.Center - previousPlatformCenter;
             if (carry.LengthSquared() > 400f)
             {
@@ -478,7 +499,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             previousBottom += allowed;
             previousPlatformCenter = platform.Projectile.Center;
             Player.velocity.Y = 0f;
-            Player.fallStart = (int)(Player.position.Y / 16f);
+            Player.jump = 0;
+            Player.fallStart = Player.fallStart2 = (int)(Player.position.Y / 16f);
         }
 
         public override void PreUpdateMovement()
@@ -490,16 +512,27 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Detach(Player.controlDown ? 16 : 3);
                 return;
             }
-            if (TryGetPlatform(out TumblerMagneticPlatform platform) && Math.Abs(Player.Bottom.Y - platform.SurfaceY) <= 8f && Player.Right.X > platform.SurfaceStart.X && Player.Left.X < platform.SurfaceEnd.X)
-                Player.velocity.Y = 0f;
+
+        }
+
+        public override void PostUpdateRunSpeeds() => RestoreStanding();
+
+        public override void PostUpdate() => RestoreStanding();
+
+        internal void RestoreStanding()
+        {
+            if (platformIndex >= 0) ResolveStanding(Player.controlDown);
         }
 
         internal void ResolveStanding(bool fallThrough)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient && Player.whoAmI != Main.myPlayer)
                 return;
-            if (fallThrough || !Player.active || Player.dead || detachTimer > 0 || Player.controlDown || Player.gravDir < 0f || Player.velocity.Y < 0f || Player.justJumped || Player.GoingDownWithGrapple)
+            if (fallThrough || !Player.active || Player.dead || detachTimer > 0 || Player.controlDown || Player.gravDir < 0f || Player.pulley || Player.velocity.Y < 0f || Player.justJumped || Player.GoingDownWithGrapple)
+            {
+                Detach(Player.controlDown ? 16 : 0);
                 return;
+            }
             TumblerMagneticPlatform landing = null;
             float highest = float.MaxValue;
             if (TryGetPlatform(out TumblerMagneticPlatform current) && Math.Abs(Player.Bottom.Y - current.SurfaceY) <= 8f && Player.Right.X > current.SurfaceStart.X + 3f && Player.Left.X < current.SurfaceEnd.X - 3f)
@@ -535,7 +568,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             Player.position = destination;
             Player.velocity.Y = 0f;
             Player.jump = 0;
-            Player.fallStart = (int)(Player.position.Y / 16f);
+            Player.fallStart = Player.fallStart2 = (int)(Player.position.Y / 16f);
             Player.gfxOffY = 0f;
             platformIndex = landing.Projectile.whoAmI;
             platformIdentity = landing.Projectile.identity;

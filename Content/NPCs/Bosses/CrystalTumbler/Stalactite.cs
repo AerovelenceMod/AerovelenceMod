@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class Stalactite : ModProjectile
+    public class Stalactite : TumblerProjectile
     {
         private int timer;
         private float targetY;

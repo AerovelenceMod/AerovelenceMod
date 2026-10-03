@@ -8,8 +8,11 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerMagneticField : ModProjectile
+    public class TumblerMagneticField : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private int Age => 330 - Projectile.timeLeft;
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetDefaults()

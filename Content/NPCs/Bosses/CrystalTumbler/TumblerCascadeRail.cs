@@ -7,8 +7,11 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerCascadeRail : ModProjectile
+    public class TumblerCascadeRail : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private readonly TumblerConjuredRail rail = new();
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Type] = 1800;

@@ -8,8 +8,11 @@ using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerLoopRail : ModProjectile
+    public class TumblerLoopRail : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         public override string Texture => "Terraria/Images/Projectile_0";
         private static readonly Vector2[] curve = BuildCurve();
         private static readonly float[] distances = BuildDistances();

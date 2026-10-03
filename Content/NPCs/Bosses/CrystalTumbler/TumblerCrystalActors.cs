@@ -223,7 +223,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             NPC boss = Main.npc[bossIndex];
             phase = boss.ai[2];
-            bool attacking = boss.ai[0] == (float)TumblerState.ConductiveField;
+            bool attacking = boss.ai[0] == (float)TumblerState.ConductiveFenceField;
             int side = Math.Sign(NPC.ai[0]);
             float targetCharge = attacking ? TumblerConductiveSequence.Charge(boss.ai[1], side) : 0f;
             charge = MathHelper.Lerp(charge, targetCharge, 0.08f);
@@ -282,7 +282,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (charge > 0.05f && bossIndex >= 0 && Main.npc[bossIndex].active)
                 {
                     NPC boss = Main.npc[bossIndex];
-                    if (boss.ai[0] == (float)TumblerState.ConductiveField && boss.ai[1] < 120f)
+                    if (boss.ai[0] == (float)TumblerState.ConductiveFenceField && boss.ai[1] < 120f)
                         TumblerVFX.DrawElectricLine(spriteBatch, conductorTip, boss.Center - screenPos, color, charge * 0.4f, 18, NPC.whoAmI + 21f, 1f);
                 }
             }

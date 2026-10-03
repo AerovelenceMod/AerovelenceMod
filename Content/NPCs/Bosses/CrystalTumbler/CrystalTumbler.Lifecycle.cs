@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             NPC.dontTakeDamage = true;
             if (State != TumblerState.Death && IsServer)
             {
-                phaseTransitionQueued = false;
+                phaseTransitionActive = false;
                 ChangeState(TumblerState.Death);
                 ArenaData.ClearEncounterEntities(fadeProjectiles: true);
             }
