@@ -40,6 +40,16 @@ namespace AerovelenceMod.Common.Utilities
         {
             Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 
+            if (tile.Slope == SlopeType.Solid)
+            {
+                Main.spriteBatch.Draw(
+                    texture,
+                    position + new Vector2(0, tile.IsHalfBlock.ToInt() * 8) + zero,
+                    new Rectangle(tile.TileFrameX, tile.TileFrameY, 16, 16),
+                    color, rotation, origin, scale, effects, layerDepth);
+                return;
+            }
+
             for (int x = 0; x < 8; x++)
             {
                 int sliceWidth;
@@ -51,7 +61,6 @@ namespace AerovelenceMod.Common.Utilities
                 switch (tile.Slope)
                 {
                     default:
-                    case SlopeType.Solid:
                         sliceWidth = 16;
                         xOffset = 0;
                         break;
@@ -75,7 +84,7 @@ namespace AerovelenceMod.Common.Utilities
 
                 Main.spriteBatch.Draw(
                     texture,
-                    position + new Vector2(xOffset, yOffset + tile.IsHalfBlock.ToInt() * 8) + zero,
+                    position + new Vector2(xOffset, yOffset) + zero,
                     new Rectangle(tile.TileFrameX + xOffset, tile.TileFrameY + yOffset, sliceWidth, sliceHeight),
                     color, rotation, origin, scale, effects, layerDepth);
             }
