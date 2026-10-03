@@ -2901,6 +2901,7 @@ Tiles: {
 Emotes: {
 	CyvercryEmote.Command: cyvercryemote
 	RockCollectorEmote.Command: rockcollectoremote
+	TumblerEmote.Command: tumbleremote
 }
 
 BurningJealousy: {

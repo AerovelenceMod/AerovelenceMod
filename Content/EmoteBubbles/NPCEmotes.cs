@@ -23,9 +23,4 @@ namespace AerovelenceMod.Content.EmoteBubbles
         public override int Row => 0;
     }
 
-    public class CyvercryEmote : ModTownEmote
-    {
-        public override void OnSpawn() => EmoteBubble.lifeTime = EmoteBubble.lifeTimeStart *= 2;
-        public override int Row => 1;
-    }
 }
