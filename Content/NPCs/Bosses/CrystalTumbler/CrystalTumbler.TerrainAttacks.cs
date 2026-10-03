@@ -188,8 +188,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.8f, Pitch = -0.4f }, NPC.Center);
                 EnsureMagneticPlatforms();
                 EnsureConductiveCrystals();
-                if (IsServer)
-                    TumblerLightningBolt.ReleaseSlam(NPC);
+                TumblerLightningBolt.ReleaseSlam(NPC);
                 FinishAttack(Main.expertMode ? 150 : 90);
             }
         }

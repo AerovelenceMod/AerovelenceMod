@@ -144,7 +144,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             NPC.noGravity = false;
             NPC.noTileCollide = false;
-            NPC.dontTakeDamage = false;
+            NPC.dontTakeDamage = State == TumblerState.KnifeCrystals && !IsServer;
             if (phaseTransitionActive)
             {
                 EnterPhaseTransition(clearEncounter: false);
@@ -165,6 +165,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (State == state && StateTimer == 0)
                 return;
             State = state;
+            if (state == TumblerState.KnifeCrystals)
+                NPC.dontTakeDamage = true;
             StateTimer = 0;
             substate = 0;
             repetitions = 0;

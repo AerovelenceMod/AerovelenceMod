@@ -14,6 +14,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         private float fuzzyStrength;
         private float masterHeat;
         private float ambientStrength;
+        private float fenceFade;
+        private float FenceOpacity => MathHelper.SmoothStep(1f, 0.5f, fenceFade);
         private TumblerState presentationState;
         private readonly Vector2?[] eyeOrigins = new Vector2?[2];
 
@@ -30,6 +32,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             if (Main.dedServ)
                 return;
+            fenceFade = Approach(fenceFade, State == TumblerState.KnifeCrystals ? 1f : 0f, 0.05f);
             if (presentationState != State)
             {
                 TumblerLightningSystem.Release(NPC);

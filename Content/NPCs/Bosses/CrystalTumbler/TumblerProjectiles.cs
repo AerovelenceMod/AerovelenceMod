@@ -445,6 +445,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
     {
         private const int FenceMarker = 1000;
         private int timer;
+        private bool strikePlayed;
         private bool FenceBolt => Projectile.ai[0] >= FenceMarker;
         private int WarningTime => FenceBolt ? Math.Max(1, (int)Projectile.ai[0] - FenceMarker) : Math.Max(1, (int)Projectile.ai[0]);
         internal static float FenceWarning(int warning) => FenceMarker + Math.Max(1, warning);
@@ -458,8 +459,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (projectile.ModProjectile is not TumblerLightningBolt bolt || projectile.ai[2] != boss.whoAmI + 1)
                     continue;
                 projectile.ai[2] = 0f;
-                projectile.ai[0] = bolt.timer + 1;
-                projectile.netUpdate = true;
+                projectile.ai[0] = Math.Max(1, bolt.timer);
+                bolt.timer = bolt.WarningTime;
+                if (!bolt.strikePlayed)
+                    bolt.Strike();
+                projectile.netUpdate = Main.netMode != NetmodeID.MultiplayerClient;
             }
         }
 
@@ -515,26 +519,32 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Projectile.timeLeft = 240;
                 return;
             }
-            if (timer == WarningTime)
-            {
-                SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.15f }, Projectile.Center);
-                if (!Main.dedServ)
-                {
-                    for (int i = 0; i < 7; i++)
-                        TumblerVFX.SpawnSpark(Projectile.Center + Projectile.velocity * ((i + 0.5f) / 7f), new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2f, 0.5f)), TumblerVFX.PhaseColor(Projectile.ai[1]), 0.23f);
-                }
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, 54f, 20f, Projectile.ai[1]);
-            }
             if (timer >= WarningTime)
             {
-                lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
+                if (!strikePlayed)
+                    Strike();
+                else
+                    lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
                 if (FenceBolt)
                     Lighting.AddLight(Projectile.Center, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
                 Lighting.AddLight(Projectile.Center + Projectile.velocity, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
             }
             if (timer > WarningTime + ActiveDuration + FadeDuration)
                 Projectile.Kill();
+        }
+
+        private void Strike()
+        {
+            strikePlayed = true;
+            SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.15f }, Projectile.Center);
+            if (!Main.dedServ)
+            {
+                for (int i = 0; i < 7; i++)
+                    TumblerVFX.SpawnSpark(Projectile.Center + Projectile.velocity * ((i + 0.5f) / 7f), new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2f, 0.5f)), TumblerVFX.PhaseColor(Projectile.ai[1]), 0.23f);
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, 54f, 20f, Projectile.ai[1]);
+            lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
         }
 
         public override bool? CanDamage()

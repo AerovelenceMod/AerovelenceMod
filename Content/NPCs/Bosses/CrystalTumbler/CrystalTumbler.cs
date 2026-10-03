@@ -530,6 +530,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         private void KnifeCrystals()
         {
+            NPC.dontTakeDamage = true;
             GroundRoll(2.6f, 0.09f, 240f);
             visualCharge = 0.5f;
             if (StateTimer == 30 || StateTimer == 30 + PylonWaveTime || StateTimer == 30 + PylonWaveTime * 2)
@@ -898,7 +899,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void UpdateLifeRegen(ref int damage)
         {
-            if (State == TumblerState.PhaseTransition)
+            if (State is TumblerState.PhaseTransition or TumblerState.KnifeCrystals)
             {
                 NPC.lifeRegen = 0;
                 NPC.lifeRegenCount = 0;
@@ -1005,6 +1006,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             float teleportOpacity = State == TumblerState.Teleport ? MathHelper.Clamp(Math.Abs(StateTimer - 70f) / 18f, 0f, 1f) : 1f;
             teleportOpacity *= State == TumblerState.Despawn ? MathHelper.Clamp((110f - StateTimer) / 30f, 0f, 1f) : 1f;
             teleportOpacity *= State == TumblerState.Death ? MathHelper.Clamp((180f - StateTimer) / 30f, 0f, 1f) : 1f;
+            float fenceOpacity = FenceOpacity;
+            teleportOpacity *= fenceOpacity;
             TumblerLightningSystem.BeginCapture(NPC);
             DrawAttackEffects(spriteBatch, screenPos, texture, frame, origin);
             DrawEntrance(spriteBatch, screenPos);
@@ -1039,7 +1042,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             for (int i = 0; i < afterimagePositions.Count; i++)
             {
                 float progress = (i + 1f) / afterimagePositions.Count;
-                Color trailColor = TumblerVFX.Glow(Color.Lerp(new Color(35, 115, 255), PhaseColor, progress), progress * progress * 0.28f * trailStrength);
+                Color trailColor = TumblerVFX.Glow(Color.Lerp(new Color(35, 115, 255), PhaseColor, progress), progress * progress * 0.28f * trailStrength * fenceOpacity);
                 Main.EntitySpriteDraw(texture, afterimagePositions[i] - screenPos, frame, trailColor, afterimageRotations[i], origin, BodyDrawScale(frame), SpriteEffects.None);
                 if (i > 0 && trailStrength > 0.6f)
                 {
@@ -1058,7 +1061,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 DrawAura(spriteBatch, screenPos);
             if (visualCharge > 0.05f)
             {
-                TumblerVFX.DrawCorona(spriteBatch, center, 59f + visualCharge * 9f, PhaseColor, visualCharge * 0.8f, NPC.whoAmI);
+                TumblerVFX.DrawCorona(spriteBatch, center, 59f + visualCharge * 9f, PhaseColor, visualCharge * 0.8f * fenceOpacity, NPC.whoAmI);
                 if (spinTarget.HasValue && State is (TumblerState.CrystalRun or TumblerState.Dash))
                 {
                     Vector2 start = new(NPC.Center.X, FloorY - NPC.height * 0.5f);
