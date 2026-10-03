@@ -2236,6 +2236,24 @@ Items: {
 		On: On
 		Off: Off
 	}
+
+	RopeBridgePost: {
+		DisplayName: Rope Bridge Post
+		Tooltip:
+			'''
+			Right-click two posts with rope to connect
+			Consumes 2 rope per section
+			'''
+	}
+
+	ZiplinePost: {
+		DisplayName: Zipline Post
+		Tooltip:
+			'''
+			Right-click two posts with rope to connect
+			Consumes 2 rope per section
+			'''
+	}
 }
 
 Projectiles: {
@@ -4660,3 +4678,54 @@ Commands: {
 }
 
 Gas.Death: "{0} suffocated in crystal gas."
+
+Text: {
+	AerovelenceMod: {
+		Common: {
+			Systems: {
+				Generation: {
+					WorldGenSystem: {
+						73CC5065E21749193CDEE34302E8087B4687E2B87ED2BD48B2353F4A3A86189F: Growing living tree sky islands
+						02ECCF80AC112065C13E41E6E7D0571C892F110FD03FE0BE5638C0F809F7E4C8: Shaping Crystal Caverns
+						6BC50CF6B1775A738444538507EC23D52B8FFF29A16FB05DF2819C789BC140A6: Placing Crystal Caverns structures
+						1A7D4D9172E762A93C423A06738704D1182B3ABBE275AB569A0D8A5AB41C2685: Decorating Crystal Caverns
+						AD41E334534D7636591FDE9906B28178CA03131074201F76D493859A22AA7CF7: Growing Crystal Fields and carving lakes
+						D0E4DADBF4D07A0ED49744F5CA15BF13887878156003BF88A842447BCB67F60A: Laying cavern bridges and ziplines
+					}
+				}
+
+				Traversal: {
+					RopeSpanSystem: {
+						808AFB091EB63A6D8A9471373EA6AEDF51C2E933D0DEB7E6DAB9F2B2568513E3: Post selected. Right-click the other post with the same rope within 10 seconds.
+						2E6502065CDDD72711DAB4437F0091DA4A881D47C9D84348ACFDEBC69F094ECA: This span needs {0} rope; you have {1}. Add {2} more, then select both posts again.
+						B2E84DFA5CC21FBDC65502C0C670DFA85D14152AD0901DB8E2581ED7EDACCF8C: Posts are {0} tiles apart. Move them at least {1} tiles apart.
+						A79A7D4251F20795EBD3EAF80BB1F2FF8E4007959578E972A9162AF96D43674D: Posts are {0} tiles apart. The maximum distance is {1} tiles.
+						7892F830FB729AA60F47AC2221488E6B9BEDC5FE974C737CA70DE1A098A7A6C1: Posts differ by {0} tiles in height. The maximum for this span is {1} tiles.
+						69BF05D802004C0CA37813E663FEA4FB0840E2C980E52FD45E7A18A8C8216C46: The red outlined post already has {0} connections. Each post supports at most {1}.
+						4054CEEA21EF779510699F67473F76D956A180C944732297B68A0A8A711BC259: These two posts already have a connection. Select a different post.
+						08FF7004758C05DE98814B5B0384078DC1DA364C66CA744CB9A7F98EE232D575: The red outlined post is incomplete, the wrong kind, or is missing its floor/ceiling support.
+						96B3449004B78B01D6B02F3030C1E72304E86286CC0F1D467F4198301481EC9D: This bridge or zipline would be too close to the world's edge.
+						017BC5AC80A205A357D939F86B65C6895FFD68FAFDC79CE6154A1C0EBF2FA36B: The red outlined tile blocks the planks or rope. Clear it before connecting the posts.
+						F872EF290E31EDE8669F3290A6F3EB49ADA1C4724744900002EE685F70B571E3: The red outlined tile belongs to another bridge or zipline. Move the posts or remove that span.
+						532AAD775267E659EB730CC0B931CD9621DAD605B833742CFA2EAEC5486F03BC: The red outlined block leaves too little room to walk across the bridge. Clear it before connecting the posts.
+						BC5FA3618E973405D28AB76EB2C4B714EA3E8A8D61751B1635265E932002BD47: The red outlined block leaves too little room to hang beneath the zipline. Clear it before connecting the posts.
+						6061FFC22DD0B453D3BC594F5F613C6DDA001A29171CC766797B1D66AA8604DA: The red outlined block supports a zipline post, but your feet would hit it on this slope. Put that post on a platform, or use a gentler slope.
+						DEB6116298C718C584567AD8C2A8A5308C7B74DFCFD18F0ED00AF272E3823DE1: Move closer to the post to connect it.
+					}
+				}
+			}
+		}
+
+		Content: {
+			Tiles: {
+				Traversal: {
+					RopeBridgeDeckTile.353F8E1E5CC79DB4DFFDC8E74D9D3CFA2A12B366A39A35D9494DE00AD99259FF: Rope Bridge
+					RopeBridgePostTile.A7685B853EA9524BA9C033B1E908E916C6A176171F96177C55A141272CF9BD3F: Rope Bridge Post
+					RopeBridgeRopeTile.353F8E1E5CC79DB4DFFDC8E74D9D3CFA2A12B366A39A35D9494DE00AD99259FF: Rope Bridge
+					ZiplinePostTile.643159DB372372544D7B07AC060B4566E42ACFEA94018915EC6D25DBE12FDB8B: Zipline Post
+					ZiplineRopeTile.947CF8E3198BE6E4CB9F66C73CD8FE0F9E18E5C97C49D29E47B99F802662DF9F: Zipline
+				}
+			}
+		}
+	}
+}
