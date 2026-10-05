@@ -12,8 +12,10 @@ using Terraria.GameContent;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerResidualField : ModProjectile
+    public class TumblerResidualField : TumblerProjectile
     {
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         internal const int LaserFieldDuration = 20 * 60;
         private int age;
         public override string Texture => "AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/ElectricSpikeField";
@@ -85,8 +87,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerRazeBeam : ModProjectile
+    public class TumblerRazeBeam : TumblerProjectile
     {
+        internal override float RetirementPhase => 1f;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private const int BeamEnd = 390;
         private const int FieldEnd = BeamEnd + TumblerResidualField.LaserFieldDuration;
         private int timer;
@@ -179,8 +184,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerConvergenceOrb : ModProjectile
+    public class TumblerConvergenceOrb : TumblerProjectile
     {
+        internal override float RetirementPhase => 1f;
+        internal override bool TryRetire()
+        {
+            Retire();
+            return true;
+        }
+
         private int timer;
         private int retirement;
         private float groundX;

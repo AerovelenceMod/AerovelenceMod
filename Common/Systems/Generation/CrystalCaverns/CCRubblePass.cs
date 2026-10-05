@@ -18,22 +18,29 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
         {
             CCTerrainPass terrain = CCTerrainPass.Instance();
             int[] types = [ModContent.TileType<CavernStone1x1FloorRubbleNatural>(), ModContent.TileType<CavernStone1x2FloorRubbleNatural>(),
-                ModContent.TileType<CavernStone3x2FloorRubbleNatural>(), ModContent.TileType<CavernStone1x1CeilingRubbleNatural>(),
-                ModContent.TileType<CavernStone1x2CeilingRubbleNatural>(), ModContent.TileType<CavernPot2x2Rubble>()];
+                ModContent.TileType<CavernStone3x2FloorRubbleNatural>(), ModContent.TileType<CrystalGrowthTile>(), // CrystalGrowth functions as both grounded and hanging.
+                ModContent.TileType<CavernStone1x1CeilingRubbleNatural>(), ModContent.TileType<CavernStone1x2CeilingRubbleNatural>(),
+                ModContent.TileType<CavernPot2x2Rubble>()];
             int count = 0;
             for (int y = bounds.Top + 3; y < bounds.Bottom - 3; y++)
                 for (int x = bounds.Left + 3; x < bounds.Right - 3; x++)
                 {
-                    if (Main.tile[x, y].HasTile || Main.tile[x, y].LiquidAmount > 0 || LushReservoirGenerator.Contains(x, y, 2) || !WorldGen.genRand.NextBool(5) || !allowed(x, y)) continue;
-                    bool floor = Natural(x, y + 1), ceiling = Natural(x, y - 1);
-                    if (!floor && !ceiling) continue;
+                    if (Main.tile[x, y].HasTile || Main.tile[x, y].LiquidAmount > 0 || LushReservoirGenerator.Contains(x, y, 2) || !WorldGen.genRand.NextBool(2) || !allowed(x, y)) continue;
+                    bool floor = Natural(x, y + 1), ceiling = Natural(x, y - 1), left = Natural(x - 1, y), right = Natural(x + 1, y);
+
+                    // If there is floor beneath, 1/7 chance to pick a pot, 6/7 chance to pick a random grounded rubble. If no floor, pick a random hanging rubble.
+                    int choice = floor ? (WorldGen.genRand.NextBool(7) ? 6 : WorldGen.genRand.Next(4)) : WorldGen.genRand.Next(3, 6);
+
+                    if (!floor && !ceiling && !(choice == 3 && (left || right))) continue; // CrystalGrowth can be placed on the side of tiles
+
                     bool safe = true;
                     for (int dx = -2; dx <= 2 && safe; dx++)
                         for (int dy = -2; dy <= 2; dy++)
                             if (!allowed(x + dx, y + dy)) { safe = false; break; }
                     if (!safe) continue;
-                    int choice = floor ? (WorldGen.genRand.NextBool(7) ? 5 : WorldGen.genRand.Next(3)) : WorldGen.genRand.Next(3, 5);
-                    int style = WorldGen.genRand.Next(choice == 0 ? 12 : choice == 5 ? 9 : 6);
+
+                    // Set the number of possible placement styles based on the rubble's spritesheet
+                    int style = WorldGen.genRand.Next(choice == 0 ? 12 : choice == 5 ? 9 : choice == 3 ? 13 : 6);
                     WorldGen.PlaceTile(x, y, types[choice], mute: true, style: style);
                     if (Main.tile[x, y].HasTile && Main.tile[x, y].TileType == types[choice]) count++;
                 }
@@ -52,13 +59,6 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             progress.Message = WorldGenSystem.CrystalCavernsRubblePassMessage.Value;
 
             CCTerrainPass mainPass = CCTerrainPass.Instance();
-
-            // Copied from CCTerrainPass.cs
-            Point surfaceRectOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y - mainPass.SurfaceHeight);
-            Point upperUndergroundOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.Y);
-            Point lowerUndergroundOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight);
-            Point upperUndergroundWallOrigin = new Point(mainPass.Origin.X - mainPass.BiomeWidth / 2 + 1, mainPass.Origin.Y);
-            Point lowerUndergroundWallOrigin = new Point(mainPass.Origin.X, mainPass.Origin.Y + mainPass.UpperUndergroundHeight - 1); // Do not remember why the -1 is here but keeping it
 
             // Sets of rubble to be placed
             int[] potTileTypes = [ModContent.TileType<CavernPot2x2Rubble>()];
@@ -135,6 +135,44 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     {
                         placeStyle = WorldGen.genRand.Next(12);
                     }
+
+                    WorldGen.PlaceTile(x, y, tileType, mute: true, style: placeStyle);
+                    success = Main.tile[x, y].TileType == tileType;
+                }
+            }
+
+            // Place crystal growths
+            for (int i = 0; i < 300 * Math.Pow(mainPass.WorldSizeScale, 2); i++)
+            {
+                bool success = false;
+                int attempts = 0;
+                while (!success)
+                {
+                    attempts++;
+                    if (attempts > 1000)
+                    {
+                        break;
+                    }
+                    int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
+                    int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
+                    if (LushReservoirGenerator.Contains(x, y, 3)) continue;
+
+                    // Ensure rubble is only placed within the biome
+                    // TotalUnderground is relative to the origin, not the world, so subtract the origin
+                    if (y > mainPass.Origin.Y && !mainPass.TotalUnderground.Contains(x - mainPass.Origin.X, y - mainPass.Origin.Y))
+                        continue;
+
+                    // Ensure it is placed on valid tiles
+                    if (!validRubblePlacementTiles.Contains(Main.tile[x, y + 1].TileType) || Main.tile[x, y].HasTile)
+                        continue;
+
+                    int tileType = ModContent.TileType<CrystalGrowthTile>();
+                    int placeStyle = 0; // Default value
+
+                    if (Main.tile[x, y].TileType == tileType)
+                        continue;
+
+                    placeStyle = WorldGen.genRand.Next(13);
 
                     WorldGen.PlaceTile(x, y, tileType, mute: true, style: placeStyle);
                     success = Main.tile[x, y].TileType == tileType;

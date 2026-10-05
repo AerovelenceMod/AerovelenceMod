@@ -1,11 +1,7 @@
+using AerovelenceMod.Content.Tiles.Traversal;
 using System;
 using System.Collections.Generic;
-
-
-
 using Terraria.GameContent;
-
-using AerovelenceMod.Content.Tiles.Traversal;
 
 namespace AerovelenceMod.Common.Systems.Traversal
 {
@@ -102,6 +98,15 @@ namespace AerovelenceMod.Common.Systems.Traversal
             foreach (RopeSpan span in RopeSpanSystem.Spans.Values)
             {
                 if (!span.Bounds.Intersects(view)) continue;
+                if (span.Zipline)
+                {
+                    Main.spriteBatch.Draw(ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/Traversal/ZiplinePostHook").Value,
+                        Screen(new Vector2(span.Left.X * 16 + 12, span.Left.Y * 16 - (span.LeftCeiling ? -2 : 48))),
+                        null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
+                    Main.spriteBatch.Draw(ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/Traversal/ZiplinePostHook").Value,
+                        Screen(new Vector2(span.Right.X * 16 - 8, span.Right.Y * 16 - (span.RightCeiling ? -2 : 48))),
+                        null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+                }
                 DrawSpan(span, 1, false);
             }
         }

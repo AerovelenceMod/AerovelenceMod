@@ -8,8 +8,11 @@ using Terraria.Audio;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class ElectricBolt : ModProjectile
+    public class ElectricBolt : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[0];
+        internal override bool ClearForEdgeCharge => true;
+
         private readonly TumblerLightningVisual lightning = new();
         private int timer;
 

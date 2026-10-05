@@ -9,8 +9,11 @@ using Terraria.Audio;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerPylonField : ModProjectile
+    public class TumblerPylonField : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private const float FieldHeight = 64f;
         private const int RiseTime = 45;
         private int timer;

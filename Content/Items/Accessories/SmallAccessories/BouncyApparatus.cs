@@ -1,3 +1,5 @@
+using AerovelenceMod.Common.Systems.Traversal;
+using AerovelenceMod.Common.Systems.Language;
 using System;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using Terraria.Audio;
@@ -59,8 +61,9 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         public override void PostUpdate()
         {
-            bool pressingUp = Player.controlUp;
-            if (!Equipped)
+            RopeSpanPlayer rider = Player.GetModPlayer<RopeSpanPlayer>();
+            bool pressingUp = rider.Riding ? rider.HoldingUp : Player.controlUp;
+            if (!Equipped || rider.Riding)
             {
                 wasPressingUp = pressingUp;
                 return;

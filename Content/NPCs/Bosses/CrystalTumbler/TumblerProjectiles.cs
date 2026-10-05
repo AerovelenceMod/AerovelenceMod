@@ -151,8 +151,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerSpark : ModProjectile
+    public class TumblerSpark : TumblerProjectile
     {
+        internal override bool EmitsRetirementSparks => false;
+
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public override void SetDefaults()
@@ -181,8 +183,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerStar : ModProjectile
+    public class TumblerStar : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[0];
+        internal override bool ClearForEdgeCharge => true;
+
         private int timer;
         private int orbitSlot;
         private bool initialized;
@@ -360,8 +365,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerAimLine : ModProjectile
+    public class TumblerAimLine : TumblerProjectile
     {
+        internal override bool EmitsRetirementSparks => false;
+        internal override bool ClearForEdgeCharge => true;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color)
+        {
+            Vector2 center = Projectile.Center - Main.screenPosition;
+            Vector2 end = velocity.SafeNormalize(Vector2.UnitY) * 1100f;
+            TumblerVFX.DrawTelegraph(Main.spriteBatch, center, center + end, color, opacity * 0.65f);
+            return false;
+        }
+
         private int timer;
 
         public override string Texture => "Terraria/Images/Projectile_0";
@@ -426,10 +441,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerLightningBolt : ModProjectile
+    public class TumblerLightningBolt : TumblerProjectile
     {
         private const int FenceMarker = 1000;
         private int timer;
+        private bool strikePlayed;
         private bool FenceBolt => Projectile.ai[0] >= FenceMarker;
         private int WarningTime => FenceBolt ? Math.Max(1, (int)Projectile.ai[0] - FenceMarker) : Math.Max(1, (int)Projectile.ai[0]);
         internal static float FenceWarning(int warning) => FenceMarker + Math.Max(1, warning);
@@ -443,8 +459,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 if (projectile.ModProjectile is not TumblerLightningBolt bolt || projectile.ai[2] != boss.whoAmI + 1)
                     continue;
                 projectile.ai[2] = 0f;
-                projectile.ai[0] = bolt.timer + 1;
-                projectile.netUpdate = true;
+                projectile.ai[0] = Math.Max(1, bolt.timer);
+                bolt.timer = bolt.WarningTime;
+                if (!bolt.strikePlayed)
+                    bolt.Strike();
+                projectile.netUpdate = Main.netMode != NetmodeID.MultiplayerClient;
             }
         }
 
@@ -500,26 +519,32 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Projectile.timeLeft = 240;
                 return;
             }
-            if (timer == WarningTime)
-            {
-                SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.15f }, Projectile.Center);
-                if (!Main.dedServ)
-                {
-                    for (int i = 0; i < 7; i++)
-                        TumblerVFX.SpawnSpark(Projectile.Center + Projectile.velocity * ((i + 0.5f) / 7f), new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2f, 0.5f)), TumblerVFX.PhaseColor(Projectile.ai[1]), 0.23f);
-                }
-                if (Main.netMode != NetmodeID.MultiplayerClient)
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, 54f, 20f, Projectile.ai[1]);
-            }
             if (timer >= WarningTime)
             {
-                lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
+                if (!strikePlayed)
+                    Strike();
+                else
+                    lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
                 if (FenceBolt)
                     Lighting.AddLight(Projectile.Center, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
                 Lighting.AddLight(Projectile.Center + Projectile.velocity, TumblerVFX.PhaseColor(Projectile.ai[1]).ToVector3() * 1.1f);
             }
             if (timer > WarningTime + ActiveDuration + FadeDuration)
                 Projectile.Kill();
+        }
+
+        private void Strike()
+        {
+            strikePlayed = true;
+            SoundEngine.PlaySound(SoundID.Item122 with { Volume = 0.5f, Pitch = 0.15f }, Projectile.Center);
+            if (!Main.dedServ)
+            {
+                for (int i = 0; i < 7; i++)
+                    TumblerVFX.SpawnSpark(Projectile.Center + Projectile.velocity * ((i + 0.5f) / 7f), new Vector2(Main.rand.NextFloat(-2.5f, 2.5f), Main.rand.NextFloat(-2f, 0.5f)), TumblerVFX.PhaseColor(Projectile.ai[1]), 0.23f);
+            }
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity, Vector2.Zero, ModContent.ProjectileType<TumblerAuraPulse>(), 0, 0f, Main.myPlayer, 54f, 20f, Projectile.ai[1]);
+            lightning.Update(Projectile, Projectile.Center, Projectile.Center + Projectile.velocity, 0.7f);
         }
 
         public override bool? CanDamage()
@@ -570,8 +595,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerConductiveField : ModProjectile
+    public class TumblerConductiveField : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -689,7 +716,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerPlatformField : ModProjectile
+    public class TumblerPlatformField : TumblerProjectile
     {
         private int timer;
 
@@ -764,7 +791,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerKnifeCrystal : ModProjectile
+    public class TumblerKnifeCrystal : TumblerProjectile
     {
         private int timer;
 
@@ -846,7 +873,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerChargeBall : ModProjectile
+    public class TumblerChargeBall : TumblerProjectile
     {
         private int timer;
 
@@ -938,8 +965,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerKnifeBall : ModProjectile
+    public class TumblerKnifeBall : TumblerProjectile
     {
+        internal override bool ClearForEdgeCharge => true;
+
         private int timer;
         protected virtual bool Charged => false;
 
@@ -1025,11 +1054,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
     public class TumblerChargedKnifeBall : TumblerKnifeBall
     {
+        internal override float RetirementPhase => 1f;
+
         protected override bool Charged => true;
     }
 
-    public class TumblerBossAura : ModProjectile
+    public class TumblerBossAura : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)
@@ -1116,8 +1150,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         }
     }
 
-    public class TumblerAuraPulse : ModProjectile
+    public class TumblerAuraPulse : TumblerProjectile
     {
+        internal override float RetirementPhase => Projectile.ai[2];
+        internal override bool EmitsRetirementSparks => false;
+
         private int timer;
 
         public override void SendExtraAI(BinaryWriter writer)

@@ -12,8 +12,11 @@ using Terraria.DataStructures;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerFilamentRamp : ModProjectile
+    public class TumblerFilamentRamp : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private readonly float[] supportHeights = new float[13];
         private int Lifetime => Projectile.ai[1] > 0f ? Math.Max(48, (int)Projectile.ai[1]) : 200;
         private float Age => Math.Max(0f, Lifetime - Projectile.timeLeft);

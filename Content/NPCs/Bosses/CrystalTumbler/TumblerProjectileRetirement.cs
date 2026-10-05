@@ -25,26 +25,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (fade.remaining > 0)
                 return;
             fade.PlayExit(projectile);
-            if (projectile.ModProjectile is TumblerFloorRipple ripple)
-            {
-                ripple.Retire();
+            if (projectile.ModProjectile is TumblerProjectile encounter && encounter.TryRetire())
                 return;
-            }
-            if (projectile.ModProjectile is TumblerPulseShield pulse)
-            {
-                pulse.Retire();
-                return;
-            }
-            if (projectile.ModProjectile is TumblerConvergenceOrb orb)
-            {
-                orb.Retire();
-                return;
-            }
-            if (projectile.ModProjectile is TumblerMagneticPlatform platform)
-            {
-                platform.BeginCollapse();
-                return;
-            }
             fade.remaining = 36;
             fade.extent = projectile.velocity;
             fade.phase = PhaseFor(projectile);
@@ -78,7 +60,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 return;
             exitPlayed = true;
             TumblerLightningSystem.Release(projectile);
-            if (projectile.ModProjectile is TumblerFloorRipple or TumblerSpark or TumblerAuraPulse or TumblerAimLine)
+            if (projectile.ModProjectile is TumblerProjectile { EmitsRetirementSparks: false })
                 return;
             float phase = PhaseFor(projectile);
             Color color = TumblerVFX.PhaseColor(phase);
@@ -88,21 +70,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 TumblerVFX.SpawnSpark(projectile.Center + direction * Math.Min(28f, projectile.width * 0.5f), direction * Main.rand.NextFloat(1.5f, 3f), Color.Lerp(color, Color.White, 0.65f), 0.21f);
             }
         }
-        private static float PhaseFor(Projectile projectile)
-        {
-            if (projectile.ModProjectile is TumblerPylonField or TumblerConductiveField or TumblerAuraPulse or TumblerMagneticField)
-                return projectile.ai[2];
-            if (projectile.ModProjectile is ElectricBolt or TumblerStar)
-                return projectile.ai[0];
-            if (projectile.ModProjectile is TumblerConvergenceOrb or TumblerRazeBeam or TumblerShieldStorm or TumblerChargedKnifeBall)
-                return 1f;
-            if (projectile.ModProjectile is TumblerBossAura or TumblerPulseShield or TumblerArenaGate or TumblerMagneticPlatform or TumblerFilamentRamp or TumblerLoopRail or TumblerCascadeRail)
-            {
-                int owner = (int)projectile.ai[0];
-                return owner >= 0 && owner < Main.maxNPCs && Main.npc[owner].ModNPC is CrystalTumbler ? Main.npc[owner].ai[2] : 0f;
-            }
-            return projectile.ai[1];
-        }
+        private static float PhaseFor(Projectile projectile) => projectile.ModProjectile is TumblerProjectile encounter ? encounter.RetirementPhase : projectile.ai[1];
+
         public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer)
         {
             writer.Write(remaining);
@@ -128,18 +97,15 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (remaining <= 0)
                 return true;
             float opacity = MathHelper.SmoothStep(0f, 1f, remaining / 36f);
-            Color color = TumblerVFX.PhaseColor(phase >= 1f ? 1f : 0f);
-            Vector2 center = projectile.Center - Main.screenPosition;
-            if (projectile.ModProjectile is TumblerPylonField or TumblerResidualField or TumblerRazeBeam or TumblerBossAura or TumblerMagneticPlatform or TumblerArenaGate or TumblerMagneticField or TumblerMagneticRock)
-                return true;
-            if (projectile.ModProjectile is TumblerAimLine)
+            if (projectile.ModProjectile is TumblerProjectile encounter)
             {
-                Vector2 end = extent.SafeNormalize(Vector2.UnitY) * 1100f;
-                TumblerVFX.DrawTelegraph(Main.spriteBatch, center, center + end, color, opacity * 0.65f);
+                Color color = TumblerVFX.PhaseColor(phase >= 1f ? 1f : 0f);
+                bool? draw = encounter.PreDrawRetirement(extent, opacity, color);
+                if (draw.HasValue)
+                    return draw.Value;
             }
-            else if (projectile.ModProjectile is TumblerLoopRail or TumblerFilamentRamp or TumblerCascadeRail)
-                return true;
-            else if (projectile.ModProjectile.Texture != "Terraria/Images/Projectile_0")
+            Vector2 center = projectile.Center - Main.screenPosition;
+            if (projectile.ModProjectile.Texture != "Terraria/Images/Projectile_0")
             {
                 Texture2D texture = TextureAssets.Projectile[projectile.type].Value;
                 Rectangle frame = texture.Frame(1, Math.Max(1, Main.projFrames[projectile.type]), 0, projectile.frame);

@@ -10,8 +10,15 @@ using Terraria.GameContent;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerFloorRipple : ModProjectile
+    public class TumblerFloorRipple : TumblerProjectile
     {
+        internal override bool EmitsRetirementSparks => false;
+        internal override bool TryRetire()
+        {
+            Retire();
+            return true;
+        }
+
         internal static TumblerFloorRipple Active;
         private FloorTile[] tiles;
         private int leftTile;

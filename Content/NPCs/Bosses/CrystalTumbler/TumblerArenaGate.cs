@@ -12,8 +12,11 @@ using Terraria.GameContent;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
-    public class TumblerArenaGate : ModProjectile
+    public class TumblerArenaGate : TumblerProjectile
     {
+        internal override float RetirementPhase => OwnerPhase;
+        internal override bool? PreDrawRetirement(Vector2 velocity, float opacity, Color color) => true;
+
         private bool impactPlayed;
         private float phase;
         private int DropStart => Projectile.ai[1] < 0f ? 60 : 210;

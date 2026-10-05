@@ -248,43 +248,10 @@ namespace AerovelenceMod.Content.Items.BossSummons
                         NetMessage.SendData(MessageID.SyncNPC, number: i);
                 }
             }
-            HashSet<int> projectileTypes =
-            [
-                ModContent.ProjectileType<ElectricBolt>(),
-                ModContent.ProjectileType<CrystalShard>(),
-                ModContent.ProjectileType<TumblerGuidedShard>(),
-                ModContent.ProjectileType<Stalactite>(),
-                ModContent.ProjectileType<TumblerSpark>(),
-                ModContent.ProjectileType<TumblerStar>(),
-                ModContent.ProjectileType<TumblerAimLine>(),
-                ModContent.ProjectileType<TumblerLightningBolt>(),
-                ModContent.ProjectileType<TumblerConductiveField>(),
-                ModContent.ProjectileType<TumblerPlatformField>(),
-                ModContent.ProjectileType<TumblerKnifeCrystal>(),
-                ModContent.ProjectileType<TumblerMagneticRock>(),
-                ModContent.ProjectileType<TumblerChargeBall>(),
-                ModContent.ProjectileType<TumblerKnifeBall>(),
-                ModContent.ProjectileType<TumblerMagneticField>(),
-                ModContent.ProjectileType<TumblerChargedKnifeBall>(),
-                ModContent.ProjectileType<TumblerBossAura>(),
-                ModContent.ProjectileType<TumblerAuraPulse>(),
-                ModContent.ProjectileType<TumblerFilamentRamp>(),
-                ModContent.ProjectileType<TumblerPylonField>(),
-                ModContent.ProjectileType<TumblerLoopRail>(),
-                ModContent.ProjectileType<TumblerCascadeRail>(),
-                ModContent.ProjectileType<TumblerFloorRipple>(),
-                ModContent.ProjectileType<TumblerResidualField>(),
-                ModContent.ProjectileType<TumblerRazeBeam>(),
-                ModContent.ProjectileType<TumblerConvergenceOrb>(),
-                ModContent.ProjectileType<TumblerShieldStorm>(),
-                ModContent.ProjectileType<TumblerPulseShield>(),
-                ModContent.ProjectileType<TumblerArenaGate>(),
-                ModContent.ProjectileType<TumblerMagneticPlatform>()
-            ];
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
                 Projectile projectile = Main.projectile[i];
-                if (projectile.active && projectileTypes.Contains(projectile.type))
+                if (projectile.active && projectile.ModProjectile is TumblerProjectile)
                 {
                     if (!clearBarriers && projectile.type == ModContent.ProjectileType<TumblerArenaGate>())
                         continue;

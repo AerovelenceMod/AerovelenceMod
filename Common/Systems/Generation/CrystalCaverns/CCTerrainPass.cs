@@ -553,7 +553,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             {
                 new Modifiers.Offset(0, 2),
                 new Modifiers.Dither(.985), // 1/66.66 chance
-                new Modifiers.OnlyTiles(GrassTile, DirtTile, SandTile, StoneTile),
+                new Modifiers.OnlyTiles(StoneTile, GrassTile, DirtTile, SandTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 6, new Vector2D(0, -20), 0, 4, 3)
             }));
 
@@ -562,16 +562,16 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             {
                 new AeroGenUtils.NotSolidAbove(20),
                 new Modifiers.Offset(0, 2),
-                new Modifiers.Dither(.99), // 1/100 chance
-                new Modifiers.OnlyTiles(StoneTile, ChargedTile, LushTile),
+                new Modifiers.Dither(.985), // 1/66.66 chance
+                new Modifiers.OnlyTiles(StoneTile, LushTile, DirtTile, SandTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 4, new Vector2D(0, -10), 0, 4, 3)
             }));
             WorldUtils.Gen(upperUndergroundOrigin, upperUndergroundShape, Actions.Chain(new GenAction[]
             {
                 new AeroGenUtils.NotSolidBelow(20),
                 new Modifiers.Offset(0, -2),
-                new Modifiers.Dither(.99), // 1/100 chance
-                new Modifiers.OnlyTiles(StoneTile, ChargedTile, LushTile),
+                new Modifiers.Dither(.985), // 1/66.66 chance
+                new Modifiers.OnlyTiles(StoneTile, LushTile, DirtTile, SandTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 4, new Vector2D(0, 10), 0, 4, 3)
             }));
             WorldUtils.Gen(lowerUndergroundOrigin, lowerUndergroundShape, Actions.Chain(new GenAction[]
@@ -580,7 +580,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 new AeroGenUtils.NotSolidAbove(20),
                 new Modifiers.Offset(0, 2),
                 new Modifiers.Dither(.985), // 1/66.66 chance
-                new Modifiers.OnlyTiles(StoneTile, ChargedTile, LushTile),
+                new Modifiers.OnlyTiles(StoneTile, LushTile, DirtTile, SandTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 4, new Vector2D(0, -10), 0, 4, 3)
             }));
             WorldUtils.Gen(lowerUndergroundOrigin, lowerUndergroundShape, Actions.Chain(new GenAction[]
@@ -589,7 +589,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 new AeroGenUtils.NotSolidBelow(20),
                 new Modifiers.Offset(0, -2),
                 new Modifiers.Dither(.985), // 1/66.66 chance
-                new Modifiers.OnlyTiles(StoneTile, ChargedTile, LushTile),
+                new Modifiers.OnlyTiles(StoneTile, LushTile, DirtTile, SandTile),
                 new AeroGenUtils.PlaceTail(CrystalTile, 4, new Vector2D(0, 10), 0, 4, 3)
             }));
 
@@ -607,7 +607,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 Actions.Chain(
                     new GenAction[]
                     {
-                        new Modifiers.Offset(-BiomeWidth / 2, -(int)(SurfaceHeight)),
+                        new Modifiers.Offset(-BiomeWidth / 2, -SurfaceHeight),
                         new Actions.Blank().Output(surfaceShapeData),
                         new Actions.Blank().Output(totalBiomeShapeData)
                     }
@@ -635,7 +635,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                 Actions.Chain(
                     new GenAction[]
                     {
-                        new Modifiers.Offset(0, -(int)(0.5 * UndergroundHeight)), // Positive Y shifts upwards because of Modifiers.Flip()
+                        new Modifiers.Offset(0, -UpperUndergroundHeight), // Positive Y shifts upwards because of Modifiers.Flip()
                         new Modifiers.Flip(false, true),
                         new Actions.Blank().Output(lowerUndergroundShapeData),
                         new Actions.Blank().Output(totalUndergroundShapeData),
