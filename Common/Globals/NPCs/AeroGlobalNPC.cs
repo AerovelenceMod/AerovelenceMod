@@ -1,11 +1,11 @@
 using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Content.Biomes;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
-using Microsoft.Xna.Framework;
+
 using System.Collections.Generic;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.ModLoader.Utilities;
 
 namespace AerovelenceMod.Common.Globals.NPCs

@@ -1,12 +1,12 @@
 ﻿using System;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
+
+
+
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using AerovelenceMod.Content.Walls.CrystalCaverns.Natural;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
 using System.Linq;
 
@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Tools
         {
             Item.DefaultToSolution(ModContent.ProjectileType<ElectricBlueSolutionProjectile>());
             Item.value = Item.buyPrice(silver: 25);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.LatePHM;
         }
 
         public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)

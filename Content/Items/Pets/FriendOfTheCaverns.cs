@@ -1,10 +1,10 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Pets
 {
@@ -20,7 +20,7 @@ namespace AerovelenceMod.Content.Items.Pets
             Item.UseSound = SoundID.Item44;
             Item.noMelee = true;
             Item.value = Item.sellPrice(silver: 80);
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.MidPHM;
             Item.buffType = ModContent.BuffType<FriendOfTheCavernsBuff>();
             Item.shoot = ModContent.ProjectileType<FriendOfTheCavernsPet>();
         }

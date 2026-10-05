@@ -1,13 +1,13 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
+
+
 using Terraria.GameContent;
 using System.Linq;
 using System;
 using Terraria.DataStructures;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion;
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry

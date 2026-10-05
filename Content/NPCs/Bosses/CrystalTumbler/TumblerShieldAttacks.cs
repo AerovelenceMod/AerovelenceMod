@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Items.BossSummons;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
@@ -291,7 +291,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 opacity *= MathHelper.SmoothStep(0f, 1f, retirement / 36f);
             float flash = MathHelper.Clamp((70f - timer) / 10f, 0f, 1f) * (timer >= 60 ? 1f : 0f);
             Color color = Color.Lerp(TumblerVFX.PhaseColor(phase), Color.White, flash);
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 Texture2D glow = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow64", AssetRequestMode.ImmediateLoad).Value;
                 Main.spriteBatch.Draw(glow, center - Main.screenPosition, null, TumblerVFX.Glow(color, opacity * (0.22f + flash * 0.35f)), 0f, glow.Size() * 0.5f, radius * 2.7f / glow.Width, SpriteEffects.None, 0f);

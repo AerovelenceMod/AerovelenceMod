@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Overworld;
 
@@ -43,7 +43,7 @@ public class MeteorInvader : ModItem
         Item.shoot = ModContent.ProjectileType<MeteorInvaderMinion>();
         Item.shootSpeed = 1f;
         Item.buffType = ModContent.BuffType<MeteorInvaderBuff>();
-        Item.rare = ItemRarityID.Orange;
+        Item.rare = ItemRarities.EarlyPHM;
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item44 with { Volume = .55f, Pitch = -.2f };
     }

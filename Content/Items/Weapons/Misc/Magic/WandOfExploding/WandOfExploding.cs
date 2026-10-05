@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.Audio;
 using ReLogic.Content;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Common;
 using Terraria.Graphics;
 using AerovelenceMod.Common.Systems;
@@ -432,7 +432,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
         List<Vector2> previousPositions = new List<Vector2>();
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawTrail(giveUp: false);
             });

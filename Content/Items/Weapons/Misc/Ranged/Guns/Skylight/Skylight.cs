@@ -1,19 +1,12 @@
-﻿using AerovelenceMod.Common.Utilities;
+﻿using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.NPC;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
-using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
@@ -52,7 +45,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             Item.DamageType = DamageClass.Ranged;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.sellPrice(0, 9, 0, 0);
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ItemRarities.PostPlantDungeon;
 
             Item.shoot = ModContent.ProjectileType<SkylightElectricShot>();
             Item.shootSpeed = 12f;

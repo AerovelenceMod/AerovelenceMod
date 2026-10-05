@@ -2,23 +2,23 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
-using Terraria.ID;
+
 using Terraria.IO;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 using Terraria.WorldBuilding;
 

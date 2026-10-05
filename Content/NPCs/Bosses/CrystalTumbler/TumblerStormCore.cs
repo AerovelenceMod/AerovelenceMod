@@ -1,10 +1,10 @@
 using System;
 using AerovelenceMod.Common.Systems;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
@@ -17,7 +17,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             Color orange = TumblerVFX.PhaseColor(1f);
             Color gold = new(255, 213, 135);
             float pulse = 1f + MathF.Sin(time * 0.13f) * 0.025f;
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
                 Vector2 position = (center - Main.screenPosition) * 0.5f;
@@ -52,7 +52,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 spriteBatch.Draw(bloom, position, null, Color.White * (opacity * 0.9f), 0f, bloom.Size() * 0.5f, radius * 0.45f / bloom.Width, SpriteEffects.None, 0f);
                 spriteBatch.End();
                 spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, null, Matrix.Identity);
-            }, PixellationSystem.RenderType.Additive);
+            });
 
             for (int strand = 0; strand < 5; strand++)
             {

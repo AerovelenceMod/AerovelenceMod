@@ -1,9 +1,4 @@
-﻿using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.Localization;
-using Terraria.ModLoader;
+﻿using Terraria.Localization;
 
 namespace AerovelenceMod.Content.Items.Pets
 {
@@ -32,11 +27,12 @@ namespace AerovelenceMod.Content.Items.Pets
 
     public class LightningFishBuff : ModBuff
     {
-        public override LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.LightningFishBuff.DisplayName", () => "Fish Partner");
-        public override LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.LightningFishBuff.Description", () => "'I now pronounce you Terrarian and Fish'");
-
         public override void SetStaticDefaults()
         {
+			LocalizationManager.Bind(DisplayName.Key, DisplayName);
+        	LocalizationManager.Bind(Description.Key, Description);
+        	LocalizationManager.RegisterTranslation(DisplayName.Key, "Fish Partner", "default");
+        	LocalizationManager.RegisterTranslation(Description.Key, "'I now pronounce you Terrarian and Fish'", "default");
             Main.buffNoTimeDisplay[Type] = true;
             Main.lightPet[Type] = true;
         }

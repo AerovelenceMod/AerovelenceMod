@@ -1,11 +1,11 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Content;
 using System.Collections.Generic;
-using Terraria.ID;
+
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
@@ -91,7 +91,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
             if ((dust.customData as WindLineBehavior).pixelize)
             {
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
                 {
                     Draw(dust);
                 });

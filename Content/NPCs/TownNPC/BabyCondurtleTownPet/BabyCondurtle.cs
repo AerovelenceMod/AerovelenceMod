@@ -1,19 +1,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Crafting;
 using AerovelenceMod.Content.Items.Misc;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet

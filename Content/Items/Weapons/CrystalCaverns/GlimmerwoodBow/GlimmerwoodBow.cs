@@ -1,15 +1,15 @@
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Ammo;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 {
@@ -44,7 +44,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.shoot = ProjectileID.WoodenArrowFriendly;
             Item.shootSpeed = 6.2f;
             Item.UseSound = SoundID.Item5;
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = Item.sellPrice(copper: 30);
         }
 

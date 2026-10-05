@@ -1,24 +1,24 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using Humanizer;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using static Basic.Reference.Assemblies.Net80;
 using static Terraria.ModLoader.PlayerDrawLayer;
 
@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
             Item.useTime = Item.useAnimation = 20;
             Item.shoot = ModContent.ProjectileType<MarionetteProj>();
 
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.MidPHM;
 
             Item.channel = true;
             Item.noMelee = true;

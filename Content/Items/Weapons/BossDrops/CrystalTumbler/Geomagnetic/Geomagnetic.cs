@@ -1,21 +1,20 @@
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System.IO;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
 {
@@ -42,7 +41,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             Item.knockBack = 3;
             Item.shootSpeed = 7;
             Item.shoot = ModContent.ProjectileType<GeomagneticBolt>();
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.value = Item.sellPrice(gold: 1);
             Item.UseSound = SoundID.Item93 with { Volume = .45f };
         }

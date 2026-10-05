@@ -1,6 +1,6 @@
-/*using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+/*
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Slate
 {
@@ -21,7 +21,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
             Item.useStyle = ItemUseStyleID.Swing;
             Item.knockBack = 6;
             Item.value = Item.sellPrice(0, 0, 20, 0);
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.autoReuse = true;
         }
 		public override void AddRecipes()

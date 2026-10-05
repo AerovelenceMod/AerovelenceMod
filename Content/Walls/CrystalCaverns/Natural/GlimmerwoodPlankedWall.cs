@@ -1,9 +1,9 @@
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Walls.CrystalCaverns.Natural
 {

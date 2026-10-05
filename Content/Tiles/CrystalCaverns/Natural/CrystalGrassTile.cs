@@ -1,16 +1,16 @@
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
 using static Terraria.ID.ContentSamples.CreativeHelper;
 

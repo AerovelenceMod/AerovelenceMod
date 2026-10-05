@@ -1,15 +1,15 @@
 using System;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler.Rubbleswarm;
 
@@ -40,7 +40,7 @@ public class Rubbleswarm : ModItem
         Item.shoot = ModContent.ProjectileType<RubbleboundMinion>();
         Item.buffType = ModContent.BuffType<RubbleboundBuff>();
         Item.shootSpeed = 1f;
-        Item.rare = ItemRarityID.Green;
+        Item.rare = ItemRarities.MidPHM;
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item44;
     }

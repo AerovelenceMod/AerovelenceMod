@@ -4,9 +4,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 
-using Terraria;
+
 using Terraria.UI;
-using Terraria.ModLoader;
+
 using AerovelenceMod.Core.Abstracts;
 
 #endregion

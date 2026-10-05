@@ -1,7 +1,7 @@
 using System.IO;
 using Terraria.ModLoader.IO;
-using Terraria.ModLoader;
-using Terraria;
+
+
 using AerovelenceMod.Content.NPCs.TownNPC.RockCollector;
 
 namespace AerovelenceMod.Common.Systems

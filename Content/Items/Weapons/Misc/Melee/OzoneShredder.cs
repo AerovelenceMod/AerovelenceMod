@@ -1,13 +1,13 @@
 ﻿/*
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.ObjectModel;
 
 
@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ItemRarities.PostPlantDungeon;
             Item.DamageType = DamageClass.Melee;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;

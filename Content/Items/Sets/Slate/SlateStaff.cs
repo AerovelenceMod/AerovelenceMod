@@ -1,15 +1,15 @@
 ﻿/*
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.ObjectModel;
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
@@ -47,7 +47,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
             Item.knockBack = 4;
             Item.value = Item.sellPrice(0, 1, 0, 0);
             Item.mana = 16;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<SlateStaffHeldProj>();
             Item.shootSpeed = 12f;

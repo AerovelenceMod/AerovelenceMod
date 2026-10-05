@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
-using Terraria;
+
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.TreasureBags
 {

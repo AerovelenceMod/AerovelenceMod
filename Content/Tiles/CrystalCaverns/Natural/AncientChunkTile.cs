@@ -1,8 +1,8 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<AncientChunkTile>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }

@@ -1,16 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using Terraria;
+﻿using ReLogic.Content;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 using System;
 using Terraria.Audio;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
 using System.Collections.Generic;
 using Terraria.Graphics;
 

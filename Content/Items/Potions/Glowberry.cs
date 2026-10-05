@@ -1,9 +1,9 @@
-﻿using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Potions
 {
@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Items.Potions
         {
             Item.DefaultToFood(24, 26, BuffID.WellFed, 5 * 60 * 60);
             Item.value = Item.buyPrice(0, 1);
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
         }
     }
 }

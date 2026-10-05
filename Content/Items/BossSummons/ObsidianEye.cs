@@ -1,10 +1,10 @@
 ﻿using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.Audio;
-using Microsoft.Xna.Framework;
-using AerovelenceMod.Common.Systems.Language;
+
+
 
 namespace AerovelenceMod.Content.Items.BossSummons
 {
@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Items.BossSummons
 
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.UseSound = SoundID.Item44;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarities.RarePrePlant;
         }
 
         public override bool CanUseItem(Player player) => !Main.dayTime;// && !NPC.AnyNPCs(ModContent.NPCType<Cyvercry>());

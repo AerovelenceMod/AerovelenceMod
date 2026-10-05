@@ -1,6 +1,6 @@
 ﻿#region Using directives
 
-using Terraria.ModLoader;
+
 
 #endregion
 

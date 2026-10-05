@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.DataStructures;
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using Terraria.Graphics;

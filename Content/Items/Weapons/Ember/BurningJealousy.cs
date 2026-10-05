@@ -1,26 +1,19 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.ObjectModel;
 using Terraria.Audio;
-using AerovelenceMod.Content.Projectiles;
 using ReLogic.Content;
 using Terraria.Graphics;
-using AerovelenceMod.Common.Utilities;
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Content.Dusts.GlowDusts;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using static Terraria.NPC;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ember
 {
@@ -1065,7 +1058,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         //OrangeRed, Orange, Gold, Gold, Wheat, White
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D sixStar = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Flares/star_05");
+            Texture2D sixStar = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
             Texture2D circle = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
             Texture2D circle2 = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/Textures/circle_05");
             Texture2D color = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/color_burst_30");

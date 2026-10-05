@@ -1,8 +1,8 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+﻿
+
+
+
+
 using Terraria.Graphics.Effects;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 using System;

@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using System;
 using Terraria.DataStructures;
 using static Terraria.NPC;
@@ -12,7 +12,7 @@ using ReLogic.Content;
 using Terraria.Graphics;
 using UtfUnknown.Core.Models.SingleByte.Finnish;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common;
 
@@ -28,7 +28,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.LucentBeam
             Item.knockBack = 2f;
             Item.crit = 4;
             Item.DamageType = DamageClass.Magic;
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ItemRarities.EarlyHardmode;
             Item.width = 20;
             Item.height = 20;
             Item.useAnimation = 15;
@@ -258,7 +258,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.LucentBeam
             if (myEffect == null)
                 myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/Scroll/ComboLaserVertexGradient", AssetRequestMode.ImmediateLoad).Value;
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
             {
                 RainbowSigil();
                 DrawTrail(false);

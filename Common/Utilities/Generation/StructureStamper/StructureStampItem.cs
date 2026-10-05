@@ -1,7 +1,7 @@
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 {
@@ -14,7 +14,6 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
             Item.useTime = 10;
             Item.useAnimation = 10;
             Item.useStyle = ItemUseStyleID.Swing;
-            Item.rare = ItemRarityID.Blue;
             Item.UseSound = SoundID.Item1;
         }
 

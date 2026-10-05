@@ -1,17 +1,17 @@
 using System;
 using ReLogic.Content;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
 
@@ -373,7 +373,7 @@ internal sealed class EnrichmentLightning
         float phase = ticks * .1f;
         Color tint = Color.Lerp(color, Color.White, .28f);
         Color core = Color.Lerp(Color.LightGoldenrodYellow, Color.White, .55f);
-        PixellationSystem.QueuePixelationAction(() =>
+        ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
         {
             void Stroke(Vector2[] vertices, float strength, float thickness, bool bloom)
             {
@@ -396,6 +396,6 @@ internal sealed class EnrichmentLightning
                 Vector2 point = (path[i == 0 ? 0 : path.Length - 1] - Main.screenPosition) * .5f;
                 Main.spriteBatch.Draw(star, point, null, tint * (opacity * .65f), phase * (i == 0 ? 1f : -1f), star.Size() * .5f, 7f / star.Width, SpriteEffects.None, 0f);
             }
-        }, PixellationSystem.RenderType.Additive);
+        });
     }
 }

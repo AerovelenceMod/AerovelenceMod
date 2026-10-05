@@ -1,12 +1,12 @@
-﻿using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿
+
+
+
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework.Graphics;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Common.Systems.Language;
+
+
+
 using System;
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories

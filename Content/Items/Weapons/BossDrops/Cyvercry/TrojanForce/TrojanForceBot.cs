@@ -1,22 +1,22 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Particles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 {
@@ -531,7 +531,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
 
             //Orb on top
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawBasicBall(false);
             });
@@ -773,7 +773,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             Main.EntitySpriteDraw(gash, drawPos, null, Color.White with { A = 0 } * Easings.easeInQuad(justShotVal) * 1f, gashRot, gash.Size() / 2f, gashScale * 1f, SpriteEffects.None);
             #endregion
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawTrail(false);
                 DrawBasicBall(false);
@@ -945,7 +945,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
         public List<Vector2> previousPositions = new List<Vector2>();
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawTrail(false);
             });

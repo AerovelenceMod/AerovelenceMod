@@ -1,19 +1,19 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using AerovelenceMod.Content.Projectiles;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 {

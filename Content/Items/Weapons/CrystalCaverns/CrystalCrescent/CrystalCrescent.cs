@@ -1,18 +1,11 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿using Terraria.DataStructures;
 using Terraria.Audio;
-using AerovelenceMod.Content.Projectiles;
 using System;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using System.Collections.Generic;
 using Mono.Cecil;
 using static System.Net.Mime.MediaTypeNames;
-using AerovelenceMod.Common.Systems.Language;
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 
@@ -52,7 +45,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.autoReuse = true;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.DamageType = DamageClass.Melee;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.channel = true;

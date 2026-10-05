@@ -1,6 +1,6 @@
-﻿/*using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿/*
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Item.useStyle = ItemUseStyleID.Swing;
             Item.knockBack = 5;
             Item.value = Item.sellPrice(silver: 50);
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.autoReuse = false;
         }
         public override void AddRecipes()

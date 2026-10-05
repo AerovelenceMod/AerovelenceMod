@@ -1,14 +1,7 @@
 using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria;
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {

@@ -1,8 +1,8 @@
 using Terraria.Graphics.Capture;
 using Terraria.Graphics.Effects;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
+
+
+
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 

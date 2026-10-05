@@ -1,20 +1,20 @@
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
-using Terraria.ID;
+
 using Terraria.IO;
 using Terraria.Localization;
 using Language = Terraria.Localization.Language;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Common.Utilities
@@ -212,7 +212,7 @@ namespace AerovelenceMod.Common.Utilities
                 top--;
             int chest = Chest.FindChest(left, top);
             if (chest < 0)
-                return Language.GetTextValue("LegacyDresserType.0");
+                return Terraria.Localization.Language.GetTextValue("LegacyDresserType.0");
             if (Main.chest[chest].name == "")
                 return name;
             return name + ": " + Main.chest[chest].name;
@@ -500,12 +500,12 @@ namespace AerovelenceMod.Common.Utilities
                 if (player.SpawnX == spawnX && player.SpawnY == spawnY)
                 {
                     player.RemoveSpawn();
-                    Main.NewText(Language.GetTextValue("Game.SpawnPointRemoved"), 255, 240, 20);
+                    Main.NewText(Terraria.Localization.Language.GetTextValue("Game.SpawnPointRemoved"), 255, 240, 20);
                 }
                 else if (Player.CheckSpawn(spawnX, spawnY))
                 {
                     player.ChangeSpawn(spawnX, spawnY);
-                    Main.NewText(Language.GetTextValue("Game.SpawnPointSet"), 255, 240, 20);
+                    Main.NewText(Terraria.Localization.Language.GetTextValue("Game.SpawnPointSet"), 255, 240, 20);
                 }
             }
             return true;

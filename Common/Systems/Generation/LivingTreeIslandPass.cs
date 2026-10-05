@@ -4,11 +4,11 @@ using System.Collections.Generic;
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+
+
+
 using Terraria.IO;
-using Terraria.ModLoader;
+
 using Terraria.WorldBuilding;
 #endif
 

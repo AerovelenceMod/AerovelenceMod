@@ -1,19 +1,19 @@
-/*using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+/*
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.DataStructures;
 using System;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.Players;
 using static Terraria.NPC;
 
@@ -39,7 +39,7 @@ namespace AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun
             Item.noMelee = true;
             Item.knockBack = 1;
             Item.value = Item.sellPrice(0, 25, 0, 0);
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarities.MidPHM;
             Item.autoReuse = true;
             Item.shoot = ProjectileID.BeeArrow;
             Item.shootSpeed = 8f;

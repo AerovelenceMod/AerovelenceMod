@@ -1,17 +1,10 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System.Collections.ObjectModel;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Audio;
 using System.Reflection.PortableExecutable;
@@ -21,7 +14,7 @@ using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ocean
@@ -390,7 +383,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 Main.EntitySpriteDraw(star, drawPos, null, Color.White with { A = 0 } * starPower, starRotation, star.Size() / 2f, starScale * 0.55f, SpriteEffects.None);
             }
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawTrail();
             });

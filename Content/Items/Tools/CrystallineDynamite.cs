@@ -1,17 +1,17 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.Items.Tools
@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Items.Tools
             Item.CloneDefaults(ItemID.Dynamite);
             Item.maxStack = 1;
             Item.consumable = false;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.value = Item.sellPrice(gold: 2);
             Item.shoot = ProjectileID.Dynamite;
         }

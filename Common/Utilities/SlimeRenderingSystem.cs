@@ -1,6 +1,6 @@
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
+
+
+
 namespace AerovelenceMod.Common.Utilities
 {
     public sealed class SlimeRenderingSystem : ModSystem

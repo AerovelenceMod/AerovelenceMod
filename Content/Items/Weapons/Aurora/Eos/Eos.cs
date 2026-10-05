@@ -1,20 +1,13 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
-using Terraria;
+﻿using ReLogic.Content;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Audio;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
-using AerovelenceMod.Content.Projectiles;
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common;
-using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Bases;
 
 namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 {
@@ -53,7 +46,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             Item.useAnimation = 30;
             Item.useTime = 30;
 
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarities.EarlyHardmode;
             Item.DamageType = DamageClass.Melee;
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.sellPrice(0, 5, 0, 0);

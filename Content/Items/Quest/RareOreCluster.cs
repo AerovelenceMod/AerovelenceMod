@@ -1,13 +1,7 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
 using AerovelenceMod.Content.Dusts;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Quest
 {
@@ -31,7 +25,7 @@ namespace AerovelenceMod.Content.Items.Quest
             Item.width = SpriteWidth;
             Item.height = SpriteHeight;
             Item.maxStack = Item.CommonMaxStack;
-            Item.rare = RewardTier >= 10 ? ItemRarityID.Pink : RewardTier >= 6 ? ItemRarityID.LightRed : ItemRarityID.Green;
+            Item.rare = RewardTier >= 10 ? ItemRarities.PrePlantPostMech : RewardTier >= 6 ? ItemRarities.EarlyHardmode : ItemRarities.MidPHM;
             Item.value = Item.sellPrice(silver: Math.Max(1, RewardSilver / 5));
         }
 

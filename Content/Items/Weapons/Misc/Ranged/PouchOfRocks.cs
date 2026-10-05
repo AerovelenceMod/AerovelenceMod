@@ -1,17 +1,17 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Utilities;
+﻿
+
+
+
 using Terraria.Audio;
-using Microsoft.Xna.Framework;
+
 using Terraria.DataStructures;
-using Microsoft.Xna.Framework.Graphics;
+
 using Terraria.GameContent;
 using AerovelenceMod.Common.Systems;
 using System.Collections.Generic;
 using System;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 {
@@ -232,7 +232,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             UpdateSegments();
             UpdateBranches();
 
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 for (int i = 0; i < 0.2; i++)
                 {
@@ -284,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                     }
                 }
 
-            }, PixellationSystem.RenderType.Additive);
+            });
 
             if (Projectile.timeLeft < 10)
             {
@@ -399,7 +399,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         public override bool PreDraw(ref Color lightColor)
         {
             if (segmentPositions == null) return false;
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
                 Texture2D lineTexture = TextureAssets.MagicPixel.Value;
@@ -618,7 +618,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                         );
                     }
                 }
-            }, PixellationSystem.RenderType.Additive);
+            });
             return false;
         }
 

@@ -1,21 +1,21 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
 using Terraria.Audio;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 using AerovelenceMod.Content.Dusts;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
 {

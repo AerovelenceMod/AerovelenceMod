@@ -1,13 +1,13 @@
-﻿using AerovelenceMod.Common.Systems.Language;
+﻿
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.Crates
@@ -49,7 +49,7 @@ namespace AerovelenceMod.Content.Tiles.Crates
 			Item.DefaultToPlaceableTile(ModContent.TileType<ThunderCrateTile>());
 			Item.width = 12;
 			Item.height = 12;
-			Item.rare = ItemRarityID.Orange;
+			Item.rare = ItemRarities.MidPHM;
 			Item.value = Item.sellPrice(0, 2);
 		}
 

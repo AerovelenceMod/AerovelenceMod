@@ -1,18 +1,18 @@
-﻿/*using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿/*
+
 using System;
-using Terraria;
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 //using Terraria.Localization;
-using Terraria.ModLoader;
+
 using System.Collections.Generic;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.UI;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
@@ -37,7 +37,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
         public override void SetDefaults()
         {
             Item.DefaultToWhip(ModContent.ProjectileType<PhanticWhipProjectile>(), 12, 2.5f, 4);
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarities.MidPHM;
             Item.channel = true;
             Item.value = Item.sellPrice(silver: 50);
         }

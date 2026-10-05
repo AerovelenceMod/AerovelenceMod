@@ -2,13 +2,13 @@ using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural

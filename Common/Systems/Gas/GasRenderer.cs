@@ -1,10 +1,10 @@
 using System;
 using System.Diagnostics;
 using AerovelenceMod.Common.Systems;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Common.Systems.Gas;
 
@@ -21,7 +21,7 @@ public sealed class GasRenderer : ModSystem
             return;
         persistentDraw ??= DrawGas;
         if (!alphaRegistered)
-            alphaRegistered = ModContent.GetInstance<NewPixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, HasGas, persistentDraw);
+            alphaRegistered = ModContent.GetInstance<PixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, HasGas, persistentDraw);
         if (!Main.gameMenu && GasPerfControl.LightingEnabled)
         {
             long start = Stopwatch.GetTimestamp();
@@ -146,7 +146,7 @@ public sealed class GasRenderer : ModSystem
         if (Main.dedServ)
             return;
         if (persistentDraw is not null)
-            ModContent.GetInstance<NewPixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, persistentDraw);
+            ModContent.GetInstance<PixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, persistentDraw);
         alphaRegistered = false;
         persistentDraw = null;
         BasicEffect old = effect;

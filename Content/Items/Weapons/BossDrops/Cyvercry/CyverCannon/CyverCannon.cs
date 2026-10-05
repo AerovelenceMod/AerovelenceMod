@@ -1,10 +1,10 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using System;
 using Terraria.DataStructures;
 using static Terraria.NPC;
@@ -16,7 +16,7 @@ using System.Runtime.InteropServices;
 using Terraria.Graphics;
 using static tModPorter.ProgressUpdate;
 using Terraria.UI;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common;
@@ -350,7 +350,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             if (timer == 0)
                 return false;
 
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
             {
                 DrawLaser(true);
             });
@@ -612,7 +612,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             if (timer < 90)
                 return false;
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 //Orb
                 Texture2D orb = CommonTextures.flare_12.Value;
@@ -797,7 +797,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
         public List<Vector2> trailPositions = new List<Vector2>();
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 RainbowLaser();
             });

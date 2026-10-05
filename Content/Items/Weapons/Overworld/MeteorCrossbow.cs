@@ -1,15 +1,15 @@
-﻿using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+﻿
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Overworld
 {
@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
         {
             Item.width = 36;
             Item.height = 20;
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.EarlyPHM;
 
             Item.useTime = 26;
             Item.useAnimation = 26;

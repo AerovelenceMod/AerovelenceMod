@@ -1,11 +1,10 @@
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
+
 using Microsoft.Xna.Framework.Graphics.PackedVector;
-using Microsoft.Xna.Framework.Graphics;
+
 using System.Linq;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.GameContent;
 using System.Collections.Generic;
 using ReLogic.Content;

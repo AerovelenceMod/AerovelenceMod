@@ -1,15 +1,15 @@
 using System.Collections.Generic;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Projectiles.Gas;
-using Microsoft.Xna.Framework;
+
+
+using AerovelenceMod.Content.Projectiles;
+
 using Microsoft.Xna.Framework.Input;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic;
@@ -46,7 +46,6 @@ public sealed class ThisIsGas : TranslatableModItem
         Item.shoot = ModContent.ProjectileType<GasCloud>();
         Item.noMelee = true;
         Item.autoReuse = true;
-        Item.rare = ItemRarityID.Pink;
     }
 
     public override bool AltFunctionUse(Player player) => true;

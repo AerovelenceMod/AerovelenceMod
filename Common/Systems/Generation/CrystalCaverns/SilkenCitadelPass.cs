@@ -9,13 +9,13 @@ using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using AerovelenceMod.Content.Walls.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
+
 using ReLogic.Utilities;
-using Terraria;
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 using Terraria.IO;
-using Terraria.ModLoader;
+
 using Terraria.ModLoader.IO;
 using Terraria.WorldBuilding;
 

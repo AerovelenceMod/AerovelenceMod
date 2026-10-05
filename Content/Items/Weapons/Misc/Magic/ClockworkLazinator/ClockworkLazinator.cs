@@ -1,25 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Projectiles.Weapons.Magic;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Graphics.Shaders;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Common.Interfaces;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator

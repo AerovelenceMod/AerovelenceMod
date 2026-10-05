@@ -1,11 +1,11 @@
-/*using AerovelenceMod.Common.Systems.Language;
+/*
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Items.Sets.Burnshock

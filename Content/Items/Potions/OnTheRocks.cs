@@ -1,11 +1,11 @@
-using AerovelenceMod.Common.Utilities;
+
 using System.Collections.Generic;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using LocalizedText = Terraria.Localization.LocalizedText;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using AerovelenceMod.Common.Systems.Language;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Potions
 {
@@ -52,8 +52,13 @@ namespace AerovelenceMod.Content.Items.Potions
     }
     public class OnTheRocksBuff : ModBuff
     {
-        public override LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.OnTheRocksBuff.DisplayName", () => "On the Rocks");
-        public override LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.OnTheRocksBuff.Description", () => "4% increased melee Skill Strike damage");
+        public override void SetStaticDefaults()
+        {
+			LocalizationManager.Bind(DisplayName.Key, DisplayName);
+        	LocalizationManager.Bind(Description.Key, Description);
+        	LocalizationManager.RegisterTranslation(DisplayName.Key, "On the Rocks", "default");
+        	LocalizationManager.RegisterTranslation(Description.Key, "4% increased melee Skill Strike damage", "default");
+        }
         public override void Update(Player player, ref int buffIndex) => player.GetModPlayer<OnTheRocksPlayer>().Active = true;
     }
 

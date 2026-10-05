@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.DataStructures;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Graphics.Shaders;
 using Terraria.Graphics;
 using AerovelenceMod.Content.Projectiles.TempVFX;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 {

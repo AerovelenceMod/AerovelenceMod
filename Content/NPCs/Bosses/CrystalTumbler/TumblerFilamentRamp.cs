@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Items.BossSummons;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
@@ -119,7 +119,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (opacity <= 0f)
                 return false;
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderNPCs, () => DrawRamp(opacity));
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderNPCs, () => DrawRamp(opacity));
             return false;
         }
 

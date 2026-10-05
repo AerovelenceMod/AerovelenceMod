@@ -1,17 +1,17 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 {
@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             base.SetDefaults();
             Item.width = 54;
             Item.height = 24;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 60);
             Item.damage = 27;
             Item.DamageType = DamageClass.Ranged;

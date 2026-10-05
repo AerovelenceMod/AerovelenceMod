@@ -1,17 +1,17 @@
 ﻿/*
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.ObjectModel;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
-using AerovelenceMod.Common.Utilities;
+
 
 namespace AerovelenceMod.Content.Items.Sets.Slate
 {
@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
             Item.noMelee = true;
             Item.knockBack = 4;
             Item.value = Item.sellPrice(0, 1, 0, 0);
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.autoReuse = true;
             Item.shoot = AmmoID.Arrow;
             Item.useAmmo = AmmoID.Arrow;

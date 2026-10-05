@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
+
 using AerovelenceMod.Content.Biomes;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.GameContent;
 
 namespace AerovelenceMod.Backgrounds

@@ -1,7 +1,7 @@
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 
 namespace AerovelenceMod.Common.Systems
 {
@@ -19,7 +19,7 @@ namespace AerovelenceMod.Common.Systems
                 .AddTile(TileID.Bottles)
                 .Register();
             Recipe.Create(ItemID.LuckyHorseshoe, 1)
-                .AddRecipeGroup("AerovelenceMod:GoldBars", 5)
+                .AddRecipeGroup("AerovelenceMod:GoldOrPlatinum", 5)
                 .AddIngredient(ItemID.Cloud, 5)
                 .AddIngredient(ItemID.SunplateBlock, 3)
                 .AddTile(TileID.SkyMill)

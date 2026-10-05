@@ -1,12 +1,6 @@
 using System;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Utilities;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler

@@ -1,19 +1,13 @@
-using Microsoft.Xna.Framework;
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
-using Microsoft.Xna.Framework.Graphics;
 using Terraria.Graphics;
-using AerovelenceMod.Content.Projectiles;
 using MonoMod.Utils;
-using AerovelenceMod.Common.Utilities;
 using static Humanizer.In;
 using ReLogic.Content;
 using Terraria.Map;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 
 namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance

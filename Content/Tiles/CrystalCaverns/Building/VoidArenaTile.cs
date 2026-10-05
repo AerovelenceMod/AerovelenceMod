@@ -1,7 +1,7 @@
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
 {
@@ -18,25 +18,6 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
             AddMapEntry(new Color(061, 079, 110));
             DustType = 59;
             HitSound = SoundID.Tink;
-        }
-    }
-
-    public class VoidArenaItem : ModItem
-    {
-        public override void SetDefaults()
-        {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<VoidArenaTile>();
-            Item.rare = ItemRarityID.White;
-            Item.value = 5;
         }
     }
 }

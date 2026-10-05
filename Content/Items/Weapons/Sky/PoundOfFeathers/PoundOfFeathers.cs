@@ -1,16 +1,16 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+﻿
+
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.Audio;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
 {
@@ -80,19 +80,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
 
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient(ItemID.ShadowScale, 5).
-                AddIngredient(ItemID.Silk, 20).
-                AddIngredient(ItemID.Feather, 15).
-                AddTile(TileID.Anvils).
-                Register();
-
-            CreateRecipe().
-                AddIngredient(ItemID.TissueSample, 5).
-                AddIngredient(ItemID.Silk, 20).
-                AddIngredient(ItemID.Feather, 15).
-                AddTile(TileID.Anvils).
-                Register();
+            CreateRecipe()
+                .AddRecipeGroup("AerovelenceMod:EvilMaterials", 5)
+                .AddIngredient(ItemID.Silk, 20)
+                .AddIngredient(ItemID.Feather, 15)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
 
     }

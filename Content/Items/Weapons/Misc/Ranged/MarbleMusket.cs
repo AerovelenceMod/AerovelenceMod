@@ -1,18 +1,18 @@
 ﻿using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 using Terraria.Audio;
-using Microsoft.Xna.Framework.Graphics;
-using AerovelenceMod.Common.Utilities;
+
+
 using System.Collections.Generic;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System.Linq;
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 {

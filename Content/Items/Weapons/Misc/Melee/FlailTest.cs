@@ -1,25 +1,25 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.ObjectModel;
 using Terraria.Audio;
-using AerovelenceMod.Content.Projectiles;
 using ReLogic.Content;
 using Terraria.Graphics;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Bases;
+
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using XPT.Core.Audio.MP3Sharp.Decoding.Decoders.LayerIII;
 using AerovelenceMod.Content.Dusts;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using System.Linq;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
@@ -54,7 +54,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             Item.channel = true;
 
             Item.value = Item.sellPrice(silver: 45);
-            Item.rare = ItemRarityID.Blue;
         }
 
         public override bool CanUseItem(Player player)

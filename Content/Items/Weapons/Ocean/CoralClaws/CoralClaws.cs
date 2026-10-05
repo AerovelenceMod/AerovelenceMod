@@ -2,17 +2,17 @@ using System;
 using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Ocean;
 
@@ -43,7 +43,7 @@ public class CoralClaws : ModItem
         Item.autoReuse = true;
         Item.shoot = ModContent.ProjectileType<CoralClawHand>();
         Item.shootSpeed = 1f;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarities.EarlyPHM;
         Item.value = Item.sellPrice(silver: 40);
     }
 
@@ -205,7 +205,7 @@ public class CoralClawHand : ModProjectile
         float open = progress == 0f ? .27f : progress < .46f ? MathHelper.Lerp(.27f, .95f, progress / .46f) : progress < .57f ? MathHelper.Lerp(.95f, .02f, (progress - .46f) / .11f) : MathHelper.Lerp(.02f, .27f, (progress - .57f) / .43f);
         Vector2 start = player.MountedCenter + new Vector2(Projectile.ai[0] * 10f, 7f);
         Vector2 end = Projectile.Center;
-        ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+        ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
         {
             Vector2 previous = start;
             for (int i = 1; i <= 24; i++)

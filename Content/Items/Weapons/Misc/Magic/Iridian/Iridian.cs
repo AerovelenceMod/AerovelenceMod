@@ -1,22 +1,15 @@
-﻿
-/*
+﻿/*
+using AerovelenceMod.Common.Bases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Projectiles.Weapons.Magic;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Graphics.Shaders;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Items.Weapons.Starglass;
 using Terraria.GameContent.Drawing;
 
@@ -33,7 +26,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Iridian
             Item.DamageType = DamageClass.Magic;
             Item.damage = 50;
             Item.knockBack = 2;
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ItemRarities.EarlyHardmode;
 
             Item.shoot = ModContent.ProjectileType<IridianShot1>();
             Item.shootSpeed = 25;

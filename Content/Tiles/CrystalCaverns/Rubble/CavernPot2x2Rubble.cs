@@ -1,19 +1,19 @@
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 using Terraria.Utilities;
 
@@ -50,7 +50,7 @@ public class CavernPot2x2Rubble : ModTile
         ];
         TileObjectData.addTile(Type);
 
-        AddMapEntry(new Color(70, 70, 85), Language.GetText("MapObject.Pot"));
+        AddMapEntry(new Color(70, 70, 85), Terraria.Localization.Language.GetText("MapObject.Pot"));
 
         glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
     }

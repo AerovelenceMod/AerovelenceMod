@@ -1,16 +1,16 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Bases;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Ammo
 {
@@ -36,14 +36,14 @@ namespace AerovelenceMod.Content.Items.Ammo
             Item.shoot = ModContent.ProjectileType<HellfireBulletProjectile>();
             Item.shootSpeed = 11f;
             Item.value = Item.sellPrice(copper: 1);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.LatePHM;
         }
 
         public override void AddRecipes()
         {
             CreateRecipe(100)
                 .AddIngredient(ItemID.MusketBall, 100)
-                .AddIngredient(ItemID.Hellstone, 1)
+                .AddIngredient(ItemID.Hellstone)
                 .AddTile(TileID.Furnaces)
                 .Register();
         }

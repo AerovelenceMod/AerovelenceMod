@@ -1,22 +1,22 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Particles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 {
@@ -539,7 +539,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
 
             //Orb on top
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawBasicBall(false);
             });

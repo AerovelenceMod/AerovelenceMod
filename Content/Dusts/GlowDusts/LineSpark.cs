@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using System.Collections.Generic;
@@ -12,7 +12,7 @@ using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
-using Terraria.ID;
+
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
@@ -135,7 +135,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
     {
         public override bool PreDraw(Dust dust)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Color White = Color.White with { A = 0 } * (dust.alpha / 255f);
                 Texture2D tex = Texture2D.Value;

@@ -1,12 +1,8 @@
 using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
 using ReLogic.Content;
-using Terraria;
 using Terraria.GameContent.Drawing;
 using Terraria.Graphics;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Backgrounds.CrystalCaverns.Underground
 {

@@ -1,8 +1,8 @@
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Tools
 {
@@ -29,7 +29,7 @@ namespace AerovelenceMod.Content.Items.Tools
             Item.useTurn = true;
             Item.autoReuse = true;
             Item.UseSound = SoundID.Item1;
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = Item.sellPrice(copper: 40);
         }
 

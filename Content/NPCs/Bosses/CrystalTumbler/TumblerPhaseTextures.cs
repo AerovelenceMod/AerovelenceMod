@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
 using ReLogic.Content;
-using Terraria;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {

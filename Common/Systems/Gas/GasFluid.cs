@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-using Microsoft.Xna.Framework;
+
 using Vector4 = System.Numerics.Vector4;
 
 namespace AerovelenceMod.Common.Systems.Gas;

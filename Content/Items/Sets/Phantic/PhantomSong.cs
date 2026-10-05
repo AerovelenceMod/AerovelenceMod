@@ -1,9 +1,9 @@
-/*using AerovelenceMod.Common.Systems.Language;
+/*
 using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
@@ -27,7 +27,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Item.noMelee = true;
             Item.knockBack = 4;
             Item.value = Item.sellPrice(0, 1, 0, 0);
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.autoReuse = true;
             Item.shoot = AmmoID.Arrow;
             Item.useAmmo = AmmoID.Arrow;

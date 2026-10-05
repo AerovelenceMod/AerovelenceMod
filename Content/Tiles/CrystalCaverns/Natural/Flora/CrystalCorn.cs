@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Content.Items.Crafting;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent.Metadata;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora;
@@ -91,7 +91,7 @@ public class CrystalCornSeeds : ModItem
         Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCorn>());
         Item.width = 12;
         Item.height = 14;
-        Item.rare = ItemRarityID.Pink;
+        Item.rare = ItemRarities.BasicMaterials;
         Item.value = Item.buyPrice(silver: 5);
     }
 }

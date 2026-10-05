@@ -4,13 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
-using Terraria;
-using Terraria.ModLoader;
+
+
 using Terraria.ModLoader.Core;
 using Terraria.Graphics.Shaders;
 using Terraria.Graphics.Effects;
 
-using Microsoft.Xna.Framework.Graphics;
+
 using AerovelenceMod.Core.Abstracts;
 
 #endregion
@@ -46,10 +46,7 @@ namespace AerovelenceMod.Core.Loaders
         {
             var shaderRef = new Ref<Effect>(AerovelenceMod.Instance.Assets.Request<Effect>(shaderPath).Value);
 
-            if (AerovelenceMod.DEBUG)
-            {
-                AerovelenceMod.Instance.Logger.Debug($"Loading shader: <{shaderName}> @ <{shaderPath}>");
-            }
+            AerovelenceMod.Instance.Logger.Debug($"Loading shader: <{shaderName}> @ <{shaderPath}>");
 
             (Filters.Scene[shaderName] = new Filter(new ScreenShaderData(shaderRef, shaderName + "Pass"), EffectPriority.High))
                 .Load();

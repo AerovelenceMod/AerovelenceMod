@@ -1,11 +1,11 @@
 using AerovelenceMod.Content.Items.Crafting;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.GameContent.Metadata;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
@@ -187,7 +187,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             Item.useTurn = true;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.useAnimation = 15;
-            Item.rare = ItemRarityID.Pink;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.useTime = 10;
             Item.maxStack = Item.CommonMaxStack;
             Item.consumable = true;

@@ -1,5 +1,5 @@
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Armor.Vanity
 {
@@ -10,7 +10,7 @@ namespace AerovelenceMod.Content.Items.Armor.Vanity
         {
             Item.width = 28;
             Item.height = 20;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.vanity = true;
         }
     }

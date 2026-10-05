@@ -1,17 +1,16 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using Terraria.Audio;
-using AerovelenceMod.Content.Projectiles;
 using ReLogic.Content;
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using System.Linq;
 using System.Collections.Generic;
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
@@ -20,7 +19,8 @@ using Terraria.Map;
 using System.IO;
 using Terraria.Graphics.Effects;
 using AerovelenceMod.Common;
-using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Bases;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Aurora
 {
