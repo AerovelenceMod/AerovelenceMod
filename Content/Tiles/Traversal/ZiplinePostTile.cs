@@ -51,13 +51,21 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             int row = tile.TileFrameY / 18 % Height;
             bool ceiling = tile.TileFrameX == 18;
             if (ceiling) row = Height - 1 - row;
-            return DrawPost(i, j, spriteBatch, row, ceiling ? SpriteEffects.FlipVertically : SpriteEffects.None);
+            return DrawPost(i, j, spriteBatch, row, ceiling);
+        }
+
+        public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch, ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement, ref SpriteEffects spriteEffects)
+        {
+            int row = frame.Y / 18 % Height;
+            bool ceiling = frame.X == 18;
+            if (ceiling) row = Height - 1 - row;
+            return DrawPost(i, j, spriteBatch, row, ceiling, true, validPlacement);
         }
     }
 
     public sealed class ZiplinePost : TranslatableModItem
     {
-        public override string Texture => "Terraria/Images/Item_" + ItemID.WoodenBeam;
+        public override string Texture => "AerovelenceMod/Content/Tiles/Traversal/ZiplinePostItem";
 
         public override void SetStaticDefaults()
         {
