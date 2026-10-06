@@ -134,7 +134,7 @@ namespace AerovelenceMod.Common.Particles
                 }
 
                 sb.End();
-                sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                sb.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.EffectMatrix);
 
             });
 
@@ -151,7 +151,7 @@ namespace AerovelenceMod.Common.Particles
                 }
 
                 sb.End();
-                sb.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.Transform);
+                sb.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, Main.Rasterizer, null, Main.GameViewMatrix.EffectMatrix);
 
             });
         }

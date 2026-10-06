@@ -133,7 +133,7 @@ namespace AerovelenceMod.Common.Systems
 
             //TODO: see if this works without immediate
             sb.Begin(SpriteSortMode.Immediate, blendState, target.Sampling ?? Main.DefaultSamplerState,
-                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
+                DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.ZoomMatrix);
 
             sb.Draw(target.pixelationTarget2.RenderTarget, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
 
@@ -178,6 +178,7 @@ namespace AerovelenceMod.Common.Systems
     {
         public SamplerState Sampling { get; init; }
         public int renderTimer;
+        private readonly BlendState blendState;
 
         // list of actions, and their draw order. Default order is zero, but actions with an order of 1 are drawn over 0, etc.
         public List<Tuple<Action, int>> pixelationDrawActions;
@@ -191,8 +192,9 @@ namespace AerovelenceMod.Common.Systems
 
         public bool Active => renderTimer > 0 || persistentPixelationDrawActions.Any(t => t.Item1());
 
-        public PixelationTarget(RenderLayer renderType)
+        public PixelationTarget(RenderLayer renderType, BlendState blendState = null)
         {
+            this.blendState = blendState ?? BlendState.AlphaBlend;
             pixelationDrawActions = new List<Tuple<Action, int>>();
             persistentPixelationDrawActions = new List<Tuple<Func<bool>, Action, int>>();
 
@@ -208,7 +210,7 @@ namespace AerovelenceMod.Common.Systems
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             sb.End();
-            sb.Begin(default, default, Sampling ?? Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
+            sb.Begin(default, default, Sampling ?? Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Matrix.Identity);
 
             sb.Draw(pixelationTarget.RenderTarget, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 0.5f, SpriteEffects.None, 0);
 
@@ -221,7 +223,7 @@ namespace AerovelenceMod.Common.Systems
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             sb.End();
-            sb.Begin(default, default, Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
+            sb.Begin(default, blendState, Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
 
             foreach (Tuple<Func<bool>, Action, int> tuple in persistentPixelationDrawActions.Where(t => t.Item1()).OrderBy(t => t.Item3))
             {
@@ -438,6 +440,13 @@ namespace AerovelenceMod.Common.Systems
     //Make sure to use Effect matrix if using a shader with this 
     public class AdditivePixelationSystem : ModSystem
     {
+        internal static readonly BlendState AdditiveBlend = new()
+        {
+            ColorSourceBlend = Blend.One,
+            ColorDestinationBlend = Blend.One,
+            AlphaSourceBlend = Blend.One,
+            AlphaDestinationBlend = Blend.One
+        };
         public List<PixelationTarget> pixelationTargets = new();
 
         public override void Load()
@@ -527,8 +536,8 @@ namespace AerovelenceMod.Common.Systems
             if (endSpriteBatch)
                 sb.End();
 
-            sb.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState,
-                DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            sb.Begin(SpriteSortMode.Deferred, AdditiveBlend, Main.DefaultSamplerState,
+                DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.ZoomMatrix);
 
             sb.Draw(target.pixelationTarget2.RenderTarget, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
 
@@ -546,7 +555,7 @@ namespace AerovelenceMod.Common.Systems
 
         public void RegisterScreenTarget(RenderLayer renderType = RenderLayer.UnderProjectiles)
         {
-            Main.QueueMainThreadAction(() => pixelationTargets.Add(new PixelationTarget(renderType)));
+            Main.QueueMainThreadAction(() => pixelationTargets.Add(new PixelationTarget(renderType, AdditiveBlend)));
         }
 
         public void QueueRenderAction(RenderLayer renderType, Action renderAction, int order = 0)

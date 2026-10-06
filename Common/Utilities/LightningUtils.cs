@@ -18,6 +18,7 @@ namespace AerovelenceMod.Common.Utilities
         public class LightningData
         {
             internal LightningStrokeRenderer StrokeRenderer;
+            internal ulong LastDustUpdate = ulong.MaxValue;
             public int MaxSegments = 12;
             public float BranchChance = 1f;
             public int MaxBranches = 2;
@@ -419,63 +420,34 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void SpawnDust(LightningData data)
         {
-            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            if (Main.dedServ || Main.gamePaused || data?.SegmentPositions == null || data.SegmentPositions.Length < 2
+                || data.Alpha <= 0f || data.LastDustUpdate == Main.GameUpdateCount)
+                return;
+            data.LastDustUpdate = Main.GameUpdateCount;
+            Vector2[] points = data.SegmentPositions;
+            Vector2 point = points[Main.rand.Next(points.Length)];
+            Vector2 direction = (points[^1] - points[0]).SafeNormalize(Vector2.Zero);
+            Color color = Color.Lerp(new Color(0, 236, 255), new Color(0, 255, 191), Main.rand.NextFloat());
+            Dust spark = Dust.NewDustPerfect(point + direction * 2f, ModContent.DustType<GlowStrong>(),
+                direction.RotatedByRandom(0.5f) * Main.rand.NextFloat(1f, 3f), 2,
+                color * data.Alpha, Main.rand.NextFloat(0.08f, 0.18f));
+            spark.noGravity = true;
+            if (data.Branches == null)
+                return;
+            foreach (Branch branch in data.Branches)
             {
-                for (int i = 0; i < 0.2; i++)
+                if (!Main.rand.NextBool(3))
+                    continue;
+                for (int i = 0; i < branch.Positions.Length - 1; i++)
                 {
-                    Vector2 randomSegment = data.SegmentPositions[Main.rand.Next(0, data.MaxSegments)];
-                    Vector2 dir = (data.SegmentPositions[data.MaxSegments - 1] - data.SegmentPositions[0])
-                        .SafeNormalize(Vector2.Zero);
-
-                    Color dustColor = Color.Lerp(
-                        new Color(0, 236, 255),
-                        new Color(0, 255, 191),
-                        Main.rand.NextFloat()
-                    );
-
-                    Dust a = Dust.NewDustPerfect(
-                        (randomSegment + dir * 2f) / 2,
-                        ModContent.DustType<GlowStrong>(),
-                        dir.RotatedByRandom(0.5f) * Main.rand.NextFloat(1f, 3f),
-                        0,
-                        newColor: dustColor,
-                        Scale: Main.rand.NextFloat(0.5f, 2f)
-                    );
-                    a.alpha = 2;
+                    Vector2 position = Vector2.Lerp(branch.Positions[i], branch.Positions[i + 1], Main.rand.NextFloat());
+                    Color branchColor = Color.Lerp(Color.Aqua, Color.LightBlue, Main.rand.NextFloat());
+                    Dust dust = Dust.NewDustPerfect(position, DustID.Electric, Vector2.Zero, 0,
+                        branchColor * branch.Alpha * data.Alpha, Main.rand.NextFloat(0.6f, 0.9f) * branch.Alpha);
+                    dust.noGravity = true;
+                    dust.fadeIn = 0f;
                 }
-
-                foreach (Branch branch in data.Branches)
-                {
-                    if (Main.rand.NextBool(3))
-                    {
-                        for (int i = 0; i < branch.Positions.Length - 1; i++)
-                        {
-                            Vector2 dustPos = Vector2.Lerp(
-                                branch.Positions[i],
-                                branch.Positions[i + 1],
-                                Main.rand.NextFloat()
-                            );
-
-                            Color dustColor = Color.Lerp(
-                                Color.Aqua,
-                                Color.LightBlue,
-                                Main.rand.NextFloat()
-                            );
-
-                            Dust dust = Dust.NewDustPerfect(
-                                dustPos,
-                                DustID.Electric,
-                                Vector2.Zero,
-                                0,
-                                dustColor * branch.Alpha * data.Alpha,
-                                Main.rand.NextFloat(0.6f, 0.9f) * branch.Alpha
-                            );
-                            dust.noGravity = true;
-                            dust.fadeIn = 0f;
-                        }
-                    }
-                }
-            });
+            }
         }
 
         public static void DrawLightning(LightningData data, SpriteBatch spriteBatch)

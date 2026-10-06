@@ -264,7 +264,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.spriteBatch.Draw(ball, drawPos, null, Color.White with { A = 0 }, rot1, ball.Size() / 2, drawScale * sineScale3, 0f, 0f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
@@ -454,7 +454,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.spriteBatch.Draw(ball, drawPos, null, Color.White with { A = 0 }, rot1, ball.Size() / 2, drawScale * sineScale3, 0f, 0f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 

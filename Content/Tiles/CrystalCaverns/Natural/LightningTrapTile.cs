@@ -577,63 +577,63 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             UpdateSegments();
             UpdateBranches();
 
-            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
-            {
-                for (int i = 0; i < 0.2; i++)
-                {
-                    Vector2 randomSegment = segmentPositions[Main.rand.Next(0, MAX_SEGMENTS)];
-                    Vector2 dir = (segmentPositions[MAX_SEGMENTS - 1] - segmentPositions[0]).SafeNormalize(Vector2.Zero);
-
-                    Color dustColor = Color.Lerp(
-                        new Color(0, 236, 255),
-                        new Color(0, 255, 191),
-                        Main.rand.NextFloat()
-                    );
-
-                    Dust a = Dust.NewDustPerfect((randomSegment + dir * 2f) / 2,
-                        ModContent.DustType<GlowStrong>(),
-                        dir.RotatedByRandom(0.5f) * Main.rand.NextFloat(1f, 3f),
-                        0, newColor: dustColor, Main.rand.NextFloat(0.5f, 2f));
-                    a.alpha = 2;
-                }
-
-                foreach (Branch branch in branches)
-                {
-                    if (Main.rand.NextBool(3))
-                    {
-                        for (int i = 0; i < branch.Positions.Length - 1; i++)
-                        {
-                            Vector2 dustPos = Vector2.Lerp(
-                                branch.Positions[i],
-                                branch.Positions[i + 1],
-                                Main.rand.NextFloat()
-                            );
-
-                            Color dustColor = Color.Lerp(
-                                Color.Aqua,
-                                Color.LightBlue,
-                                Main.rand.NextFloat()
-                            );
-
-                            Dust dust = Dust.NewDustPerfect(
-                                dustPos,
-                                DustID.Electric,
-                                Vector2.Zero,
-                                0,
-                                dustColor * branch.Alpha,
-                                Main.rand.NextFloat(0.6f, 0.9f) * branch.Alpha
-                            );
-                            dust.noGravity = true;
-                            dust.fadeIn = 0f;
-                        }
-                    }
-                }
-
-            });
+            SpawnDust();
 
             if (Projectile.timeLeft < 10)
             {
                 alpha *= 0.7f;
+            }
+        }
+
+        private void SpawnDust()
+        {
+            if (Main.dedServ || Main.gamePaused)
+                return;
+
+            Vector2 randomSegment = segmentPositions[Main.rand.Next(0, MAX_SEGMENTS)];
+            Vector2 dir = (segmentPositions[MAX_SEGMENTS - 1] - segmentPositions[0]).SafeNormalize(Vector2.Zero);
+
+            Color sparkColor = Color.Lerp(
+                new Color(0, 236, 255),
+                new Color(0, 255, 191),
+                Main.rand.NextFloat()
+            );
+
+            Dust a = Dust.NewDustPerfect(randomSegment + dir * 2f,
+                ModContent.DustType<GlowStrong>(),
+                dir.RotatedByRandom(0.5f) * Main.rand.NextFloat(1f, 3f),
+                0, newColor: sparkColor, Main.rand.NextFloat(0.08f, 0.18f));
+            a.alpha = 2;
+            foreach (Branch branch in branches)
+            {
+                if (Main.rand.NextBool(3))
+                {
+                    for (int i = 0; i < branch.Positions.Length - 1; i++)
+                    {
+                        Vector2 dustPos = Vector2.Lerp(
+                            branch.Positions[i],
+                            branch.Positions[i + 1],
+                            Main.rand.NextFloat()
+                        );
+
+                        Color dustColor = Color.Lerp(
+                            Color.Aqua,
+                            Color.LightBlue,
+                            Main.rand.NextFloat()
+                        );
+
+                        Dust dust = Dust.NewDustPerfect(
+                            dustPos,
+                            DustID.Electric,
+                            Vector2.Zero,
+                            0,
+                            dustColor * branch.Alpha,
+                            Main.rand.NextFloat(0.6f, 0.9f) * branch.Alpha
+                        );
+                        dust.noGravity = true;
+                        dust.fadeIn = 0f;
+                    }
+                }
             }
         }
 
@@ -754,8 +754,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 float energyPulse = (float)Math.Sin(Main.GameUpdateCount * 0.2f) * 0.3f + 0.7f;
                 for (int i = 0; i < MAX_SEGMENTS - 1; i++)
                 {
-                    Vector2 start = (segmentPositions[i] - Main.screenPosition) / 2;
-                    Vector2 end = (segmentPositions[i + 1] - Main.screenPosition) / 2;
+                    Vector2 start = segmentPositions[i] - Main.screenPosition;
+                    Vector2 end = segmentPositions[i + 1] - Main.screenPosition;
                     Vector2 direction = end - start;
                     float distance = direction.Length();
                     float rotation = direction.ToRotation();
@@ -831,8 +831,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/GlowTrailSlice").Value;
                 for (int i = 0; i < MAX_SEGMENTS - 1; i++)
                 {
-                    Vector2 start = (segmentPositions[i] - Main.screenPosition) / 2;
-                    Vector2 end = (segmentPositions[i + 1] - Main.screenPosition) / 2;
+                    Vector2 start = segmentPositions[i] - Main.screenPosition;
+                    Vector2 end = segmentPositions[i + 1] - Main.screenPosition;
                     Vector2 direction = end - start;
                     float distance = direction.Length();
                     float rotation = direction.ToRotation();
@@ -858,7 +858,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 //tiny impact points
                 void DrawImpactPoint(Vector2 position, float size)
                 {
-                    position = (position - Main.screenPosition) / 2;
+                    position = position - Main.screenPosition;
                     float time = Main.GameUpdateCount * 0.1f;
                     float pulseSize = 1f + (float)Math.Sin(time) * 0.2f;
 
@@ -930,8 +930,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 
                     for (int i = 0; i < branch.Positions.Length - 1; i++)
                     {
-                        Vector2 start = (branch.Positions[i] - Main.screenPosition) / 2;
-                        Vector2 end = (branch.Positions[i + 1] - Main.screenPosition) / 2;
+                        Vector2 start = branch.Positions[i] - Main.screenPosition;
+                        Vector2 end = branch.Positions[i + 1] - Main.screenPosition;
                         Vector2 direction = end - start;
                         float distance = direction.Length();
                         float rotation = direction.ToRotation();

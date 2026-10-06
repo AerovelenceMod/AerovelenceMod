@@ -260,8 +260,8 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 Color drawColor = Color.Lerp(color1Start, color1End, colorLerpProgress) * ((255 - Projectile.alpha) / 255f);
                 Color drawColor2 = Color.Lerp(color2Start, color2End, colorLerpProgress) * ((255 - Projectile.alpha) / 255f);
                 Player player = Main.player[Projectile.owner];
-                Vector2 drawPos = (player.Center - Main.screenPosition) / 2f;
-                float finalDrawScale = drawScale / 2;
+                Vector2 drawPos = player.Center - Main.screenPosition;
+                float finalDrawScale = drawScale;
                 spriteBatch.Draw(texture, drawPos, frame, drawColor, Projectile.rotation, origin, finalDrawScale, SpriteEffects.None, 0f);
                 spriteBatch.Draw(texture2, drawPos, frame, drawColor2, -Projectile.rotation, origin, finalDrawScale, SpriteEffects.None, 0f);
             });

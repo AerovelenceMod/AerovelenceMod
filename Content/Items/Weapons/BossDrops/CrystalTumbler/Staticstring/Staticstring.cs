@@ -387,8 +387,8 @@ internal sealed class StaticstringLightning
             {
                 for (int i = 0; i < vertices.Length - 1; i++)
                 {
-                    Vector2 point = (vertices[i] - Main.screenPosition) * .5f;
-                    Vector2 delta = (vertices[i + 1] - vertices[i]) * .5f;
+                    Vector2 point = vertices[i] - Main.screenPosition;
+                    Vector2 delta = vertices[i + 1] - vertices[i];
                     float rotation = delta.ToRotation();
                     float length = delta.Length();
                     if (bloom)
@@ -401,7 +401,7 @@ internal sealed class StaticstringLightning
             foreach (Vector2[] branch in branches) Stroke(branch, .5f, width * .55f, false);
             for (int i = 0; i < 2; i++)
             {
-                Vector2 point = (path[i == 0 ? 0 : path.Length - 1] - Main.screenPosition) * .5f;
+                Vector2 point = path[i == 0 ? 0 : path.Length - 1] - Main.screenPosition;
                 Main.spriteBatch.Draw(star, point, null, tint * (opacity * .65f), phase * (i == 0 ? 1f : -1f), star.Size() * .5f, 7f / star.Width, SpriteEffects.None, 0f);
             }
         });

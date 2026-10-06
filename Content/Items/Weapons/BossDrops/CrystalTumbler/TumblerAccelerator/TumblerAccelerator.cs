@@ -315,8 +315,8 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                 core.A = middle.A = outer.A = bloom.A = 255;
                 for (int i = 1; i < snapshot.Length; i++)
                 {
-                    Vector2 start = (snapshot[i - 1] - Main.screenPosition) * 0.5f;
-                    Vector2 end = (snapshot[i] - Main.screenPosition) * 0.5f;
+                    Vector2 start = snapshot[i - 1] - Main.screenPosition;
+                    Vector2 end = snapshot[i] - Main.screenPosition;
                     for (int halo = 4; halo >= 1; halo--)
                     {
                         Color tint = bloom * ((5f - halo) / 5f);

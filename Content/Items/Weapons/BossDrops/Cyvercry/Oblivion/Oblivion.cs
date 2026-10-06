@@ -713,7 +713,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
@@ -1405,7 +1405,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             #endregion
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
     }
