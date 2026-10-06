@@ -41,8 +41,8 @@ namespace AerovelenceMod.Content.Tiles.Traversal
         public override void SetStaticDefaults()
         {
             this.AddName(Language.Default, "Rope Bridge Post")
-                .AddTooltip(Language.Default, "Right-click two posts with rope to connect"
-                    + "\nConsumes 2 rope per section");
+                .AddTooltip(Language.Default, "Right-click two posts with ropes or chains to connect"
+                    + "\nConsumes 2 ropes or chains per section");
         }
 
         public override void SetDefaults()

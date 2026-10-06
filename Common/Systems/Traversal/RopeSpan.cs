@@ -1,3 +1,4 @@
+using AerovelenceMod.Content.Tiles.Traversal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,6 +22,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public Vector2[] Rest { get; }
         public Point[] DeckTiles { get; }
         public Point[] RopeTiles { get; }
+        private readonly Point[] ropePaintTiles;
         private readonly float[] velocity;
         private readonly float[] load;
         private readonly float maximumStep;
@@ -30,19 +32,12 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public int Sections => Segments - 1;
         public Rectangle Bounds { get; }
 
-        internal bool HookFacesRight(bool right) => !right || Left.X == Right.X;
-
-        internal Vector2 HookPosition(bool right)
+        internal Vector2 HookAnchor(bool right)
         {
             Point post = right ? Right : Left;
             bool ceiling = right ? RightCeiling : LeftCeiling;
-            bool facingRight = HookFacesRight(right);
-            int offset = Left.X == Right.X ? 9 : Math.Min(9, (Right.X - Left.X) * 8 - 1);
-            int x = post.X * 16 + 8 + (facingRight ? offset : -offset) - (facingRight ? 5 : 7);
-            return new Vector2(x, post.Y * 16 + (ceiling ? 2 : -48));
+            return ZiplinePostTile.ConnectionPoint(post, ceiling);
         }
-
-        internal Vector2 HookAnchor(bool right) => HookPosition(right) + new Vector2(HookFacesRight(right) ? 5 : 7, 7);
 
         internal Vector2 BridgeAnchor(bool right, bool rail)
         {
@@ -67,6 +62,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
             int count = Segments + 1;
             int nodeCount = count + (zipline ? 2 : 0);
             motionAxis = zipline && width == 0 ? Vector2.UnitX : Vector2.UnitY;
+            ropePaintTiles = zipline ? new Point[nodeCount] : Array.Empty<Point>();
             Nodes = new Vector2[nodeCount];
             Previous = new Vector2[nodeCount];
             Rest = new Vector2[nodeCount];
@@ -74,10 +70,17 @@ namespace AerovelenceMod.Common.Systems.Traversal
             load = new float[nodeCount];
             DeckTiles = zipline ? Array.Empty<Point>() : new Point[count - 2];
             List<Point> ropeTiles = new();
-            Vector2 a = new(left.X * 16 + 8, (left.Y + 1) * 16 - (zipline ? LeftCeiling ? 6 : 58 : 4));
-            Vector2 b = new(right.X * 16 + 8, (right.Y + 1) * 16 - (zipline ? RightCeiling ? 6 : 58 : 4));
+            Vector2 markerA = new(left.X * 16 + 8, left.Y * 16 + (LeftCeiling ? 10 : -42));
+            Vector2 markerB = new(right.X * 16 + 8, right.Y * 16 + (RightCeiling ? 10 : -42));
+            Vector2 a = zipline ? HookAnchor(false) : new Vector2(left.X * 16 + 8, left.Y * 16 + 12);
+            Vector2 b = zipline ? HookAnchor(true) : new Vector2(right.X * 16 + 8, right.Y * 16 + 12);
             Sag = sag ?? (zipline ? Math.Min(64f, count * 0.65f) * width / Math.Max(1f, extent)
                 : Math.Min(12f, count * 0.3f));
+            if (zipline)
+            {
+                ropePaintTiles[1] = markerA.ToTileCoordinates();
+                ropePaintTiles[^2] = markerB.ToTileCoordinates();
+            }
             maximumStep = 9;
             for (int i = 0; i < count; i++)
             {
@@ -88,27 +91,26 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 if (i > 0) maximumStep = Math.Max(maximumStep, Math.Abs(Vector2.Dot(Rest[node] - Rest[node - 1], motionAxis)));
                 if (i == 0 || i == count - 1) continue;
                 Point tile = Rest[node].ToTileCoordinates();
+                if (zipline)
+                {
+                    tile = (Vector2.Lerp(markerA, markerB, t) + new Vector2(0, Sag * 4 * t * (1 - t))).ToTileCoordinates();
+                    ropePaintTiles[node] = tile;
+                }
                 if (!zipline) DeckTiles[i - 1] = tile;
                 if (!zipline || !PostTile(tile, left) && !PostTile(tile, right))
                     ropeTiles.Add(new Point(tile.X, tile.Y - (zipline ? 0 : 2)));
             }
             if (zipline)
             {
-                Rest[1] = Nodes[1] = Previous[1] = HookAnchor(false);
-                Rest[^2] = Nodes[^2] = Previous[^2] = HookAnchor(true);
-                Rest[0] = Nodes[0] = Previous[0] = RopeSpanSystem.JunctionAnchor(this, false);
-                Rest[^1] = Nodes[^1] = Previous[^1] = RopeSpanSystem.JunctionAnchor(this, true);
+                Rest[0] = Nodes[0] = Previous[0] = a;
+                Rest[^1] = Nodes[^1] = Previous[^1] = b;
             }
             RopeTiles = ropeTiles.Distinct().ToArray();
             Bounds = new Rectangle(left.X * 16 - 32, (int)Math.Min(a.Y, b.Y) - 64,
                 (width + 1) * 16 + 64, (int)Math.Abs(b.Y - a.Y) + 160);
         }
 
-        internal void SetJunction(Point post, Vector2 anchor)
-        {
-            int node = post == Left ? 0 : Nodes.Length - 1;
-            Rest[node] = Nodes[node] = Previous[node] = anchor;
-        }
+        internal Point RopeTile(int node) => Zipline ? ropePaintTiles[node] : RopeTiles[node - 1];
 
         private static bool PostTile(Point tile, Point post)
             => tile.X == post.X && tile.Y <= post.Y + 1 && tile.Y >= post.Y - 3;

@@ -1,3 +1,4 @@
+using AerovelenceMod.Content.Tiles.Traversal;
 using System;
 
 
@@ -14,6 +15,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
         private const byte JumpInput = 8;
         private const byte UpInput = 16;
         private const float RestSpeed = 0.4f;
+        internal const int HangOffset = 4;
 
         public int RideId { get; private set; } = -1;
         public int StandingId { get; private set; } = -1;
@@ -234,7 +236,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
 
         private static int Steering(byte controls) => ((controls & RightInput) != 0 ? 1 : 0) - ((controls & LeftInput) != 0 ? 1 : 0);
 
-        private Vector2 HangPosition(RopeSpan span, float parameter) => span.At(parameter) + new Vector2(-Player.width * 0.5f, 6);
+        private Vector2 HangPosition(RopeSpan span, float parameter) => span.At(parameter) + new Vector2(-Player.width * 0.5f, HangOffset);
 
         private static RopeSpan SelectJunctionRoute(RopeSpan incoming, Point post, byte controls)
         {
@@ -345,7 +347,11 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 Point post = Parameter == 0 ? span.Left : span.Right;
                 if (RestAtJunction(span, post, controls)) return;
                 RopeSpan route = SelectJunctionRoute(span, post, controls);
-                if (route == null) Dismount(true);
+                if (route == null)
+                {
+                    if (ZiplinePostTile.IsEndStop(post)) Speed = 0;
+                    else Dismount(true);
+                }
                 else
                 {
                     float remainder = Math.Abs(remaining);

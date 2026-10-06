@@ -19,6 +19,14 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             DustType = DustID.WoodFurniture;
             AddMapEntry(new Color(145, 113, 75), this.Localize(Name == nameof(ZiplineRopeTile) ? "Zipline" : "Rope Bridge"));
         }
+        public override bool CreateDust(int i, int j, ref int type)
+        {
+            if (this is RopeBridgeDeckTile) return true;
+            RopeSpan span = RopeSpanSystem.AtTile(new Point(i, j));
+            if (span == null) return false;
+            type = RopeSpanSystem.RopeDustType(RopeSpanSystem.RopeTileType(span.RopeType));
+            return type >= 0;
+        }
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch) => false;
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) => false;
         public override bool CanDrop(int i, int j) => false;
