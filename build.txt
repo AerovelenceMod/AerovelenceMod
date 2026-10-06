@@ -3,4 +3,4 @@ author = Aerovelence Development Team
 version = 2.1.0
 homepage = https://discord.gg/QwqqZzc
 includePDB = true
-buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*
+buildIgnore = *.csproj, *.user, obj\*, bin\*, .vs\*, Tests\*
