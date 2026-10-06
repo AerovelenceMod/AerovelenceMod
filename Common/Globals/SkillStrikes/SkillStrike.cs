@@ -1,3 +1,5 @@
+using System.IO;
+using Terraria.ModLoader.IO;
 
 using AerovelenceMod.Content.Dusts.GlowDusts;
 
@@ -69,6 +71,32 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
         //Type of Impact VFX
         public SkillStrikeImpactType impactType = SkillStrikeImpactType.Basic;
 
+        public override void SendExtraAI(Projectile projectile, BitWriter bitWriter, BinaryWriter writer)
+        {
+            bitWriter.WriteBit(SkillStrike);
+            if (!SkillStrike) return;
+            writer.Write(skillStrikeMultiplier);
+            writer.Write(superCritMultiplier);
+            writer.Write(skillStrikeAmount);
+            writer.Write(impactScale);
+            writer.Write(impactVolume);
+            writer.Write((byte)impactType);
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, BitReader bitReader, BinaryReader reader)
+        {
+            SkillStrike = bitReader.ReadBit();
+            if (!SkillStrike) return;
+            skillStrikeMultiplier = reader.ReadSingle();
+            superCritMultiplier = reader.ReadSingle();
+            skillStrikeAmount = Math.Max(0, reader.ReadInt32());
+            impactScale = reader.ReadSingle();
+            impactVolume = reader.ReadSingle();
+            impactType = (SkillStrikeImpactType)(reader.ReadByte() % 3);
+            if (!float.IsFinite(skillStrikeMultiplier) || !float.IsFinite(superCritMultiplier)
+                || !float.IsFinite(impactScale) || !float.IsFinite(impactVolume)) SkillStrike = false;
+        }
+
         public override void ModifyHitNPC(Projectile projectile, NPC target, ref NPC.HitModifiers modifiers)
         {
             if (!SkillStrike)
@@ -82,6 +110,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                 modifiers.FinalDamage *= skillStrikeMultiplier * 1f; //1f
                 //modifiers.CritDamage *= superCritMultiplier;
                 skillStrikeAmount--;
+                if (projectile.owner == Main.myPlayer) projectile.netUpdate = true;
 
                 if (skillStrikeAmount >= 0)
                     modifiers.HideCombatText();
@@ -98,6 +127,8 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                 SkillStrike = false;
                 return;
             }
+
+            if (Main.dedServ) return;
 
             if (hit.Crit)
             {
@@ -130,6 +161,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                 int a = Projectile.NewProjectile(null, projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkillCritImpact>(), 0, 0);
                 Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
                 Main.projectile[a].scale = impactScale;
+                Main.projectile[a].netUpdate = true;
 
                 for (int ii = 0; ii < (6 + Main.rand.Next(0, 2)) * impactScale; ii++)
                 {

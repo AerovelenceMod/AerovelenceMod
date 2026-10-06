@@ -35,7 +35,8 @@ namespace AerovelenceMod
 
         public override void PreUpdate()
         {
-            WaterGlowManager.UpdateWaterGlow();
+            if (!Main.dedServ && Player.whoAmI == Main.myPlayer)
+                WaterGlowManager.UpdateWaterGlow();
             PlatformTimer--;
 
         }

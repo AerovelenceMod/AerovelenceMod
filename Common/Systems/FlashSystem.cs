@@ -82,6 +82,7 @@ namespace AerovelenceMod.Common.Systems
 
         public override void Load()
         {
+            if (Main.dedServ) return;
             Main.OnResolutionChanged += ResizeRenderTarget;
         }
 
@@ -213,7 +214,10 @@ namespace AerovelenceMod.Common.Systems
 
     public class FlashDetour : ModSystem
     {
-        public override void Load() { On_FilterManager.EndCapture += EndCaptureManager; }
+        public override void Load()
+        {
+            if (!Main.dedServ) On_FilterManager.EndCapture += EndCaptureManager;
+        }
         public override void Unload() { On_FilterManager.EndCapture -= EndCaptureManager; }
 
         private void EndCaptureManager(On_FilterManager.orig_EndCapture orig, FilterManager self, RenderTarget2D finalTexture, RenderTarget2D screenTarget1, RenderTarget2D screenTarget2, Color clearColor)

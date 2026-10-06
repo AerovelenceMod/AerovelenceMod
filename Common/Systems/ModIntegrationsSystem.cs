@@ -31,11 +31,11 @@ namespace AerovelenceMod.Common.Systems
                 LocalizedText tumblerSpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<CrystalKey>() + "]");
                 Action<SpriteBatch, Rectangle, Color> tumblerPortrait = (SpriteBatch spriteBatch, Rectangle rect, Color color) =>
                 {
-                    Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler").Value);
+                    Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler").Value;
                     Rectangle frame = texture.Frame(1, 2, 0, 0);
                     Vector2 centered = rect.Center.ToVector2();
                     spriteBatch.Draw(texture, centered, frame, color, 0f, frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
-                    Texture2D eyeTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler_Eye", AssetRequestMode.ImmediateLoad).Value);
+                    Texture2D eyeTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler_Eye", AssetRequestMode.ImmediateLoad).Value;
                     Rectangle eyeFrame = eyeTexture.Frame(1, 2, 0, 0);
                     spriteBatch.Draw(eyeTexture, centered, eyeFrame, Color.White, 0f, eyeFrame.Size() / 2f, 1f, SpriteEffects.None, 0f);
 

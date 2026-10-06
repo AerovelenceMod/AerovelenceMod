@@ -18,37 +18,35 @@ namespace AerovelenceMod.Common.Utilities
     {
         public static void setSkillStrike(Projectile projectile, float multiplier, int timesToStrike = 1, float impactVolume = 0f, float impactScale = 0f)
         {
-            Player player = Main.player[projectile.owner];
-
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = true;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().skillStrikeMultiplier = multiplier * player.GetModPlayer<SkillStrikePlayer>().skillStrikeMultiplier;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().superCritMultiplier = multiplier * player.GetModPlayer<SkillStrikePlayer>().superCritMultiplier;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().skillStrikeAmount = timesToStrike;
-
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().impactVolume = impactVolume;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().impactScale = impactScale;
-
+            setSkillStrikeWithImpactType(projectile, multiplier, timesToStrike,
+                projectile.GetGlobalProjectile<SkillStrikeGProj>().impactType, impactVolume, impactScale);
         }
 
         public static void setSkillStrikeWithImpactType(Projectile projectile, float multiplier, int timesToStrike = 1,
             SkillStrikeImpactType impactType = SkillStrikeImpactType.Basic, float impactVolume = 0f, float impactScale = 0f)
         {
-            Player player = Main.player[projectile.owner];
-
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().SkillStrike = true;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().skillStrikeMultiplier = multiplier * player.GetModPlayer<SkillStrikePlayer>().skillStrikeMultiplier;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().superCritMultiplier = multiplier * player.GetModPlayer<SkillStrikePlayer>().superCritMultiplier;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().skillStrikeAmount = timesToStrike;
-
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().impactType = impactType;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().impactVolume = impactVolume;
-            projectile.GetGlobalProjectile<SkillStrikeGProj>().impactScale = impactScale;
-
+            if ((uint)projectile.owner >= Main.maxPlayers) return;
+            SkillStrikePlayer player = Main.player[projectile.owner].GetModPlayer<SkillStrikePlayer>();
+            SkillStrikeGProj strike = projectile.GetGlobalProjectile<SkillStrikeGProj>();
+            float normal = multiplier * player.skillStrikeMultiplier;
+            float crit = multiplier * player.superCritMultiplier;
+            bool changed = !strike.SkillStrike || strike.skillStrikeMultiplier != normal || strike.superCritMultiplier != crit
+                || strike.skillStrikeAmount != timesToStrike || strike.impactType != impactType
+                || strike.impactVolume != impactVolume || strike.impactScale != impactScale;
+            strike.SkillStrike = true;
+            strike.skillStrikeMultiplier = normal;
+            strike.superCritMultiplier = crit;
+            strike.skillStrikeAmount = timesToStrike;
+            strike.impactType = impactType;
+            strike.impactVolume = impactVolume;
+            strike.impactScale = impactScale;
+            if (changed && projectile.owner == Main.myPlayer) projectile.netUpdate = true;
         }
 
         public static void fakeSkillStrike(Player player, NPC target, Vector2 hitPosition, float multiplier = 1f, bool crit = false,
             float damage = 0f, SkillStrikeImpactType impactType = SkillStrikeImpactType.Basic, float impactVolume = 1f, float impactScale = 1f)
         {
+            if (player.whoAmI != Main.myPlayer) return;
             SkillStrikePlayer skillPlayer = player.GetModPlayer<SkillStrikePlayer>();
             float skillStrikeMultiplier = multiplier * skillPlayer.skillStrikeMultiplier;
             float superCritMultiplier = multiplier * skillPlayer.superCritMultiplier;
@@ -82,42 +80,46 @@ namespace AerovelenceMod.Common.Utilities
             }
 
             #region effects
-            if (impactType == SkillStrikeImpactType.Basic)
+            if (!Main.dedServ)
             {
-                for (int j = 0; j < (5 + Main.rand.Next(0, 2)) * impactScale; j++)
+                if (impactType == SkillStrikeImpactType.Basic)
                 {
-                    Dust star = Dust.NewDustPerfect(hitPosition, ModContent.DustType<GlowPixelCross>(),
-                    Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), newColor: new Color(255, 180, 60), Scale: Main.rand.NextFloat(0.35f, 0.5f) * 1f);
+                    for (int j = 0; j < (5 + Main.rand.Next(0, 2)) * impactScale; j++)
+                    {
+                        Dust star = Dust.NewDustPerfect(hitPosition, ModContent.DustType<GlowPixelCross>(),
+                        Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), newColor: new Color(255, 180, 60), Scale: Main.rand.NextFloat(0.35f, 0.5f) * 1f);
 
-                    star.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
-                                    rotPower: 0.15f, preSlowPower: 0.91f, timeBeforeSlow: 15, postSlowPower: 0.90f, velToBeginShrink: 2f, fadePower: 0.93f, shouldFadeColor: false);
+                        star.customData = DustBehaviorUtil.AssignBehavior_GPCBase(
+                                        rotPower: 0.15f, preSlowPower: 0.91f, timeBeforeSlow: 15, postSlowPower: 0.90f, velToBeginShrink: 2f, fadePower: 0.93f, shouldFadeColor: false);
+                    }
+                    for (int ii = 0; ii < (6 + Main.rand.Next(0, 2)) * impactScale; ii++)
+                    {
+                        Dust d = Dust.NewDustPerfect(hitPosition, ModContent.DustType<MuraLineBasic>(),
+                                Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), Alpha: Main.rand.Next(10, 15), new Color(255, 180, 60), 0.35f);
+                    }
                 }
-                for (int ii = 0; ii < (6 + Main.rand.Next(0, 2)) * impactScale; ii++)
+                else if (impactType == SkillStrikeImpactType.Pixel)
                 {
-                    Dust d = Dust.NewDustPerfect(hitPosition, ModContent.DustType<MuraLineBasic>(),
-                            Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), Alpha: Main.rand.Next(10, 15), new Color(255, 180, 60), 0.35f);
-                }
-            }
-            else if (impactType == SkillStrikeImpactType.Pixel)
-            {
-                int a = Projectile.NewProjectile(null, hitPosition, Vector2.Zero, ModContent.ProjectileType<SkillCritImpact>(), 0, 0);
-                Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
-                Main.projectile[a].scale = impactScale;
+                    int a = Projectile.NewProjectile(null, hitPosition, Vector2.Zero, ModContent.ProjectileType<SkillCritImpact>(), 0, 0);
+                    Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+                    Main.projectile[a].scale = impactScale;
+                    Main.projectile[a].netUpdate = true;
 
-                for (int ii = 0; ii < (6 + Main.rand.Next(0, 2)) * impactScale; ii++)
+                    for (int ii = 0; ii < (6 + Main.rand.Next(0, 2)) * impactScale; ii++)
+                    {
+                        Dust d = Dust.NewDustPerfect(hitPosition, ModContent.DustType<MuraLineBasic>(),
+                                Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), Alpha: Main.rand.Next(10, 15), new Color(255, 180, 60), 0.35f);
+                    }
+                }
+
+                if (impactVolume > 0f)
                 {
-                    Dust d = Dust.NewDustPerfect(hitPosition, ModContent.DustType<MuraLineBasic>(),
-                            Vector2.One.RotatedByRandom(6.28f) * Main.rand.NextFloat(1.5f, 3.25f), Alpha: Main.rand.Next(10, 15), new Color(255, 180, 60), 0.35f);
+                    SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Pitch = .46f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.5f * impactVolume };
+                    SoundEngine.PlaySound(style, target.Center);
+
+                    SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_2") with { Pitch = -.26f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.25f * impactVolume };
+                    SoundEngine.PlaySound(style2, target.Center);
                 }
-            }
-
-            if (impactVolume > 0f)
-            {
-                SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_1") with { Pitch = .46f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.5f * impactVolume };
-                SoundEngine.PlaySound(style, target.Center);
-
-                SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_2") with { Pitch = -.26f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.25f * impactVolume };
-                SoundEngine.PlaySound(style2, target.Center);
             }
             #endregion
 
@@ -132,7 +134,11 @@ namespace AerovelenceMod.Common.Utilities
                     HideCombatText = true
                 };
 
-                target.StrikeNPC(hit, false, false);
+                if (Main.netMode == NetmodeID.SinglePlayer || player.whoAmI == Main.myPlayer)
+                {
+                    target.StrikeNPC(hit, false, false);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(target, hit);
+                }
             }
 
         }
@@ -146,6 +152,7 @@ namespace AerovelenceMod.Common.Utilities
 
         public static void GenericStrikeEffect(StrikeEffectMode mode, Vector2 position, float scale = 1f, float volume = 1f)
         {
+            if (Main.dedServ) return;
             switch (mode)
             {
                 case StrikeEffectMode.A: //basic Impact

@@ -114,6 +114,7 @@ namespace AerovelenceMod.Common.Bases
 
         public void TrailLogic()
         {
+            if (Main.dedServ) return;
             Initialize();
             trailPositions.Add(trailPos);
             trailRotations.Add(trailRot);
@@ -325,6 +326,7 @@ namespace AerovelenceMod.Common.Bases
 
         public void TrailLogic()
         {
+            if (Main.dedServ) return;
             Initialize();
             trailPositions.Add(trailPos);
             trailRotations.Add(trailRot);
