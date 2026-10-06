@@ -90,9 +90,9 @@ namespace AerovelenceMod.Content.Items.Tools.Drills
         public override void SetStaticDefaults() => ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         public override void SetDefaults()
         {
-            _colorGlowTexture = Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillProjGlow").Value;
-            _pulseGlowTexture = Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillDrillOrange").Value;
-            _drillTexture = Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillDrill").Value;
+            _colorGlowTexture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillProjGlow").Value);
+            _pulseGlowTexture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillDrillOrange").Value);
+            _drillTexture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Items/Tools/Drills/VanillaDrills/PalladiumDrillDrill").Value);
 
             Projectile.width = 42;
             Projectile.height = 42;
@@ -118,8 +118,7 @@ namespace AerovelenceMod.Content.Items.Tools.Drills
 
             if (player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                    Angle = (Main.MouseWorld - (player.MountedCenter)).ToRotation();
+                Projectile.UpdateAimAngle(player.MountedCenter, ref Angle);
                 direction = Angle.ToRotationVector2();
                 player.ChangeDir(direction.X > 0 ? 1 : -1);
 
