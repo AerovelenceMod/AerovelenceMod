@@ -226,7 +226,7 @@ namespace AerovelenceMod.Common.Utilities
             Vector2 direction = endPos - startPos;
             data.DistanceToTarget = direction.Length();
             float segmentLength = data.DistanceToTarget / (data.MaxSegments - 1);
-            direction.Normalize();
+            direction = direction.SafeNormalize(Vector2.Zero);
 
             for (int i = 0; i < data.MaxSegments; i++)
             {
