@@ -105,7 +105,7 @@ public sealed class CryoCanHeld : ModProjectile
                 Projectile.Kill();
                 return;
             }
-            Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 aim = (Projectile.AimWorld() - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
             if (Vector2.DistanceSquared(aim, Projectile.velocity) > 0.0001f || age % 12 == 0)
             {
                 Projectile.velocity = aim;

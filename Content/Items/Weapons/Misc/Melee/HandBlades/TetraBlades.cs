@@ -174,6 +174,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                 {
                     SkillStrikeUtil.setSkillStrike(Main.projectile[a], 1.3f);
                 }
+                Main.projectile[a].netUpdate = true;
 
                 for (int i = 0; i < 3 + (Main.rand.NextBool() ? 1 : 0); i++)
                 {
@@ -238,6 +239,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                         distort.implode = false;
                         distort.scale = 0.2f;
                     }
+                    Main.projectile[afg].netUpdate = true;
 
                     SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/GloogaSlide") with { Volume = 0.4f, Pitch = 0.3f, PitchVariance = 0.2f }, player.Center);
 

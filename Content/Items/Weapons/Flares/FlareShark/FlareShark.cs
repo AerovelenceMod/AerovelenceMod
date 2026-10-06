@@ -69,6 +69,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
                 held.timeToStartFade = 1;
                 held.quickFade = true; //Recommended for slower firing guns with large YRecoil
             }
+            Main.projectile[heldProj].netUpdate = true;
 
             //Explosion
             int dir = velocity.X > 0 ? 1 : -1;
@@ -249,5 +250,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
             Main.spriteBatch.Draw(Star, starPos, null, Color.White with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.2f, SpriteEffects.None, 0f);
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(quickFade);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            quickFade = reader.ReadBoolean();
+        }
     }
 }

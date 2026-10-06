@@ -91,6 +91,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
                 perpendicular = perpendicular.SafeNormalize(Vector2.Zero) * 30f;
                 meteorArrow.ControlPoint = midPoint + perpendicular;
             }
+            proj.netUpdate = true;
             Projectile.NewProjectile(source, spawnPosition, Vector2.Zero, ModContent.ProjectileType<MeteorCrossbowHeld>(), 0, 0f, player.whoAmI);
             return false;
         }
@@ -129,8 +130,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
                 return;
             }
             Projectile.Center = Owner.Center;
-            if (Projectile.owner == Main.myPlayer)
-                Projectile.rotation = Projectile.DirectionTo(Main.MouseWorld).ToRotation();
+            Projectile.rotation = Projectile.DirectionTo(Projectile.AimWorld()).ToRotation();
             Owner.ChangeDir(Projectile.rotation.ToRotationVector2().X > 0 ? 1 : -1);
             if (Projectile.ai[0] == 0)
             {
@@ -251,7 +251,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
                     SkillStrikeUtil.setSkillStrike(Projectile, 1.5f);
                 }
                 Player player = Main.player[Projectile.owner];
-                Vector2 mouseWorldPosition = Main.MouseWorld;
+                Vector2 mouseWorldPosition = Projectile.AimWorld();
                 Vector2 directionToMouse = (mouseWorldPosition - Projectile.Center).SafeNormalize(Vector2.Zero);
                 float mouseInfluence = 0.015f;
                 Vector2 currentDir = Projectile.velocity.SafeNormalize(Vector2.Zero);
@@ -316,7 +316,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
                 dust.noGravity = true;
             }
 
-            Vector2 mouseWorldPosition = Main.MouseWorld;
+            Vector2 mouseWorldPosition = Projectile.AimWorld();
             Vector2 directionToMouse = (mouseWorldPosition - Projectile.Center).SafeNormalize(Vector2.Zero);
             Vector2 targetDirection = TargetVelocity.SafeNormalize(Vector2.Zero);
             Vector2 finalDirection = Vector2.Lerp(targetDirection, directionToMouse, 0.002f).SafeNormalize(Vector2.Zero);
@@ -383,6 +383,31 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             target.AddBuff(BuffID.OnFire, 180);
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(TargetVelocity.X);
+            writer.Write(TargetVelocity.Y);
+            writer.Write(_rocketIgnited);
+            writer.Write(_timer);
+            writer.Write(StartPosition.X);
+            writer.Write(StartPosition.Y);
+            writer.Write(ControlPoint.X);
+            writer.Write(ControlPoint.Y);
+            writer.Write(ArcEndPosition.X);
+            writer.Write(ArcEndPosition.Y);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            TargetVelocity = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            _rocketIgnited = reader.ReadBoolean();
+            _timer = reader.ReadInt32();
+            StartPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            ControlPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            ArcEndPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
         }
     }
 }

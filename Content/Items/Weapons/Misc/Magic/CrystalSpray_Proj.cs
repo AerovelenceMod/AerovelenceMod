@@ -63,7 +63,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             {
                 float randomRot = Main.rand.NextFloat(6.28f);
 
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
                 int a = GlowDustHelper.DrawGlowDust(Projectile.position + (Projectile.rotation.ToRotationVector2() * -35), 1, 1, ModContent.DustType<Dusts.GlowDusts.GlowCircleFlare>(), 0,
                     0, Color.DodgerBlue, Main.rand.NextFloat(.3f, .5f), 0.55f, 0, dustShader);
                 Main.dust[a].noLight = true;
@@ -304,7 +304,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
             float velVal = Main.rand.NextFloat(2, 10);
             Vector2 vel = new Vector2(velVal, 0).RotatedBy(dustSpawnPos.ToRotation() + MathHelper.PiOver2);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             Dust d = GlowDustHelper.DrawGlowDustPerfect(Projectile.position + dustSpawnPos, ModContent.DustType<Dusts.GlowDusts.GlowCircleFlare>(), vel, Color.DodgerBlue,
                 Main.rand.NextFloat(.4f, 0.6f), 0.55f, 0, dustShader);
 
@@ -363,7 +363,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
                     float velVal = Main.rand.NextFloat(m, m);
                     Vector2 vel = new Vector2(velVal, 0).RotatedBy(dustSpawnPos.ToRotation() + MathHelper.PiOver2);
 
-                    ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                    ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
                     Dust d = GlowDustHelper.DrawGlowDustPerfect(Projectile.position + dustSpawnPos, ModContent.DustType<Dusts.GlowDusts.GlowCircleFlare>(), vel, Color.DodgerBlue,
                         Main.rand.NextFloat(.4f, 0.4f), 0.55f, 0, dustShader);
                 }
@@ -379,7 +379,7 @@ namespace AerovelenceMod.Content.Projectiles.Weapons.Magic
                     vel = new Vector2(4, 0).RotatedBy(Main.rand.NextFloat(-1.75f, 1.75f)) * Main.rand.NextFloat(0f, 2.5f);
 
                 //Vector2 vel = Main.rand.NextVector2Circular(5.5f, 2f) * 2.5f;
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
                 Dust d = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<Dusts.GlowDusts.GlowCircleFlare>(), vel, Color.DodgerBlue,
                     Main.rand.NextFloat(1f, 1f), 0.4f, 0, dustShader);
             }

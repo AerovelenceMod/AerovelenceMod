@@ -147,7 +147,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.LucentBeam
 
             player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
 
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity.SafeNormalize(Vector2.Zero), player.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.Zero), 0.12f); //0.12f
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity.SafeNormalize(Vector2.Zero), player.DirectionTo(Projectile.AimWorld()).SafeNormalize(Vector2.Zero), 0.12f); //0.12f
             Projectile.rotation = Projectile.velocity.ToRotation();
 
             #endregion

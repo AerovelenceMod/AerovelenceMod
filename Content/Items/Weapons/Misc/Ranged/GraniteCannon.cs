@@ -145,9 +145,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             Player.itemTime = 2;
             Player.itemAnimation = 2;
 
-            if (Projectile.owner == Main.myPlayer && timer == 0)
+            if (timer == 0)
             {
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
+                Projectile.UpdateAimAngle(Player.Center, ref Angle);
             }
 
             direction = Angle.ToRotationVector2();
@@ -262,11 +262,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                         SoundStyle style = new SoundStyle("Terraria/Sounds/Item_14") with { Pitch = .27f, Volume = 0.7f, MaxInstances = -1 };
                         SoundEngine.PlaySound(style, Projectile.Center);
 
-                        int core1 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), projSpawnDir + Projectile.Center, projSpawnDir * 0.5f, ModContent.ProjectileType<GraniteCore>(), (int)(Projectile.damage * 1f), Projectile.knockBack * 0.5f, Main.myPlayer);
-                        int core2 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), projSpawnDir + Projectile.Center, projSpawnDir * -0.5f, ModContent.ProjectileType<GraniteCore>(), (int)(Projectile.damage * 1f), Projectile.knockBack * 0.5f, Main.myPlayer);
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            int core1 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), projSpawnDir + Projectile.Center, projSpawnDir * 0.5f, ModContent.ProjectileType<GraniteCore>(), (int)(Projectile.damage * 1f), Projectile.knockBack * 0.5f, Main.myPlayer);
+                            int core2 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), projSpawnDir + Projectile.Center, projSpawnDir * -0.5f, ModContent.ProjectileType<GraniteCore>(), (int)(Projectile.damage * 1f), Projectile.knockBack * 0.5f, Main.myPlayer);
 
-                        SkillStrikeUtil.setSkillStrike(Main.projectile[core1], 1.5f);
-                        SkillStrikeUtil.setSkillStrike(Main.projectile[core2], 1.5f);
+                            SkillStrikeUtil.setSkillStrike(Main.projectile[core1], 1.5f);
+                            Main.projectile[core1].netUpdate = true;
+                            SkillStrikeUtil.setSkillStrike(Main.projectile[core2], 1.5f);
+                            Main.projectile[core2].netUpdate = true;
+                        }
 
                         Projectile.active = false;
                         p.active = false;

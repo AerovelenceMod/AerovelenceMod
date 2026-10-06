@@ -123,7 +123,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
 
             if (timer == 0)
             {
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.spriteDirection = Projectile.AimWorld().X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
                 previousRotations = new List<float>();
 
                 if (Main.player[Projectile.owner].GetModPlayer<EntourageCounter>().successiveHits >= Main.player[Projectile.owner].GetModPlayer<EntourageCounter>().hitsForCrit)
@@ -208,7 +208,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             if (width < 0.15)
                 width = 0;
 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trail1.trailColor = Color.Purple * width;
             trail1.trailPointLimit = 800;
             trail1.trailWidth = (int)(50 * width * 1.5f);
@@ -228,7 +228,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             trail1.TrailLogic();
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Laser1").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Laser1").Value);
             trail2.trailColor = Color.White * width;
             trail2.trailPointLimit = 800;
             trail2.trailWidth = (int)(8);

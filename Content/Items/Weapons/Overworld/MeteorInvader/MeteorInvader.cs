@@ -56,6 +56,7 @@ public class MeteorInvader : ModItem
             int index = Projectile.NewProjectile(source, player.Center - Vector2.UnitY * 90f, Vector2.Zero, ModContent.ProjectileType<MeteorInvaderFleet>(), 0, 0f, player.whoAmI);
             if (index >= Main.maxProjectiles) return false;
             fleet = Main.projectile[index];
+            Main.projectile[index].netUpdate = true;
         }
         player.AddBuff(Item.buffType, 2);
         HashSet<int> occupied = new();

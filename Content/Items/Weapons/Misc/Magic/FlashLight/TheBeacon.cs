@@ -167,10 +167,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
             if (player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Angle = (Main.MouseWorld - player.MountedCenter).ToRotation();
-                }
+                Projectile.UpdateAimAngle(player.MountedCenter, ref Angle);
 
                 direction = Angle.ToRotationVector2();
                 player.ChangeDir(direction.X > 0 ? 1 : -1);
@@ -250,10 +247,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                         //Spawn all 3 tendrils
                         for (int i = 0; i < 3; i++)
                         {
-                            int tendril = Projectile.NewProjectile(Projectile.GetSource_FromThis(), npc.Center, Vector2.Zero * 1f, ModContent.ProjectileType<BeaconTendril>(), Projectile.damage, 0f, Main.myPlayer);
-                            Main.projectile[tendril].ai[0] = Projectile.ai[0];
-                            Main.projectile[tendril].rotation = MathHelper.ToRadians(120 + (120 * i));
-                            tendrils.Add(tendril);
+                            if (Projectile.owner == Main.myPlayer)
+                            {
+                                int tendril = Projectile.NewProjectile(Projectile.GetSource_FromThis(), npc.Center, Vector2.Zero * 1f, ModContent.ProjectileType<BeaconTendril>(), Projectile.damage, 0f, Main.myPlayer);
+                                Main.projectile[tendril].ai[0] = Projectile.ai[0];
+                                Main.projectile[tendril].rotation = MathHelper.ToRadians(120 + (120 * i));
+                                tendrils.Add(tendril);
+                                Main.projectile[tendril].netUpdate = true;
+                            }
                         }
                     }
                     lockedOn = true;
@@ -375,7 +376,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                             if ((!(npc.lifeMax < 10 || npc.type == NPCID.TargetDummy || npc.catchItem != 0) && ignoreCritters) || !ignoreCritters)
                             {
                                 //cache this
-                                float compDist = Main.MouseWorld.DistanceSQ(npc.Center);
+                                float compDist = Projectile.AimWorld().DistanceSQ(npc.Center);
                                 //Distance is shorter than current distance, but did not overflow (underflow)
                                 if (compDist < dist && compDist > 0)
                                 {

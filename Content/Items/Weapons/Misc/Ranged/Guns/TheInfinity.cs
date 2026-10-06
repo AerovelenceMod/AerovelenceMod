@@ -116,6 +116,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 int heldProj = Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<TheInfinityHeldProj>(), 0, 0, player.whoAmI);
                 if (Main.projectile[heldProj].ModProjectile is TheInfinityHeldProj gunProj)
                     gunProj.TriggerShoot();
+                Main.projectile[heldProj].netUpdate = true;
             }
 
             return false;

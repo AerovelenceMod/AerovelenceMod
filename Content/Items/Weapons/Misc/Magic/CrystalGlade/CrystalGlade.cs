@@ -189,7 +189,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
             if (!firstFrame)
             {
                 firstFrame = true;
-                Projectile.rotation = Projectile.DirectionTo(Main.MouseWorld).ToRotation();
+                Projectile.rotation = Projectile.DirectionTo(Projectile.AimWorld()).ToRotation();
             }
 
             glowIntensity = Math.Clamp(MathHelper.Lerp(glowIntensity, -0.5f, 0.05f), 0, 1);
@@ -443,6 +443,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(rotDir);
+            writer.Write(timer);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            rotDir = reader.ReadInt32();
+            timer = reader.ReadInt32();
+        }
     }
 
     public class CrystalGladeFirst : ModProjectile
@@ -537,17 +550,22 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 
         public void Fire()
         {
-            Vector2 vel = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 5f;
+            Vector2 vel = (Projectile.AimWorld() - Projectile.Center).SafeNormalize(Vector2.UnitX) * 5f;
 
-            int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel, ModContent.ProjectileType<CrystalGladeShot>(), Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
-            int a = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CrystalGladePulse>(), 0, 0, Main.player[Projectile.owner].whoAmI);
-            Main.projectile[a].rotation = Projectile.rotation;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel, ModContent.ProjectileType<CrystalGladeShot>(), Projectile.damage, Projectile.knockBack, Main.player[Projectile.owner].whoAmI);
+                int a = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CrystalGladePulse>(), 0, 0, Main.player[Projectile.owner].whoAmI);
+                Main.projectile[a].rotation = Projectile.rotation;
 
 
-            if (Main.projectile[a].ModProjectile is CrystalGladePulse cgp)
-                cgp.rotDir = rotDir;
+                if (Main.projectile[a].ModProjectile is CrystalGladePulse cgp)
+                    cgp.rotDir = rotDir;
+                Main.projectile[a].netUpdate = true;
 
-            SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 1, 0.15f, 0f);
+                SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 1, 0.15f, 0f);
+                Main.projectile[shot].netUpdate = true;
+            }
 
             for (int i = 0; i < 6; i++)
             {

@@ -143,10 +143,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
             if (player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Angle = (Main.MouseWorld - (player.Center)).ToRotation();
-                }
+                Projectile.UpdateAimAngle(player.Center, ref Angle);
 
                 direction = Angle.ToRotationVector2();
                 player.ChangeDir(direction.X > 0 ? 1 : -1);
@@ -245,7 +242,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                     {
                         Vector2 random = Main.rand.NextVector2CircularEdge(5, 5);
 
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), npcPos, random, ModContent.ProjectileType<LaserPointerSpark>(), Projectile.damage / 2, Projectile.knockBack, Main.myPlayer, 0, Main.rand.NextBool() ? 1 : -1);
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), npcPos, random, ModContent.ProjectileType<LaserPointerSpark>(), Projectile.damage / 2, Projectile.knockBack, Main.myPlayer, 0, Main.rand.NextBool() ? 1 : -1);
+                        }
 
                         SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/hero_fury_charm_burst") with { Pitch = 1f, PitchVariance = 0.2f, Volume = 0.6f };
                         SoundEngine.PlaySound(style, npcPos);
@@ -314,7 +314,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                             if ((!(npc.lifeMax < 10 || npc.type == NPCID.TargetDummy || npc.catchItem != 0) && ignoreCritters) || !ignoreCritters)
                             {
                                 //cache this
-                                float compDist = Main.MouseWorld.DistanceSQ(npc.Center);
+                                float compDist = Projectile.AimWorld().DistanceSQ(npc.Center);
                                 //Distance is shorter than current distance, but did not overflow (underflow)
                                 if (compDist < dist && compDist > 0)
                                 {
