@@ -27,11 +27,11 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Main.tileLighted[Type] = true;
             Main.tileBlockLight[Type] = true;
             AddMapEntry(new Color(50, 100, 70));
-            Main.tileMerge[Type][ModContent.TileType<CrystalDirtTile>()] = true;
-            Main.tileMerge[ModContent.TileType<CrystalDirtTile>()][Type] = true;
+            Main.tileMerge[Type][ModContent.TileType<CavernStoneTile>()] = true;
+            Main.tileMerge[ModContent.TileType<CavernStoneTile>()][Type] = true;
             TileID.Sets.Grass[Type] = true;
             TileID.Sets.NeedsGrassFraming[Type] = true;
-            TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrystalDirtTile>();
+            TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CavernStoneTile>();
             TileID.Sets.GeneralPlacementTiles[Type] = false;
 
             glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             if (!effectOnly)
             {
                 fail = true;
-                Main.tile[i, j].TileType = (ushort)ModContent.TileType<CrystalDirtTile>();
+                Main.tile[i, j].TileType = (ushort)ModContent.TileType<CavernStoneTile>();
                 WorldGen.SquareTileFrame(i, j, true);
                 Dust.NewDust(new Vector2(i * 16, j * 16), 16, 16, DustID.Marble, 0f, 0f, 0, new Color(121, 121, 121), 1f);
             }
