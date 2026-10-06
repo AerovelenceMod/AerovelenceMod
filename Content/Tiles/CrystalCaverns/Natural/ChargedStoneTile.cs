@@ -1,12 +1,7 @@
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
 using System;
-using Terraria;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
-using Terraria.ModLoader;
-using static AerovelenceMod.Content.Projectiles.LightningUtils;
+using static AerovelenceMod.Common.Utilities.LightningUtils;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -97,7 +92,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<ChargedStoneTile>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }

@@ -1,21 +1,21 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+
+
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using System.Collections.Generic;
 using Terraria.GameContent;
 using Terraria.DataStructures;
 using Terraria.Audio;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using static Terraria.NPC;
 using static tModPorter.ProgressUpdate;
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ember
 {

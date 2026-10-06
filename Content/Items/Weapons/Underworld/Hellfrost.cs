@@ -1,15 +1,15 @@
 using System;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Underworld;
 
@@ -36,7 +36,7 @@ public class Hellfrost : ModItem
         Item.noMelee = Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<HellfrostHead>();
         Item.shootSpeed = 16f;
-        Item.rare = ItemRarityID.Orange;
+        Item.rare = ItemRarities.LatePHM;
         Item.value = Item.sellPrice(gold: 2);
     }
 

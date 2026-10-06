@@ -1,19 +1,18 @@
 ﻿/*
 using System;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.GameContent;
 using Terraria.Audio;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
 using ReLogic.Content;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Graphics.Shaders;
-using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
 {
@@ -206,7 +205,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
                 Main.EntitySpriteDraw(glowTex, drawPos + new Vector2(10,8), null, color * (0.5f -(k * 0.05f)), Projectile.oldRot[k] + (Projectile.ai[0] != 1 ? 0 : MathHelper.PiOver2 * 3), origin, Projectile.scale + ((float)Math.Sin(getProgress(easingProgress) * Math.PI) * 0.25f), spriteEffects, 0);
             }
 
-            //Texture2D a = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Flares/twirl_02");
+            //Texture2D a = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Slash/twirl_02");
             //float extraRotation = Projectile.ai[0] != 1 ? MathHelper.PiOver4 + 0.3f : MathHelper.PiOver2 - 1f;
             //Main.spriteBatch.Draw(a, Main.player[Projectile.owner].Center - Main.screenPosition, null, Color.White, Projectile.rotation + extraRotation, a.Size() / 2, new Vector2(0.5f, 0.5f) * Projectile.scale, Projectile.ai[0] != 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None, 0f);
 

@@ -2,13 +2,13 @@ using System;
 using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Items.BossSummons;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
@@ -68,7 +68,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 return;
             Color color = TumblerVFX.PhaseColor(phase);
             TumblerVFX.DrawElectricLine(Main.spriteBatch, start - Main.screenPosition - new Vector2(0f, 18f), new Vector2(right, start.Y - 18f) - Main.screenPosition, color, opacity * 0.75f, Math.Clamp((int)((right - start.X) / 18f), 4, 64), start.X, 2f);
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 Texture2D texture = TumblerPhaseTextures.Get("ElectricSpikeField", phase > 0.5f);
                 int count = Math.Max(2, (int)MathF.Ceiling((right - start.X) / 16f));

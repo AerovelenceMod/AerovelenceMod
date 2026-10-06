@@ -1,18 +1,18 @@
-using Microsoft.Xna.Framework;
+
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
-using Microsoft.Xna.Framework.Graphics;
+
 using System.Collections.Generic;
 using Terraria.Graphics;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Content.Projectiles;
+
 using Microsoft.CodeAnalysis;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe

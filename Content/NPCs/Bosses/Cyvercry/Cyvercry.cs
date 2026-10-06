@@ -1,27 +1,26 @@
 using AerovelenceMod.Common.Globals.Worlds;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.GameContent.Drawing;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using System;
 using Terraria.Graphics.Effects;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry;
 using AerovelenceMod.Common.Globals.Players;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Items.Weapons.Aurora;
 using AerovelenceMod.Content.Items.Weapons.Ember;
-using AerovelenceMod.Content.Projectiles;
 using rail;
 using static Terraria.ModLoader.PlayerDrawLayer;
 using System.Collections.Generic;
@@ -393,7 +392,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             //FX for death Anim
             if (DrawDeathOrb)
             {
-                Texture2D starTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/scorch_01").Value;
+                Texture2D starTex = Mod.Assets.Request<Texture2D>("Assets/Flare/scorch_01").Value;
                 Texture2D starTex2 = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_4").Value;
 
                 Main.spriteBatch.End();
@@ -527,7 +526,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
 
             //Thruster Flash
-            Texture2D texture2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/muzzle_05").Value;
+            Texture2D texture2 = Mod.Assets.Request<Texture2D>("Assets/Flare/muzzle_05").Value;
 
             Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
             myEffect.Parameters["uColor"].SetValue(new Color(0, 255, 255).ToVector3() * (2 - thrusterValue));

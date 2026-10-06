@@ -1,7 +1,7 @@
 using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+
+
+
 namespace AerovelenceMod.Common.Utilities
 {
     public static class SlimeSurface

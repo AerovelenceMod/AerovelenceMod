@@ -1,10 +1,10 @@
 ﻿using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
-using Microsoft.Xna.Framework;
+
 using ReLogic.Utilities;
 using System;
 using System.Linq;
-using Terraria;
-using Terraria.ID;
+
+
 using Terraria.WorldBuilding;
 
 namespace AerovelenceMod.Common.Utilities.Generation

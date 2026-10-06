@@ -1,22 +1,15 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
 using Humanizer;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using CirclePulse = AerovelenceMod.Content.Projectiles.Other.CirclePulse;
+using CirclePulse = AerovelenceMod.Content.Projectiles.CirclePulse;
 
 namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 {

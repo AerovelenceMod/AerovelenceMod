@@ -1,16 +1,16 @@
-﻿using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿
+
+
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
 {
@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
         public override void SetDefaults()
         {
             Item.DefaultToWhip(ModContent.ProjectileType<NerveFlagellatorProjectile>(), 50, 2f, 4f);
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(0, 1, 75, 0);
             Item.damage = 24;
             Item.knockBack = 2.5f;

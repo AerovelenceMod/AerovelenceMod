@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
-using Terraria;
-using Terraria.ID;
+
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 
 namespace AerovelenceMod.Common.Systems.Language
 {

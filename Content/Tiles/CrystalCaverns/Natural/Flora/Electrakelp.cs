@@ -2,13 +2,13 @@ using System;
 using AerovelenceMod.Common.Systems;
 using System.Collections.Generic;
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
@@ -256,14 +256,14 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
         {
             if (Main.dedServ) return;
             if (!registered)
-                registered = GetInstance<NewPixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles,
+                registered = GetInstance<PixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles,
                     Electrakelp.HasVisibleFronds, Electrakelp.DrawFronds);
             Electrakelp.PruneFronds();
         }
         public override void ClearWorld() => Electrakelp.ClearFronds();
         public override void Unload()
         {
-            if (registered) GetInstance<NewPixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, Electrakelp.DrawFronds);
+            if (registered) GetInstance<PixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, Electrakelp.DrawFronds);
             registered = false;
             Electrakelp.ClearFronds();
         }

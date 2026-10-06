@@ -1,21 +1,15 @@
 ﻿/*
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
-using Terraria;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
 using Terraria.Audio;
 using Terraria.GameContent;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using System.Collections.Generic;
-using AerovelenceMod.Content.Projectiles;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 using System.Runtime.InteropServices;
 

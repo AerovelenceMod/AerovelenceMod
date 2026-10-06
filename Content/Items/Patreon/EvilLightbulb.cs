@@ -1,11 +1,11 @@
-using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
 using System;
-using Terraria;
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Patreon
 {
@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Items.Patreon
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.knockBack = 6;
             Item.value = Item.sellPrice(0, 5, 30, 0);
-            Item.rare = ItemRarityID.Purple;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<EvilRay>();
             Item.shootSpeed = 12f;

@@ -1,21 +1,20 @@
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
-using static AerovelenceMod.Content.Projectiles.LightningUtils;
+using static AerovelenceMod.Common.Utilities.LightningUtils;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -33,7 +32,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<LightningTrapTile>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }
@@ -578,7 +577,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             UpdateSegments();
             UpdateBranches();
 
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 for (int i = 0; i < 0.2; i++)
                 {
@@ -630,7 +629,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                     }
                 }
 
-            }, PixellationSystem.RenderType.Additive);
+            });
 
             if (Projectile.timeLeft < 10)
             {
@@ -745,7 +744,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
         public override bool PreDraw(ref Color lightColor)
         {
             if (segmentPositions == null) return false;
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
                 Texture2D lineTexture = TextureAssets.MagicPixel.Value;
@@ -964,7 +963,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                         );
                     }
                 }
-            }, PixellationSystem.RenderType.Additive);
+            });
             return false;
         }
 

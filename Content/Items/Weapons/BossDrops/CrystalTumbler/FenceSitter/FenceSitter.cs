@@ -1,20 +1,20 @@
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System.IO;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
 {
@@ -40,7 +40,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             Item.knockBack = 5;
             Item.shootSpeed = 1;
             Item.shoot = ModContent.ProjectileType<FenceSitterSwing>();
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.value = Item.sellPrice(gold: 1);
         }
         public override bool CanUseItem(Player player) => player.ownedProjectileCounts[Item.shoot] == 0;
@@ -414,7 +414,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                 return;
             Vector2[] snapshot = (Vector2[])points.Clone();
             float alpha = MathHelper.Clamp(opacity, 0f, 1f);
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 float thickness = Math.Max(2f, width) * 0.5f;
                 Color core = Color.Lerp(color, Color.White, 0.9f) * alpha;
@@ -437,7 +437,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                     DrawLine(Main.spriteBatch, start, end, middle, thickness + 1.5f);
                     DrawLine(Main.spriteBatch, start, end, core, thickness);
                 }
-            }, PixellationSystem.RenderType.Additive);
+            });
             if (dustTick != Main.GameUpdateCount)
             {
                 dustTick = Main.GameUpdateCount;

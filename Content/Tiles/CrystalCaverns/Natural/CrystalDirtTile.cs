@@ -1,13 +1,13 @@
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -68,7 +68,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<CrystalDirtTile>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }

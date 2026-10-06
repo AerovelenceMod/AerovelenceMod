@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
+
 using Terraria.GameContent;
-using Terraria.ModLoader;
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 {
@@ -107,9 +107,9 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (system.captureOwner != null && system.captured.TryGetValue(system.captureOwner, out CapturedLightning capture) && capture.Paths.Count < 64)
                 capture.Paths.Add(path);
             if (layer.HasValue)
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(layer.Value, () => Draw(path, 1f, true));
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(layer.Value, () => Draw(path, 1f, true));
             else
-                PixellationSystem.QueuePixelationAction(() => Draw(path), PixellationSystem.RenderType.Additive);
+                ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path));
             if (emitDust && !Main.gamePaused)
                 ModContent.GetInstance<TumblerLightningSystem>().dustPaths.Add(path);
         }
@@ -124,15 +124,19 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 float fade = MathHelper.Clamp(1f - age / 22f, 0f, 1f);
                 LightningPath path = tail.Path with { Opacity = tail.Path.Opacity * fade * fade, Width = Math.Max(1f, tail.Path.Width * fade), Bloom = tail.Path.Bloom * fade };
                 if (path.Layer.HasValue)
-                    ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(path.Layer.Value, () => Draw(path, 1f, true));
+                {
+                    ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path, 1f, true));
+                }
                 else
-                    PixellationSystem.QueuePixelationAction(() => Draw(path), PixellationSystem.RenderType.Additive);
+                {
+                    ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path));
+                }
             }
             foreach (CrystalRemnant remnant in crystalRemnants)
             {
                 float age = Main.GameUpdateCount - remnant.Started;
                 float opacity = MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp(1f - age / 30f, 0f, 1f));
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderNPCs, () =>
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderNPCs, () =>
                     Main.spriteBatch.Draw(remnant.Texture, remnant.Position - Main.screenPosition - new Vector2(0f, age * 0.12f), null, remnant.Color * opacity, remnant.Rotation, remnant.Texture.Size() * 0.5f, remnant.Size / remnant.Texture.Size(), SpriteEffects.None, 0f));
             }
         }
@@ -236,7 +240,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             float scale = dust.scale;
             float opacity = 1f - dust.alpha / 255f;
             Color color = dust.color;
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
                 Main.spriteBatch.Draw(texture, position - Main.screenPosition, null, TumblerVFX.Glow(color, opacity), 0f, texture.Size() * 0.5f, scale, SpriteEffects.None, 0f);

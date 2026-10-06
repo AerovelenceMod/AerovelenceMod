@@ -1,20 +1,20 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
-using Terraria;
+
+
 
 namespace AerovelenceMod.Content.Items.Potions
 {
@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.Items.Potions
         {
             base.SetDefaults();
             Item.width = Item.height = 20;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
 
             Item.value = Item.sellPrice(silver: 2);
             Item.maxStack = Item.CommonMaxStack;
@@ -50,9 +50,13 @@ namespace AerovelenceMod.Content.Items.Potions
     }
     public class MinerallBoost : ModBuff
     {
-
-        public override LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.MinerallBoost.DisplayName", () => "Minerall");
-        public override LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.MinerallBoost.Description", () => "15% faster mining, 10% movement speed, and 1 extra tile of mining reach");
+        public override void SetStaticDefaults()
+        {
+			LocalizationManager.Bind(DisplayName.Key, DisplayName);
+        	LocalizationManager.Bind(Description.Key, Description);
+        	LocalizationManager.RegisterTranslation(DisplayName.Key, "Minerall", "default");
+        	LocalizationManager.RegisterTranslation(Description.Key, "15% faster mining, 10% movement speed, and 1 extra tile of mining reach", "default");
+        }
         public override void Update(Player player, ref int buffIndex)
         {
             player.pickSpeed -= .15f;

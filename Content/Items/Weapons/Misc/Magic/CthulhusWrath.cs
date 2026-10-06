@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.NPCs.Bosses.Rimegeist;
@@ -33,7 +33,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.knockBack = 6;
             Item.value = 53000 * 5;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<FireWave>();
             Item.shootSpeed = 1f;
@@ -43,17 +43,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic
 
         public override void AddRecipes()
         {
-            //CreateRecipe().
-            //    AddIngredient(ItemID.PlatinumBar, 12).
-            //    AddIngredient(ItemID.Fireblossom, 2).
-            //    AddTile(TileID.Anvils).
-            //    Register();
-
-            //CreateRecipe().
-            //    AddIngredient(ItemID.GoldBar, 12).
-            //    AddIngredient(ItemID.Fireblossom, 2).
-            //    AddTile(TileID.Anvils).
-            //    Register();
+            CreateRecipe()
+                .AddRecipeGroup("AerovelenceMod:GoldOrPlatinum", 12)
+                .AddIngredient(ItemID.Fireblossom, 2)
+                .AddTile(TileID.Anvils)
+                .Register();
         }
 
         public override bool CanUseItem(Player player)

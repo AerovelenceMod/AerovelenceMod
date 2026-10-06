@@ -1,9 +1,9 @@
-﻿using Terraria.ModLoader;
+﻿
 using System.Collections.Generic;
 using Terraria.WorldBuilding;
 using LocalizedText = Terraria.Localization.LocalizedText;
 using AerovelenceMod.Common.Systems.Generation.CrystalCaverns;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Common.Systems.Generation
 {

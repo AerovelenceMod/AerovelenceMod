@@ -1,24 +1,17 @@
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
 using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows

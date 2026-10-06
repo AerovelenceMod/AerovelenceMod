@@ -1,10 +1,10 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Content.Projectiles.Gas;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+using AerovelenceMod.Content.Projectiles;
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Tools;
 
@@ -25,7 +25,6 @@ public sealed class GasVacuum : TranslatableModItem
         Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<GasVacuumHeld>();
         Item.shootSpeed = 1f;
-        Item.rare = ItemRarityID.Pink;
     }
 
     public override bool AltFunctionUse(Player player) => true;

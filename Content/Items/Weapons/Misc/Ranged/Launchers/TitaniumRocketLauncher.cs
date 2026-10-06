@@ -1,7 +1,6 @@
-﻿using AerovelenceMod.Common.Globals.SkillStrikes;
+﻿using AerovelenceMod.Common.Bases;
+using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
@@ -9,20 +8,14 @@ using AerovelenceMod.Content.Items.Weapons.Ember;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 using static Terraria.ModLoader.ModContent;
 using static Terraria.NPC;
 
@@ -33,9 +26,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
         public override void SetStaticDefaults()
         {
             ItemID.Sets.ShimmerTransformToItem[Type] = ModContent.ItemType<AdamantitePulsar>();
-            this.ModifyLocalization("TitaniumRocketLauncher", "Does not require ammo\nRight-Click to shoot a large rocket that follows the mouse")
-            .AddName(Language.Default, "Titanium Rocket Launcher")
-            .AddTooltip(Language.Default, "Does not require ammo\nRight-Click to shoot a large rocket that follows the mouse")
+            this.ModifyLocalization("Titanium Rocket Launcher", "Does not require ammo\nRight-Click to shoot a large rocket that follows the mouse")
             .AddSkillStrike(Language.Default, "Big Rocket Skill Strikes after a second")
 
             .AddName(Language.Spanish, "Lanzacohetes de Titanio").AddTooltip(Language.Spanish, "No requiere munición\nHaz clic derecho para disparar un gran cohete que sigue el ratón").AddSkillStrike(Language.Spanish, "El Gran Cohete realiza Golpes de Habilidad después de un segundo")
@@ -88,8 +79,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                 type = ModContent.ProjectileType<TitaniumMiniRocket>();
                 damage = (int)(damage * 1.75f);
                 velocity *= 0.2f;
-
-                //Projectile.NewProjectile(source, position, Vector2.Zero, ModContent.ProjectileType<TitaniumLauncherHeldSmall>(), 0, 0, player.whoAmI);
 
                 for (int i = 0; i < 4 + Main.rand.Next(4); i++)
                 {
@@ -246,7 +235,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             Color trailCol = Color.Lerp(Color.White, Color.Orange, Easings.easeOutCirc(colVal));
 
             Texture2D Flare = Mod.Assets.Request<Texture2D>("Assets/Pixel/Flare").Value;
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 for (int i = 0; i < previousPositions.Count; i++)
                 {
@@ -458,7 +447,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
 
             Texture2D Flare = Mod.Assets.Request<Texture2D>("Assets/Pixel/Flare").Value;
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 for (int i = 0; i < previousPositions.Count; i++)
                 {
@@ -585,7 +574,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
         }
     }
 
-    public class TitaniumLauncherHeldLarge : ModProjectile
+    public class TitaniumLauncherHeldLarge : BaseRecoilProj
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
@@ -710,11 +699,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
         }
     }
 
-    public class TitaniumLauncherHeldMini : BasicRecoilProj
+    public class TitaniumLauncherHeldMini : BaseRecoilProj
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public override bool PreDraw(ref Color lightColor)
+        public override void Draw(ref Color lightColor)
         {
             Texture2D Texture = TextureAssets.Item[gunID].Value;
 
@@ -724,14 +713,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             Vector2 heldOffset = new Vector2(HoldoutOffset.X, HoldoutOffset.Y * Player.direction).RotatedBy(Projectile.rotation);
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Player.gfxOffY) + heldOffset;
 
-            Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation, Texture.Size() / 2, Projectile.scale, mySE, 0f);
-
             //Glowlayer
             Texture2D Glowlayer = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/Launchers/TitaniumRocketLauncherGlow").Value;
             Main.spriteBatch.Draw(Glowlayer, drawPos, null, Color.White with { A = 0 } * Easings.easeOutCubic(bonusPower), Projectile.rotation, Glowlayer.Size() / 2, Projectile.scale, mySE, 0f);
-
-
-            return false;
         }
     }
 

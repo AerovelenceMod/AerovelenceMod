@@ -1,15 +1,15 @@
 using Terraria.Audio;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
+
+
 using Terraria.DataStructures;
 using AerovelenceMod.Common.Systems;
 using System;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
@@ -246,7 +246,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         public override bool PreDraw(ref Color lightColor)
         {
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
                 Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/ElectricPopE").Value;
@@ -264,7 +264,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 float finalDrawScale = drawScale / 2;
                 spriteBatch.Draw(texture, drawPos, frame, drawColor, Projectile.rotation, origin, finalDrawScale, SpriteEffects.None, 0f);
                 spriteBatch.Draw(texture2, drawPos, frame, drawColor2, -Projectile.rotation, origin, finalDrawScale, SpriteEffects.None, 0f);
-            }, PixellationSystem.RenderType.Additive);
+            });
 
             return false;
         }

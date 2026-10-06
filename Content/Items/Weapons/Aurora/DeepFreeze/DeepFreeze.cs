@@ -1,21 +1,21 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using System.Collections.ObjectModel;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Audio;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 {

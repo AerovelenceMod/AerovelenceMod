@@ -1,17 +1,17 @@
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 {
@@ -446,7 +446,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Player myPlayer = Main.player[NPC.target];
 
             Texture2D texture = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/GlowmaskBot");
-            Texture2D spiralTex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Flares/star_05");
+            Texture2D spiralTex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
             Texture2D glorbTex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/Textures/circle_05");
             Texture2D eyeStar = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/Twinkle");
 

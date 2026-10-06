@@ -1,25 +1,18 @@
-﻿using AerovelenceMod.Common.Globals.SkillStrikes;
+﻿using AerovelenceMod.Common.Bases;
+using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
 using System.Xml.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 {
@@ -57,7 +50,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.value = Item.sellPrice(0, 7, 0, 0);
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.EarlyHardmode;
             Item.shoot = ModContent.ProjectileType<AdamantitePulseShot>();
 
             Item.channel = true;
@@ -312,11 +305,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
     }
 
     //3 shot burst held proj
-    public class AdamantitePulsarRecoilBurst : BasicRecoilProj
+    public class AdamantitePulsarRecoilBurst : BaseRecoilProj
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public override bool PreDraw(ref Color lightColor)
+        public override void Draw(ref Color lightColor)
         {
             Texture2D Texture = TextureAssets.Item[gunID].Value;
 
@@ -326,8 +319,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             Vector2 heldOffset = new Vector2(HoldoutOffset.X, HoldoutOffset.Y * Player.direction).RotatedBy(Projectile.rotation);
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Player.gfxOffY) + heldOffset;
 
-            Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation, Texture.Size() / 2, Projectile.scale, mySE, 0f);
-
             //Glowmask
             Texture2D Glowmask = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/Guns/AdamantitePulsar/AdamantitePulsar_Glow").Value;
             Main.spriteBatch.Draw(Glowmask, drawPos, null, Color.White, Projectile.rotation, Glowmask.Size() / 2, Projectile.scale, mySE, 0f);
@@ -335,9 +326,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             //Glowlayer
             Texture2D Glowlayer = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/Guns/AdamantitePulsar/AdamantitePulsar_WhiteGlow").Value;
             Main.spriteBatch.Draw(Glowlayer, drawPos, null, Color.White with { A = 0 } * Easings.easeInQuad(bonusPower) * 3f, Projectile.rotation, Glowlayer.Size() / 2, Projectile.scale, mySE, 0f);
-
-
-            return false;
         }
     }
 

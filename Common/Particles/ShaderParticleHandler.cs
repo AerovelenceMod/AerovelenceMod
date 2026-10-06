@@ -1,15 +1,15 @@
 ﻿using AerovelenceMod.Common.Systems;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using Steamworks;
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.GameContent.UI.Elements;
 using Terraria.Graphics.Renderers;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Common.Particles
 {
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Common.Particles
             }
 
             //Draw shader layer
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 sb.End();
                 sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, AerovelenceMod.SmokeColShader, Main.GameViewMatrix.EffectMatrix);
@@ -139,7 +139,7 @@ namespace AerovelenceMod.Common.Particles
             });
 
             //UnderProjLayer
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 sb.End();
                 sb.Begin(SpriteSortMode.Immediate, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, AerovelenceMod.SmokeColShader, Main.GameViewMatrix.EffectMatrix);

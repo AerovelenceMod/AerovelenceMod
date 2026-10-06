@@ -1,13 +1,13 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
+
+
+
 using System.Collections.Generic;
 using Terraria.DataStructures;
 using System;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Common.Systems.Language;
+
+
 
 namespace AerovelenceMod.Content.Items.Tools
 {

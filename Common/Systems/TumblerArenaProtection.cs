@@ -3,12 +3,12 @@ using System.IO;
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Common.Systems

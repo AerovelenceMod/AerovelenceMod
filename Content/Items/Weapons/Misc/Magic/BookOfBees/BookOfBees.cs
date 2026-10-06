@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Utilities;
+
+
+
 using System;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
@@ -23,7 +23,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
 
             Item.DamageType = DamageClass.Magic;
 
-            Item.rare = ItemRarityID.Yellow;
+            Item.rare = ItemRarities.LatePHM;
             Item.width = 28;
             Item.height = 28;
             Item.useAnimation = 40;
@@ -159,7 +159,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
             SpriteEffects SE = Projectile.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawTrail();
             });

@@ -1,10 +1,5 @@
-﻿using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System.Collections.Generic;
-using Terraria;
-using Terraria.ModLoader;
-using static AerovelenceMod.Content.Projectiles.LightningUtils;
+﻿using System.Collections.Generic;
+using static AerovelenceMod.Common.Utilities.LightningUtils;
 
 namespace AerovelenceMod.Common.Systems
 {

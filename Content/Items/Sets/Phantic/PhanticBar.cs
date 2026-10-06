@@ -1,10 +1,10 @@
-/*using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using AerovelenceMod.Common.Utilities;
+/*
+
+
+
 using Terraria.Localization;
 using Terraria.ObjectData;
-using Microsoft.Xna.Framework;
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {

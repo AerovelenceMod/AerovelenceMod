@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+﻿
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using System;
 using Terraria.DataStructures;
 using static Terraria.NPC;
@@ -19,7 +19,7 @@ using Terraria.Graphics;
 using static System.Net.Mime.MediaTypeNames;
 using System.Linq;
 using System.Net;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common;
@@ -407,7 +407,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
             Vector2 vec2Scale = new Vector2(1f, 0.85f) * 1.5f * elboost;
 
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Color betweenBlue = Color.Lerp(Color.DeepSkyBlue, Color.SkyBlue, 0.7f);
 

@@ -1,13 +1,13 @@
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Items.Accessories.Boss;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion;
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce;
-using Terraria;
+
 using Terraria.GameContent.ItemDropRules;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.TreasureBags
 {

@@ -1,21 +1,21 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using Terraria.Audio;
 using static Terraria.NPC;
 using ReLogic.Content;
-using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Common.Systems;
 using Terraria.Graphics;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Interfaces;
 using AerovelenceMod.Common;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba;
 
 
@@ -601,14 +601,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             #endregion
 
             //Draw Trail pixelated
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 TrailDraw();
             });
 
             //Draw energy sword pixelated
             //Use Dusts layer so we can draw on top of black underglow
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 BladeDraw();
             });
@@ -948,7 +948,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
         float overallAlpha = 1f;
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawShit(false);
             });
@@ -1308,7 +1308,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             Main.spriteBatch.Draw(glow4, drawPos, null, Color.DeepPink with { A = 0 } * 0.15f * energySwordAlpha, Projectile.rotation, origin1, newScale2, SpriteEffects.None, 0f);
 
             //Use Dusts layer so we can draw on top of black underglow
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 BladeDraw();
             });

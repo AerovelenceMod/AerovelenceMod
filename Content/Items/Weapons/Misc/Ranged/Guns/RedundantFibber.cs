@@ -1,23 +1,23 @@
 ﻿using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Items.Weapons.Underworld;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
 using System.Collections.Generic;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
 using ReLogic.Content;
 using Terraria.Graphics.Shaders;
 using Terraria.GameContent.UI.Elements;
 using AerovelenceMod.Common;
-using AerovelenceMod.Common.Systems.Language;
+using AerovelenceMod.Common.Bases;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 {

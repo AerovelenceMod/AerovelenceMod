@@ -1,8 +1,8 @@
 using System.IO;
 using AerovelenceMod.Common.Systems.Traversal;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
+
+
+
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler

@@ -1,10 +1,6 @@
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
 using System.Collections.Generic;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.WorldBuilding;
-using Microsoft.Xna.Framework;
 using Terraria.ModLoader.IO;
 using static AerovelenceMod.Common.Utilities.ChestUtilities;
 

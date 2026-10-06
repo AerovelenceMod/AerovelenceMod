@@ -1,16 +1,16 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Ammo
 {
@@ -35,10 +35,12 @@ namespace AerovelenceMod.Content.Items.Ammo
     public class EmbeddedCrystalSplinters : ModBuff
     {
         public override string Texture => CrystalStoneSlugVFX.CrystalTexture;
-        public override Terraria.Localization.LocalizedText DisplayName => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.EmbeddedCrystalSplinters.DisplayName", () => "Embedded Crystal Splinters");
-        public override Terraria.Localization.LocalizedText Description => Terraria.Localization.Language.GetOrRegister("Mods.AerovelenceMod.Buffs.EmbeddedCrystalSplinters.Description", () => "Sharp crystal splinters deal damage over time");
         public override void SetStaticDefaults()
         {
+			LocalizationManager.Bind(DisplayName.Key, DisplayName);
+        	LocalizationManager.Bind(Description.Key, Description);
+        	LocalizationManager.RegisterTranslation(DisplayName.Key, "Embedded Crystal Splinters", "default");
+        	LocalizationManager.RegisterTranslation(Description.Key, "Sharp crystal splinters deal damage over time", "default");
             Main.debuff[Type] = true;
             Main.buffNoSave[Type] = true;
         }
@@ -91,7 +93,7 @@ namespace AerovelenceMod.Content.Items.Ammo
             base.SetDefaults();
             Item.width = 16;
             Item.height = 20;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(copper: 2);
             Item.damage = Material == CrystalStoneSlugSlugMaterial.Stone ? 5 : Material == CrystalStoneSlugSlugMaterial.Wood ? 2 : 4;
             Item.DamageType = DamageClass.Ranged;

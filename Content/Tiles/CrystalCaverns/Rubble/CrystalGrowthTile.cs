@@ -1,16 +1,12 @@
 using AerovelenceMod.Content.Tiles.Citadel;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Building;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
-using Terraria.ModLoader;
+
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble
 {
     public class CrystalGrowthTile : ModTile
@@ -119,24 +115,6 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble
             r = 0.0f * lightFactor;
             g = 0.6f * lightFactor;
             b = 0.9f * lightFactor;
-        }
-    }
-    public class CrystalGrowthRubbleItem : ModItem
-    {
-        public override void SetDefaults()
-        {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<CrystalGrowthTile>();
-            Item.rare = ItemRarityID.White;
-            Item.value = 5;
         }
     }
 }

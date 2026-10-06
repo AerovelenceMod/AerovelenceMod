@@ -1,4 +1,4 @@
-using Terraria;
+
 using Terraria.Graphics.Shaders;
 
 namespace AerovelenceMod.Backgrounds.Skies

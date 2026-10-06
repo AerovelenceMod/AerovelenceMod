@@ -1,18 +1,18 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
@@ -25,7 +25,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             base.SetDefaults();
             Item.width = 34;
             Item.height = 30;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 60);
             Item.accessory = true;
             Item.defense = 1;

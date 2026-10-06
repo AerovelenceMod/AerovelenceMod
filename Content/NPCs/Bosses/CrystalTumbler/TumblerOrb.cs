@@ -1,16 +1,16 @@
 using System;
-using AerovelenceMod.Common.Utilities;
+
 using System.Collections.Generic;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using AerovelenceMod.Content.Projectiles;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using static Terraria.ModLoader.ModContent;
 using Terraria.GameContent;
 using AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance;

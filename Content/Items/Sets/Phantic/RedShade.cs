@@ -1,15 +1,15 @@
-/*using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+/*
+
 using System;
-using Terraria;
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {

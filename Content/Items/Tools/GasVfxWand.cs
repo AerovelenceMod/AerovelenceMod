@@ -1,15 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Projectiles.Gas;
-using Microsoft.Xna.Framework;
-using Terraria;
+using AerovelenceMod.Content.Projectiles;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 
 namespace AerovelenceMod.Content.Items.Tools;
@@ -39,7 +33,6 @@ public sealed class GasVfxWand : TranslatableModItem
         Item.shootSpeed = 1f;
         Item.shoot = ModContent.ProjectileType<GasCloud>();
         Item.noMelee = true;
-        Item.rare = ItemRarityID.LightPurple;
     }
 
     public override bool AltFunctionUse(Player player) => true;
@@ -80,6 +73,4 @@ public sealed class GasVfxWand : TranslatableModItem
     public override void NetSend(BinaryWriter writer) => writer.Write((byte)style);
 
     public override void NetReceive(BinaryReader reader) => style = (GasVisualStyle)(reader.ReadByte() % Enum.GetValues<GasVisualStyle>().Length);
-
-    public override void AddRecipes() => CreateRecipe().AddIngredient(ItemID.DirtBlock).Register();
 }

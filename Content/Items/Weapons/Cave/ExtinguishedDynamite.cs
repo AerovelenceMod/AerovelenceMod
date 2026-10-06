@@ -1,15 +1,15 @@
 ﻿using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+using AerovelenceMod.Content.Projectiles;
+
+
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Cave
 {

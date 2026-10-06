@@ -1,18 +1,18 @@
-﻿using AerovelenceMod.Common.Utilities;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
+
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using AerovelenceMod.Content.Projectiles;
+
+
 using AerovelenceMod.Common;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 {
@@ -769,10 +769,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         public override bool PreDraw(ref Color lightColor)
         {
             if (impacted) return false;
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawTrail();
-            }, PixellationSystem.RenderType.AlphaBlend);
+            });
             Texture2D glowTex = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/Nightglow").Value;
             Color elementColor = TheInfinity.ElementColors[elementIndex];
             Main.spriteBatch.End();

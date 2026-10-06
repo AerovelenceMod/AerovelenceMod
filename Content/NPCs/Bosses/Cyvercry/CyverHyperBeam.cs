@@ -1,9 +1,9 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+
+
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using System.Collections.Generic;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -184,7 +184,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             Texture2D Ball = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/Textures/circle_05");
             Texture2D BallHalf = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/Textures/circle_05half");
-            Texture2D Ball2 = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Flares/star_05");
+            Texture2D Ball2 = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
 
             Vector2 thisPos = endPoint - Main.screenPosition + Vector2.UnitX.RotatedBy(LaserRotation) * (-14 * (Projectile.ai[0] / 300));
 

@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
 using AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Misc
 {
@@ -28,7 +28,7 @@ namespace AerovelenceMod.Content.Items.Misc
             Item.width = 16;
             Item.height = 18;
             Item.maxStack = Item.CommonMaxStack;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 20);
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.useTime = Item.useAnimation = 45;

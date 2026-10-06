@@ -1,8 +1,8 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 
 namespace AerovelenceMod.Content.Tiles.Citadel
 {
@@ -59,7 +59,7 @@ namespace AerovelenceMod.Content.Tiles.Citadel
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<CitadelStone>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }

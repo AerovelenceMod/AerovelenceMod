@@ -1,9 +1,9 @@
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.Trophies
@@ -22,7 +22,7 @@ namespace AerovelenceMod.Content.Tiles.Trophies
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.value = 50000;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.createTile = ModContent.TileType<CrystalTumblerTrophyPlaced>();
             Item.placeStyle = 0;
         }

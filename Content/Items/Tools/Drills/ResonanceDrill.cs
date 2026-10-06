@@ -1,17 +1,10 @@
-﻿using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.DataStructures;
+﻿using Terraria.DataStructures;
 using System;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Utilities;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.Tools.Drills
 {

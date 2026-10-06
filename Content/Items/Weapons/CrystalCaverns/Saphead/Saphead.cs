@@ -1,8 +1,8 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System.IO;
 using System;
@@ -10,9 +10,9 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Saphead
 {
@@ -36,7 +36,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Saphead
         {
             base.SetDefaults();
             Item.width = Item.height = 30;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 60);
             Item.damage = 14;
             Item.DamageType = DamageClass.Magic;

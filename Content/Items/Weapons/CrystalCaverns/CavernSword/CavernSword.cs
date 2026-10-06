@@ -1,21 +1,21 @@
 ﻿using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using System.Collections.Generic;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using Terraria.Audio;
 using static Terraria.NPC;
 using ReLogic.Content;
 using Terraria.Graphics;
-using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Common;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.Players;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
@@ -258,7 +258,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
 
             Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation + rotationOffset, origin, Projectile.scale + scaleBoost, effects, 0f);
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 TrailDraw(false);
             });
@@ -758,7 +758,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             Vector2 vec2Scale = new Vector2(1f, 0.85f) * 1.5f * elboost;
 
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Color betweenBlue = Color.Lerp(Color.DeepSkyBlue, Color.SkyBlue, 0.7f);
 
@@ -924,7 +924,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
         public List<Vector2> previousPositions = new List<Vector2>();
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
             {
                 DrawVertexTrail(false);
             });
@@ -1163,7 +1163,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
 
             Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation + rotationOffset, origin, Projectile.scale + scaleBoost, effects, 0f);
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 TrailDraw(false);
             });

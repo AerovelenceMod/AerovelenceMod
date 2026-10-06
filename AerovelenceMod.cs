@@ -1,32 +1,31 @@
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+global using AerovelenceMod.Common.Systems.Language;
+global using AerovelenceMod.Common.Utilities;
+global using Microsoft.Xna.Framework;
+global using Microsoft.Xna.Framework.Graphics;
+global using Terraria;
+global using Terraria.ID;
+global using Terraria.ModLoader;
 using System.Collections.Generic;
 using AerovelenceMod.Core;
 using AerovelenceMod.Backgrounds.Skies;
 using AerovelenceMod.Common.Globals.Players;
 using AerovelenceMod.Common.IL;
-using Terraria;
 using Terraria.Graphics.Effects;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader;
 using Terraria.UI;
 using ReLogic.Content;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using ReLogic.Graphics;
 using AerovelenceMod.Common;
 using Terraria.GameContent;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Items.Weapons.Misc.Melee;
 using AerovelenceMod.Content.Items.Weapons.Starglass;
 using AerovelenceMod.Content.Biomes;
-using AerovelenceMod.Common.Systems.Language;
 using System;
 using AerovelenceMod.Common.Interfaces;
 using System.Linq;
-using AerovelenceMod.Common.Globals.Worlds;
-using AerovelenceMod.Content.Items.BossSummons;
 
 namespace AerovelenceMod
 {
@@ -46,24 +45,11 @@ namespace AerovelenceMod
             else if (packet == Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.FeedResultPacket && Main.netMode == NetmodeID.MultiplayerClient)
                 Content.NPCs.TownNPC.BabyCondurtleTownPet.BabyCondurtle.ShowFeed(reader.ReadInt16(), reader.ReadByte(), reader.ReadByte());
         }
-        public Asset<Effect> TrailShader;
-
-        public static IDictionary<string, Effect> ShaderDict = new Dictionary<string, Effect>();
-
-        public const bool DEBUG = true;
-
         public const string ProjectileAssets = "AerovelenceMod/Assets/Projectiles/";
         public const string CrystalCavernsAssets = "AerovelenceMod/Assets/CrystalCaverns/";
 
         public const string Abbreviation = "AM";
         public const string AbbreviationPrefix = Abbreviation + ":";
-
-        // UI
-        internal UserInterface MarauderUserInterface;
-        internal UserInterface RockCollectorUserInterface;
-
-        //Mod Support
-        public bool FargosModMutant;
 
         public const string AssetPath = $"{nameof(AerovelenceMod)}/Assets/";
 
@@ -72,84 +58,6 @@ namespace AerovelenceMod
         public AerovelenceMod()
         {
             Instance = this;
-        }
-
-
-
-        public override void PostSetupContent()
-        {
-            DoBossChecklistIntegration();
-        }
-
-        private void DoBossChecklistIntegration()
-        {
-            if (ModLoader.TryGetMod("BossChecklist", out Mod bossChecklistMod))
-            {
-                string cyvercryInternalName = "Cyvercry";
-                float cyvercryWeight = 12.3f;
-                Func<bool> cyvercryDowned = () => DownedWorld.DownedCyvercry;
-                int cyvercryBossType = ModContent.NPCType<Content.NPCs.Bosses.Cyvercry.Cyvercry>();
-                int cyvercrySpawnItem = ModContent.ItemType<Content.Items.BossSummons.ObsidianEye>();
-                List<int> cyvercryCollectibles = new List<int>()
-                {
-                    ModContent.ItemType<Content.Items.Accessories.Boss.EnergyShield>()
-                };
-                LocalizedText cyvercrySpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.Cyvercry.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<ObsidianEye>() + "]");
-                bossChecklistMod.Call(
-                    "LogBoss",
-                    Instance,
-                    cyvercryInternalName,
-                    cyvercryWeight,
-                    cyvercryDowned,
-                    cyvercryBossType,
-                    new Dictionary<string, object>()
-                    {
-                        ["spawnItems"] = cyvercrySpawnItem,
-                        ["collectibles"] = cyvercryCollectibles,
-                        ["spawnInfo"] = cyvercrySpawnInfo
-
-                    }
-                );
-
-                string tumblerInternalName = "CrystalTumbler";
-                float tumblerWeight = 2.8f;
-                Func<bool> tumblerDowned = () => DownedWorld.DownedCrystalTumbler;
-                int tumblerBossType = ModContent.NPCType<Content.NPCs.Bosses.CrystalTumbler.CrystalTumbler>();
-                int tumblerSpawnItem = ModContent.ItemType<Content.Items.BossSummons.CrystalKey>();
-                List<int> tumblerCollectibles = new List<int>()
-                {
-                    ModContent.ItemType<Content.Items.Accessories.Boss.PrismaticSoul>()
-                };
-                LocalizedText tumblerDisplayName = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.DisplayName");
-                LocalizedText tumblerSpawnInfo = Terraria.Localization.Language.GetText("Mods.AerovelenceMod.NPCs.CrystalTumbler.SpawnInfo").WithFormatArgs("[i:" + ModContent.ItemType<CrystalKey>() + "]");
-                Action<SpriteBatch, Rectangle, Color> tumblerPortrait = (SpriteBatch spriteBatch, Rectangle rect, Color color) =>
-                {
-                    Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler").Value;
-                    Rectangle frame = texture.Frame(1, 2, 0, 0);
-                    Vector2 centered = rect.Center.ToVector2();
-                    spriteBatch.Draw(texture, centered, frame, color, 0f, frame.Size() / 2f, 1f, SpriteEffects.None, 0f);
-                    Texture2D eyeTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/CrystalTumbler_Eye", AssetRequestMode.ImmediateLoad).Value;
-                    Rectangle eyeFrame = eyeTexture.Frame(1, 2, 0, 0);
-                    spriteBatch.Draw(eyeTexture, centered, eyeFrame, Color.White, 0f, eyeFrame.Size() / 2f, 1f, SpriteEffects.None, 0f);
-
-                };
-                bossChecklistMod.Call(
-                    "LogBoss",
-                    Instance,
-                    tumblerInternalName,
-                    tumblerWeight,
-                    tumblerDowned,
-                    tumblerBossType,
-                    new Dictionary<string, object>()
-                    {
-                        ["spawnItems"] = tumblerSpawnItem,
-                        ["collectibles"] = tumblerCollectibles,
-                        ["spawnInfo"] = tumblerSpawnInfo,
-                        ["displayName"] = tumblerDisplayName,
-                        ["customPortrait"] = tumblerPortrait
-                    }
-                );
-            }
         }
 
         public static Effect LegElectricity;
@@ -303,8 +211,6 @@ namespace AerovelenceMod
 
             if (!Main.dedServ)
             {
-                MarauderUserInterface = new UserInterface();
-                RockCollectorUserInterface = new UserInterface();
                 //DiscordRichPresence.Initialize();
                 //Main.OnTickForThirdPartySoftwareOnly += DiscordRichPresence.Update;
             }
@@ -313,9 +219,6 @@ namespace AerovelenceMod
 
 
         }
-
-        public static bool shouldHide = false;
-
 
         public override void Unload()
         {
@@ -331,7 +234,6 @@ namespace AerovelenceMod
 
                 SmokeColShader = null;
 
-                TrailShader = null;
                 BasicTrailShader = null;
                 TrailShaderPixelate = null;
                 TrailShaderGradient = null;
@@ -339,7 +241,6 @@ namespace AerovelenceMod
 
 
             UnloadDetours();
-            FargosModMutant = false;
             Instance = null;
             LegElectricity = null;
             RailgunShader = null;
@@ -349,56 +250,6 @@ namespace AerovelenceMod
         public override void Close()
         {
             base.Close();
-        }
-
-        [Obsolete]
-        public override void AddRecipeGroups()/* tModPorter Note: Removed. Use ModSystem.AddRecipeGroups */
-        {
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Silver Bars", new int[]
-                {
-                    ItemID.SilverBar,
-                    ItemID.TungstenBar
-                });
-                RecipeGroup.RegisterGroup("AerovelenceMod:SilverBars", group);
-
-            }
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Adamantite Bars", new int[]
-                {
-                    ItemID.AdamantiteBar,
-                    ItemID.TitaniumBar
-                });
-                RecipeGroup.RegisterGroup("AerovelenceMod:TitaniumBars", group);
-
-            }
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Cobalt Bars", new int[]
-                {
-                    ItemID.CobaltBar,
-                    ItemID.PalladiumBar
-                });
-                RecipeGroup.RegisterGroup("AerovelenceMod:CobaltBars", group);
-
-            }
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Evil Materials", new int[]
-                {
-                    ItemID.ShadowScale,
-                    ItemID.TissueSample
-                });
-
-                RecipeGroup.RegisterGroup("AerovelenceMod:EvilMaterials", group);
-            }
-            {
-                RecipeGroup group = new RecipeGroup(() => Terraria.Localization.Language.GetTextValue("LegacyMisc.37") + " Gold Bars", new int[]
-                {
-                    ItemID.PlatinumBar,
-                    ItemID.GoldBar
-                });
-
-                RecipeGroup.RegisterGroup("AerovelenceMod:GoldBars", group);
-            }
         }
 
         private void LoadDetours()

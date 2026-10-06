@@ -1,13 +1,7 @@
 using System;
-using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ocean;
 
@@ -38,7 +32,7 @@ public class ResurrectedAmmonite : ModItem
         Item.shoot = ModContent.ProjectileType<AmmoniteMinion>();
         Item.buffType = ModContent.BuffType<AmmoniteCompanion>();
         Item.shootSpeed = 1f;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarities.EarlyPHM;
         Item.value = Item.sellPrice(silver: 35);
         Item.UseSound = SoundID.Item44 with { Volume = .55f };
     }
@@ -65,7 +59,7 @@ public class AmmoniteCompanion : ModBuff
         LocalizationManager.Bind(DisplayName.Key, DisplayName);
         LocalizationManager.Bind(Description.Key, Description);
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Resurrected Ammonite", "default");
-        LocalizationManager.RegisterTranslation(Description.Key, "A little life from a distant sea fihghts for you", "default");
+        LocalizationManager.RegisterTranslation(Description.Key, "A little life from a distant sea fights for you", "default");
         LocalizationManager.RegisterTranslation(DisplayName.Key, "Ammonite resucitado", "es-ES");
         LocalizationManager.RegisterTranslation(Description.Key, "Una pequeña vida de un mar remoto lucha por ti", "es-ES");
     }
@@ -79,7 +73,7 @@ public class AmmoniteCompanion : ModBuff
 
 public class AmmoniteMinion : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmoniteAmmonite";
+    public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmonite";
     private int age;
 
     public override void SetStaticDefaults()
@@ -165,18 +159,6 @@ public class AmmoniteMinion : ModProjectile
         SpriteEffects flip = Projectile.spriteDirection < 0 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
         float breath = MathF.Sin(age * .065f) * .025f;
         Vector2 drawScale = new(1f + breath, 1f - breath);
-        Vector2 TendrilPoint(float x, float y) => center + (new Vector2(x * Projectile.spriteDirection, y) * drawScale).RotatedBy(Projectile.rotation);
-        for (int i = 0; i < 4; i++)
-        {
-            Vector2 previous = TendrilPoint(9f, 7f);
-            for (int j = 1; j <= 7; j++)
-            {
-                float t = j / 7f;
-                Vector2 next = TendrilPoint(9f + 16f * t, 7f + i * 2f + MathF.Sin(age * .07f + i + t * 3f) * t * 5f);
-                ShellYeah.Line(previous, next, new Color(230, 173, 122) * fade, 2f - t);
-                previous = next;
-            }
-        }
         Main.EntitySpriteDraw(shell, center, null, Color.Lerp(lightColor, Color.White, .15f) * fade, Projectile.rotation, shell.Size() * .5f, drawScale, flip);
         return false;
     }
@@ -255,12 +237,6 @@ public class AmmoniteSpiralBubble : ModProjectile
 
 internal static class ShellYeah
 {
-    internal static void Line(Vector2 start, Vector2 end, Color color, float width)
-    {
-        Vector2 delta = end - start;
-        Main.EntitySpriteDraw(TextureAssets.MagicPixel.Value, start, new Rectangle(0, 0, 1, 1), color, delta.ToRotation(), new Vector2(0f, .5f), new Vector2(delta.Length() + 1f, width), SpriteEffects.None);
-    }
-
     internal static void BubbleDust(Vector2 position, Vector2 velocity)
     {
         if (Main.dedServ) return;

@@ -1,23 +1,14 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria.Audio;
+﻿using Terraria.Audio;
 using System;
-using AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff;
 using Terraria.DataStructures;
 using Terraria.Graphics.CameraModifiers;
-using AerovelenceMod.Common.Utilities;
 using System.Collections.Generic;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Items.Weapons.Flares;
+using AerovelenceMod.Content.Items.Ammo.Flares;
 using ReLogic.Content;
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Common;
-using AerovelenceMod.Content.Projectiles;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
-using AerovelenceMod.Common.Systems.Language;
 
 namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 {
@@ -659,8 +650,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             Main.spriteBatch.Draw(softGlow, Projectile.Center - Main.screenPosition, softGlow.Frame(1, 1, 0, 0), Color.Gold * 0.3f * alpha, Projectile.rotation, softGlow.Size() / 2, 0.3f, SpriteEffects.None, 0f);
 
-            Texture2D star = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_06").Value;
-            Texture2D star2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_05").Value;
+            Texture2D star = Mod.Assets.Request<Texture2D>("Assets/Flare/star_06").Value;
+            Texture2D star2 = Mod.Assets.Request<Texture2D>("Assets/Flare/star_05").Value;
 
             Main.spriteBatch.Draw(star2, Projectile.Center - Main.screenPosition, star2.Frame(1, 1, 0, 0), Color.Pink * 0.7f * alpha, randomRotation[1] + MathHelper.ToRadians(vortexRotsmall * -2), star2.Size() / 2, 0.20f, SpriteEffects.None, 0f);
 
@@ -677,10 +668,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             myEffect.CurrentTechnique.Passes[0].Apply();
 
-            Texture2D FlareFlare = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/flare_01").Value;
+            Texture2D FlareFlare = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_01").Value;
             Main.spriteBatch.Draw(FlareFlare, Projectile.Center - Main.screenPosition, FlareFlare.Frame(1, 1, 0, 0), Color.Gold * alpha, MathF.PI, FlareFlare.Size() / 2, 0.35f * 0.5f, SpriteEffects.None, 0f);
 
-            Texture2D swirl = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/twirl_02").Value;
+            Texture2D swirl = Mod.Assets.Request<Texture2D>("Assets/Slash/twirl_02").Value;
             Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Gold * alpha, vortexRot, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
 
             Main.spriteBatch.End();
@@ -937,7 +928,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
         {
             Texture2D spotTex = Mod.Assets.Request<Texture2D>("Assets/Flare/CrispStarPMA").Value;
             Texture2D glowTex = Mod.Assets.Request<Texture2D>("Assets/Orbs/feather_circle").Value;
-            Texture2D star2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_05").Value;
+            Texture2D star2 = Mod.Assets.Request<Texture2D>("Assets/Flare/star_05").Value;
 
             Vector2 thisPos = _endPoint - Main.screenPosition;
 
@@ -1141,8 +1132,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             Main.spriteBatch.Draw(softGlow, Projectile.Center - Main.screenPosition, softGlow.Frame(1, 1, 0, 0), Color.Gold * 0.3f * alpha, Projectile.rotation, softGlow.Size() / 2, 0.7f, SpriteEffects.None, 0f);
 
-            Texture2D star = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_06").Value;
-            Texture2D star2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_05").Value;
+            Texture2D star = Mod.Assets.Request<Texture2D>("Assets/Flare/star_06").Value;
+            Texture2D star2 = Mod.Assets.Request<Texture2D>("Assets/Flare/star_05").Value;
 
             Main.spriteBatch.Draw(star2, Projectile.Center - Main.screenPosition, star2.Frame(1, 1, 0, 0), Color.Pink * 0.7f * alpha, randomRotation[1] + MathHelper.ToRadians(vortexRotsmall * -2), star2.Size() / 2, 0.40f, SpriteEffects.None, 0f);
 
@@ -1163,12 +1154,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             myEffect.CurrentTechnique.Passes[0].Apply();
 
-            Texture2D FlareFlare = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/flare_01").Value;
+            Texture2D FlareFlare = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_01").Value;
 
             Main.spriteBatch.Draw(FlareFlare, Projectile.Center - Main.screenPosition, FlareFlare.Frame(1, 1, 0, 0), Color.Gold * alpha, MathF.PI, FlareFlare.Size() / 2, 0.35f * 0.7f, SpriteEffects.None, 0f);
 
-            Texture2D swirl = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/twirl_02").Value;
-            Texture2D swirl2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/twirl_03").Value;
+            Texture2D swirl = Mod.Assets.Request<Texture2D>("Assets/Slash/twirl_02").Value;
+            Texture2D swirl2 = Mod.Assets.Request<Texture2D>("Assets/Slash/twirl_03").Value;
 
             Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), Color.Gold * alpha, vortexRot, swirl.Size() / 2, 0.20f, SpriteEffects.None, 0f);
 
@@ -1408,7 +1399,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
         {
             Texture2D spotTex = Mod.Assets.Request<Texture2D>("Assets/Flare/CrispStarPMA").Value;
             Texture2D glowTex = Mod.Assets.Request<Texture2D>("Assets/Orbs/feather_circle").Value;
-            Texture2D star2 = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/star_05").Value;
+            Texture2D star2 = Mod.Assets.Request<Texture2D>("Assets/Flare/star_05").Value;
 
             Vector2 thisPos = _endPoint - Main.screenPosition;
 

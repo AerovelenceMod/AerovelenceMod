@@ -1,10 +1,10 @@
-using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
+
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 using static Terraria.ModLoader.ModContent;
 
@@ -55,7 +55,7 @@ namespace AerovelenceMod.Content.Tiles.MusicBoxes
             Item.createTile = TileType<CrystalCavernsBox>();
             Item.width = 24;
             Item.height = 24;
-            Item.rare = ItemRarityID.LightRed;
+            Item.rare = ItemRarities.LatePHM;
             Item.value = 100000;
             Item.accessory = true;
         }

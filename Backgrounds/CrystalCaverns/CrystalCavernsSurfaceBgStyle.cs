@@ -1,6 +1,6 @@
 using AerovelenceMod.Common.Globals.Players;
-using Terraria;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Backgrounds.CrystalCaverns
 {

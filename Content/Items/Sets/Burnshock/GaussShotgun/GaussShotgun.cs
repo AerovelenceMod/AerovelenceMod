@@ -1,22 +1,16 @@
-﻿using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
-using System.Collections.Generic;
-using Terraria;
+﻿using System.Collections.Generic;
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
 using System;
 using Terraria.DataStructures;
 using static Terraria.NPC;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
 using AerovelenceMod.Common;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Systems;
 using Terraria.GameContent;
 using AerovelenceMod.Content.Gores;
 using AerovelenceMod.Content.Dusts;
-using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun
 {
@@ -191,11 +185,11 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun
     }
 }
 
-public class GaussShotgunRecoil : BasicRecoilProj
+public class GaussShotgunRecoil : BaseRecoilProj
 {
     public override string Texture => "Terraria/Images/Projectile_0";
 
-    public override bool PreDraw(ref Color lightColor)
+    public override void Draw(ref Color lightColor)
     {
         Texture2D Texture = TextureAssets.Item[gunID].Value;
 
@@ -246,8 +240,6 @@ public class GaussShotgunRecoil : BasicRecoilProj
         Main.spriteBatch.Draw(Star, starPos, null, Color.SkyBlue with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.3f, SpriteEffects.None, 0f);
         Main.spriteBatch.Draw(Star, starPos, null, Color.White with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.2f, SpriteEffects.None, 0f);
 
-        Main.spriteBatch.Draw(Texture, drawPos, null, lightColor, Projectile.rotation, Texture.Size() / 2, Projectile.scale, mySE, 0f);
-
         //Glowmask
         Texture2D Glowmask = Mod.Assets.Request<Texture2D>("Content/Items/Sets/Burnshock/GaussShotgun/GaussShotgunGlowmask").Value;
         Main.spriteBatch.Draw(Glowmask, drawPos, null, Color.White, Projectile.rotation, Glowmask.Size() / 2, Projectile.scale, mySE, 0f);
@@ -255,9 +247,6 @@ public class GaussShotgunRecoil : BasicRecoilProj
         //Glowlayer
         Texture2D Glowlayer = Mod.Assets.Request<Texture2D>("Content/Items/Sets/Burnshock/GaussShotgun/GaussShotgunGlow").Value;
         Main.spriteBatch.Draw(Glowlayer, drawPos, null, Color.White with { A = 0 } * Easings.easeOutCubic(bonusPower), Projectile.rotation, Glowlayer.Size() / 2, Projectile.scale, mySE, 0f);
-
-
-        return false;
     }
 }
 
@@ -489,7 +478,7 @@ public class GaussianStar : ModProjectile
     float overallAlpha = 1f;
     public override bool PreDraw(ref Color lightColor)
     {
-        ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+        ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
         {
             DrawShader(false);
         });

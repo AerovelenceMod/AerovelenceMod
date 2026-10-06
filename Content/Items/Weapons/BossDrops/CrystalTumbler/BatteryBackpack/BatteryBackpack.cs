@@ -1,17 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler;
 
@@ -40,7 +40,7 @@ public class BatteryBackpack : ModItem
         Item.knockBack = 2f;
         Item.shoot = ModContent.ProjectileType<BatteryClamp>();
         Item.shootSpeed = 11f;
-        Item.rare = ItemRarityID.Green;
+        Item.rare = ItemRarities.MidPHM;
         Item.value = Item.sellPrice(gold: 1);
         Item.UseSound = SoundID.Item1 with { Volume = .6f, Pitch = -.1f };
     }

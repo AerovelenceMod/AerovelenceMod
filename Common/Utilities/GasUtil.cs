@@ -1,11 +1,11 @@
 using System;
 using AerovelenceMod.Common.Systems.Gas;
-using AerovelenceMod.Content.Projectiles.Gas;
-using Microsoft.Xna.Framework;
-using Terraria;
+using AerovelenceMod.Content.Projectiles;
+
+
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Common.Utilities;
 

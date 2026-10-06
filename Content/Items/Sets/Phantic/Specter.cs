@@ -1,18 +1,18 @@
 /*using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
-using Microsoft.Xna.Framework;
-using AerovelenceMod.Common.Utilities;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
+
+
+
 using System;
 using Terraria.GameContent;
 using System.Collections.Generic;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {

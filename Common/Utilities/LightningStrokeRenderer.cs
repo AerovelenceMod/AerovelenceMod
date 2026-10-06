@@ -1,11 +1,10 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Common.Utilities;
 
@@ -28,7 +27,7 @@ public sealed class LightningStrokeRenderer : IDisposable
         Texture2D stroke = texture;
         Vector2 position = origin;
         Color tint = Color.White * MathHelper.Clamp(opacity, 0, 1);
-        ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(layer, () =>
+        ModContent.GetInstance<PixelationSystem>().QueueRenderAction(layer, () =>
         {
             if (!stroke.IsDisposed)
                 Main.spriteBatch.Draw(stroke, position - Main.screenPosition, null, tint, 0,

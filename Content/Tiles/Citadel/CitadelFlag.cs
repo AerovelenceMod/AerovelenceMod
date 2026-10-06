@@ -1,9 +1,9 @@
 /*
-using Microsoft.Xna.Framework;
-using Terraria;
+
+
 using Terraria.Enums;
 using Terraria.Localization;
-using Terraria.ModLoader;
+
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Tiles

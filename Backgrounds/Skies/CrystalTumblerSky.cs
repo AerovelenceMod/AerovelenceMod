@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿
 using MonoMod.Cil;
 using ReLogic.Content;
 using System;
-using Terraria.ModLoader;
-using Terraria;
+
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework;
+
 
 namespace AerovelenceMod.Backgrounds.Skies
 {

@@ -1,7 +1,7 @@
 ﻿using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb;
@@ -18,18 +18,17 @@ using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 using AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe;
 using AerovelenceMod.Content.Particles;
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
 using AerovelenceMod.Content.Projectiles.TempVFX;
 using Microsoft.CodeAnalysis;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 
 namespace AerovelenceMod.Content.Items
@@ -56,7 +55,6 @@ namespace AerovelenceMod.Content.Items
             Item.noMelee = true;
             Item.knockBack = 0;
             Item.value = Item.sellPrice(0, 9, 0, 0);
-            Item.rare = ItemRarityID.Orange;
             Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<EosSlash>();
             //Item.useAmmo = AmmoID.Bullet;

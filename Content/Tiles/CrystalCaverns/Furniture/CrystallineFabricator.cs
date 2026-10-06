@@ -1,15 +1,15 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 using Terraria.ObjectData;
 using Terraria.DataStructures;
 
 using ReLogic.Content;
-using Microsoft.Xna.Framework.Graphics;
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {

@@ -1,7 +1,7 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Systems.Language;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Tools.ClockOfLife
 {
@@ -10,7 +10,6 @@ namespace AerovelenceMod.Content.Items.Tools.ClockOfLife
         public override void SetStaticDefaults()
         {
             this.ModifyLocalization("Clock of Life", "Changes the time to day if the moon is up, and vice-versa")
-            .AddName(Language.Default, "Clock of Life").AddTooltip(Language.Default, "Changes the time to day if the moon is up, and vice-versa")
             .AddName(Language.Spanish, "Reloj de la vida").AddTooltip(Language.Spanish, "Cambia el tiempo a de día si la luna está arriba, y viceversa");
         }
 
@@ -24,7 +23,7 @@ namespace AerovelenceMod.Content.Items.Tools.ClockOfLife
             Item.mana = 100;
             Item.UseSound = SoundID.Item4;
             Item.consumable = false;
-            Item.rare = ItemRarityID.Cyan;
+            Item.rare = ItemRarities.PostML;
         }
 
         public const int DayLength = 54000;

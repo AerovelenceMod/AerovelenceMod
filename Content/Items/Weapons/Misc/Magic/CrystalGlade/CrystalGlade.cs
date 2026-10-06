@@ -1,11 +1,11 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Utilities;
+
+
+
 using System;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
@@ -14,7 +14,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
 {
@@ -489,7 +489,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D Base = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/GlowStar");
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Flares/star_05");
+            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
 
             Vector2 pos = Projectile.Center - Main.screenPosition;
 

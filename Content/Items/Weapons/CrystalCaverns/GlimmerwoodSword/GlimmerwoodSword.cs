@@ -1,18 +1,11 @@
 using System;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Enums;
-using Terraria.ID;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 {
@@ -42,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.noMelee = Item.noUseGraphic = Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<GlimmerwoodSwordSwing>();
             Item.shootSpeed = 1f;
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = Item.sellPrice(copper: 30);
         }
 

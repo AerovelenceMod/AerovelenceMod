@@ -1,15 +1,15 @@
 using System;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria.ModLoader;
-using Terraria;
-using AerovelenceMod.Common.Utilities;
+
+
+
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using Microsoft.Xna.Framework;
+
 using ReLogic.Content;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Drawing;
-using Terraria.ID;
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -103,27 +103,5 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 }
             }
         }
-    }
-
-    public class CavernGatewayItem : ModItem
-    {
-
-        public override void SetDefaults()
-        {
-            Item.width = 30;
-            Item.height = 30;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<CavernGatewayTile>();
-            Item.placeStyle = 0;
-            Item.rare = ItemRarityID.Blue;
-            Item.value = Item.buyPrice(0, 5, 0, 0);
-        }
-
     }
 }

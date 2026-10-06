@@ -1,11 +1,11 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Content;
 using System.Collections.Generic;
-using Terraria.ID;
+
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
@@ -106,7 +106,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
                     {
 
                         //Doing UnderProjectiles instead of Dusts cuz I want it to draw under the player
-                        ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(behavior.drawLayer, () =>
+                        ModContent.GetInstance<PixelationSystem>().QueueRenderAction(behavior.drawLayer, () =>
                         {
                             for (int i = 0; i < timesToDraw; i++)
                                 Draw(dust, Tex, vec2Scale);

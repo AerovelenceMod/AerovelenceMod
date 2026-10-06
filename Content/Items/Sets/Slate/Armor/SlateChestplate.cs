@@ -1,6 +1,6 @@
-/*using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+/*
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Slate.Armor
 {
@@ -17,7 +17,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate.Armor
             Item.width = 30;
             Item.height = 18;
             Item.value = 10;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.defense = 5;
         }
         public override void UpdateEquip(Player player)

@@ -1,15 +1,15 @@
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Accessories.Boss
 {
@@ -183,7 +183,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
 
             float scaley = 0.5f;
 
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Main.spriteBatch.End();
                 Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);

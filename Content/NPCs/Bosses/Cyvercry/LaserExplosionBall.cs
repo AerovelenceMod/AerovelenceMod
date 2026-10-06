@@ -1,18 +1,17 @@
 using AerovelenceMod.Common.Globals.Worlds;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
+
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry;
-using AerovelenceMod.Content.Projectiles;
 using System;
 using Terraria.GameContent.Bestiary;
 

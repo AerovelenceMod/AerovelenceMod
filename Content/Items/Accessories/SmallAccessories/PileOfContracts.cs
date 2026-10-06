@@ -1,7 +1,7 @@
-using AerovelenceMod.Common.Systems.Language;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             Item.width = 24;
             Item.height = 20;
             Item.accessory = true;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 35);
         }
 

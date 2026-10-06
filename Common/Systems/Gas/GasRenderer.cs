@@ -32,7 +32,7 @@ public sealed class GasRenderer : ModSystem
             return;
         persistentDraw ??= DrawGas;
         if (!alphaRegistered)
-            alphaRegistered = ModContent.GetInstance<NewPixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, HasGas, persistentDraw);
+            alphaRegistered = ModContent.GetInstance<PixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, HasGas, persistentDraw);
         if (!Main.gameMenu)
         {
             GasSystem system = ModContent.GetInstance<GasSystem>();
@@ -174,7 +174,7 @@ public sealed class GasRenderer : ModSystem
         if (Main.dedServ)
             return;
         if (persistentDraw is not null)
-            ModContent.GetInstance<NewPixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, persistentDraw);
+            ModContent.GetInstance<PixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, persistentDraw);
         alphaRegistered = false;
         persistentDraw = null;
         GasFieldRenderer old = fieldRenderer;

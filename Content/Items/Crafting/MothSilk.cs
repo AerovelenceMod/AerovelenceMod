@@ -1,8 +1,8 @@
-﻿using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+﻿
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Crafting
 {

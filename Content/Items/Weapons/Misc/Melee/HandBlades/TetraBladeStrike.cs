@@ -1,15 +1,15 @@
 ﻿using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+using AerovelenceMod.Content.Projectiles;
+
+
 using ReLogic.Content;
 using System.Collections.Generic;
 using System.Net;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
 {

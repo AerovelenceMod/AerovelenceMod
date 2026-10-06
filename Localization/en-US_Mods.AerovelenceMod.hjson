@@ -272,6 +272,16 @@ Buffs: {
 		Description: "'I now pronounce you Terrarian and Fish'"
 		DisplayName: Fish Partner
 	}
+
+	MiningAbilityCooldown: {
+		DisplayName: Mining Power Withdrawl
+		Description: Can't use Ambrosia mining set bonus while this is active
+	}
+
+	CrabBuff: {
+		DisplayName: Seashine Crab
+		Description: ""
+	}
 }
 
 Items: {
@@ -2237,6 +2247,51 @@ Items: {
 		Off: Off
 	}
 
+	AmbrosiaMiningBoots: {
+		DisplayName: Ambrosia Mining Boots
+		Tooltip: 5% increased movment speed
+	}
+
+	AmbrosiaMiningChestplate: {
+		DisplayName: Ambrosia Mining Chestplate
+		Tooltip: Increased jump height
+	}
+
+	AmbrosiaMiningHelmet: {
+		DisplayName: Ambrosia Mining Helmet
+		Tooltip: ""
+	}
+
+	SeashineBodyArmor: {
+		DisplayName: Seashine Body Armor
+		Tooltip: 2% increased minion knockback
+	}
+
+	SeashineHelmet: {
+		DisplayName: Seashine Helmet
+		Tooltip:
+			'''
+			6% increased summoning damage
+			8% less mana cost
+			+1 summon slot
+			'''
+	}
+
+	SeashineLeggings: {
+		DisplayName: Seashine Leggings
+		Tooltip: 3% increased movement speed
+	}
+
+	MiningSack: {
+		DisplayName: Mining Sack
+		Tooltip: Right click to open
+	}
+
+	MiningSackHardmode: {
+		DisplayName: Mining Sack
+		Tooltip: Right click to open
+	}
+
 	RopeBridgePost: {
 		DisplayName: Rope Bridge Post
 		Tooltip:
@@ -2253,6 +2308,26 @@ Items: {
 			Right-click two posts with rope to connect
 			Consumes 2 rope per section
 			'''
+	}
+
+	ChloroFlare: {
+		DisplayName: Chloro Flare
+		Tooltip: ""
+	}
+
+	FrostFlare: {
+		DisplayName: Frost Flare
+		Tooltip: ""
+	}
+
+	VenomFlare: {
+		DisplayName: Venom Flare
+		Tooltip: ""
+	}
+
+	FlareShark: {
+		DisplayName: Flare Shark
+		Tooltip: ""
 	}
 }
 
@@ -2828,6 +2903,14 @@ Projectiles: {
 	LumberjackAxe.DisplayName: Lumberjack Axe
 	CrystalSlimeHazard.DisplayName: Crystal Slime Hazard
 	GasCloud.DisplayName: Gas Cloud
+	SeaCrabProjectile.DisplayName: Sea Spray
+	SeaCrab.DisplayName: Sea Crab
+	ChloroFlareProj.DisplayName: Chloro Flare Proj
+	FireFlareProj.DisplayName: Fire Flare Proj
+	FrostFlareProj.DisplayName: Frost Flare Proj
+	VenomFlareProj.DisplayName: Venom Flare Proj
+	MiningEnergyBlast.DisplayName: Mining Energy Blast
+	FlareSharkRecoilProjectile.DisplayName: Flare Shark Recoil Projectile
 }
 
 Configs: {

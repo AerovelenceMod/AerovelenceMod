@@ -1,7 +1,7 @@
-using AerovelenceMod.Common.Systems.Language;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
             Item.width = 28;
             Item.height = 22;
             Item.accessory = true;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.LatePHM;
             Item.value = Item.buyPrice(gold: 3);
         }
 

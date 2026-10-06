@@ -3,18 +3,18 @@ using System.IO;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Corruption
 {
@@ -43,7 +43,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
             Item.noMelee = Item.noUseGraphic = Item.channel = true;
             Item.shootSpeed = 1f;
             Item.shoot = ModContent.ProjectileType<MimikosMirrorHeld>();
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.value = Item.sellPrice(silver: 40);
         }
 
@@ -348,7 +348,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Corruption
                 float snapshotAim = Projectile.ai[0];
                 Effect effect = ModContent.Request<Effect>("AerovelenceMod/Effects/Scroll/ComboLaserVertexGradient", AssetRequestMode.ImmediateLoad).Value;
                 Texture2D mask = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Clear/GlowTrailClear", AssetRequestMode.ImmediateLoad).Value;
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
                 {
                     GetVisualAnchor(out _, out Vector2 liveFace, out float liveAim);
                     DrawRays(effect, mask, snapshot, widths, strengths, depths, time, alignment, liveFace, MathHelper.WrapAngle(liveAim - snapshotAim));

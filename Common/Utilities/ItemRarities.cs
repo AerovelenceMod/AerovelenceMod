@@ -1,7 +1,7 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
-using Terraria.ID;
+﻿
+
+
+
 
 namespace AerovelenceMod.Common.Utilities
 {
@@ -15,7 +15,7 @@ namespace AerovelenceMod.Common.Utilities
         public const int PrePlantPostMech = ItemRarityID.Pink;
         public const int RarePrePlant = ItemRarityID.LightPurple;
         public const int PlanteraGolemTier = ItemRarityID.Lime;
-        public const int PostPlantDungeon = ItemRarityID.Orange;
+        public const int PostPlantDungeon = ItemRarityID.Yellow;
         public const int LunarMaterials = ItemRarityID.Cyan;
         public const int PillarsAndML = ItemRarityID.Red;
         public const int PostML = ItemRarityID.Purple;

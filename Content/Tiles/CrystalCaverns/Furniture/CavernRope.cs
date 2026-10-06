@@ -1,8 +1,8 @@
-using Terraria.ModLoader;
-using AerovelenceMod.Common.Utilities;
-using Terraria.ID;
-using Terraria;
-using Microsoft.Xna.Framework;
+
+
+
+
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Building;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<CavernRope>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
             Item.tileBoost = 3;
         }

@@ -1,21 +1,20 @@
 /*using System;
 using System.IO;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using Terraria;
+
+
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Effects;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Mjolnir;
 
@@ -38,7 +37,7 @@ public class Mjolnir : TranslatableModItem
         Item.useTime = Item.useAnimation = 20;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.noMelee = Item.noUseGraphic = true;
-        Item.rare = ItemRarityID.Yellow;
+        Item.rare = ItemRarities.EarlyHardmode;
         Item.value = Item.sellPrice(gold: 12);
     }
 
@@ -1219,7 +1218,7 @@ internal static class MjolnirEffects
         return (angle + MathHelper.Clamp(turn * .065f, -.032f, .032f)).ToRotationVector2();
     }
 
-    internal static void Queue(Action draw, RenderLayer layer = RenderLayer.OverPlayers) => ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(layer, draw);
+    internal static void Queue(Action draw, RenderLayer layer = RenderLayer.OverPlayers) => ModContent.GetInstance<PixelationSystem>().QueueRenderAction(layer, draw);
 
     internal static void Shake(Vector2 center, float strength)
     {

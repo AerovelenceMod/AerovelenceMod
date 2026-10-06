@@ -1,7 +1,7 @@
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
 {
@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
             Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = true;
             Item.createTile = ModContent.TileType<SmoothCavernStoneTile>();
-            Item.rare = ItemRarityID.White;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = 5;
         }
     }

@@ -1,15 +1,15 @@
-using AerovelenceMod.Common.Systems.Language;
-using AerovelenceMod.Common.Utilities;
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Terraria;
+
+
+
 
 namespace AerovelenceMod.Content.Items.Ammo
 {
@@ -43,7 +43,7 @@ namespace AerovelenceMod.Content.Items.Ammo
             base.SetDefaults();
             Item.width = 16;
             Item.height = 20;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.BasicMaterials;
             Item.value = Item.sellPrice(copper: 2);
             Item.damage = Material == WoodSlugSlugMaterial.Stone ? 5 : Material == WoodSlugSlugMaterial.Wood ? 2 : 4;
             Item.DamageType = DamageClass.Ranged;

@@ -1,20 +1,20 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 {
@@ -180,12 +180,12 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.EntitySpriteDraw(gash, drawPos, null, between with { A = 0 } * 0.35f, 0f, gash.Size() / 2f, gashScale * 2f, SpriteEffects.None);
             Main.EntitySpriteDraw(gash, drawPos, null, Color.White with { A = 0 } * 0.35f, 0f, gash.Size() / 2f, gashScale * 1f, SpriteEffects.None);
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawBasicBall(false);
             });
 
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 DrawBall(false);
             });
@@ -375,13 +375,13 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.EntitySpriteDraw(gash, drawPos, null, between with { A = 0 } * Easings.easeInQuad(justShotVal) * 1f, 0f, gash.Size() / 2f, gashScale * 2f, SpriteEffects.None);
             Main.EntitySpriteDraw(gash, drawPos, null, Color.White with { A = 0 } * Easings.easeInQuad(justShotVal) * 1f, 0f, gash.Size() / 2f, gashScale * 1f, SpriteEffects.None);
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
             {
                 DrawTrail(false);
                 DrawBasicBall(false);
             });
 
-            ModContent.GetInstance<NewAdditivePixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.OverPlayers, () =>
             {
                 DrawBall(false);
             });
@@ -601,7 +601,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawCrack(false);
             });
@@ -779,7 +779,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 
         public override bool PreDraw(ref Color lightColor)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawCrack(true);
             });

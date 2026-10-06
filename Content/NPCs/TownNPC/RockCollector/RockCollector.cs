@@ -7,12 +7,9 @@ using AerovelenceMod.Content.EmoteBubbles;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -20,15 +17,15 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Personalities;
 using Terraria.GameContent.UI;
-using Terraria.ID;
 using Terraria.Localization;
-using Terraria.ModLoader;
 using Terraria.ModLoader.IO;
 using Terraria.Utilities;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 using AerovelenceMod.Content.Items.Tools;
 using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
+using AerovelenceMod.Content.Items.Armor.AmbrosiaMiningSet;
+using AerovelenceMod.Content.Items.Misc;
 using AerovelenceMod.Content.Items.Potions;
 using AerovelenceMod.Content.Items.Tools.Drills;
 using AerovelenceMod.Common.Systems;
@@ -202,29 +199,29 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
             //int dryad = NPC.FindFirstNPC(NPCID.Dryad);
 
             //if (demolitionist >= 0 && Main.rand.NextBool(4))
-            //    chat.Add(Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.DemolitionistDialogue", Main.npc[demolitionist].GivenName));
+            //    chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.DemolitionistDialogue", Main.npc[demolitionist].GivenName));
             //if (angler >= 0 && Main.rand.NextBool(6))
-            //    chat.Add(Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.AnglerDialogue", Main.npc[angler].GivenName));
+            //    chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.AnglerDialogue", Main.npc[angler].GivenName));
             //if (dryad >= 0 && Main.rand.NextBool(6))
-            //    chat.Add(Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.DryadDialogue", Main.npc[dryad].GivenName));
+            //    chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.DryadDialogue", Main.npc[dryad].GivenName));
 
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue1"));
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2"));
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue3"));
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"));
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.CommonDialogue"), 5.0);
-            chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.RareDialogue"), 0.1);
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue1"));
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue2"));
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue3"));
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue4"));
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.CommonDialogue"), 5.0);
+            chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.RareDialogue"), 0.1);
 
             //Utterly worthless line + it saves the timestalkedto for some reason???
             //NumberOfTimesTalkedTo++;
 
             //if (NumberOfTimesTalkedTo >= 10 && dryad >= 0)
-            //    chat.Add(Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.TalkALot", Main.npc[dryad].GivenName));
+            //    chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.Dialogue.RockCollector.TalkALot", Main.npc[dryad].GivenName));
 
             // Ensure chat isn't empty to prevent crashes
             if (chat.elements.Count == 0)
             {
-                chat.Add(Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue1"));
+                chat.Add(Terraria.Localization.Language.GetTextValue("Mods.AerovelenceMod.NPCs.RockCollector.Dialogue.StandardDialogue1"));
             }
 
             string chosenChat = chat.Get();
@@ -283,31 +280,9 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
                 .Add<AmuletOfGlory>()
                 .Add<PlatinumHook>()
                 .Add<OnTheRocks>()
-
-
-                .Add(new Item(ItemID.Geode) { shopCustomPrice = Item.buyPrice(gold: 3) })
-
-                .Add(ItemID.CopperOre)
-                .Add(ItemID.TinOre)
-                .Add(ItemID.IronOre)
-                .Add(ItemID.LeadOre)
-
-                .Add(ItemID.SilverOre, Condition.DownedEowOrBoc)
-                .Add(ItemID.TungstenOre, Condition.DownedEowOrBoc)
-                .Add(ItemID.GoldOre, Condition.DownedEowOrBoc)
-                .Add(ItemID.PlatinumOre, Condition.DownedEowOrBoc)
-
-                .Add(ItemID.DemoniteOre, Condition.Hardmode)
-                .Add(ItemID.CrimtaneOre, Condition.Hardmode)
-                .Add(ItemID.Hellstone, Condition.Hardmode)
-
-                .Add(ItemID.ChlorophyteOre, Condition.DownedGolem)
-
-                .Add(new Item(ModContent.ItemType<ElectricBlueSolution>()), Condition.DownedMechBossAny);
-
-            //.Add(new Item(ModContent.ItemType<ShotgunAxe>()) { shopCustomPrice = Item.buyPrice(copper: 15) })
-            //.Add<ShotgunAxe>(Condition.IsNpcShimmered);
-
+                .Add<AmbrosiaMiningHelmet>()
+                .Add<AmbrosiaMiningChestplate>()
+                .Add<AmbrosiaMiningBoots>();
             npcShop.Register();
         }
 
@@ -323,12 +298,6 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
                     item.shopCustomPrice = value / 2;
                 }
             }
-        }
-
-        public override void ModifyNPCLoot(NPCLoot npcLoot)
-        {
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CavernStoneItem>(), 1, 8, 16));
-            npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CavernCrystalItem>(), 1, 2, 5));
         }
 
         public override void OnKill()
@@ -362,39 +331,6 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
                     }
                 }
         }
-
-        //COMMENTING OUT CUZ ROCK COLLECTOR IS LITERALLY AGENDER
-
-        //public override bool CanGoToStatue(bool toKingStatue) => true;
-
-        //public override void OnGoToStatue(bool toKingStatue)
-        //{
-        //    if (Main.netMode == NetmodeID.Server)
-        //    {
-        //        ModPacket packet = Mod.GetPacket();
-        //      //  packet.Write((byte)ExampleMod.MessageType.ExampleTeleportToStatue);
-        //        packet.Write((byte)NPC.whoAmI);
-        //        packet.Send();
-        //    }
-        //    else
-        //    {
-        //        StatueTeleport();
-        //    }
-        //}
-
-        //public void StatueTeleport()
-        //{
-        //    for (int i = 0; i < 30; i++)
-        //    {
-        //        Vector2 position = Main.rand.NextVector2Square(-20, 21);
-        //        if (Math.Abs(position.X) > Math.Abs(position.Y))
-        //            position.X = Math.Sign(position.X) * 20;
-        //        else
-        //            position.Y = Math.Sign(position.Y) * 20;
-
-        //        Dust.NewDustPerfect(NPC.Center + position, ModContent.DustType<PixelGlowOrb>(), Vector2.Zero).noGravity = true;
-        //    }
-        //}
 
         public override void TownNPCAttackStrength(ref int damage, ref float knockback)
         {
@@ -480,6 +416,10 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
             if (silver >= 100) Reward(player, collector, ItemID.GoldCoin, silver / 100);
             if (silver % 100 > 0) Reward(player, collector, ItemID.SilverCoin, silver % 100);
             Reward(player, collector, ModContent.ItemType<CavernCrystalItem>(), crystals);
+            if (!Main.hardMode)
+                Reward(player, collector, ModContent.ItemType<MiningSack>(), crystals);
+            if (Main.hardMode)
+                Reward(player, collector, ModContent.ItemType<MiningSackHardmode>(), crystals);
             if (specialReward > 0) Reward(player, collector, specialReward, 1);
             if (Main.netMode == NetmodeID.Server)
             {

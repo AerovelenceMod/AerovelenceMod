@@ -1,17 +1,17 @@
 /*using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Items.Weapons.AreaPistols.ErinGun;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Content.Items.Weapons.AreaPistols
 {

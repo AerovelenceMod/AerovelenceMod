@@ -1,20 +1,19 @@
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework;
+
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using System;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common;
-using AerovelenceMod.Content.Projectiles;
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 {
@@ -35,7 +34,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
             Item.DamageType = DamageClass.SummonMeleeSpeed;
             Item.damage = 20;
             Item.knockBack = 2;
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.EarlyPHM;
 
             Item.shoot = ModContent.ProjectileType<ShocklashProjectile>();
             Item.shootSpeed = 4;
@@ -294,7 +293,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Shocklash
 
             //DrawLine(list);
 
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
             {
                 DrawPixelatedStarAfterImage(false);
             });

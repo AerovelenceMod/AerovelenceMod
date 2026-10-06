@@ -1,17 +1,17 @@
-using AerovelenceMod.Common.Utilities;
+
 using Terraria.Audio;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
-using Terraria;
+
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
 using Terraria.GameContent;
-using Microsoft.Xna.Framework;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
 using Terraria.Localization;
-using Microsoft.Xna.Framework.Graphics;
+
 using ReLogic.Content;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 

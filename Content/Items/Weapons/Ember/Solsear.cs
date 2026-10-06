@@ -1,19 +1,19 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
 using ReLogic.Content;
-using Terraria;
+
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using System;
 using Terraria.Audio;
-using AerovelenceMod.Common.Utilities;
+
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Content.Projectiles.Other;
+using AerovelenceMod.Content.Projectiles;
 using System.Collections.Generic;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Ember
 {

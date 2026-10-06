@@ -1,14 +1,14 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Systems;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.BossSummons
 {
@@ -372,7 +372,7 @@ namespace AerovelenceMod.Content.Items.BossSummons
             Item.useTime = 45;
             Item.useStyle = ItemUseStyleID.HoldUp;
             Item.consumable = false;
-            Item.rare = ItemRarityID.Orange;
+            Item.rare = ItemRarities.MidPHM;
         }
 
         public override bool CanUseItem(Player player)

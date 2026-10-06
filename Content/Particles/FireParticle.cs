@@ -1,14 +1,14 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework.Graphics;
+
+
+
+
 using ReLogic.Content;
-using Microsoft.Xna.Framework;
+
 using System;
 using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Common;
-using AerovelenceMod.Common.Utilities;
+
 
 
 namespace AerovelenceMod.Content.Particles
@@ -113,7 +113,7 @@ namespace AerovelenceMod.Content.Particles
 
         public override void Draw(SpriteBatch spriteBatch)
         {
-            ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(renderLayer, () =>
+            ModContent.GetInstance<PixelationSystem>().QueueRenderAction(renderLayer, () =>
             {
                 Vector2 drawPos = Center - Main.screenPosition;
 

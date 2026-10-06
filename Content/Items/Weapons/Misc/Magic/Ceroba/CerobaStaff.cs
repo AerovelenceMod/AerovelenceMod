@@ -1,19 +1,18 @@
-﻿using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+﻿
+
 using System.Collections.Generic;
-using Terraria;
+
 using Terraria.Audio;
 using Terraria.GameContent;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.DataStructures;
 using System;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Projectiles;
-using AerovelenceMod.Content.Projectiles.Other;
 using AerovelenceMod.Common.Globals.Players;
 using System.Linq;
 using Microsoft.Xna.Framework.Graphics.PackedVector;
@@ -25,7 +24,7 @@ using Terraria.Map;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight;
 using static Terraria.NPC;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Systems.Language;
+
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 {
@@ -89,19 +88,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         public override void AddRecipes()
         {
-            CreateRecipe().
-                AddIngredient(ItemID.SpectreBar, 12).
-                AddIngredient(ItemID.SoulofLight, 6).
-                AddIngredient(ItemID.GoldBar, 6).
-                AddTile(TileID.MythrilAnvil).
-                Register();
-
-            CreateRecipe().
-                AddIngredient(ItemID.SpectreBar, 12).
-                AddIngredient(ItemID.SoulofLight, 6).
-                AddIngredient(ItemID.PlatinumBar, 6).
-                AddTile(TileID.MythrilAnvil).
-                Register();
+            CreateRecipe()
+                .AddIngredient(ItemID.SpectreBar, 12)
+                .AddIngredient(ItemID.SoulofLight, 6)
+                .AddRecipeGroup("AerovelenceMod:GoldOrPlatinum", 6)
+                .AddTile(TileID.MythrilAnvil)
+                .Register();
         }
 
         public override void HoldItem(Player player)

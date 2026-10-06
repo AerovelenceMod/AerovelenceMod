@@ -1,11 +1,11 @@
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
-using AerovelenceMod.Common.Utilities;
+
+
+
+
+
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using Terraria.GameContent;
 using AerovelenceMod.Common.Systems;
 using Microsoft.CodeAnalysis.Text;
@@ -135,7 +135,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             slashTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Slash/pixelKennySlash").Value;
             Main.spriteBatch.Draw(slashTexture, drawPosition, null, Color.AliceBlue * 0.8f, 0f, slashTexture.Size() / 2, slashScale, SpriteEffects.None, 0f);
 
-            PixellationSystem.QueuePixelationAction(() =>
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
                 Rectangle sourceRect = new(0, 0, 1, 1);
@@ -201,7 +201,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
                     spriteBatch.Draw(slashTexture, start, sourceRect, Color.AliceBlue * 0.8f, 0f, slashTexture.Size() / 2, slashScale, SpriteEffects.None, 0f);
                 }
-            }, PixellationSystem.RenderType.Additive);
+            });
             return false;
         }
     }

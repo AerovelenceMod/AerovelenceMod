@@ -1,9 +1,9 @@
-/*using AerovelenceMod.Common.Systems.Language;
+/*
 using System;
-using Microsoft.Xna.Framework;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
@@ -29,7 +29,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
             Item.noUseGraphic = true;
             Item.knockBack = 4;
             Item.value = Item.sellPrice(0, 0, 80, 0);
-            Item.rare = ItemRarityID.Green;
+            Item.rare = ItemRarities.MidPHM;
             Item.autoReuse = false;
             Item.shoot = ModContent.ProjectileType<ReaperProj>();
             Item.shootSpeed = 2f;

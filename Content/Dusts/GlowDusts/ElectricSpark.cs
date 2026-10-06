@@ -1,8 +1,8 @@
-﻿using Terraria;
-using Terraria.ModLoader;
-using Microsoft.Xna.Framework;
+﻿
+
+
 using System;
-using Microsoft.Xna.Framework.Graphics;
+
 using AerovelenceMod.Common.Systems;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
@@ -151,7 +151,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
             if ((dust.customData as ElectricSparkBehavior).pixelize)
             {
-                ModContent.GetInstance<NewPixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
                 {
                     Draw(dust);
                 });

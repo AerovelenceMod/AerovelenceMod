@@ -1,14 +1,14 @@
-using AerovelenceMod.Common.Utilities;
+
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
+
+
 using ReLogic.Content;
 using System;
-using Terraria;
+
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
 using static Terraria.ID.ContentSamples.CreativeHelper;
 
@@ -108,25 +108,6 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                 * MathHelper.Lerp(0.0f, 2f, ((float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(i * 0.05f, j * 0.05f), Main.GlobalTimeWrappedHourly * 0.1f)), 8)));
 
             DrawUtils.DrawSlopedTile(glowTexture.Value, position, tile, maskColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
-        }
-    }
-
-    public class LushGrowthItem : ModItem
-    {
-        public override void SetDefaults()
-        {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<LushGrowthTile>();
-            Item.rare = ItemRarityID.White;
-            Item.value = 5;
         }
     }
 }

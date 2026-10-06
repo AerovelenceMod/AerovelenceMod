@@ -7,8 +7,8 @@ using AerovelenceMod.Content.Items.Weapons.CrystalCaverns;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using System.Collections.Generic;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 {

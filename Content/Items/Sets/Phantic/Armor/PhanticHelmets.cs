@@ -1,7 +1,7 @@
-/*using AerovelenceMod.Common.Utilities;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+/*
+
+
+
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
 {
@@ -62,7 +62,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
             Item.width = 22;
             Item.height = 22;
             Item.value = 10;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.MidPHM;
             Item.defense = 3;
         }
         public override void UpdateEquip(Player player)
@@ -99,7 +99,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
             Item.width = 22;
             Item.height = 22;
             Item.value = 10;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.MidPHM;
             Item.defense = 3;
         }
         public override void UpdateEquip(Player player)
@@ -136,7 +136,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic.Armor
             Item.width = 22;
             Item.height = 22;
             Item.value = 10;
-            Item.rare = ItemRarityID.Blue;
+            Item.rare = ItemRarities.MidPHM;
             Item.defense = 3;
         }
         public override void UpdateEquip(Player player)

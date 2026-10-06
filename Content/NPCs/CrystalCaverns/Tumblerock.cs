@@ -1,13 +1,13 @@
 ﻿using AerovelenceMod.Common.Globals.NPCs;
-using AerovelenceMod.Common.Systems.Language;
+
 using AerovelenceMod.Content.Biomes;
-using Microsoft.Xna.Framework;
+
 using System.Collections.Generic;
 using System.Reflection;
-using Terraria;
+
 using Terraria.GameContent.Bestiary;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
 using Terraria.ModLoader.Utilities;
 
 namespace AerovelenceMod.Content.NPCs.CrystalCaverns

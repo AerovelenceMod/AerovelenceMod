@@ -1,8 +1,8 @@
 using Terraria.Enums;
-using AerovelenceMod.Common.Systems.Language;
-using Terraria.ModLoader;
+
+
 using Terraria.ObjectData;
-using Terraria;
+
 using System.Collections.Generic;
 
 namespace AerovelenceMod.Content.Tiles.Banners

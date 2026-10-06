@@ -1,15 +1,14 @@
 ﻿/*
 using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
+
+
+
 using Terraria.DataStructures;
 using Terraria.GameContent;
-using AerovelenceMod.Common.Utilities;
+
 using System.Composition.Convention;
-using Microsoft.Xna.Framework.Graphics;
-using AerovelenceMod.Content.Projectiles;
-using Microsoft.Xna.Framework;
+
+
 
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.Yoyo
@@ -50,7 +49,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.Yoyo
             Item.channel = true;
 
             Item.value = Item.sellPrice(gold: 1, silver: 50);
-            Item.rare = ItemRarityID.Red;
+            Item.rare = ItemRarities.EarlyHardmode;
         }
 
     }

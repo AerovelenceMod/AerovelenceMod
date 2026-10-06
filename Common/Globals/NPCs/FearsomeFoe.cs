@@ -1,7 +1,7 @@
 ﻿using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
-using Terraria;
-using Terraria.ModLoader;
+
+
 
 namespace AerovelenceMod.Common.Globals.NPCs
 {
