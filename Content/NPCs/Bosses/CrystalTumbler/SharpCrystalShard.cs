@@ -42,7 +42,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             Projectile.rotation = Projectile.velocity.ToRotation();
             Projectile.spriteDirection = Projectile.direction;
             timer++;
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/LintyTrail").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/LintyTrail").Value);
             trailColor = Color.MediumAquamarine * alpha;
             trailTime = timer * 0.05f;
             trailPointLimit = 10;

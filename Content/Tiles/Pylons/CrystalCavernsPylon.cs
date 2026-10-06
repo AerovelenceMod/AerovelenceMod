@@ -26,9 +26,9 @@ namespace AerovelenceMod.Content.Tiles.Pylons
 
         public override void Load()
         {
-            crystalTexture = ModContent.Request<Texture2D>(Texture + "_Crystal");
-            crystalHighlightTexture = ModContent.Request<Texture2D>(Texture + "_CrystalHighlight");
-            mapIcon = ModContent.Request<Texture2D>(Texture + "_MapIcon");
+            crystalTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Crystal"));
+            crystalHighlightTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_CrystalHighlight"));
+            mapIcon = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_MapIcon"));
         }
 
         public override void SetStaticDefaults()

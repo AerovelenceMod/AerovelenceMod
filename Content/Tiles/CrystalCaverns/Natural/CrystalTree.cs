@@ -31,9 +31,9 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
         public override void SetStaticDefaults()
         {
             GrowsOnTileId = [ModContent.TileType<CrystalGrassTile>()];
-            texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree");
-            branchesTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree_Branches");
-            topsTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree_Tops");
+            texture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree"));
+            branchesTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree_Branches"));
+            topsTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Natural/CrystalTree_Tops"));
         }
 
         public override bool Shake(int x, int y, ref bool createLeaves)

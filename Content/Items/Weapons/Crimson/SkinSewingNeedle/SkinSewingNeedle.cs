@@ -48,10 +48,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         static Asset<Texture2D> sparkAtTheTip2;
         public override void Load()
         {
-            glow = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Crimson/SkinSewingNeedle/NeedleGlow");
-            piercingStrike = ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/AdamantitePulseShot");
-            sparkAtTheTip = ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_2");
-            sparkAtTheTip2 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_3");
+            glow = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Crimson/SkinSewingNeedle/NeedleGlow"));
+            piercingStrike = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/AdamantitePulseShot"));
+            sparkAtTheTip = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_2"));
+            sparkAtTheTip2 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/ImpactTextures/flare_3"));
         }
         private NeedleState state
         {
@@ -289,7 +289,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                     hitNpcCenterOffset = target.DirectionTo(Projectile.Center) * target.Distance(Projectile.Center);
                     Projectile.Center = hitNpc.Center + hitNpcCenterOffset;
 
-                    int b = Projectile.NewProjectile(null, Projectile.Center - Projectile.velocity, Projectile.velocity.SafeNormalize(Vector2.UnitX) * -0.5f, ModContent.ProjectileType<CirclePulse>(), 0, 0, Main.myPlayer);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int b = Projectile.NewProjectile(null, Projectile.Center - Projectile.velocity, Projectile.velocity.SafeNormalize(Vector2.UnitX) * -0.5f, ModContent.ProjectileType<CirclePulse>(), 0, 0, Main.myPlayer);
+                    }
                     Main.projectile[b].rotation = Projectile.velocity.ToRotation();
                     if (Main.projectile[b].ModProjectile is CirclePulse pulseb)
                     {
@@ -328,7 +331,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         {
             base.AI();
 
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/GlowTrail").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/GlowTrail").Value);
             trailColor = Color.IndianRed;
             trailPointLimit = 400;
             trailWidth = 15;
@@ -488,7 +491,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         static Asset<Texture2D> Tex;
         public override void Load()
         {
-            Tex = Mod.Assets.Request<Texture2D>("Assets/BloodHit");
+            Tex = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Assets/BloodHit"));
         }
         public override void SetStaticDefaults()
         {
@@ -559,7 +562,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         static Asset<Texture2D> Tex;
         public override void Load()
         {
-            Tex = Mod.Assets.Request<Texture2D>("Assets/TrailImages/Pincer");
+            Tex = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Assets/TrailImages/Pincer"));
 
         }
         public override void SetDefaults()

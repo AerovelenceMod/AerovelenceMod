@@ -15,7 +15,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         internal static Texture2D Get(string name, bool orange)
         {
-            Texture2D original = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/" + name, AssetRequestMode.ImmediateLoad).Value;
+            Texture2D original = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/CrystalTumbler/" + name, AssetRequestMode.ImmediateLoad).Value);
             if (!orange)
                 return original;
             if (orangeTextures.TryGetValue(name, out Texture2D texture))

@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void SetStaticDefaults()
         {
-            slashTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Slash/pixelKennySlash").Value;
+            slashTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Slash/pixelKennySlash").Value);
         }
         public override void SetDefaults()
         {

@@ -129,7 +129,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             #region trailInfo
             //Trail1 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value);
             //trail1.trailColor = Color.DodgerBlue;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = 30;
@@ -145,12 +145,12 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.TrailLogic();
 
             trail1.gradient = true;
-            trail1.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;
+            trail1.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value);
             trail1.shouldScrollColor = true;
             trail1.gradientTime = (float)Main.timeForVisualEffects * 0.03f;
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trail2.trailColor = Color.White;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = 100;
@@ -163,7 +163,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail2.trailRot = Projectile.velocity.ToRotation();
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = ((float)Main.timeForVisualEffects * 0.02f) + 0.3f;
 

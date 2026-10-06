@@ -201,8 +201,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             }
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 2;
-            if (Projectile.owner == Main.myPlayer)
-                Angle = (Main.MouseWorld - (Owner.MountedCenter)).ToRotation();
+            Projectile.UpdateAimAngle(Owner.MountedCenter, ref Angle);
             direction = Angle.ToRotationVector2();
             Owner.ChangeDir(direction.X > 0 ? 1 : -1);
             lerpVal = Math.Clamp(MathHelper.Lerp(lerpVal, -0.2f, 0.002f), 0, 0.4f);
@@ -298,7 +297,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             if (needToShoot)
             {
                 needToShoot = false;
-                Vector2 aimDirection = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
+                Vector2 aimDirection = Vector2.Normalize(Projectile.AimWorld() - Projectile.Center);
                 int bulletDamage = (int)(Owner.HeldItem.damage * Owner.GetDamage(DamageClass.Ranged).Multiplicative);
                 FireElementalBullet(aimDirection, bulletDamage);
                 ApplyRecoil();
@@ -335,7 +334,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Vector2 barrelOffset = new Vector2((float)Math.Cos(rotation) * barrelLength, (float)Math.Sin(rotation) * barrelLength);
             Vector2 verticalAdjustment = new Vector2((float)Math.Cos(rotation + MathHelper.PiOver2) * verticalOffset, (float)Math.Sin(rotation + MathHelper.PiOver2) * verticalOffset);
             Vector2 spawnPosition = Projectile.Center + barrelOffset + verticalAdjustment;
-            int bulletProj = Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), spawnPosition, velocity, projType, damage, Owner.HeldItem.knockBack, Owner.whoAmI, elementIndex);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int bulletProj = Projectile.NewProjectile(Owner.GetSource_ItemUse(Owner.HeldItem), spawnPosition, velocity, projType, damage, Owner.HeldItem.knockBack, Owner.whoAmI, elementIndex);
+            }
             Color dustColor = TheInfinity.ElementColors[elementIndex];
             int dustType = GetDustTypeForElement(elementIndex);
         }
@@ -576,7 +578,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
             Color elementColor = TheInfinity.ElementColors[elementIndex];
 
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/s06sBloom").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/s06sBloom").Value);
             trailColor = elementColor;
             trailTime = 1f;
             trailPointLimit = 10;
@@ -629,12 +631,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                             if (nearbyNPC.active && !nearbyNPC.friendly && !nearbyNPC.dontTakeDamage && Vector2.Distance(nearbyNPC.Center, Projectile.Center) < 120f && nearbyNPC.whoAmI != target.whoAmI)
                             {
                                 int explosionDamage = Projectile.damage / 2;
-                                nearbyNPC.StrikeNPC(new NPC.HitInfo
+                                NPC.HitInfo explosionHit = new()
                                 {
                                     Damage = explosionDamage,
                                     Knockback = Projectile.knockBack / 2,
                                     HitDirection = (nearbyNPC.Center.X < Projectile.Center.X) ? -1 : 1
-                                });
+                                };
+                                nearbyNPC.StrikeNPC(explosionHit);
+                                if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(nearbyNPC, explosionHit);
                             }
                         }
                     }

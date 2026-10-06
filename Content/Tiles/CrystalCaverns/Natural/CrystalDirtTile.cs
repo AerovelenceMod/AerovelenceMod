@@ -33,7 +33,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             HitSound = SoundID.Dig;
             TileID.Sets.GeneralPlacementTiles[Type] = false;
 
-            glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Glowmask"));
         }
         public override bool CanExplode(int i, int j)
         {

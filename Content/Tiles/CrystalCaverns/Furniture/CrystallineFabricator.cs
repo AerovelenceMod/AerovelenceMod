@@ -32,7 +32,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             DustType = DustID.BlueCrystalShard;
             AnimationFrameHeight = 54;
 
-            glowTexture = ModContent.Request<Texture2D>(ModContent.GetInstance<CrystallineFabricator>().Texture + "_Glow");
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(ModContent.GetInstance<CrystallineFabricator>().Texture + "_Glow"));
             Main.tileFrame[Type] = 6;
         }
 

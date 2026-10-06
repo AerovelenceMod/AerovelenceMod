@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
 {
     public class RimeIceCube : ModProjectile
     {
-        public int timer = 0;
+        public ref float timer => ref Projectile.ai[0];
         public int index = 0;
         public override void SetStaticDefaults()
         {
@@ -56,8 +56,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
 
                 for (int i = 0; i < 4; i++)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(2, 2).RotatedBy(MathHelper.PiOver2 * i),
-                        ModContent.ProjectileType<HomingIceBolt>(), Projectile.damage, 2);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, new Vector2(2, 2).RotatedBy(MathHelper.PiOver2 * i),
+                            ModContent.ProjectileType<HomingIceBolt>(), Projectile.damage, 2);
+                    }
                 }
                 Projectile.active = false;
             }
@@ -97,7 +100,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
     }
     public class HomingIceBolt : ModProjectile
     {
-        public int timer = 0;
+        public ref float timer => ref Projectile.ai[0];
         public override void SetDefaults()
         {
             Projectile.width = 20;
@@ -129,12 +132,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
 
             if (timer >= 70)
             {
-                if (timer == 70)
+                if (timer == 70 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
 
-                    Projectile.rotation = (Main.MouseWorld - Projectile.Center).ToRotation();
+                    int target = Player.FindClosest(Projectile.Center, Projectile.width, Projectile.height);
+                    Projectile.rotation = (Main.player[target].Center - Projectile.Center).ToRotation();
+                    Projectile.ai[1] = Projectile.rotation;
+                    Projectile.netUpdate = true;
                 }
 
+                Projectile.rotation = Projectile.ai[1];
                 float velMultiplier = MathHelper.Clamp(MathHelper.Lerp((timer - 70), 27, 0.02f), 0, 23);
                 Projectile.velocity = Projectile.rotation.ToRotationVector2() * velMultiplier;
             }

@@ -40,7 +40,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Starglass
         public override void AI()
         {
             //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value);
             trail1.trailColor = Color.White * 0.8f;
             trail1.trailPointLimit = 400;
             trail1.trailWidth = (int)(15 * Projectile.scale);
@@ -53,7 +53,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Starglass
             trail1.TrailLogic();
 
             //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/LintyTrail").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/LintyTrail").Value);
             trail2.trailColor = trailCol;
             trail2.trailPointLimit = 400;
             trail2.trailWidth = (int)(20 * Projectile.scale);
@@ -67,7 +67,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Starglass
 
             Vector2 pos = trailCol == new Color(255, 20, 20) ? new Vector2(-200, 0f) : new Vector2(200f, 0f);
 
-            Projectile.velocity = (Main.MouseWorld - Projectile.Center + pos).SafeNormalize(Vector2.UnitX) * 15;
+            Projectile.velocity = (Projectile.AimWorld() - Projectile.Center + pos).SafeNormalize(Vector2.UnitX) * 15;
 
             oldPos = Projectile.Center;
 

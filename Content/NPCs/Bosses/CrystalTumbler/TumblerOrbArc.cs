@@ -51,7 +51,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail2.trailPointLimit = (int)(maxTrailPoints2 * lifeRatio);
 
             // Setup trail1
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightning").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightning").Value);
             trail1.trailColor = Color.White * 1f;
             trail1.trailWidth = 60;
             trail1.timesToDraw = 1;
@@ -64,7 +64,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail1.TrailLogic();
 
             // Setup trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trail2.trailColor = Color.Wheat;
             trail2.trailWidth = 30;
             trail2.timesToDraw = 2;
@@ -72,7 +72,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail2.pinchAmount = 0.55f;
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.01f;
 

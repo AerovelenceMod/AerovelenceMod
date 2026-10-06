@@ -43,7 +43,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Rubble
 
             AddMapEntry(new Microsoft.Xna.Framework.Color(70, 70, 85));
 
-            glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Glowmask"));
         }
 
         public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)

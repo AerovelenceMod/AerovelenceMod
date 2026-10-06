@@ -192,7 +192,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.NerveFlagellator
                 }
                 if (!hasActiveNerveCreeper)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NerveCreeper>(), Projectile.damage / 2, 0f, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer)
+                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<NerveCreeper>(), Projectile.damage / 2, 0f, Projectile.owner);
                 }
             }
 

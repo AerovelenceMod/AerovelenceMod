@@ -153,7 +153,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 if (stop || !player.channel) { Projectile.ai[1] = 1; Projectile.netUpdate = true; }
                 else
                 {
-                    float angle = (Main.MouseWorld - player.MountedCenter).ToRotation();
+                    float angle = (Projectile.AimWorld() - player.MountedCenter).ToRotation();
                     if (Math.Abs(MathHelper.WrapAngle(angle - Projectile.ai[0])) > .03f) { Projectile.ai[0] = angle; Projectile.netUpdate = true; }
                 }
             }
@@ -284,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 

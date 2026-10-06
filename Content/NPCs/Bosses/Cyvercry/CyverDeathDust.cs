@@ -26,7 +26,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public override void OnSpawn(Dust dust)
         {
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value;
+            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value);
 
             dust.customData = false;
             dust.noGravity = true;

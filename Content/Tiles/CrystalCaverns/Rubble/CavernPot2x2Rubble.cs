@@ -52,7 +52,7 @@ public class CavernPot2x2Rubble : ModTile
 
         AddMapEntry(new Color(70, 70, 85), Terraria.Localization.Language.GetText("MapObject.Pot"));
 
-        glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
+        glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Glowmask"));
     }
 
     public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)

@@ -106,7 +106,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
             }
             if (Projectile.owner == Main.myPlayer)
             {
-                Vector2 cursor = Main.MouseWorld;
+                Vector2 cursor = Projectile.AimWorld();
                 if (age == 0 || (age % 4 == 0 && Vector2.DistanceSquared(cursor, sentCursor) > 4f))
                 {
                     sentCursor = cursor;

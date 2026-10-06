@@ -40,7 +40,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void AI()
         {
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/s06sBloom").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/s06sBloom").Value);
             trail1.trailColor = Color.White * 0.7f;
             trail1.trailPointLimit = 200;
             trail1.trailWidth = 200;
@@ -54,7 +54,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail1.trailPos = Projectile.Center;
             trail1.TrailLogic();
 
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trail2.trailColor = Color.DeepSkyBlue;
             trail2.trailPointLimit = 200;
             trail2.trailWidth = 200;
@@ -63,7 +63,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail2.pinch = true;
             trail2.pinchAmount = 0.8f;
 
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.02f;
 
