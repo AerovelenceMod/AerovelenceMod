@@ -1,11 +1,7 @@
 using AerovelenceMod.Content.Tiles.Traversal;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using Terraria;
 using Terraria.GameContent;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Common.Systems.Traversal
 {

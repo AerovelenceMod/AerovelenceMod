@@ -55,7 +55,11 @@ namespace AerovelenceMod.Common.Systems.Traversal
             }
             if (Player.whoAmI == Main.myPlayer && !Main.gameMenu && !Main.playerInventory && !Player.mouseInterface && Main.mouseRight && Main.mouseRightRelease)
             {
-                if (Riding)
+                if (RopeSpanSystem.IsRope(Player.HeldItem))
+                {
+                    if (RopeSpanSystem.TryChangeRopeAt(Main.MouseWorld)) Main.mouseRightRelease = false;
+                }
+                else if (Riding)
                 {
                     Dismount(true);
                     Main.mouseRightRelease = false;
@@ -74,13 +78,13 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 detachTimer = Player.controlDown ? 15 : 3;
                 return;
             }
-            if (Math.Abs(Player.Bottom.Y - span.SurfaceY(Player.Left.X + 3, Player.Right.X - 3, true)) >= 18)
+            if (Math.Abs(Player.Bottom.Y - span.SurfaceY(Player.Left.X, Player.Right.X, true)) >= 18)
             {
                 StandingId = -1;
                 return;
             }
-            Vector2 carry = new(0, span.SurfaceY(Player.Left.X + 3, Player.Right.X - 3)
-                - span.SurfaceY(Player.Left.X + 3, Player.Right.X - 3, true));
+            Vector2 carry = new(0, span.SurfaceY(Player.Left.X, Player.Right.X)
+                - span.SurfaceY(Player.Left.X, Player.Right.X, true));
             Player.position += Collision.TileCollision(Player.position, carry, Player.width, Player.height, true, true);
             previousBottom = Player.Bottom;
             Player.velocity.Y = 0;
@@ -435,19 +439,21 @@ namespace AerovelenceMod.Common.Systems.Traversal
             foreach (RopeSpan span in RopeSpanSystem.Spans.Values)
             {
                 if (span.Zipline || Player.Right.X <= span.Nodes[0].X || Player.Left.X >= span.Nodes[^1].X) continue;
-                float y = span.SurfaceY(Player.Left.X + 3, Player.Right.X - 3);
+                float y = span.SurfaceY(Player.Left.X, Player.Right.X);
                 bool attached = StandingId == span.Id && Math.Abs(Player.Bottom.Y - y) < 18;
                 if (!attached && (previousBottom.Y > y + 6 || Player.Bottom.Y < y)) continue;
-                if (y >= surface || Collision.SolidCollision(new Vector2(Player.position.X, y - Player.height), Player.width, Player.height)) continue;
                 Vector2 movement = new(0, y - Player.Bottom.Y);
                 Vector2 allowed = Collision.noSlopeCollision(Player.position, movement, Player.width, Player.height);
-                if (Math.Abs(allowed.Y - movement.Y) > 0.01f) continue;
+                if (movement.Y < 0 && Math.Abs(allowed.Y - movement.Y) > 0.01f) continue;
+                y = Player.Bottom.Y + allowed.Y;
+                if (y >= surface || Collision.SolidCollision(new Vector2(Player.position.X, y - Player.height), Player.width, Player.height)) continue;
                 best = span;
                 surface = y;
             }
             StandingId = best?.Id ?? -1;
             if (best == null) return;
             Player.position.Y = surface - Player.height;
+            Player.gfxOffY = 0;
             Player.velocity.Y = 0;
             Player.fallStart = Player.fallStart2 = (int)(Player.position.Y / 16);
             Player.jump = 0;
