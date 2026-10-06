@@ -186,7 +186,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public override void OnSpawn(Dust dust)
         {
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value;
+            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value);
 
             dust.customData = false;
             dust.noGravity = true;
@@ -285,7 +285,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
         private Texture2D core;
 
 
-        public override void Load() => core = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/PixelCrossInner");
+        public override void Load() => core = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/PixelCrossInner"));
 
         public override void Unload() => core = null;
 

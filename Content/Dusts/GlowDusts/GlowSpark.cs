@@ -34,7 +34,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
             dust.noGravity = true;
             dust.frame = new Rectangle(0, 0, 75, 50);
-            dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            dust.shader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
         }
 
         public override bool Update(Dust dust)
@@ -105,7 +105,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
             dust.noGravity = true;
             dust.frame = new Rectangle(0, 0, 128, 50);
-            dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            dust.shader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
         }
 
         public override bool Update(Dust dust)

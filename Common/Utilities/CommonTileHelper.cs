@@ -425,7 +425,7 @@ namespace AerovelenceMod.Common.Utilities
 
             modTile.AddMapEntry(mapColor, modTile.MapNameFromItem(itemDropType));
 
-            flameTexture = ModContent.Request<Texture2D>(flameTexturePath);
+            flameTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(flameTexturePath));
         }
 
         public static void ToggleTile(int i, int j, int frameHeight = 36, int frameWidth = 54)

@@ -50,7 +50,7 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trailColor = Color.DodgerBlue; //191 255 255
             trailTime = timer * 0.02f;
 

@@ -104,7 +104,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             target.AddBuff(ModContent.BuffType<FlareFrostburn>(), 200);
 
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
@@ -157,7 +157,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             if (timer % 12 == 0)
             {
-                int penis = GlowDustHelper.DrawGlowDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowCircleDust>(), Color.DeepSkyBlue, 0.5f * Main.rand.NextFloat(0.7f, 1.3f), 0.55f, 0f, new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+                int penis = GlowDustHelper.DrawGlowDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowCircleDust>(), Color.DeepSkyBlue, 0.5f * Main.rand.NextFloat(0.7f, 1.3f), 0.55f, 0f, (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic")));
                 Main.dust[penis].noLight = true;
             }
             if (timer % 8 == 0)

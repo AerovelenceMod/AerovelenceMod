@@ -27,8 +27,8 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public override void Load()
         {
-            core = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Dusts/Textures/PixelGlowOrbInner");
-            glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow64");
+            core = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Dusts/Textures/PixelGlowOrbInner"));
+            glow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow64"));
         }
 
 
