@@ -17,13 +17,21 @@ internal static class GasAppearance
 
     public static FieldValue Cubic(FieldValue a, FieldValue b, FieldValue c, FieldValue d, float t)
     {
+        return Cubic(a, b, c, d, CubicWeights(t));
+    }
+
+    public static FieldValue CubicWeights(float t)
+    {
         float t2 = t * t;
         float t3 = t2 * t;
-        return (a * (-7f * t3 + 15f * t2 - 9f * t + 1f)
-            + b * (21f * t3 - 36f * t2 + 16f)
-            + c * (-21f * t3 + 27f * t2 + 9f * t + 1f)
-            + d * (7f * t3 - 6f * t2)) / 18f;
+        return new FieldValue(-7f * t3 + 15f * t2 - 9f * t + 1f,
+            21f * t3 - 36f * t2 + 16f,
+            -21f * t3 + 27f * t2 + 9f * t + 1f,
+            7f * t3 - 6f * t2);
     }
+
+    public static FieldValue Cubic(FieldValue a, FieldValue b, FieldValue c, FieldValue d, FieldValue weights)
+        => (a * weights.X + b * weights.Y + c * weights.Z + d * weights.W) / 18f;
 
     public static Color Shade(FieldValue value, Vector3 ambient) => Shade(value, ambient, new FieldValue(value.W, 0f, 0f, value.W));
 

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using AerovelenceMod.Common.Systems.Language;
 using ModLanguage = AerovelenceMod.Common.Systems.Language.Language;
 using AerovelenceMod.Common.Utilities;
@@ -48,6 +47,8 @@ public sealed class GasSystem : ModSystem
 
     public override void OnWorldLoad()
     {
+        StopWorker();
+        if (Environment.ProcessorCount > 1) GasFluid.Worker = new GasSimulationWorker();
         Colliding = new GasFluid(IsSolid);
         Free = new GasFluid();
         AdditiveColliding = new GasFluid(IsSolid, 64, 4);
@@ -115,25 +116,28 @@ public sealed class GasSystem : ModSystem
         Vector2 impulse = velocity * (settings.Jet ? 1.8f : 1.4f) + transverse * pulse * (settings.Turbulence ? 0.7f : 0f);
         if (settings.Jet)
         {
+            int taps = Math.Max(3, (int)MathF.Ceiling(settings.Radius / 4f) * 2 + 1);
+            Span<float> weights = stackalloc float[taps];
+            float total = 0f;
+            for (int tap = 0; tap < taps; tap++)
+            {
+                float offset = tap * 2f / (taps - 1) - 1f;
+                weights[tap] = MathF.Exp(-offset * offset * 3f);
+                total += weights[tap];
+            }
+            for (int tap = 0; tap < taps; tap++) weights[tap] /= total;
             for (int i = 0; i < 5; i++)
             {
                 Vector2 point = position + direction * (i * 4f);
                 if (settings.TileCollision && !Open(position, point))
                     break;
-                int taps = Math.Max(3, (int)MathF.Ceiling(settings.Radius / 4f) * 2 + 1);
-                float total = 0f;
-                for (int tap = 0; tap < taps; tap++)
-                {
-                    float offset = tap * 2f / (taps - 1) - 1f;
-                    total += MathF.Exp(-offset * offset * 3f);
-                }
                 for (int tap = 0; tap < taps; tap++)
                 {
                     float offset = tap * 2f / (taps - 1) - 1f;
                     Vector2 nozzle = point + transverse * (offset * settings.Radius);
                     if (settings.TileCollision && !Open(position, nozzle))
                         continue;
-                    float weight = MathF.Exp(-offset * offset * 3f) / total;
+                    float weight = weights[tap];
                     field.InjectJet(nozzle, impulse, settings.Color.ToVector3(), settings.Density * 0.11f * weight,
                         settings.Buoyancy ? settings.Lift : 0f, settings.Turbulence ? 1f : 0f,
                         settings.Viscosity * 0.3f, 3f / settings.Lifetime, settings.Pressure * 0.015f * weight, damage, settings.Hostile, appearance, colorFade);
@@ -206,20 +210,8 @@ public sealed class GasSystem : ModSystem
 
     public override void PostUpdateProjectiles()
     {
-        if (Colliding is null)
+        if (Colliding is null || (emitters.Count == 0 && vacuums.Count == 0 && !HasAnyGas))
             return;
-        long start = Stopwatch.GetTimestamp();
-        if (!GasPerfControl.SimulationEnabled)
-        {
-            GasPerfControl.UpdateSimulation(start);
-            return;
-        }
-        bool idle = emitters.Count == 0 && vacuums.Count == 0 && !HasAnyGas;
-        if (idle)
-        {
-            GasPerfControl.UpdateSimulation(start);
-            return;
-        }
         for (int i = emitters.Count - 1; i >= 0; i--)
         {
             emitters[i].Update();
@@ -247,17 +239,16 @@ public sealed class GasSystem : ModSystem
             DamageNPCs();
         if (damageTimer % 15 == 0 && !Main.dedServ)
             DamageLocalPlayer();
-        GasPerfControl.UpdateSimulation(start);
     }
 
     private void Advance(GasFluid field)
     {
         if (field is null)
             return;
-        if (field.FastUpdates)
-            field.Step();
-        else if (damageTimer % 2 == 0)
-            field.Step(2f);
+        bool fast = field.FastUpdates;
+        if (!fast && damageTimer % 2 != 0)
+            return;
+        field.Step(fast ? 1f : 2f);
     }
 
     private GasDye Sample(Vector2 position) => Colliding.Sample(position) + Free.Sample(position) + AdditiveColliding.Sample(position) + AdditiveFree.Sample(position);
@@ -307,8 +298,18 @@ public sealed class GasSystem : ModSystem
 
     internal static bool Open(Vector2 from, Vector2 to) => Collision.CanHitLine(from, 1, 1, to, 1, 1);
 
+    private static void StopWorker()
+    {
+        GasSimulationWorker worker = GasFluid.Worker;
+        GasFluid.Worker = null;
+        worker?.Dispose();
+    }
+
+    public override void Unload() => StopWorker();
+
     public override void OnWorldUnload()
     {
+        StopWorker();
         Colliding = null;
         Free = null;
         AdditiveColliding = null;
