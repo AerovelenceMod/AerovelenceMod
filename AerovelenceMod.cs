@@ -34,7 +34,9 @@ namespace AerovelenceMod
         public override void HandlePacket(System.IO.BinaryReader reader, int whoAmI)
         {
             byte packet = reader.ReadByte();
-            if (packet == Content.Items.Misc.BabyCondurtleEgg.HatchPacket)
+            if (packet == Common.Systems.Traversal.RopeSpanSystem.Packet)
+                Common.Systems.Traversal.RopeSpanSystem.Receive(reader, whoAmI);
+            else if (packet == Content.Items.Misc.BabyCondurtleEgg.HatchPacket)
                 Content.Items.Misc.BabyCondurtleEgg.ReceiveHatch(whoAmI);
             else if (packet == Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.RequestPacket)
                 Content.NPCs.TownNPC.RockCollector.RockCollectorTrade.TurnIn(whoAmI, reader.ReadInt16(), reader.ReadByte(), reader.ReadInt32());
@@ -80,7 +82,7 @@ namespace AerovelenceMod
         private List<IOrderedLoadable> loadCache;
         public override void Load()
         {
-            if (Main.netMode != NetmodeID.Server)
+            if (!Main.dedServ)
             {
                 string shaderName = "AerovelenceMod:CavernCrystalShine";
                 string shaderPath = "Effects/CavernCrystalShine";
@@ -147,25 +149,28 @@ namespace AerovelenceMod
 
 
 
-            Filters.Scene["AerovelenceMod:FoggyFields"] =
-                new Filter(new ScreenShaderData("FilterMiniTower").UseColor(0.168f, 0.168f, 0.188f).UseOpacity(0.1f), EffectPriority.High);
+            if (!Main.dedServ)
+            {
+                Filters.Scene["AerovelenceMod:FoggyFields"] =
+                    new Filter(new ScreenShaderData("FilterMiniTower").UseColor(0.168f, 0.168f, 0.188f).UseOpacity(0.1f), EffectPriority.High);
 
-            //yManager.Instance["AerovelenceMod:FoggyFields"] = new CrystalTorrentSky();
+                //yManager.Instance["AerovelenceMod:FoggyFields"] = new CrystalTorrentSky();
 
-            Filters.Scene["AerovelenceMod:CrystalTorrents"] =
-                new Filter(new CrystalTorrentScreenShaderData("FilterBloodMoon").UseColor(0.0f, 0.5f, 0.0f), EffectPriority.Medium);
+                Filters.Scene["AerovelenceMod:CrystalTorrents"] =
+                    new Filter(new CrystalTorrentScreenShaderData("FilterBloodMoon").UseColor(0.0f, 0.5f, 0.0f), EffectPriority.Medium);
 
-            Filters.Scene["AerovelenceMod:DarkNights"] =
-                new Filter(new DarkNightScreenShaderData("FilterBloodMoon").UseColor(0.0f, 0.2f, 0.2f), EffectPriority.Medium);
+                Filters.Scene["AerovelenceMod:DarkNights"] =
+                    new Filter(new DarkNightScreenShaderData("FilterBloodMoon").UseColor(0.0f, 0.2f, 0.2f), EffectPriority.Medium);
 
-            SkyManager.Instance["AerovelenceMod:Cyvercry"] = new CyverSky();
-            SkyManager.Instance["AerovelenceMod:CrystalCavernsSurface"] = new CrystalCavernsSky();
-            SkyManager.Instance["AerovelenceMod:CrystalCaverns"] = new CrystalCavernsSky();
+                SkyManager.Instance["AerovelenceMod:Cyvercry"] = new CyverSky();
+                SkyManager.Instance["AerovelenceMod:CrystalCavernsSurface"] = new CrystalCavernsSky();
+                SkyManager.Instance["AerovelenceMod:CrystalCaverns"] = new CrystalCavernsSky();
 
-            Overlays.Scene.Load();
-            Filters.Scene.Load();
+                Overlays.Scene.Load();
+                Filters.Scene.Load();
+            }
 
-            if (Main.netMode != NetmodeID.Server)
+            if (!Main.dedServ)
             {
 
                 Ref<Effect> MiscGlow = new Ref<Effect>(Assets.Request<Effect>("Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value);
