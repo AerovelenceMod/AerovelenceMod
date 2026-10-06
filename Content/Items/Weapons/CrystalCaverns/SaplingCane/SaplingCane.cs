@@ -106,6 +106,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                     int child = Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, Vector2.Zero,
                         ModContent.ProjectileType<BabySapper>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.identity, i);
                     Main.projectile[child].originalDamage = Projectile.originalDamage;
+                    Main.projectile[child].netUpdate = true;
                 }
             }
             if (timer == 1)

@@ -496,7 +496,10 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
                 player.GetModPlayer<AeroPlayer>().ScreenShakePower = 14;
 
                 Vector2 shotVel = Projectile.rotation.ToRotationVector2() * 12;
-                int a = Projectile.NewProjectile(null, player.Center, shotVel, ModContent.ProjectileType<CavernSwordElecShot>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(null, player.Center, shotVel, ModContent.ProjectileType<CavernSwordElecShot>(), Projectile.damage, Projectile.knockBack, player.whoAmI);
+                }
             }
 
             #endregion
@@ -512,8 +515,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             Projectile.velocity = Vector2.Zero;
 
             Vector2 mousePos = Vector2.Zero;
-            if (Projectile.owner == Main.myPlayer)
-                mousePos = Main.MouseWorld;
+            mousePos = Projectile.AimWorld();
 
             float rotDir = (mousePos - player.Center).ToRotation();
 
@@ -1381,8 +1383,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CavernSword
             Projectile.velocity = Vector2.Zero;
 
             Vector2 mousePos = Vector2.Zero;
-            if (Projectile.owner == Main.myPlayer)
-                mousePos = Main.MouseWorld;
+            mousePos = Projectile.AimWorld();
 
             float rotDir = (mousePos - player.Center).ToRotation();
 

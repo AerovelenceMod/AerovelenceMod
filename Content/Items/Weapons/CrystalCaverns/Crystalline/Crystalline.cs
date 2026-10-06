@@ -117,7 +117,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
                     Projectile.velocity *= 0.92f;
 
                 //Release the lightning
-                if (animTimer == 8)
+                if (animTimer == 8 && Projectile.owner == Main.myPlayer)
                 {
                     //Find the three closest enemies
                     NPC[] targets = new NPC[3];
@@ -139,6 +139,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
                             int a = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CrystallineVFX>(), 0, 0, Projectile.owner);
                             (Main.projectile[a].ModProjectile as CrystallineVFX).startPoint = Projectile.Center;
                             (Main.projectile[a].ModProjectile as CrystallineVFX).endPoint = targets[i].Center;
+                            Main.projectile[a].netUpdate = true;
 
                             int hitdmg = (int)(Projectile.damage * 1.5);
 
@@ -146,6 +147,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
 
                             HitInfo hit = targets[i].CalculateHitInfo(hitdmg, dir, knockBack: 0, damageType: DamageClass.Melee, damageVariation: true);
                             targets[i].StrikeNPC(hit);
+                            if (Main.netMode == NetmodeID.MultiplayerClient)
+                                NetMessage.SendStrikeNPC(targets[i], hit);
 
                             atLeastOneTarget = true;
                         }
@@ -159,7 +162,10 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
                         glowPower = 11f;
                     }
                     else
+                    {
                         hitCounter = 0;
+                        Projectile.netUpdate = true;
+                    }
                 }
 
                 if (animTimer == 18)
@@ -197,6 +203,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
         {
             animTimer = 0;
             hitCounter++;
+            Projectile.netUpdate = true;
             base.OnHitNPC(target, hit, damageDone);
         }
 
@@ -239,6 +246,23 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
             #endregion
 
             return base.PreDraw(ref lightColor);
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(animTimer);
+            writer.Write(hitCounter);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            animTimer = reader.ReadInt32();
+            hitCounter = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 
@@ -480,6 +504,27 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.Crystalline
             Main.pixelShader.CurrentTechnique.Passes[0].Apply();
 
             #endregion
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(startPoint.X);
+            writer.Write(startPoint.Y);
+            writer.Write(endPoint.X);
+            writer.Write(endPoint.Y);
+            writer.Write(timer);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            startPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            endPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            timer = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 }
