@@ -126,7 +126,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
             //ThinGlowLine
             //2 draws | timer * 0.005 | White | 120 30 800 |
 
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/ThinGlowLine").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/ThinGlowLine").Value);
             trailColor = Color.White;
             trailTime = timer * 0.005f;
             timesToDraw = 2;

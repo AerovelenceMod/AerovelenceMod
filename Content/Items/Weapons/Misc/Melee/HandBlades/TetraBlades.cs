@@ -234,7 +234,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
 
                     if (Main.projectile[afg].ModProjectile is DistortProj distort)
                     {
-                        distort.tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
+                        distort.tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall"));
                         distort.implode = false;
                         distort.scale = 0.2f;
                     }
