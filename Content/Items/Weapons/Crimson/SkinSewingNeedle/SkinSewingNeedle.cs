@@ -61,11 +61,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
                 currentState = value;
                 Timer = 0;
                 Projectile.extraUpdates = 0;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
             get => currentState;
 
         }
-        private NeedleState currentState = NeedleState.JustFired;
+        private NeedleState currentState
+        {
+            get => (NeedleState)Projectile.ai[2];
+            set => Projectile.ai[2] = (float)value;
+        }
 
         private SpriteEffects spriteEffects = SpriteEffects.None;
         private ref float Timer => ref Projectile.ai[0];
@@ -113,7 +118,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
         public override void OnSpawn(IEntitySource source)
         {
-            Projectile.velocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(5f));
+            if (Projectile.owner == Main.myPlayer)
+                Projectile.velocity = Projectile.velocity.RotatedByRandom(MathHelper.ToRadians(5f));
             startingVel = Projectile.velocity;
             state = NeedleState.JustFired;
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -286,18 +292,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
                     hitNpc = target;
                     state = NeedleState.Latched;
+                    Projectile.netUpdate = true;
                     hitNpcCenterOffset = target.DirectionTo(Projectile.Center) * target.Distance(Projectile.Center);
                     Projectile.Center = hitNpc.Center + hitNpcCenterOffset;
 
                     if (Projectile.owner == Main.myPlayer)
                     {
                         int b = Projectile.NewProjectile(null, Projectile.Center - Projectile.velocity, Projectile.velocity.SafeNormalize(Vector2.UnitX) * -0.5f, ModContent.ProjectileType<CirclePulse>(), 0, 0, Main.myPlayer);
-                    }
-                    Main.projectile[b].rotation = Projectile.velocity.ToRotation();
-                    if (Main.projectile[b].ModProjectile is CirclePulse pulseb)
-                    {
-                        pulseb.color = Color.Red;
-                        pulseb.size = 0.25f;
+                        Main.projectile[b].rotation = Projectile.velocity.ToRotation();
+                        if (Main.projectile[b].ModProjectile is CirclePulse pulseb)
+                        {
+                            pulseb.color = Color.Red;
+                            pulseb.size = 0.25f;
+                        }
                     }
 
                     SoundStyle hitsound = new SoundStyle("AerovelenceMod/Sounds/Effects/hero_butterfly_blade") with { Pitch = 0f, Volume = 0.27f };
@@ -407,8 +414,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
 
 
             Vector2 dir = hitNpc.DirectionTo(player.Center);
-            var blood = Projectile.NewProjectileDirect(null, Projectile.Center + dir * 25, Vector2.Zero, ModContent.ProjectileType<NeedleBlood>(), 0, 0, Main.myPlayer);
-            blood.rotation = dir.ToRotation();
+            if (!Main.dedServ)
+            {
+                var blood = Projectile.NewProjectileDirect(null, Projectile.Center + dir * 25, Vector2.Zero, ModContent.ProjectileType<NeedleBlood>(), 0, 0, Main.maxPlayers);
+                blood.rotation = dir.ToRotation();
+            }
             SoundStyle swif = new SoundStyle("AerovelenceMod/Sounds/Effects/TF2/katana_06") with { Pitch = 0f, Volume = 0.27f };
             SoundEngine.PlaySound(swif, Projectile.Center);
             SkillStrikeUtil.setSkillStrike(Projectile, 1.2f, impactVolume: 0.35f);
@@ -482,6 +492,24 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             if (Projectile.Distance(player.Center) < 4)
                 Projectile.Kill();
 
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(hitNpcCenterOffset.X);
+            writer.Write(hitNpcCenterOffset.Y);
+            writer.Write(startingVel.X);
+            writer.Write(startingVel.Y);
+            writer.Write(hitNpc?.whoAmI ?? -1);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            hitNpcCenterOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            startingVel = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            int hitNpcIndex = reader.ReadInt32();
+            hitNpc = (uint)hitNpcIndex < Main.maxNPCs ? Main.npc[hitNpcIndex] : null;
         }
     }
     public class NeedleBlood : ModProjectile
@@ -601,5 +629,4 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
         }
 
     }
-
 }
