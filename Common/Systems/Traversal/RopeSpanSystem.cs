@@ -152,11 +152,39 @@ namespace AerovelenceMod.Common.Systems.Traversal
         }
 
         public static bool IsRope(Item item) => item.stack > 0 && (uint)item.createTile < Main.tileRope.Length && Main.tileRope[item.createTile];
+        internal static int RopeTileType(int ropeType)
+            => ContentSamples.ItemsByType.TryGetValue(ropeType, out Item item) && IsRope(item) ? item.createTile : TileID.Rope;
+
+        internal static int RopeStyle(int ropeType) => RopeTileType(ropeType) switch
+        {
+            TileID.VineRope => 1,
+            TileID.SilkRope => 2,
+            TileID.WebRope => 3,
+            _ => 0
+        };
+
         public static RopeSpan Get(int id) => Spans.TryGetValue(id, out RopeSpan span) ? span : null;
         public static RopeSpan AtTile(Point point) => tileSpans.TryGetValue(point, out HashSet<int> ids) || postSpans.TryGetValue(point, out ids)
             ? ids.Select(Get).FirstOrDefault(span => span != null) : null;
 
         internal static int ConnectionCount(Point point) => postSpans.TryGetValue(point, out HashSet<int> ids) ? ids.Count : 0;
+
+        internal static Vector2 JunctionAnchor(RopeSpan span, bool right)
+        {
+            Point post = right ? span.Right : span.Left;
+            Vector2 anchor = span.HookAnchor(right);
+            float leftX = anchor.X, rightX = anchor.X;
+            if (postSpans.TryGetValue(post, out HashSet<int> ids))
+                foreach (int id in ids)
+                {
+                    RopeSpan connected = Get(id);
+                    if (connected == null || !connected.Zipline) continue;
+                    float x = connected.HookAnchor(connected.Right == post).X;
+                    leftX = Math.Min(leftX, x);
+                    rightX = Math.Max(rightX, x);
+                }
+            return new Vector2((leftX + rightX) * 0.5f, anchor.Y);
+        }
 
         internal static RopeSpan[] JunctionRoutes(RopeSpan incoming, Point point)
         {
@@ -193,11 +221,13 @@ namespace AerovelenceMod.Common.Systems.Traversal
             int type = zipline ? ModContent.TileType<ZiplinePostTile>() : ModContent.TileType<RopeBridgePostTile>();
             if (!WorldGen.InWorld(point.X, point.Y, 10) || point.Y < height) return false;
             bool ceiling = zipline && CeilingPost(point);
+            int frameX = Main.tile[point.X, point.Y].TileFrameX;
+            if (zipline ? frameX != (ceiling ? 18 : 0) : frameX < 0 || frameX >= 144 || frameX % 18 != 0) return false;
             for (int row = 0; row < height; row++)
             {
                 Tile tile = Main.tile[point.X, point.Y - height + 1 + row];
                 if (!tile.HasTile || tile.TileType != type || tile.TileFrameY / 18 % height != row
-                    || tile.TileFrameX != (ceiling ? 18 : 0)) return false;
+                    || tile.TileFrameX != frameX) return false;
             }
             if (ceiling) return WorldGen.SolidTile(point.X, point.Y - height);
             return WorldGen.SolidTile(point.X, point.Y + 1) || Main.tile[point.X, point.Y + 1].HasTile && Main.tileSolidTop[Main.tile[point.X, point.Y + 1].TileType];
@@ -330,6 +360,8 @@ namespace AerovelenceMod.Common.Systems.Traversal
             AddOwner(postSpans, span.Left, span.Id);
             AddOwner(postSpans, span.Right, span.Id);
             foreach (Point point in span.Tiles()) AddOwner(tileSpans, point, span.Id);
+            RefreshPost(span.Left);
+            RefreshPost(span.Right);
             nextId = Math.Max(nextId, span.Id + 1);
         }
 
@@ -349,6 +381,8 @@ namespace AerovelenceMod.Common.Systems.Traversal
             if (!Spans.Remove(span.Id)) return;
             RemoveOwner(postSpans, span.Left, span.Id);
             RemoveOwner(postSpans, span.Right, span.Id);
+            RefreshPost(span.Left);
+            RefreshPost(span.Right);
             breaking = true;
             try
             {
@@ -401,6 +435,93 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 packet.Send();
             }
             else Link(Main.myPlayer, point, zipline);
+        }
+
+        internal static void RefreshPost(Point point)
+        {
+            RopeSpan span = postSpans.TryGetValue(point, out HashSet<int> ids) ? ids.OrderBy(id => id).Select(Get).FirstOrDefault() : null;
+            if (span != null && span.Zipline)
+            {
+                Vector2 anchor = JunctionAnchor(span, span.Right == point);
+                foreach (int id in ids) Get(id)?.SetJunction(point, anchor);
+                return;
+            }
+            if (!WorldGen.InWorld(point.X, point.Y) || !Main.tile[point.X, point.Y].HasTile
+                || Main.tile[point.X, point.Y].TileType != ModContent.TileType<RopeBridgePostTile>()) return;
+            int style = span == null ? Main.tile[point.X, point.Y].TileFrameX / 36 : RopeStyle(span.RopeType);
+            short frameX = (short)((style * 2 + (span == null ? 0 : 1)) * 18);
+            for (int row = 0; row < 3; row++)
+            {
+                Tile tile = Main.tile[point.X, point.Y - row];
+                if (tile.HasTile && tile.TileType == ModContent.TileType<RopeBridgePostTile>()) tile.TileFrameX = frameX;
+            }
+        }
+
+        public static bool TryChangeRopeAt(Vector2 position)
+        {
+            Player player = Main.LocalPlayer;
+            if (!IsRope(player.HeldItem)) return false;
+            Point point = position.ToTileCoordinates();
+            if (!WorldGen.InWorld(point.X, point.Y)) return false;
+            Tile tile = Main.tile[point.X, point.Y];
+            if (tile.HasTile && TileLoader.GetTile(tile.TileType) is RopePost) return false;
+            RopeSpan selected = null;
+            float distance = 20 * 20;
+            foreach (RopeSpan span in Spans.Values)
+            {
+                float parameter = span.Closest(position);
+                float d = Vector2.DistanceSquared(position, span.At(parameter));
+                if (!span.Zipline)
+                {
+                    Vector2 railPosition = position + new Vector2(0, 32);
+                    d = Math.Min(d, Vector2.DistanceSquared(railPosition, span.At(span.Closest(railPosition))));
+                }
+                if (d >= distance) continue;
+                selected = span;
+                distance = d;
+            }
+            return selected != null && ClickSpan(selected.Id);
+        }
+
+        public static bool ClickSpan(int id)
+        {
+            if (Get(id) == null || !IsRope(Main.LocalPlayer.HeldItem)) return false;
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket packet = NewPacket(9);
+                packet.Write(id);
+                packet.Send();
+                return true;
+            }
+            return ChangeRope(Main.myPlayer, id);
+        }
+
+        private static bool ChangeRope(int playerId, int id)
+        {
+            if (playerId < 0 || playerId >= Main.maxPlayers) return false;
+            Player player = Main.player[playerId];
+            RopeSpan span = Get(id);
+            if (span == null || !player.active || player.dead || !IsRope(player.HeldItem)) return false;
+            Point point = span.At(span.Closest(player.Center)).ToTileCoordinates();
+            if (!player.IsInTileInteractionRange(point.X, point.Y, TileReachCheckSettings.Simple)) return false;
+            SetSelection(playerId, null);
+            if (span.RopeType == player.HeldItem.type) return true;
+            SetRopeType(span, player.HeldItem.type);
+            if (Main.netMode == NetmodeID.Server)
+            {
+                ModPacket packet = NewPacket(10);
+                packet.Write(id);
+                packet.Write(span.RopeType);
+                packet.Send();
+            }
+            return true;
+        }
+
+        private static void SetRopeType(RopeSpan span, int ropeType)
+        {
+            span.RopeType = ropeType;
+            RefreshPost(span.Left);
+            RefreshPost(span.Right);
         }
 
         private static void RememberPreviewTarget(int player, Point point, bool zipline, int rope)
@@ -579,6 +700,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
             if (Main.netMode == NetmodeID.Server)
             {
                 if (operation == 0) Link(sender, new Point(reader.ReadInt16(), reader.ReadInt16()), reader.ReadBoolean());
+                else if (operation == 9) ChangeRope(sender, reader.ReadInt32());
                 else if (operation == 3)
                 {
                     int id = reader.ReadInt32();
@@ -604,6 +726,12 @@ namespace AerovelenceMod.Common.Systems.Traversal
             {
                 RopeSpan span = Get(reader.ReadInt32());
                 if (span != null) Remove(span, false);
+            }
+            else if (operation == 10)
+            {
+                RopeSpan span = Get(reader.ReadInt32());
+                int rope = reader.ReadInt32();
+                if (span != null && ContentSamples.ItemsByType.TryGetValue(rope, out Item item) && IsRope(item)) SetRopeType(span, rope);
             }
             else if (operation == 4)
             {

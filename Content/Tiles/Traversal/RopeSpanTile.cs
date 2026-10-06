@@ -27,8 +27,15 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             noItem = true;
             if (!fail && !effectOnly) RopeSpanSystem.BreakAt(new Point(i, j));
         }
-        public override bool RightClick(int i, int j) => Main.LocalPlayer.GetModPlayer<RopeSpanPlayer>().TryRideAt(Main.SmartCursorIsUsed ? Main.MouseWorld : new Vector2(i * 16 + 8, j * 16 + 8));
-        public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => this is ZiplineRopeTile && Main.SmartCursorIsUsed;
+        public override bool RightClick(int i, int j)
+        {
+            if (!Main.LocalPlayer.releaseUseTile) return false;
+            if (RopeSpanSystem.IsRope(Main.LocalPlayer.HeldItem))
+                return RopeSpanSystem.AtTile(new Point(i, j)) is RopeSpan span && RopeSpanSystem.ClickSpan(span.Id);
+            return this is ZiplineRopeTile && Main.LocalPlayer.GetModPlayer<RopeSpanPlayer>().TryRideAt(Main.SmartCursorIsUsed ? Main.MouseWorld : new Vector2(i * 16 + 8, j * 16 + 8));
+        }
+        public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings)
+            => RopeSpanSystem.IsRope(Main.LocalPlayer.HeldItem) || this is ZiplineRopeTile && Main.SmartCursorIsUsed;
     }
 
     public sealed class RopeBridgeDeckTile : RopeSpanTile { public override string Texture => "Terraria/Images/Tiles_" + TileID.WoodBlock; }

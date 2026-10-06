@@ -72,7 +72,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 StandingId = -1;
                 return;
             }
-            if (Player.controlDown || Player.velocity.Y < -0.5f || Player.justJumped || Player.Bottom.X < span.Nodes[0].X || Player.Bottom.X > span.Nodes[^1].X)
+            if (Player.controlDown || Player.velocity.Y < -0.5f || Player.justJumped || Player.Right.X <= span.Nodes[0].X || Player.Left.X >= span.Nodes[^1].X)
             {
                 StandingId = -1;
                 detachTimer = Player.controlDown ? 15 : 3;
@@ -187,7 +187,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
             StandingId = -1;
             Player.RemoveAllGrapplingHooks();
             ridePosition = target;
-            Player.position = target;
+            if (!transferring) Player.position = target;
             Player.gfxOffY = 0;
             Player.legFrameCounter = 0;
             Player.velocity = Vector2.Zero;
@@ -285,12 +285,12 @@ namespace AerovelenceMod.Common.Systems.Traversal
         private void SettleAtLowPoint(RopeSpan span)
         {
             if (Math.Abs(Speed) > RestSpeed) return;
-            int node = (int)MathF.Round(Parameter * span.Segments);
-            if (node <= 0 || node >= span.Segments) return;
+            int node = (int)MathF.Round(Parameter * span.PathSegments);
+            if (node <= (span.Zipline ? 1 : 0) || node >= span.PathSegments - (span.Zipline ? 1 : 0)) return;
             Vector2 point = span.Nodes[node];
             if (point.Y < span.Nodes[node - 1].Y || point.Y < span.Nodes[node + 1].Y
                 || Vector2.DistanceSquared(span.At(Parameter), point) > RestSpeed * RestSpeed) return;
-            Parameter = node / (float)span.Segments;
+            Parameter = node / (float)span.PathSegments;
             Speed = 0;
         }
 

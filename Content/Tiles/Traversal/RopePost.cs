@@ -14,7 +14,6 @@ namespace AerovelenceMod.Content.Tiles.Traversal
     public abstract class RopePost : ModTile
     {
         public abstract int Height { get; }
-        public override string Texture => "AerovelenceMod/Content/Tiles/Traversal/ZiplinePostTile";
 
         public override void SetStaticDefaults()
         {
@@ -42,12 +41,12 @@ namespace AerovelenceMod.Content.Tiles.Traversal
         public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch, ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement, ref SpriteEffects spriteEffects)
             => DrawPost(i, j, spriteBatch, frame.Y / 18 % Height, false, true, validPlacement);
 
-        protected bool DrawPost(int i, int j, SpriteBatch spriteBatch, int row, bool ceiling, bool preview = false, bool validPlacement = true)
+        protected bool DrawPost(int i, int j, SpriteBatch spriteBatch, int row, bool ceiling, bool preview = false, bool validPlacement = true, int column = 0)
         {
             Tile tile = Main.tile[i, j];
             if (tile.IsTileInvisible && !Main.ShouldShowInvisibleWalls()) return false;
             Vector2 offset = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
-            Rectangle frame = new(0, row == 0 ? 0 : row == Height - 1 ? 36 : 18, 16, 16);
+            Rectangle frame = new(column * 18, row == 0 ? 0 : row == Height - 1 ? 36 : 18, 16, 16);
             Color color = new(255, validPlacement ? 255 : 127, validPlacement ? 255 : 127, preview ? 127 : 255);
             spriteBatch.Draw(preview ? ModContent.Request<Texture2D>(Texture).Value : Main.instance.TilesRenderer.GetTileDrawTexture(tile, i, j),
                 new Vector2(i * 16, j * 16 + (ceiling ? -2 : 2)) - Main.screenPosition + offset, frame,

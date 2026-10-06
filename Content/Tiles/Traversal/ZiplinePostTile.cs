@@ -16,6 +16,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
     public sealed class ZiplinePostTile : RopePost
     {
         public override int Height => 4;
+        public override string Texture => "AerovelenceMod/Content/Tiles/Traversal/ZiplinePostTile";
 
         public override void SetStaticDefaults()
         {
@@ -51,7 +52,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             int row = tile.TileFrameY / 18 % Height;
             bool ceiling = tile.TileFrameX == 18;
             if (ceiling) row = Height - 1 - row;
-            return DrawPost(i, j, spriteBatch, row, ceiling);
+            return DrawPost(i, j, spriteBatch, row, ceiling, column: RopeSpanSystem.ConnectionCount(Bottom(i, j)) > 0 ? 0 : 1);
         }
 
         public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch, ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement, ref SpriteEffects spriteEffects)
@@ -59,7 +60,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             int row = frame.Y / 18 % Height;
             bool ceiling = frame.X == 18;
             if (ceiling) row = Height - 1 - row;
-            return DrawPost(i, j, spriteBatch, row, ceiling, true, validPlacement);
+            return DrawPost(i, j, spriteBatch, row, ceiling, true, validPlacement, 1);
         }
     }
 
