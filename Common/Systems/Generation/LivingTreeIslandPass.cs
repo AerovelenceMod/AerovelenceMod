@@ -3,7 +3,7 @@ using System.Collections.Generic;
 #if !ISLAND_PREVIEW
 using AerovelenceMod.Common.Utilities.Generation;
 using AerovelenceMod.Common.Utilities.Generation.StructureStamper;
-using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
+using AerovelenceMod.Content.Items.Weapons.Sky;
 
 
 
@@ -957,7 +957,7 @@ public sealed class LivingTreeIslandPass : GenPass
                     chest.y < cellarFloor - 3 || chest.y >= cellarFloor) continue;
                 for (int slot = chest.item.Length - 1; slot > 0; slot--)
                     chest.item[slot] = chest.item[slot - 1];
-                chest.item[0] = new Item(ModContent.ItemType<ShotgunAxe>());
+                chest.item[0] = new Item(ModContent.ItemType<CharmingFlower>());
                 break;
             }
         }

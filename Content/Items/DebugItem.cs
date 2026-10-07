@@ -64,8 +64,11 @@ namespace AerovelenceMod.Content.Items
         }
 
         bool tick = false;
+        public override bool AltFunctionUse(Player player) => true;
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            if (player.whoAmI == Main.myPlayer)
+                CrackTest.Place(player, source, Main.MouseWorld, player.altFunctionUse == 2);
             //Fire Particle Example | Recommend setting debug item usetime to 1
             for (int i = 110; i < 2; i++)
             {
