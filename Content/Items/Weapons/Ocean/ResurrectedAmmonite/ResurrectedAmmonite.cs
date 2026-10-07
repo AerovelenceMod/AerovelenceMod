@@ -73,7 +73,7 @@ public class AmmoniteCompanion : ModBuff
 
 public class AmmoniteMinion : ModProjectile
 {
-    public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmonite";
+    public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmoniteAmmonite";
     private int age
     {
         get => (int)Projectile.ai[1];
