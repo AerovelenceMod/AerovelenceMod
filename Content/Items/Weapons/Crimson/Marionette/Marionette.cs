@@ -28,8 +28,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Marionette", "Continuously drain mana to summon a set of handle bars and puppet strings at the cursor\nThe ends of the strings can attach to enemies and choke their arteries\nIf the handle bars get too far from a string's attach point, or if a string stays attached for too long, it will weaken and snap\nChoke damage gains a small crit chance for every string that is attached")
-            .AddName(Language.Default, "The Marionette").AddTooltip(Language.Default, "Continuously drain mana to summon a set of handle bars and puppet strings at the cursor\nThe ends of the strings can attach to enemies and choke their arteries\nIf the handle bars get too far from a string's attach point, or if a string stays attached for too long, it will weaken and snap\nChoke damage gains a small crit chance for every string that is attached")
+            this.ModifyLocalization("Marionette", "Summons bars and puppet strings at the cursor")
+            .AddName(Language.Default, "The Marionette").AddTooltip(Language.Default, "Summons bars and puppet strings at the cursor")
             .AddSkillStrike(Language.Default, "Skill Strikes when all strings are attached");
 
             //.AddName(Language.Spanish, "").AddSkillStrike(Language.Spanish, "")
@@ -49,13 +49,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
             Item.damage = 30;
             Item.knockBack = 2f;
             Item.DamageType = DamageClass.Summon;
-
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = Item.useAnimation = 20;
             Item.shoot = ModContent.ProjectileType<MarionetteProj>();
-
             Item.rare = ItemRarities.MidPHM;
-
             Item.channel = true;
             Item.noMelee = true;
             Item.useTurn = true;

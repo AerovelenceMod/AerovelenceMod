@@ -31,11 +31,17 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.SkinSewingNeedle
             Item.useTime = 10;
             Item.useStyle = ItemUseStyleID.Swing;
             Item.DamageType = DamageClass.Melee;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.noMelee = true;
             Item.noUseGraphic = true;
             Item.reuseDelay = 8;
             Item.crit = 25;
         }
+
+        public override void AddRecipes() => CreateRecipe()
+            .AddIngredient(ItemID.Vertebrae, 12)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 
 
