@@ -100,6 +100,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                         StarPos: new Vector2(38f, -3f)
                         );
                 }
+                Main.projectile[gun].netUpdate = true;
             }
 
             Vector2 muzzleOffset = Vector2.Normalize(velocity) * 50f;
@@ -177,7 +178,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
 
             if (Main.myPlayer == Projectile.owner)
             {
-                Projectile.velocity += (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.UnitX) * 0.5f;
+                Projectile.velocity += (Projectile.AimWorld() - Projectile.Center).SafeNormalize(Vector2.UnitX) * 0.5f;
             }
 
             if (i == 60)
@@ -308,21 +309,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
 
             //smoke.customData = AssignBehavior_HRSBase(5, 25, 1f, 1f, true, 1f);
 
-            int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
-
-            if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
+            if (Projectile.owner == Main.myPlayer)
             {
-                feh.color = Color.OrangeRed;
-                feh.colorIntensity = 1f;
-                feh.fadeSpeed = 0.025f;
-                for (int m = 0; m < 10; m++)
+                int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
+
+                if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
                 {
-                    FadeExplosionClass newSmoke = new FadeExplosionClass(Main.projectile[explosion].Center, new Vector2(1f, 0).RotatedByRandom(6) * Main.rand.NextFloat(0.5f, 2f));
+                    feh.color = Color.OrangeRed;
+                    feh.colorIntensity = 1f;
+                    feh.fadeSpeed = 0.025f;
+                    for (int m = 0; m < 10; m++)
+                    {
+                        FadeExplosionClass newSmoke = new FadeExplosionClass(Main.projectile[explosion].Center, new Vector2(1f, 0).RotatedByRandom(6) * Main.rand.NextFloat(0.5f, 2f));
 
-                    newSmoke.size = 0.45f + Main.rand.NextFloat(-0.15f, 0.15f);
-                    feh.Smokes.Add(newSmoke);
+                        newSmoke.size = 0.45f + Main.rand.NextFloat(-0.15f, 0.15f);
+                        feh.Smokes.Add(newSmoke);
 
+                    }
                 }
+                Main.projectile[explosion].netUpdate = true;
             }
 
             //Trail Dust
@@ -342,7 +347,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             //AoE
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 100f)
+                if (Projectile.owner == Main.myPlayer && Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 100f)
                 {
                     int Direction = 0;
                     if (Projectile.Center.X - Main.npc[i].Center.X < 0)
@@ -356,6 +361,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                     myHit.HitDirection = Direction;
 
                     Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
 
                 }
             }
@@ -367,7 +373,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             //AoE
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 75f && Main.npc[i] != target)
+                if (Projectile.owner == Main.myPlayer && Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 75f && Main.npc[i] != target)
                 {
                     int Direction = 0;
                     if (Projectile.Center.X - Main.npc[i].Center.X < 0)
@@ -381,6 +387,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                     myHit.HitDirection = Direction;
 
                     Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
                 }
             }
         }
@@ -495,21 +502,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                     Color.Orange, Main.rand.NextFloat(0.4f, 0.7f));
             }
 
-            int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
-
-            if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
+            if (Projectile.owner == Main.myPlayer)
             {
-                feh.color = Color.OrangeRed;
-                feh.colorIntensity = 1f;
-                feh.fadeSpeed = 0.028f;
+                int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
 
-                for (int m = 0; m < 5; m++)
+                if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
                 {
-                    FadeExplosionClass newSmoke = new FadeExplosionClass(Main.projectile[explosion].Center, new Vector2(0.45f, 0).RotatedByRandom(6) * Main.rand.NextFloat(0.5f, 1.75f));
+                    feh.color = Color.OrangeRed;
+                    feh.colorIntensity = 1f;
+                    feh.fadeSpeed = 0.028f;
 
-                    newSmoke.size = 0.3f + Main.rand.NextFloat(-0.1f, 0.15f);
-                    feh.Smokes.Add(newSmoke);
+                    for (int m = 0; m < 5; m++)
+                    {
+                        FadeExplosionClass newSmoke = new FadeExplosionClass(Main.projectile[explosion].Center, new Vector2(0.45f, 0).RotatedByRandom(6) * Main.rand.NextFloat(0.5f, 1.75f));
+
+                        newSmoke.size = 0.3f + Main.rand.NextFloat(-0.1f, 0.15f);
+                        feh.Smokes.Add(newSmoke);
+                    }
                 }
+                Main.projectile[explosion].netUpdate = true;
             }
 
             //Trail Dust
@@ -530,7 +541,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             //AoE
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 50f)
+                if (Projectile.owner == Main.myPlayer && Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 50f)
                 {
                     int Direction = 0;
                     if (Projectile.Center.X - Main.npc[i].Center.X < 0)
@@ -544,6 +555,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                     myHit.HitDirection = Direction;
 
                     Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
 
                 }
             }
@@ -555,7 +567,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             //AoE
             for (int i = 0; i < Main.maxNPCs; i++)
             {
-                if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 50f && Main.npc[i] != target)
+                if (Projectile.owner == Main.myPlayer && Main.npc[i].active && !Main.npc[i].dontTakeDamage && !Main.npc[i].friendly && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 50f && Main.npc[i] != target)
                 {
                     int Direction = 0;
                     if (Projectile.Center.X - Main.npc[i].Center.X < 0)
@@ -569,6 +581,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
                     myHit.HitDirection = Direction;
 
                     Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
                 }
             }
         }
@@ -608,9 +621,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
             owner.heldProj = Projectile.whoAmI;
             Projectile.Center = owner.Center;
 
-            if (Projectile.owner == Main.myPlayer)
+            if (true)
             {
-                Projectile.rotation = Projectile.DirectionTo(Main.MouseWorld).ToRotation();
+                Projectile.rotation = Projectile.DirectionTo(Projectile.AimWorld()).ToRotation();
             }
 
             owner.ChangeDir(Projectile.rotation.ToRotationVector2().X > 0 ? 1 : -1);
@@ -633,7 +646,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
 
                 if (owner.whoAmI == Main.myPlayer)
                 {
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, velocity, ModContent.ProjectileType<TitaniumRocket>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), pos, velocity, ModContent.ProjectileType<TitaniumRocket>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
+                    }
                 }
                 owner.velocity += velocity * -0.55f;
 

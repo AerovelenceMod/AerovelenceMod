@@ -170,6 +170,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
                     held.timeToStartFade = 0;
                 }
+                Main.projectile[gun].netUpdate = true;
 
                 Vector2 muzzleOffset = Vector2.Normalize(velocity) * 16;
                 if (Collision.CanHit(position, 0, 0, position + muzzleOffset, 0, 0))
@@ -369,15 +370,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             Player.itemTime = 2;
             Player.itemAnimation = 2;
 
-            if (Projectile.owner == Main.myPlayer)
-                reticleLocation = Main.MouseWorld + Player.velocity;
+            if (true)
+                reticleLocation = Projectile.AimWorld() + Player.velocity;
 
             if (Player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
+                if (true)
                 {
-                    Angle = (Main.MouseWorld - (Player.MountedCenter + Player.velocity)).ToRotation();
-                    reticleLocation = (Main.MouseWorld);
+                    Projectile.UpdateAimAngle(Player.MountedCenter + Player.velocity, ref Angle);
+                    reticleLocation = (Projectile.AimWorld());
                 }
                 direction = Angle.ToRotationVector2();
 
@@ -402,40 +403,44 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
 
                     int damage = (int)(Projectile.damage * (1f + (2f * reticleProgress)));
-                    int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + adjustedVel * 10, adjustedVel * 1.5f, ModContent.ProjectileType<AdamantitePulseShot>(), damage, Projectile.knockBack, Main.myPlayer);
-
-                    if (Main.projectile[shot].ModProjectile is AdamantitePulseShot aps)
-                        aps.big = reticleProgress == 1;
-
-
-                    #region dust
-                    Vector2 vel1 = adjustedVel * (reticleProgress == 1 ? 2.3f : 2.25f);
-                    Vector2 vel2 = adjustedVel * (reticleProgress == 1 ? 2.8f : 2.75f);
-
-                    Dust circA = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel1, newColor: new Color(255, 10, 10) * 0.6f, Scale: 0.01f);
-                    circA.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.65f : 0.55f), false, 2, 0.25f, 0.5f);
-
-                    Dust circB = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel2, newColor: new Color(255, 10, 10) * 0.7f, Scale: 0.01f);
-                    circB.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.35f : 0.25f), false, 1, 0.25f, 0.5f);
-
-                    Vector2 dustOffsetPos = Projectile.Center + adjustedVel * 10f;
-                    for (int i = 220; i < 4 + Main.rand.Next(0, 2); i++)
+                    if (Projectile.owner == Main.myPlayer)
                     {
-                        Color col1 = Color.Lerp(Color.DeepPink, Color.HotPink, 0.65f);
+                        int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + adjustedVel * 10, adjustedVel * 1.5f, ModContent.ProjectileType<AdamantitePulseShot>(), damage, Projectile.knockBack, Main.myPlayer);
 
-                        Vector2 randomStart = Main.rand.NextVector2Circular(6f, 6f) * 1f;
-                        Dust dust = Dust.NewDustPerfect(dustOffsetPos, ModContent.DustType<GlowPixelCross>(), randomStart, newColor: Color.Red, Scale: Main.rand.NextFloat(0.45f, 0.55f) * 1f);
-                        dust.noLight = false;
-                        dust.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.2f, preSlowPower: 0.99f, timeBeforeSlow: 0, postSlowPower: 0.89f,
-                            velToBeginShrink: 10f, fadePower: 0.93f, shouldFadeColor: false);
+                        if (Main.projectile[shot].ModProjectile is AdamantitePulseShot aps)
+                            aps.big = reticleProgress == 1;
 
-                        dust.velocity += adjustedVel.SafeNormalize(Vector2.UnitX) * 12f;
-                    }
-                    #endregion
 
-                    if (skillCritWindow > 0 && reticleProgress == 1)
-                    {
-                        SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 2);
+                        #region dust
+                        Vector2 vel1 = adjustedVel * (reticleProgress == 1 ? 2.3f : 2.25f);
+                        Vector2 vel2 = adjustedVel * (reticleProgress == 1 ? 2.8f : 2.75f);
+
+                        Dust circA = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel1, newColor: new Color(255, 10, 10) * 0.6f, Scale: 0.01f);
+                        circA.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.65f : 0.55f), false, 2, 0.25f, 0.5f);
+
+                        Dust circB = Dust.NewDustPerfect(Projectile.Center + adjustedVel * 3, ModContent.DustType<Dusts.GlowDusts.CirclePulse>(), vel2, newColor: new Color(255, 10, 10) * 0.7f, Scale: 0.01f);
+                        circB.customData = new CirclePulseBehavior((reticleProgress == 1 ? 0.35f : 0.25f), false, 1, 0.25f, 0.5f);
+
+                        Vector2 dustOffsetPos = Projectile.Center + adjustedVel * 10f;
+                        for (int i = 220; i < 4 + Main.rand.Next(0, 2); i++)
+                        {
+                            Color col1 = Color.Lerp(Color.DeepPink, Color.HotPink, 0.65f);
+
+                            Vector2 randomStart = Main.rand.NextVector2Circular(6f, 6f) * 1f;
+                            Dust dust = Dust.NewDustPerfect(dustOffsetPos, ModContent.DustType<GlowPixelCross>(), randomStart, newColor: Color.Red, Scale: Main.rand.NextFloat(0.45f, 0.55f) * 1f);
+                            dust.noLight = false;
+                            dust.customData = DustBehaviorUtil.AssignBehavior_GPCBase(rotPower: 0.2f, preSlowPower: 0.99f, timeBeforeSlow: 0, postSlowPower: 0.89f,
+                                velToBeginShrink: 10f, fadePower: 0.93f, shouldFadeColor: false);
+
+                            dust.velocity += adjustedVel.SafeNormalize(Vector2.UnitX) * 12f;
+                        }
+                        #endregion
+
+                        if (skillCritWindow > 0 && reticleProgress == 1)
+                        {
+                            SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 2);
+                        }
+                        Main.projectile[shot].netUpdate = true;
                     }
 
                     SoundStyle style23 = new SoundStyle("Terraria/Sounds/Custom/dd2_sky_dragons_fury_shot_0") with { Pitch = .10f, PitchVariance = 0.4f, Volume = 0.4f };

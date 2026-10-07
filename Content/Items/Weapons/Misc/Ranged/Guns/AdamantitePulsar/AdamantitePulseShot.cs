@@ -202,6 +202,21 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center + tip * -1,
                 Projectile.Center + tip, 10, ref point);
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(big);
+            writer.Write(timer);
+            writer.Write(enemiesHit);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            big = reader.ReadBoolean();
+            timer = reader.ReadInt32();
+            enemiesHit = reader.ReadInt32();
+        }
     }
 
     public class AdamSmallShot : ModProjectile
@@ -298,9 +313,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.AdamantitePulsar
 
             if (target.GetGlobalNPC<AdamShotNPC>().AdamShotHitCounter >= 4)
             {
-                int a = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<H3Impact>(), 0, 0, Main.myPlayer);
-                Main.projectile[a].rotation = Projectile.rotation;
-                Main.projectile[a].scale = 0.75f;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<H3Impact>(), 0, 0, Main.myPlayer);
+                    Main.projectile[a].rotation = Projectile.rotation;
+                    Main.projectile[a].scale = 0.75f;
+                    Main.projectile[a].netUpdate = true;
+                }
                 //if (Main.projectile[a].ModProjectile is H3Impact h3)
 
                 //Circle Dust
