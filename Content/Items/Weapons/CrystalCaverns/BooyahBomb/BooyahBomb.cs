@@ -1,20 +1,14 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Sets.Burnshock.GaussShotgun;
-
-
 using ReLogic.Content;
 using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics;
-
-
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 {

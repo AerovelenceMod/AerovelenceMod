@@ -1,10 +1,9 @@
-﻿using ReLogic.Content;
-using System;
+﻿using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Dusts.GlowDusts;
-using Terraria.Graphics.Shaders;
-using rail;
+using ReLogic.Content;
+using System;
 using Terraria.Audio;
-using Steamworks;
+using Terraria.Graphics.Shaders;
 using static Terraria.NPC;
 
 namespace AerovelenceMod.Common.Bases
@@ -15,7 +14,7 @@ namespace AerovelenceMod.Common.Bases
         public override string Texture => "Terraria/Images/Projectile_0";
 
         int timer = 0;
-        public override bool? CanDamage() { return false; }
+        public override bool? CanDamage() => false;
         public override void SetDefaults()
         {
             Projectile.width = 8;
@@ -34,7 +33,7 @@ namespace AerovelenceMod.Common.Bases
 
         public override void AI()
         {
-            aiLogic();
+            AILogic();
         }
         public override bool PreDraw(ref Color lightColor)
         {
@@ -46,23 +45,25 @@ namespace AerovelenceMod.Common.Bases
         {
             var Fire = Mod.Assets.Request<Texture2D>("Assets/Flare/scorch_01").Value;
 
-            Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
-            myEffect.Parameters["uColor"].SetValue(col.ToVector3() * colMultipliter);
-            myEffect.Parameters["uTime"].SetValue(2);
-            myEffect.Parameters["uOpacity"].SetValue(0.8f); //0.6
-            myEffect.Parameters["uSaturation"].SetValue(0);
+            //ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            //{
+                Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
+                myEffect.Parameters["uColor"].SetValue(col.ToVector3() * colMultipliter);
+                myEffect.Parameters["uTime"].SetValue(2);
+                myEffect.Parameters["uOpacity"].SetValue(0.8f); //0.6
+                myEffect.Parameters["uSaturation"].SetValue(0);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.Draw(Fire, Projectile.Center - Main.screenPosition, Fire.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation, Fire.Size() / 2, scale, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(Fire, Projectile.Center - Main.screenPosition, Fire.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation + 2, Fire.Size() / 2, scale * 0.2f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Fire, Projectile.Center - Main.screenPosition, Fire.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation, Fire.Size() / 2, scale, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(Fire, Projectile.Center - Main.screenPosition, Fire.Frame(1, 1, 0, 0), Color.OrangeRed, Projectile.rotation + 2, Fire.Size() / 2, scale * 0.2f, SpriteEffects.None, 0f);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            //});
         }
-        public void aiLogic()
+        public void AILogic()
         {
             //Shrink scale to zero and kill Projectile when it hits it
             scale = Math.Clamp(MathHelper.Lerp(scale, -0.1f, 0.12f), 0, 0.3f);
@@ -112,16 +113,16 @@ namespace AerovelenceMod.Common.Bases
         float alpha = 0f;
         public override void AI()
         {
-            baseAILogic();
+            BaseAILogic();
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            baseDrawing();
+            BaseDrawing();
             return false;
         }
 
-        public void baseAILogic()
+        public void BaseAILogic()
         {
             //Add light based on set color
             Lighting.AddLight(Projectile.Center, lightCol);
@@ -181,7 +182,7 @@ namespace AerovelenceMod.Common.Bases
             timer++;
         }
 
-        public void baseDrawing()
+        public void BaseDrawing()
         {
             //load textures
             Texture2D softGlow = Mod.Assets.Request<Texture2D>("Assets/Glow").Value;
@@ -190,50 +191,50 @@ namespace AerovelenceMod.Common.Bases
             Texture2D FlareCircle = Mod.Assets.Request<Texture2D>("Assets/Flare/flare_01").Value;
             Texture2D swirl = Mod.Assets.Request<Texture2D>("Assets/Slash/twirl_02").Value;
             Texture2D swirl2 = Mod.Assets.Request<Texture2D>("Assets/Slash/twirl_03").Value;
+            //ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.UnderProjectiles, () =>
+            //{
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+                //Draw outer glow
+                Main.spriteBatch.Draw(softGlow, Projectile.Center - Main.screenPosition, softGlow.Frame(1, 1, 0, 0), flareCol * alpha, Projectile.rotation, softGlow.Size() / 2, 3.3f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(star2, Projectile.Center - Main.screenPosition, star2.Frame(1, 1, 0, 0), flareCol * 0.7f * alpha, randomRot + MathHelper.ToRadians(vortexRotsmall * -2), star2.Size() / 2, 0.20f, SpriteEffects.None, 0f);
 
-            //Draw outer glow
-            Main.spriteBatch.Draw(softGlow, Projectile.Center - Main.screenPosition, softGlow.Frame(1, 1, 0, 0), flareCol * alpha, Projectile.rotation, softGlow.Size() / 2, 3.3f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(star2, Projectile.Center - Main.screenPosition, star2.Frame(1, 1, 0, 0), flareCol * 0.7f * alpha, randomRot + MathHelper.ToRadians(vortexRotsmall * -2), star2.Size() / 2, 0.20f, SpriteEffects.None, 0f);
+                //Activate Shader
+                Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
+                myEffect.Parameters["uColor"].SetValue(flareCol.ToVector3() * flareColIntensity * alpha);
+                myEffect.Parameters["uTime"].SetValue(2);
+                myEffect.Parameters["uOpacity"].SetValue(0.6f); //0.6
+                myEffect.Parameters["uSaturation"].SetValue(1.2f);
 
-            //Activate Shader
-            Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
-            myEffect.Parameters["uColor"].SetValue(flareCol.ToVector3() * flareColIntensity * alpha);
-            myEffect.Parameters["uTime"].SetValue(2);
-            myEffect.Parameters["uOpacity"].SetValue(0.6f); //0.6
-            myEffect.Parameters["uSaturation"].SetValue(1.2f);
+                //draw four-point stars
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
+                if (timer > 1 && timer < 50)
+                {
+                    Main.spriteBatch.Draw(star, Projectile.Center - Main.screenPosition, star.Frame(1, 1, 0, 0), flareCol, randomRot + MathHelper.ToRadians(vortexRotsmall * 3 + 45), star.Size() / 2, secondScale, SpriteEffects.None, 0f);
+                    Main.spriteBatch.Draw(star, Projectile.Center - Main.screenPosition, star.Frame(1, 1, 0, 0), flareCol, randomRot + MathHelper.ToRadians(vortexRotsmall * 3 + 45), star.Size() / 2, secondScale, SpriteEffects.None, 0f);
+                }
 
-            //draw four-point stars
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, myEffect, Main.GameViewMatrix.TransformationMatrix);
-            if (timer > 1 && timer < 50)
-            {
-                Main.spriteBatch.Draw(star, Projectile.Center - Main.screenPosition, star.Frame(1, 1, 0, 0), flareCol, randomRot + MathHelper.ToRadians(vortexRotsmall * 3 + 45), star.Size() / 2, secondScale, SpriteEffects.None, 0f);
-                Main.spriteBatch.Draw(star, Projectile.Center - Main.screenPosition, star.Frame(1, 1, 0, 0), flareCol, randomRot + MathHelper.ToRadians(vortexRotsmall * 3 + 45), star.Size() / 2, secondScale, SpriteEffects.None, 0f);
-            }
+                myEffect.CurrentTechnique.Passes[0].Apply();
 
-            myEffect.CurrentTechnique.Passes[0].Apply();
+                //Draw Flare Center
+                Main.spriteBatch.Draw(FlareCircle, Projectile.Center - Main.screenPosition, FlareCircle.Frame(1, 1, 0, 0), flareCol * alpha, (float)Math.PI, FlareCircle.Size() / 2, 0.35f * 0.5f, SpriteEffects.None, 0f);
 
-            //Draw Flare Center
-            Main.spriteBatch.Draw(FlareCircle, Projectile.Center - Main.screenPosition, FlareCircle.Frame(1, 1, 0, 0), flareCol * alpha, (float)Math.PI, FlareCircle.Size() / 2, 0.35f * 0.5f, SpriteEffects.None, 0f);
+                //Draw Swirls
+                //This one has shader
+                Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, vortexRot, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
 
+                //These dont
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
-            //Draw Swirls
-            //This one has shader
-            Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, vortexRot, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, vortexRot + MathHelper.Pi, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
+                Main.spriteBatch.Draw(swirl2, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, MathHelper.ToRadians(vortexRotsmall * 8), swirl.Size() / 2, 0.06f, SpriteEffects.None, 0f);
 
-            //These dont
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
-
-            Main.spriteBatch.Draw(swirl, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, vortexRot + MathHelper.Pi, swirl.Size() / 2, 0.10f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(swirl2, Projectile.Center - Main.screenPosition, swirl.Frame(1, 1, 0, 0), flareCol * alpha, MathHelper.ToRadians(vortexRotsmall * 8), swirl.Size() / 2, 0.06f, SpriteEffects.None, 0f);
-
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            //});
 
             Texture2D CenterTex = Mod.Assets.Request<Texture2D>(textureLocation).Value;
             Main.spriteBatch.Draw(CenterTex, Projectile.Center - Main.screenPosition, CenterTex.Frame(1, 1, 0, 0), Color.White * alpha, Projectile.rotation, CenterTex.Size() / 2, Projectile.scale * 0.75f, SpriteEffects.None, 0f);
@@ -267,9 +268,6 @@ namespace AerovelenceMod.Common.Bases
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
                 SoundEngine.PlaySound(style);
             }
-
-            //int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FrostFlareExplosion>(), 0, 0, Main.myPlayer);
-            //Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
 
             ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
             for (int i = 0; i < 3; i++)
@@ -308,18 +306,18 @@ namespace AerovelenceMod.Common.Bases
 
         public override void ResetEffects(NPC npc)
         {
-            baseResetEffects(npc);
+            BaseResetEffects(npc);
         }
         public override void UpdateLifeRegen(NPC npc, ref int damage)
         {
-            baseUpdateLifeRegen(npc, ref damage);
+            BaseUpdateLifeRegen(npc, ref damage);
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
-            //baseModifyHitByProjectile(npc, projectile, ref damage, ref knockback, ref crit, ref hitDirection);
+            BaseModifyHitByProjectile(npc, projectile, ref modifiers);
         }
 
-        public void baseResetEffects(NPC npc)
+        public void BaseResetEffects(NPC npc)
         {
             if (!npc.HasBuff(DebuffIndex))
             {
@@ -328,7 +326,7 @@ namespace AerovelenceMod.Common.Bases
             }
         }
 
-        public void baseUpdateLifeRegen(NPC npc, ref int damage)
+        public void BaseUpdateLifeRegen(NPC npc, ref int damage)
         {
             if (DebuffActive)
             {
@@ -381,13 +379,13 @@ namespace AerovelenceMod.Common.Bases
             }
         }
 
-        public void baseModifyHitByProjectile(NPC npc, Projectile projectile, ref int damage, ref float knockback, ref bool crit, ref int hitDirection)
+        public void BaseModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)
         {
             if (DebuffActive && !projectile.npcProj && !projectile.trap && (projectile.minion || ProjectileID.Sets.MinionShot[projectile.type]))
             {
-                damage += (int)tagDamage;
+                modifiers.FinalDamage += (int)tagDamage;
                 if (tagCrit >= Main.rand.Next(1, 101))
-                    crit = true;
+                    modifiers.SetCrit();
             }
         }
     }

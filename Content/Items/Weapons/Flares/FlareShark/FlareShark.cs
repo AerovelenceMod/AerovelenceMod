@@ -1,5 +1,6 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Bases;
+using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Ammo.Flares;
@@ -10,15 +11,15 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics.Shaders;
+using static Terraria.NPC;
 
 namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
 {
-    public class FlareShark : ModItem
+    public class FlareShark : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Flareshark");
-            // Tooltip.SetDefault("33% chance to not consume ammo\nShoots flares alongside bullets");
+            this.ModifyLocalization("Flareshark", "Heats up over time, exploding if overheated too much");
         }
         public override void SetDefaults()
         {
@@ -48,6 +49,31 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
         public override Vector2? HoldoutOffset()
         {
             return new Vector2(-2, 0);
+        }
+        public override void HoldItem(Player player)
+        {
+            var modPlayer = player.GetModPlayer<OverheatPlayer>();
+            if (!player.controlUseItem || player.itemAnimation <= 0)
+            {
+                modPlayer.OverheatDecay++;
+                if (modPlayer.OverheatDecay >= 5)
+                {
+                    modPlayer.OverheatDecay = 0;
+                    modPlayer.Overheat--;
+                    if (modPlayer.Overheat < 0)
+                        modPlayer.Overheat = 0;
+                }
+            }
+            if (player.controlUseItem)
+            {
+                modPlayer.Overheat++;
+                modPlayer.OverheatDecay = 0;
+                if (modPlayer.Overheat >= 300)
+                {
+                    Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<OverheatExplosion>(), Item.damage * 2, 0, player.whoAmI);
+                    modPlayer.Overheat = 0;
+                }
+            }
         }
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
@@ -132,68 +158,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
         //Which muzzle flash texture to use
         public int muzzleFlashFrame = Main.rand.Next(0, 3);
 
-        float pullBackRotOffsetAmount = 0f;
-        bool hasDoneClickSound = false;
-
-        public override void RecoilAI()
-        {
-            Player Player = Main.player[Projectile.owner];
-            float goalX = GoalXOffset;
-            float baseX = BaseXOffset;
-
-            #region compositeArms
-
-            float totalProgress = (float)timer / (float)Player.itemAnimationMax;
-            bool doPullClickAnim = totalProgress >= 0.6f && totalProgress <= 0.8f;
-
-
-            float armRot = GunDirection.ToRotation() - MathHelper.PiOver2;
-            armRot += (-0.35f * pullBackRotOffsetAmount) * Player.direction;
-
-            if (doPullClickAnim)
-            {
-                float pullProg = Utils.GetLerpValue(0.6f, 0.8f, totalProgress, true);
-                pullProg = Easings.easeOutSine(pullProg);
-
-                if (pullProg > 0.75f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, armRot);
-                else if (pullProg > 0.5f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, armRot);
-                else if (pullProg > 0.25f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRot);
-                else
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRot);
-
-                if (!hasDoneClickSound && pullProg > 0.5f)
-                {
-                    SoundStyle style = new SoundStyle("Terraria/Sounds/Menu_Tick") with { Volume = 0.66f, Pitch = -.4f, PitchVariance = .25f, MaxInstances = -1 };
-                    SoundEngine.PlaySound(style, Player.Center);
-                    hasDoneClickSound = true;
-                }
-
-
-                pullBackRotOffsetAmount = 1f;
-            }
-            else
-            {
-                float Xprog = Utils.GetLerpValue(goalX, baseX, XOffset, true);
-
-                if (Xprog > 0.75f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, armRot);
-                else if (Xprog > 0.5f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.ThreeQuarters, armRot);
-                else if (Xprog > 0.25f)
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Quarter, armRot);
-                else
-                    Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, armRot);
-
-                pullBackRotOffsetAmount = Math.Clamp(MathHelper.Lerp(pullBackRotOffsetAmount, -0.75f, 0.12f), 0f, 1f);
-            }
-            #endregion
-
-            if (timer > timeToStartFade)
-                muzzleFlashPower = Math.Clamp(MathHelper.Lerp(muzzleFlashPower, -0.5f, 0.15f), 0f, 1f);
-        }
+        public static Color Additive(Color color, float opacity) => color with { A = 0 } * MathHelper.Clamp(opacity, 0f, 1f);
 
         public override void Draw(ref Color lightColor)
         {
@@ -204,6 +169,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
 
             Vector2 heldOffset = new Vector2(HoldoutOffset.X, HoldoutOffset.Y * Player.direction).RotatedBy(Projectile.rotation);
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Player.gfxOffY) + heldOffset;
+
+            Texture2D Overheat = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Flares/FlareShark/FlareShark_Overheat").Value;
+            Main.spriteBatch.Draw(Overheat, drawPos, null, Additive(Color.Orange, Player.GetModPlayer<OverheatPlayer>().Overheat * 0.005f), Projectile.rotation, Texture.Size() / 2, Projectile.scale, mySE, 0f);
 
             Color between = Color.Lerp(Color.Orange, Color.OrangeRed, 0.75f);
             Color[] colors = { between, Color.OrangeRed, Color.Orange, Color.White };
@@ -249,5 +217,113 @@ namespace AerovelenceMod.Content.Items.Weapons.Flares.FlareShark
             Main.spriteBatch.Draw(Star, starPos, null, Color.White with { A = 0 } * starAlpha, starRot, Star.Size() / 2, 0.2f, SpriteEffects.None, 0f);
         }
 
+    }
+
+    public class OverheatExplosion : ModProjectile
+    {
+        public override string Texture => "Terraria/Images/Projectile_0";
+
+        public override void SetDefaults()
+        {
+            Projectile.width = 20;
+            Projectile.height = 20;
+            Projectile.scale = 0.1f;
+            Projectile.timeLeft = 300;
+            Projectile.penetrate = -1;
+
+            Projectile.friendly = false;
+            Projectile.hostile = true;
+            Projectile.ignoreWater = true;
+            Projectile.tileCollide = false;
+        }
+
+        int timer = 0;
+        bool firstFrame = true;
+        float colorIntensity = 1f;
+
+        float randomRot = 0;
+        public override void AI()
+        {
+            if (firstFrame)
+            {
+                randomRot = Main.rand.NextFloat(6.28f);
+                firstFrame = false;
+
+                Projectile.rotation = Main.rand.NextFloat(6.28f);
+
+                //Spawn Dust
+                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+
+                for (int i = 0; i < 30; i++)
+                {
+                    if (Main.rand.NextBool())
+                    {
+                        Vector2 randomStart = Main.rand.NextVector2CircularEdge(5, 5);
+                        Dust gd = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<LineGlow>(), randomStart * Main.rand.NextFloat(0.65f, 1.35f), Color.OrangeRed, 0.15f, 0.2f, 0f, dustShader2);
+                        gd.fadeIn = 45 + Main.rand.NextFloat(-3f, 14f);
+                        gd.scale *= Main.rand.NextFloat(0.9f, 2.1f);
+                    }
+                    else
+                    {
+                        Vector2 randomStart = Main.rand.NextVector2CircularEdge(6, 6);
+                        Dust gd = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleFlare>(), randomStart * Main.rand.NextFloat(0.65f, 1.35f), Color.Orange, 0.7f, 0.1f, 0f, dustShader2);
+                        gd.fadeIn = 1;
+                    }
+                }
+
+            }
+
+            Projectile.scale = Math.Clamp(MathHelper.Lerp(Projectile.scale, 0.55f, 0.5f), 0f, 2f);
+
+            Projectile.velocity = Vector2.Zero;
+
+            if (timer > 10)
+            {
+                colorIntensity -= 0.12f;
+                if (colorIntensity <= 0)
+                    Projectile.active = false;
+            }
+            Projectile.rotation += 0.06f;
+
+            timer++;
+        }
+
+        //OrangeRed, Orange, Gold, Gold, Wheat, White
+        public override bool PreDraw(ref Color lightColor)
+        {
+            Texture2D sixStar = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
+            Texture2D circle = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
+            Texture2D circle2 = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/Bosses/Cyvercry/Textures/circle_05");
+            Texture2D color = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/color_burst_30");
+
+            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            {
+                Main.spriteBatch.Draw(circle2, Projectile.Center - Main.screenPosition, null, Color.Black * 0.85f * colorIntensity, Projectile.rotation * 1.5f, circle2.Size() / 2, Projectile.scale * 0.75f, 0, 0f);
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+
+                Main.spriteBatch.Draw(circle2, Projectile.Center - Main.screenPosition, null, Color.OrangeRed * 0.7f * colorIntensity, Projectile.rotation * 2f, sixStar.Size() / 2, Projectile.scale * 0.5f, 0, 0f);
+
+                Main.spriteBatch.Draw(sixStar, Projectile.Center - Main.screenPosition, null, Color.OrangeRed * colorIntensity, Projectile.rotation, sixStar.Size() / 2, Projectile.scale * 0.75f, 0, 0f);
+                Main.spriteBatch.Draw(circle, Projectile.Center - Main.screenPosition, null, Color.Orange * colorIntensity, Projectile.rotation, circle.Size() / 2, Projectile.scale * 0.17f, 0, 0f);
+
+                Main.spriteBatch.Draw(color, Projectile.Center - Main.screenPosition, null, Color.Gold * colorIntensity, randomRot, color.Size() / 2, Projectile.scale * 0.5f, 0, 0f);
+                Main.spriteBatch.Draw(circle2, Projectile.Center - Main.screenPosition, null, Color.Wheat * 1f * colorIntensity, Projectile.rotation * 1.5f, circle2.Size() / 2, Projectile.scale * 0.5f, 0, 0f);
+                Main.spriteBatch.Draw(circle2, Projectile.Center - Main.screenPosition, null, Color.White * 1f * colorIntensity, Projectile.rotation * 1.5f, circle2.Size() / 2, Projectile.scale * 0.25f, 0, 0f);
+
+                Main.spriteBatch.End();
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            });
+
+            return false;
+        }
+    }
+
+    public class OverheatPlayer : ModPlayer
+    {
+        public int Overheat = 0;
+
+        public int OverheatDecay = 0;
     }
 }

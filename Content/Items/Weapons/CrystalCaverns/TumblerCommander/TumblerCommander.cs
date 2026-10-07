@@ -1,10 +1,6 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
 using System.Collections.Generic;
 using System.IO;
 using System;
@@ -12,9 +8,6 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent;
-
-
-
 
 namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TumblerCommander
 {

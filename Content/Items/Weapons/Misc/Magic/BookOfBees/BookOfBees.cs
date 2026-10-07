@@ -1,16 +1,10 @@
-﻿
-
-using System.Collections.Generic;
-
-using Terraria.Audio;
-
-
-
-using System;
-using AerovelenceMod.Common;
+﻿using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.Dusts.GlowDusts;
+using System;
+using System.Collections.Generic;
+using Terraria.Audio;
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
 {

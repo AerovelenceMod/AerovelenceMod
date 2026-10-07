@@ -1,9 +1,4 @@
-
 using AerovelenceMod.Content.Dusts;
-
-
-
-
 
 namespace AerovelenceMod.Content.Walls.CrystalCaverns.Natural
 {

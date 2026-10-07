@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
 {
     public class TheTile : ModTile
@@ -25,18 +20,8 @@ namespace AerovelenceMod.Common.Utilities.Generation.StructureStamper
     {
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = 1;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 1;
-            Item.useStyle = ItemUseStyleID.Swing;
             Item.consumable = false;
-            Item.createTile = ModContent.TileType<TheTile>();
-            Item.rare = ItemRarities.PostML;
-            Item.value = 5;
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 0, ModContent.TileType<TheTile>());
             Item.tileBoost += 20;
         }
     }

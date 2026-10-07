@@ -1,9 +1,5 @@
-
-
 using Terraria.DataStructures;
-
 using Terraria.Localization;
-
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.Trophies
@@ -12,19 +8,7 @@ namespace AerovelenceMod.Content.Tiles.Trophies
     {
         public override void SetDefaults()
         {
-            Item.width = 30;
-            Item.height = 30;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.value = 50000;
-            Item.rare = ItemRarities.EarlyPHM;
-            Item.createTile = ModContent.TileType<CrystalTumblerTrophyPlaced>();
-            Item.placeStyle = 0;
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 50000, ModContent.TileType<CrystalTumblerTrophyPlaced>(), ItemRarities.EarlyPHM);
         }
     }
 

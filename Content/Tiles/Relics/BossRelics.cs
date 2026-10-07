@@ -1,15 +1,9 @@
-
-
-using Terraria.DataStructures;
-
-
-
-
+using System;
 using System.Collections.Generic;
 using Terraria.Enums;
+using Terraria.DataStructures;
 using Terraria.Localization;
 using Terraria.ObjectData;
-using System;
 
 namespace AerovelenceMod.Content.Tiles.Relics
 {

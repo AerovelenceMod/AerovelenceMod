@@ -282,7 +282,8 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
                 .Add<OnTheRocks>()
                 .Add<AmbrosiaMiningHelmet>()
                 .Add<AmbrosiaMiningChestplate>()
-                .Add<AmbrosiaMiningBoots>();
+                .Add<AmbrosiaMiningBoots>()
+                .Add(new Item(ModContent.ItemType<ElectricBlueSolution>()), Condition.DownedMechBossAny);
             npcShop.Register();
         }
 

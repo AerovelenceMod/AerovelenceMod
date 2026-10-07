@@ -282,6 +282,16 @@ Buffs: {
 		DisplayName: Seashine Crab
 		Description: ""
 	}
+
+	FlareChloro: {
+		DisplayName: Flare Chloro
+		Description: Mods.AerovelenceMod.Buffs.FlareChloro.Description
+	}
+
+	FlareVenom: {
+		DisplayName: Flare Venom
+		Description: Mods.AerovelenceMod.Buffs.FlareVenom.Description
+	}
 }
 
 Items: {
@@ -2911,6 +2921,9 @@ Projectiles: {
 	VenomFlareProj.DisplayName: Venom Flare Proj
 	MiningEnergyBlast.DisplayName: Mining Energy Blast
 	FlareSharkRecoilProjectile.DisplayName: Flare Shark Recoil Projectile
+	ChloroFlareExplosion.DisplayName: Chloro Flare Explosion
+	VenomFlareExplosion.DisplayName: Venom Flare Explosion
+	OverheatExplosion.DisplayName: Overheat Explosion
 }
 
 Configs: {

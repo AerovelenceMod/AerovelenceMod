@@ -1,50 +1,19 @@
-
-
-
-
-
 namespace AerovelenceMod.Common.Utilities
 {
     public static class CommonItemHelper
     {
-        public static void SetupPlaceableItem(ModItem modItem, int width, int height, int value, int createTileType, int placeStyle = 0, int maxStack = 9999, int useAnimation = 15, int useTime = 10)
+        public static void SetupPlaceableItem(ModItem modItem, int width, int height, int value, int createTileType, int rare = ItemRarities.BasicMaterials, int placeStyle = 0)
         {
             modItem.Item.width = width;
             modItem.Item.height = height;
-            modItem.Item.maxStack = maxStack;
             modItem.Item.value = value;
-            modItem.Item.useTurn = true;
-            modItem.Item.autoReuse = true;
-            modItem.Item.useAnimation = useAnimation;
-            modItem.Item.useTime = useTime;
-            modItem.Item.useStyle = ItemUseStyleID.Swing;
-            modItem.Item.consumable = true;
-            modItem.Item.createTile = createTileType;
-            modItem.Item.placeStyle = placeStyle;
+            modItem.Item.rare = rare;
+            modItem.Item.DefaultToPlaceableTile(createTileType, placeStyle);
         }
 
-        public static void SetupTorch(ModItem modItem, int tileType, int value, int shimmerTransformToItem = 0, float lightR = 1f, float lightG = 1f, float lightB = 1f, int researchUnlockCount = 100)
+        public static void SetupTorch(ModItem modItem, int tileType, float lightR = 1f, float lightG = 1f, float lightB = 1f)
         {
-            modItem.Item.width = 10;
-            modItem.Item.height = 12;
-            modItem.Item.maxStack = Item.CommonMaxStack;
-            modItem.Item.value = value;
-            modItem.Item.useTurn = true;
-            modItem.Item.autoReuse = true;
-            modItem.Item.useAnimation = 15;
-            modItem.Item.useTime = 10;
-            modItem.Item.useStyle = ItemUseStyleID.Swing;
-            modItem.Item.consumable = true;
-            modItem.Item.createTile = tileType;
-            modItem.Item.holdStyle = 1;
-            modItem.Item.placeStyle = 0;
-            modItem.Item.flame = true;
-            modItem.Item.noWet = false;
-
-            if (shimmerTransformToItem > 0)
-            {
-                ItemID.Sets.ShimmerTransformToItem[modItem.Type] = shimmerTransformToItem;
-            }
+            ItemID.Sets.ShimmerTransformToItem[modItem.Type] = ItemID.ShimmerTorch;
 
             modItem.Item.DefaultToTorch(tileType, 0, false);
 
@@ -55,7 +24,7 @@ namespace AerovelenceMod.Common.Utilities
             modItem.Item.GetGlobalItem<TorchGlobalItem>().LightG = lightG;
             modItem.Item.GetGlobalItem<TorchGlobalItem>().LightB = lightB;
 
-            modItem.Item.ResearchUnlockCount = researchUnlockCount;
+            modItem.Item.ResearchUnlockCount = 100;
         }
 
         public class TorchGlobalItem : GlobalItem

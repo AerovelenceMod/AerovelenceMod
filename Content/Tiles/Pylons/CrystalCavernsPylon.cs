@@ -1,16 +1,10 @@
 ﻿using AerovelenceMod.Common;
 using AerovelenceMod.Content.Biomes;
-
-
 using ReLogic.Content;
-
 using Terraria.DataStructures;
 using Terraria.Enums;
 using Terraria.GameContent;
-
-using Terraria.Localization;
 using Terraria.Map;
-
 using Terraria.ModLoader.Default;
 using Terraria.ObjectData;
 
@@ -54,7 +48,7 @@ namespace AerovelenceMod.Content.Tiles.Pylons
 
             AddToArray(ref TileID.Sets.CountsAsPylon);
 
-            LocalizedText pylonName = CreateMapEntryName();
+            Terraria.Localization.LocalizedText pylonName = CreateMapEntryName();
             AddMapEntry(Color.White, pylonName);
         }
 
@@ -104,12 +98,15 @@ namespace AerovelenceMod.Content.Tiles.Pylons
         }
     }
 
-    public class CrystalCavernsPylon : ModItem
+    public class CrystalCavernsPylon : TranslatableModItem
     {
+        public override void SetStaticDefaults()
+        {
+            this.ModifyLocalization("Crystal Pylon", "Teleport to another pylon when 2 villagers are nearby\nYou can only place one per type and in the matching biome");
+        }
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCavernsPylonTile>());
-            Item.SetShopValues(ItemRarityColor.Blue1, Terraria.Item.buyPrice(gold: 10));
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, Item.buyPrice(gold: 10), ModContent.TileType<CrystalCavernsPylonTile>(), ItemRarities.EarlyPHM);
         }
     }
 

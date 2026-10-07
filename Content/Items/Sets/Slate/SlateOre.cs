@@ -1,10 +1,4 @@
 /*
-
-
-
-using Terraria.Localization;
-
-
 namespace AerovelenceMod.Content.Items.Sets.Slate
 {
     public class SlateOre : TranslatableModItem
@@ -16,18 +10,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
 
         public override void SetDefaults()
         {
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.consumable = true;
-
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-
-            Item.createTile = ModContent.TileType<SlateOreTile>();
-
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.sellPrice(silver: 9);
+            CommonItemHelper.SetupPlaceableItem(this, 20, 18, Item.sellPrice(silver: 9), ModContent.TileType<SlateOreTile>();
         }
     }
 
@@ -44,7 +27,7 @@ namespace AerovelenceMod.Content.Items.Sets.Slate
             Main.tileLighted[Type] = false;
 			DustType = 4;
 			HitSound = SoundID.Tink;			
-            AddMapEntry(new Color(108, 114, 116),Terraria.Localization.Language.GetText("Slate Slab"));
+            AddMapEntry(new Color(108, 114, 116), Terraria.Localization.Language.GetText("Slate Slab"));
         }
     }
 }*/

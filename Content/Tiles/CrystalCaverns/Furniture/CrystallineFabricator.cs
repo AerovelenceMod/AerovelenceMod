@@ -1,15 +1,7 @@
-
-
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
-
-
-
-
+using ReLogic.Content;
 using Terraria.ObjectData;
 using Terraria.DataStructures;
-
-using ReLogic.Content;
-
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {

@@ -1,14 +1,12 @@
-﻿using ReLogic.Content;
-using Terraria.Graphics.Shaders;
-using AerovelenceMod.Common.Bases;
-using System;
-using AerovelenceMod.Content.Dusts.GlowDusts;
-using Terraria.GameContent;
-using Terraria.Audio;
+﻿using AerovelenceMod.Common.Bases;
 using AerovelenceMod.Content.Dusts;
-using static Terraria.ModLoader.PlayerDrawLayer;
+using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze;
-using XPT.Core.Audio.MP3Sharp.Decoding.Decoders.LayerIII;
+using ReLogic.Content;
+using System;
+using Terraria.Audio;
+using Terraria.Graphics.Shaders;
+using static Terraria.ModLoader.PlayerDrawLayer;
 
 namespace AerovelenceMod.Content.Items.Ammo.Flares
 {
@@ -41,7 +39,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             dustCol = Color.DeepSkyBlue;
             lightCol = Color.SkyBlue.ToVector3() * 1f; //Color of light
 
-            baseAILogic();
+            BaseAILogic();
 
             int modulo = timer < 60 ? 18 : 24;
             if (timer % modulo == 0 && timer != 0)
@@ -61,7 +59,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         public override bool PreDraw(ref Color lightColor)
         {
             textureLocation = "Content/Items/Ammo/Flares/FrostFlareProj";
-            baseDrawing();
+            BaseDrawing();
             return false;
         }
 
@@ -78,7 +76,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             noSound = true;
             HitDust();
 
-            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI; ;
+            Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 
             SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/FlareImpact") with { Volume = 0.3f, PitchVariance = 0.1f };
             SoundEngine.PlaySound(style2, Projectile.Center);
@@ -100,17 +98,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FrostFlareExplosion>(), 0, 0, Main.myPlayer);
             Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
 
-
             target.AddBuff(ModContent.BuffType<FlareFrostburn>(), 200);
-
-
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-            for (int i = 0; i < 3; i++)
-            {
-                Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
-                    Main.rand.NextVector2Circular(5, 5), Color.DeepSkyBlue, Main.rand.NextFloat(0.4f, 0.7f), 0.8f, 0f, dustShader);
-                p.alpha = 0;
-            }
         }
     }
 
@@ -120,14 +108,13 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             col = Color.DeepSkyBlue;
             colMultipliter = 2f;
-            aiLogic();
+            AILogic();
         }
     }
 
     public class FrostFlareIcicle : ModProjectile
     {
         int timer = 0;
-        int frame = Main.rand.Next(3);
 
         float alpha = 0;
 
