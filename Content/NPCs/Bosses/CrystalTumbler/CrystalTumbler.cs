@@ -247,7 +247,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 for (int i = 0; i < 7; i++)
                 {
                     Vector2 velocity = (MathHelper.TwoPi * i / 7f).ToRotationVector2() * 7f;
-                    Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center - new Vector2(0f, 80f), velocity, ModContent.ProjectileType<TumblerStar>(), ProjectileDamage(15), 0f, Main.myPlayer, i == yellowIndex ? 1f : 0f, NPC.whoAmI);
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
+                    {
+                        Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center - new Vector2(0f, 80f), velocity, ModContent.ProjectileType<TumblerStar>(), ProjectileDamage(15), 0f, Main.myPlayer, i == yellowIndex ? 1f : 0f, NPC.whoAmI);
+                    }
                 }
             }
             if (StateTimer >= 360)
@@ -801,7 +804,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         private void SpawnPylonSegment(float left, float right, float y)
         {
-            Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(left, y), new Vector2(right - left, 0f), ModContent.ProjectileType<TumblerPylonField>(), ProjectileDamage(20), 0f, Main.myPlayer, PylonWarningTime, 75f, PhaseTwo ? 1f : 0f);
+            if (Main.netMode != NetmodeID.MultiplayerClient)
+            {
+                Projectile.NewProjectile(NPC.GetSource_FromAI(), new Vector2(left, y), new Vector2(right - left, 0f), ModContent.ProjectileType<TumblerPylonField>(), ProjectileDamage(20), 0f, Main.myPlayer, PylonWarningTime, 75f, PhaseTwo ? 1f : 0f);
+            }
         }
 
         private void SpawnAuraPulse(float radius, int lifetime, bool hostile)
@@ -831,7 +837,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         private void SpawnProjectile<T>(Vector2 position, Vector2 velocity, int damage, float knockback = 0f, float ai0 = 0f, float ai1 = 0f, float ai2 = 0f) where T : ModProjectile
         {
             if (IsServer)
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), position, velocity, ModContent.ProjectileType<T>(), damage, knockback, Main.myPlayer, ai0, ai1, ai2);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), position, velocity, ModContent.ProjectileType<T>(), damage, knockback, Main.myPlayer, ai0, ai1, ai2);
+                }
         }
 
         private void RecordAfterimage()

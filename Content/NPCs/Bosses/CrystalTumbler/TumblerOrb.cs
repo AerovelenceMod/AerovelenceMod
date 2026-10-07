@@ -45,8 +45,12 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         {
             if (!hasSpawnedVFX)
             {
-                int vfxIndex = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<TumblerOrbVFX>(), 0, 0, Main.myPlayer);
-                Main.projectile[vfxIndex].ai[0] = Projectile.whoAmI;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int vfxIndex = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<TumblerOrbVFX>(), 0, 0, Main.myPlayer);
+                    Main.projectile[vfxIndex].ai[0] = Projectile.whoAmI;
+                    Main.projectile[vfxIndex].netUpdate = true;
+                }
                 hasSpawnedVFX = true;
             }
             Projectile.frameCounter++;
@@ -256,19 +260,27 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Vector2 direction = new Vector2(1, 0).RotatedByRandom(6.28f);
                 Vector2 ai1 = new Vector2((float)Math.Cos(direction.ToRotation()), (float)Math.Sin(direction.ToRotation())) * 10f;
                 float ai2 = Main.rand.Next(100);
-                int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
-                Main.projectile[lightning].scale = 0.3f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
+                    Main.projectile[lightning].scale = 0.3f;
+                    Main.projectile[lightning].netUpdate = true;
+                }
             }
 
-            int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
-            Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
-            Main.projectile[afg].timeLeft = 10;
-
-            if (Main.projectile[afg].ModProjectile is DistortProj distort)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                distort.tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
-                distort.implode = false;
-                distort.scale = 0.6f;
+                int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
+                Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
+                Main.projectile[afg].timeLeft = 10;
+
+                if (Main.projectile[afg].ModProjectile is DistortProj distort)
+                {
+                    distort.tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall"));
+                    distort.implode = false;
+                    distort.scale = 0.6f;
+                }
+                Main.projectile[afg].netUpdate = true;
             }
         }
 
@@ -379,19 +391,27 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 Vector2 direction = new Vector2(1, 0).RotatedByRandom(6.28f);
                 Vector2 ai1 = new Vector2((float)Math.Cos(direction.ToRotation()), (float)Math.Sin(direction.ToRotation())) * 10f;
                 float ai2 = Main.rand.Next(100);
-                int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
-                Main.projectile[lightning].scale = 0.3f;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
+                    Main.projectile[lightning].scale = 0.3f;
+                    Main.projectile[lightning].netUpdate = true;
+                }
             }
 
-            int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
-            Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
-            Main.projectile[afg].timeLeft = 10;
-
-            if (Main.projectile[afg].ModProjectile is DistortProj distort)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                distort.tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
-                distort.implode = false;
-                distort.scale = 0.1f;
+                int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
+                Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
+                Main.projectile[afg].timeLeft = 10;
+
+                if (Main.projectile[afg].ModProjectile is DistortProj distort)
+                {
+                    distort.tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall"));
+                    distort.implode = false;
+                    distort.scale = 0.1f;
+                }
+                Main.projectile[afg].netUpdate = true;
             }
         }
 

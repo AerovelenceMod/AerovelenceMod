@@ -84,6 +84,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
         // If they double tapped this frame, they'll move fast this frame
         public override void PreUpdateMovement()
         {
+            if (Player.whoAmI != Main.myPlayer) return;
             bool canUseFirstDash = (CanUseDash() && DashDir != -1 && DashDelay == 0);
             bool canUseSecondDash = (CanUseDash() && DashDir != -1 && DashDelay != 0 && (TimeSinceFirstDash > 10 && TimeSinceSecondDash > 60)); //10 60
 
@@ -100,9 +101,8 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
                     case DashLeft when Player.velocity.X > -VelocityThreshold:
                     case DashRight when Player.velocity.X < VelocityThreshold:
                         {
-                            int dash = Projectile.NewProjectile(null, Player.Center, Vector2.Zero, ModContent.ProjectileType<EnergyShieldDash>(), 0, 0, Player.whoAmI);
-                            (Main.projectile[dash].ModProjectile as EnergyShieldDash).dashDirection = (DashDir == DashRight ? 0f : 3.14f);
-                            (Main.projectile[dash].ModProjectile as EnergyShieldDash).isPink = !canUseFirstDash;
+                            Projectile.NewProjectile(Player.GetSource_Misc("EnergyShieldDash"), Player.Center, Vector2.Zero, ModContent.ProjectileType<EnergyShieldDash>(), 0, 0, Player.whoAmI,
+                                DashDir == DashRight ? 0f : 3.14f, canUseFirstDash ? 0f : 1f);
 
                             if (firstDash)
                                 TimeSinceFirstDash = 0;
@@ -232,9 +232,9 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
 
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public float dashDirection = 0f;
+        public ref float dashDirection => ref Projectile.ai[0];
 
-        public bool isPink = false;
+        public bool isPink => Projectile.ai[1] != 0f;
 
         Vector2 startingVel = Vector2.Zero;
 
@@ -284,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
                 }
 
 
-                player.velocity.X = Projectile.velocity.X;
+                if (Projectile.owner == Main.myPlayer) player.velocity.X = Projectile.velocity.X;
                 Projectile.velocity += new Vector2(0, Main.player[Projectile.owner].gravity * 0.25f);
 
 

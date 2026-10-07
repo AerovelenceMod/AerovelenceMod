@@ -144,12 +144,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
             bandColors[1] = FetchRainbow((int)(timer * 2f));
             bandColors[2] = FetchRainbow((int)(timer * 2.5f));
 
-            storedMousePos = Vector2.Lerp(storedMousePos, Main.MouseWorld, 0.04f);
+            storedMousePos = Vector2.Lerp(storedMousePos, Projectile.AimWorld(), 0.04f);
 
             if (timer % 10 == 0 && Main.rand.NextBool() && timer > 0)
             {
 
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 Vector2 offsetVel = Projectile.rotation.ToRotationVector2().RotatedBy(Main.rand.NextBool() ? Main.rand.NextFloat(-0.6f, -0.3f) : Main.rand.NextFloat(0.3f, 0.6f));
                 Dust p = GlowDustHelper.DrawGlowDustPerfect((Projectile.rotation.ToRotationVector2() * 45) + Projectile.Center,
@@ -161,8 +161,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
             if (timer == 0)
             {
-                storedMousePos = Main.MouseWorld;
-                rotDirection = (Main.MouseWorld - Player.Center).ToRotation();
+                storedMousePos = Projectile.AimWorld();
+                rotDirection = (Projectile.AimWorld() - Player.Center).ToRotation();
             }
 
             Projectile.velocity = Vector2.Zero;
@@ -191,7 +191,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
 
-            float targetRot = (Main.MouseWorld - Player.Center).ToRotation();
+            float targetRot = (Projectile.AimWorld() - Player.Center).ToRotation();
             float diff = CompareAngle(Projectile.rotation, targetRot);
             float maxRot = 0.03f;
             rotDirection -= MathHelper.Clamp(diff, -maxRot, maxRot);
@@ -226,18 +226,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
 
                 Vector2 spawnPos = Projectile.Center + (Projectile.rotation.ToRotationVector2() * 35);
-                int a = Projectile.NewProjectile(null, spawnPos, Projectile.rotation.ToRotationVector2() * 5, ModContent.ProjectileType<DeepFreezeProj>(), 0, 0);
-                Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
-                if (Main.projectile[a].ModProjectile is DeepFreezeProj explo)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    explo.size = 1f;
-                    explo.multiplier = 1.5f;
-                    explo.sticky = true;
+                    int a = Projectile.NewProjectile(null, spawnPos, Projectile.rotation.ToRotationVector2() * 5, ModContent.ProjectileType<DeepFreezeProj>(), 0, 0);
+                    Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+                    if (Main.projectile[a].ModProjectile is DeepFreezeProj explo)
+                    {
+                        explo.size = 1f;
+                        explo.multiplier = 1.5f;
+                        explo.sticky = true;
+                    }
+                    Main.projectile[a].netUpdate = true;
                 }
-                int aa = Projectile.NewProjectile(null, spawnPos, Projectile.rotation.ToRotationVector2() * 4.5f, ModContent.ProjectileType<AuroraBlast>(), Projectile.damage, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int aa = Projectile.NewProjectile(null, spawnPos, Projectile.rotation.ToRotationVector2() * 4.5f, ModContent.ProjectileType<AuroraBlast>(), Projectile.damage, 0, Main.myPlayer);
 
-                if (Player.statMana < (Player.statManaMax2 / 4))
-                    SkillStrikeUtil.setSkillStrike(Main.projectile[aa], 1.3f, 100, 0.15f, 0f);
+                    if (Player.statMana < (Player.statManaMax2 / 4))
+                        SkillStrikeUtil.setSkillStrike(Main.projectile[aa], 1.3f, 100, 0.15f, 0f);
+                    Main.projectile[aa].netUpdate = true;
+                }
             }
 
             timer++;
@@ -514,7 +522,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
                 for (int i = 0; i < 9; i++)
                 {
                     //have to make new dustShader everytime so color is different
-                    ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                    ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                     Color c = new Color(
                         (byte)Main.rand.Next(0, 255),

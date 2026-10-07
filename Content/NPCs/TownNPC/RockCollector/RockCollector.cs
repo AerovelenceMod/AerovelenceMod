@@ -55,7 +55,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
             NPCID.Sets.ExtraFramesCount[Type] = 9;
             NPCID.Sets.AttackFrameCount[Type] = 4;
-            NPCID.Sets.DangerDetectRange[Type] = 700;
+            NPCID.Sets.DangerDetectRange[Type] = 280;
             NPCID.Sets.AttackType[Type] = 0;
             NPCID.Sets.AttackTime[Type] = 90;
             NPCID.Sets.AttackAverageChance[Type] = 30;
@@ -345,14 +345,14 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
 
         public override void TownNPCAttackProj(ref int projType, ref int attackDelay)
         {
-            projType = ModContent.ProjectileType<CyverBeam>();
+            projType = ModContent.ProjectileType<RockCollectorsWhip>();
             attackDelay = 1;
         }
 
         public override void TownNPCAttackProjSpeed(ref float multiplier, ref float gravityCorrection, ref float randomOffset)
         {
             multiplier = 12f;
-            randomOffset = 2f;
+            randomOffset = 0f;
         }
 
         public override void LoadData(TagCompound tag) => NumberOfTimesTalkedTo = tag.GetInt("numberOfTimesTalkedTo");

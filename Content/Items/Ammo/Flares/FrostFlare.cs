@@ -54,6 +54,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
                     p.multiplier = 1.5f;
                     p.size = 0.25f;
                 }
+                Main.projectile[b].netUpdate = true;
 
             }
         }
@@ -96,9 +97,11 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
                 p2.size = 0.35f;
             }
             Main.projectile[b].scale = 0.1f;
+            Main.projectile[b].netUpdate = true;
 
             int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FrostFlareExplosion>(), 0, 0, Main.myPlayer);
             Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+            Main.projectile[a].netUpdate = true;
 
 
             target.AddBuff(ModContent.BuffType<FlareFrostburn>(), 200);

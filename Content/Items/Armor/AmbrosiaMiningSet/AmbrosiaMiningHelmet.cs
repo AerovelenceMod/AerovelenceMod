@@ -29,6 +29,7 @@ namespace AerovelenceMod.Content.Items.Armor.AmbrosiaMiningSet
     {
         public override void SetControls()
         {
+            if (Player.whoAmI != Main.myPlayer) return;
             for (int i = 0; i < 4; i++)
             {
                 bool JustPressed = false;
@@ -54,7 +55,7 @@ namespace AerovelenceMod.Content.Items.Armor.AmbrosiaMiningSet
             {
 				if (Player.armor[0].type == ModContent.ItemType<AmbrosiaMiningHelmet>() && !Player.HasBuff<MiningAbilityCooldown>())
 				{
-					Terraria.Projectile.NewProjectile(Player.GetSource_Misc("SetBonus_AmbrosiaSetBonus"), Player.Center, (Terraria.Main.MouseWorld - Player.Center) / 10, ModContent.ProjectileType<MiningEnergyBlast>(), 1, 0);
+					Terraria.Projectile.NewProjectile(Player.GetSource_Misc("SetBonus_AmbrosiaSetBonus"), Player.Center, (Terraria.Main.MouseWorld - Player.Center) / 10, ModContent.ProjectileType<MiningEnergyBlast>(), 1, 0, Player.whoAmI);
 					Player.AddBuff(ModContent.BuffType<MiningAbilityCooldown>(), 300);
 				}
             }

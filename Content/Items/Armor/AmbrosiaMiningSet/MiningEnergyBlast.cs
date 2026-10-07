@@ -70,6 +70,7 @@ namespace AerovelenceMod.Content.Items.Armor.AmbrosiaMiningSet
 				Main.gore[goreIndex].velocity.X = Main.gore[goreIndex].velocity.X - 1.5f;
 				Main.gore[goreIndex].velocity.Y = Main.gore[goreIndex].velocity.Y - 1.5f;
 			}
+			if (Main.netMode == NetmodeID.MultiplayerClient) return;
 			Projectile.position.X = Projectile.position.X + Projectile.width / 2;
 			Projectile.position.Y = Projectile.position.Y + Projectile.height / 2;
 			Projectile.width = 10;
@@ -89,17 +90,17 @@ namespace AerovelenceMod.Content.Items.Armor.AmbrosiaMiningSet
 				{
 					minTileX = 0;
 				}
-				if (maxTileX > Main.maxTilesX)
+				if (maxTileX >= Main.maxTilesX)
 				{
-					maxTileX = Main.maxTilesX;
+					maxTileX = Main.maxTilesX - 1;
 				}
 				if (minTileY < 0)
 				{
 					minTileY = 0;
 				}
-				if (maxTileY > Main.maxTilesY)
+				if (maxTileY >= Main.maxTilesY)
 				{
-					maxTileY = Main.maxTilesY;
+					maxTileY = Main.maxTilesY - 1;
 				}
 				bool canKillWalls = false;
 				for (int x = minTileX; x <= maxTileX; x++)

@@ -17,6 +17,7 @@ namespace AerovelenceMod.Backgrounds.Skies
 
         public override void Load()
         {
+            if (Main.dedServ) return;
             try
             {
                 crystalTumblerTexture = ModContent.Request<Texture2D>(

@@ -107,16 +107,18 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         public override void OnHitByNPC(NPC npc, Player.HurtInfo info)
         {
-            if (hasOpal && crystalCount >= 3)
+            if (hasOpal && crystalCount >= 3 && Player.whoAmI == Main.myPlayer)
             {
                 int reflectDamage = 20;
-                npc.StrikeNPC(new NPC.HitInfo
+                NPC.HitInfo reflectedHit = new()
                 {
                     Damage = reflectDamage,
                     Knockback = 0f,
                     HitDirection = 0,
                     Crit = false
-                }, fromNet: false, noPlayerInteraction: false);
+                };
+                npc.StrikeNPC(reflectedHit, fromNet: false, noPlayerInteraction: false);
+                if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(npc, reflectedHit);
 
                 if (Main.myPlayer == Player.whoAmI)
                 {

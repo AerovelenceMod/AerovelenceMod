@@ -247,7 +247,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 
         public void spearBackGlow()
         {
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceBackGlow");
+            Texture2D Glow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceBackGlow"));
 
             Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/Radial/BoFIrisAlt", AssetRequestMode.ImmediateLoad).Value;
 

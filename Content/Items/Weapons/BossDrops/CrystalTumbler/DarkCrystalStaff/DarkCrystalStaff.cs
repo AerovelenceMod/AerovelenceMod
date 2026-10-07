@@ -51,6 +51,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                     Projectile lightningProj = Main.projectile[projectileIndex];
                     Main.NewText($"Lightning Strike AI Values: {lightningProj.ai[0]}, {lightningProj.ai[1]}, {lightningProj.ai[2]}");
                 }
+                Main.projectile[projectileIndex].netUpdate = true;
             }
 
             return false;
@@ -104,9 +105,12 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
             {
                 TargetPosition = new Vector2(Projectile.ai[0], Projectile.ai[1]);
                 TelegraphTime = Projectile.ai[2];
-                Main.NewText(TelegraphTime);
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), TargetPosition, Vector2.Zero, ModContent.ProjectileType<LightningTelegraphProjectile>(), 0, 0, Projectile.owner, TelegraphTime);
+
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), TargetPosition, Vector2.Zero, ModContent.ProjectileType<LightningTelegraphProjectile>(), 0, 0, Projectile.owner, TelegraphTime);
+                }
 
                 firstFrame = true;
             }
@@ -196,10 +200,13 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                 }
             }
 
-            for (int i = 0; i < 3; i++)
+            if (Projectile.owner == Main.myPlayer)
             {
-                Vector2 sparkVelocity = Main.rand.NextVector2CircularEdge(0.5f, 1.3f);
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkVelocity, ProjectileID.Spark, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 sparkVelocity = Main.rand.NextVector2CircularEdge(0.5f, 1.3f);
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, sparkVelocity, ProjectileID.Spark, Projectile.damage, Projectile.knockBack, Projectile.owner);
+                }
             }
 
             for (int i = 0; i < 10; i++)

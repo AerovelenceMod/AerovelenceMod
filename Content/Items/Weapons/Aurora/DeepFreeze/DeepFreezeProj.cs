@@ -132,5 +132,31 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
             return color;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(size);
+            writer.Write(multiplier);
+            writer.Write(sticky);
+            writer.Write(rise);
+            writer.Write(rotDir);
+            writer.Write(distFromPlayer.X);
+            writer.Write(distFromPlayer.Y);
+            writer.Write(timer);
+            writer.Write(colorIntensity);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            size = reader.ReadSingle();
+            multiplier = reader.ReadSingle();
+            sticky = reader.ReadBoolean();
+            rise = reader.ReadBoolean();
+            rotDir = reader.ReadBoolean();
+            distFromPlayer = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            timer = reader.ReadInt32();
+            colorIntensity = reader.ReadSingle();
+        }
     }
 }

@@ -45,6 +45,9 @@ public sealed class GasCloud : ModProjectile
 
     public override void SendExtraAI(BinaryWriter writer)
     {
+        writer.Write(ready);
+        if (!ready) return;
+        writer.Write(age);
         writer.Write((byte)settings.Kind);
         writer.Write(settings.TileCollision);
         writer.Write(settings.Buoyancy);
@@ -73,6 +76,9 @@ public sealed class GasCloud : ModProjectile
 
     public override void ReceiveExtraAI(BinaryReader reader)
     {
+        ready = reader.ReadBoolean();
+        if (!ready) return;
+        age = System.Math.Max(0, reader.ReadInt32());
         settings = GasUtil.Sanitize(new GasSettings
         {
             Kind = (GasKind)reader.ReadByte(),

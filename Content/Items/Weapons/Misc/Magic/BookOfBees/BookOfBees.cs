@@ -106,8 +106,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
                 //int beeType = Main.player[Projectile.owner].beeType();
 
                 Vector2 vel = Main.rand.NextVector2Circular(1f, 1f) + Projectile.velocity * 0.15f;
-                int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel * 0.15f, ProjectileID.Wasp, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
-                Main.projectile[proj].penetrate = 1;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel * 0.15f, ProjectileID.Wasp, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
+                    Main.projectile[proj].penetrate = 1;
+                }
 
                 //So apparently extra updates just dont fucking work on bees lmao
                 //Main.projectile[proj].extraUpdates = 50;
@@ -226,14 +229,17 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
             Vector2 pos = Projectile.Center + Projectile.oldVelocity;
 
             float triRand = Main.rand.NextFloat(6.28f);
-            for (int i = 0; i < 3; i++)
+            if (Projectile.owner == Main.myPlayer)
             {
-                Vector2 vel = new Vector2(1f, 0f).RotatedBy(triRand + ((MathHelper.TwoPi / 3f) * i));
+                for (int i = 0; i < 3; i++)
+                {
+                    Vector2 vel = new Vector2(1f, 0f).RotatedBy(triRand + ((MathHelper.TwoPi / 3f) * i));
 
-                int beeType = Main.player[Projectile.owner].beeType();
-                int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileID.Wasp, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
-                Main.projectile[proj].penetrate = 1;
+                    int beeType = Main.player[Projectile.owner].beeType();
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, vel, ProjectileID.Wasp, (int)(Projectile.damage * 0.5f), 0, Projectile.owner);
+                    Main.projectile[proj].penetrate = 1;
 
+                }
             }
 
             for (int i = 0; i < 16; ++i)

@@ -106,8 +106,8 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.CrystalTumbler
                 charge++;
                 if (Projectile.owner == Main.myPlayer && charge % 6 == 0)
                 {
-                    Projectile.ai[1] = Main.MouseWorld.X;
-                    Projectile.ai[2] = Main.MouseWorld.Y;
+                    Projectile.ai[1] = Projectile.AimWorld().X;
+                    Projectile.ai[2] = Projectile.AimWorld().Y;
                     Projectile.netUpdate = true;
                 }
                 if (charge >= 32)

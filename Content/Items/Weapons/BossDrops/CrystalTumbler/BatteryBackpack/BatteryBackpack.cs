@@ -63,6 +63,7 @@ public class BatteryBackpack : ModItem
             int index = Projectile.NewProjectile(source, player.Center, Vector2.Zero, ModContent.ProjectileType<BatteryCircuit>(), damage, knockback, player.whoAmI);
             if (index >= Main.maxProjectiles) return false;
             battery = Main.projectile[index];
+            Main.projectile[index].netUpdate = true;
         }
         int wire = player.ownedProjectileCounts[type] == 0 ? 0 : 1;
         float speed = 11f + battery.ai[0] * 1.5f;
@@ -157,6 +158,7 @@ public class BatteryCircuit : ModProjectile
         {
             int discharge = Projectile.NewProjectile(Projectile.GetSource_FromAI(), first.Center, second.Center - first.Center, ModContent.ProjectileType<BatteryDischarge>(), Math.Max(first.damage, second.damage), 2f, Projectile.owner, firstTarget + 1, secondTarget + 1);
             if (discharge < Main.maxProjectiles) Main.projectile[discharge].originalDamage = Projectile.originalDamage;
+            Main.projectile[discharge].netUpdate = true;
             bool overflow = Projectile.ai[0] >= 5f;
             Projectile.ai[0] = Math.Min(5f, Projectile.ai[0] + 1f);
             Projectile.ai[1] = 0f;

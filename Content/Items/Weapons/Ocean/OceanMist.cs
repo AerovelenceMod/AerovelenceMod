@@ -68,6 +68,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
 
             if (player.statMana + player.GetManaCost(player.inventory[player.selectedItem]) == player.statManaMax2)
                 (Main.projectile[a].ModProjectile as OceanMistHeldProj).shouldSkillStrike = true;
+            Main.projectile[a].netUpdate = true;
 
             return false;
         }
@@ -129,8 +130,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
             KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             //Get angle to mouse
-            if (Projectile.owner == Main.myPlayer)
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
+            Projectile.UpdateAimAngle(Player.Center, ref Angle);
 
             //Have player turn whichever direction they point
             direction = Angle.ToRotationVector2();
@@ -211,10 +211,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                 SoundEngine.PlaySound(style, Projectile.Center);
 
                 //Spawn Proj
-                int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Angle.ToRotationVector2() * 8f, ModContent.ProjectileType<OceanMistShot>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Angle.ToRotationVector2() * 8f, ModContent.ProjectileType<OceanMistShot>(), Projectile.damage, Projectile.knockBack, Main.myPlayer);
 
-                if (shouldSkillStrike)
-                    SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 100, 0.35f, 0f); //1
+                    if (shouldSkillStrike)
+                        SkillStrikeUtil.setSkillStrike(Main.projectile[shot], 1.3f, 100, 0.35f, 0f);
+                    Main.projectile[shot].netUpdate = true;
+                } //1
             }
 
             //Swoosh Sound 

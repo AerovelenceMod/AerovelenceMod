@@ -74,7 +74,11 @@ public class AmmoniteCompanion : ModBuff
 public class AmmoniteMinion : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ocean/ResurrectedAmmonite/ResurrectedAmmonite";
-    private int age;
+    private int age
+    {
+        get => (int)Projectile.ai[1];
+        set => Projectile.ai[1] = value;
+    }
 
     public override void SetStaticDefaults()
     {
@@ -111,7 +115,7 @@ public class AmmoniteMinion : ModProjectile
         {
             Projectile.Center = player.Center - Vector2.UnitY * 50f;
             Projectile.velocity = Vector2.Zero;
-            Projectile.netUpdate = true;
+            if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
         }
         NPC target = null;
         if (player.HasMinionAttackTargetNPC)
@@ -140,7 +144,11 @@ public class AmmoniteMinion : ModProjectile
         Projectile.rotation = Projectile.velocity.X * .035f;
         if (target == null) { Projectile.ai[0] = Math.Min(Projectile.ai[0], 40f); return; }
         Projectile.ai[0]++;
-        if (Projectile.ai[0] >= 90f) Projectile.ai[0] = 0f;
+        if (Projectile.ai[0] >= 90f)
+        {
+            Projectile.ai[0] = 0f;
+            if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
+        }
         if (Projectile.ai[0] == 60f || Projectile.ai[0] == 68f || Projectile.ai[0] == 76f)
         {
             Vector2 nozzle = Projectile.Center + aim * 14f;

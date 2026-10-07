@@ -67,7 +67,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         public override void PostUpdateEverything()
         {
-            if (Main.gameMenu) { highlightedEnemies.Clear(); return; }
+            if (Main.dedServ || Main.gameMenu) { highlightedEnemies.Clear(); return; }
             bool anyAmulet = Main.player.Any(p => p.active && p.GetModPlayer<AmuletPlayer>().hasAmulet);
             if (!anyAmulet) { highlightedEnemies.Clear(); return; }
             UpdateChestCache();
@@ -94,7 +94,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                         Type: ModContent.ProjectileType<EnemyGlowEffect>(),
                         Damage: 0,
                         KnockBack: 0f,
-                        Owner: Main.LocalPlayer.whoAmI,
+                        Owner: Main.maxPlayers,
                         ai0: npcIndex,
                         ai1: intensity
                     );

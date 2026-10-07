@@ -187,9 +187,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
         {
             if (Projectile.velocity.Length() > 3 && justBouncedTime > 10)
             {
-                int a = Projectile.NewProjectile(null, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 15f, Vector2.Zero, ModContent.ProjectileType<ElementalShiftImpact>(), 0, 0f);
-                Main.projectile[a].scale = 1.25f;
-                Main.projectile[a].rotation = Projectile.velocity.ToRotation();
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(null, Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 15f, Vector2.Zero, ModContent.ProjectileType<ElementalShiftImpact>(), 0, 0f);
+                    Main.projectile[a].scale = 1.25f;
+                    Main.projectile[a].rotation = Projectile.velocity.ToRotation();
+                    Main.projectile[a].netUpdate = true;
+                }
 
                 Projectile.velocity = Projectile.velocity.SafeNormalize(Vector2.UnitX) * -15;
                 justHitCounter = 5;
@@ -198,24 +202,28 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 SoundStyle style2 = new SoundStyle("Terraria/Sounds/Item_66") with { Pitch = .5f, PitchVariance = 0.23f, Volume = 0.35f };
                 SoundEngine.PlaySound(style2, Projectile.Center);
 
-                int Mura = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MuraLineHandler>(), 0, 0, Projectile.owner);
-
-                if (Main.projectile[Mura].ModProjectile is MuraLineHandler mlh)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    mlh.fadeMult = 2f;
+                    int Mura = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MuraLineHandler>(), 0, 0, Projectile.owner);
 
-                    for (int m = 0; m < 10; m++)
+                    if (Main.projectile[Mura].ModProjectile is MuraLineHandler mlh)
                     {
-                        float range = m > 3 ? 0.3f : 1f;
+                        mlh.fadeMult = 2f;
 
-                        float xScaleMinus = Main.rand.NextFloat(0.3f, 1.6f);
-                        MuraLine newWind = new MuraLine(Main.projectile[Mura].Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * -7f, Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-1 * range, range)) * -1 * Main.rand.NextFloat(1f, 8f), 2 - xScaleMinus);
-                        newWind.color = FetchRainbow();
-                        mlh.lines.Add(newWind);
+                        for (int m = 0; m < 10; m++)
+                        {
+                            float range = m > 3 ? 0.3f : 1f;
+
+                            float xScaleMinus = Main.rand.NextFloat(0.3f, 1.6f);
+                            MuraLine newWind = new MuraLine(Main.projectile[Mura].Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * -7f, Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-1 * range, range)) * -1 * Main.rand.NextFloat(1f, 8f), 2 - xScaleMinus);
+                            newWind.color = FetchRainbow();
+                            mlh.lines.Add(newWind);
+                        }
                     }
+                    Main.projectile[Mura].netUpdate = true;
                 }
 
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -234,7 +242,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
         public override void OnKill(int timeLeft)
         {
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 8; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleFlare>(),
@@ -287,6 +295,23 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             return color;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(justHitCounter);
+            writer.Write(bouncedOffEnemyCount);
+            writer.Write(justBouncedTime);
+            writer.Write(timer);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            justHitCounter = reader.ReadInt32();
+            bouncedOffEnemyCount = reader.ReadInt32();
+            justBouncedTime = reader.ReadInt32();
+            timer = reader.ReadInt32();
+        }
     }
     public class ElementalShiftImpact : ModProjectile
     {
@@ -327,7 +352,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             if (timer == 8)
             {
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 8; i++)
                 {
@@ -452,7 +477,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             if (timer == 0)
             {
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.spriteDirection = Projectile.AimWorld().X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
                 previousRotations = new List<float>();
             }
 
@@ -510,7 +535,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             }
 
             //Ball
-            if (!hasDoneBallHitDetection && getProgress(easingProgress) >= 0.45f)
+            if (!hasDoneBallHitDetection && getProgress(easingProgress) >= 0.45f && Projectile.owner == Main.myPlayer)
             {
                 Player myPlayer = Main.player[Projectile.owner];
 
@@ -526,11 +551,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                     Rectangle biggerHitbox = new Rectangle(Projectile.Hitbox.X - Projectile.width / 2, Projectile.Hitbox.Y - Projectile.height / 2, Projectile.Hitbox.Width * 2, Projectile.Hitbox.Height * 2);
 
                     //Got this tech from Everjade (gong and ringer)
-                    Projectile ball = Main.projectile.Where(n => n.active && n.type == ModContent.ProjectileType<ElementalShiftBall>() && n.Hitbox.Intersects(biggerHitbox)).FirstOrDefault();
+                    Projectile ball = Main.projectile.Where(n => n.active && n.owner == Projectile.owner && n.type == ModContent.ProjectileType<ElementalShiftBall>() && n.Hitbox.Intersects(biggerHitbox)).FirstOrDefault();
 
                     if (ball != default)
                     {
                         ball.velocity = originalAngle.ToRotationVector2() * 15f;
+                    ball.netUpdate = true;
 
                         if (ball.ModProjectile is ElementalShiftBall esb) esb.justHitCounter = 10;
 
@@ -663,7 +689,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             {
                 spawnPos = Main.player[Projectile.owner].Center + currentAngle.ToRotationVector2() * 60;
             }
-            Projectile.NewProjectile(null, spawnPos, Vector2.Zero, ModContent.ProjectileType<ElementalShiftImpact>(), 0, 0f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(null, spawnPos, Vector2.Zero, ModContent.ProjectileType<ElementalShiftImpact>(), 0, 0f);
+            }
 
             for (int i = 0; i < 5; i++)
             {

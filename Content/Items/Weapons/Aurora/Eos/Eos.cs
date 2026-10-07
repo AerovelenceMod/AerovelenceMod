@@ -230,7 +230,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
             if (timer == 0)
             {
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.spriteDirection = Projectile.AimWorld().X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
 
                 Player p = Main.player[Projectile.owner];
 
@@ -307,11 +307,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
                 playedSound = true;
             }
 
-            if (getProgress(easingProgress) >= 0.5f && !shotProj && !spin && shouldShootProj)
+            if (getProgress(easingProgress) >= 0.5f && !shotProj && !spin && shouldShootProj && Projectile.owner == Main.myPlayer)
             {
                 float speed = fast ? 17 : 17; //15 : 17 old
 
-                float dirToMouse = (Main.MouseWorld - Main.player[Projectile.owner].Center).ToRotation();
+                float dirToMouse = (Projectile.AimWorld() - Main.player[Projectile.owner].Center).ToRotation();
                 float newDir = currentAngle.AngleTowards(dirToMouse, 0.5f);
                 //Vector2 newDir = currentAngle.ToRotationVector2().Rot
 
@@ -357,7 +357,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             trail1.pinchAmount = 0.8f;
 
             trail1.gradient = true;
-            trail1.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value;
+            trail1.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value);
             trail1.shouldScrollColor = true;
             trail1.gradientTime = (float)Main.timeForVisualEffects * 0.03f;
 
@@ -371,7 +371,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             trail1.TrailLogic();
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Clear/PixelTrail").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Clear/PixelTrail").Value);
             trail2.trailColor = Color.White * width;
             trail2.trailPointLimit = 800;
             trail2.trailWidth = (int)(8);
@@ -548,9 +548,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
                 Vector2 dir = (target.Center - p.Center).SafeNormalize(Vector2.UnitX);
 
-                int flare = Projectile.NewProjectile(null, target.Center, dir * 1.75f, ModContent.ProjectileType<EosHitFlare>(), 0, 0, Projectile.owner);
-                Main.projectile[flare].rotation = dir.ToRotation();
-                Main.projectile[flare].scale = 1.35f;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int flare = Projectile.NewProjectile(null, target.Center, dir * 1.75f, ModContent.ProjectileType<EosHitFlare>(), 0, 0, Projectile.owner);
+                    Main.projectile[flare].rotation = dir.ToRotation();
+                    Main.projectile[flare].scale = 1.35f;
+                    Main.projectile[flare].netUpdate = true;
+                }
 
                 for (int i = 0; i < 6; i++)
                 {
@@ -598,7 +602,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
             Vector2 randomPos = Main.rand.NextVector2CircularEdge(120, 120);
 
-            Projectile.NewProjectile(null, target.Center + randomPos, randomPos.SafeNormalize(Vector2.UnitX) * -6f, ModContent.ProjectileType<EosSlash>(), Projectile.damage / 2, 0, Projectile.owner);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(null, target.Center + randomPos, randomPos.SafeNormalize(Vector2.UnitX) * -6f, ModContent.ProjectileType<EosSlash>(), Projectile.damage / 2, 0, Projectile.owner);
+            }
 
             for (int i = 0; i < 3; i++)
             {
@@ -634,6 +641,29 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
 
 
             #endregion;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(fast);
+            writer.Write(medium);
+            writer.Write(spin);
+            writer.Write(safety);
+            writer.Write(shouldShootProj);
+            writer.Write(shotProj);
+            writer.Write(hasBashed);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            fast = reader.ReadBoolean();
+            medium = reader.ReadBoolean();
+            spin = reader.ReadBoolean();
+            safety = reader.ReadBoolean();
+            shouldShootProj = reader.ReadBoolean();
+            shotProj = reader.ReadBoolean();
+            hasBashed = reader.ReadBoolean();
         }
     }
 
@@ -695,7 +725,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             trail2.shouldSmooth = true;
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value);
             trail2.shouldScrollColor = true;
 
             trail2.trailRot = Projectile.velocity.ToRotation();
@@ -838,7 +868,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.Eos
             trail2.shouldSmooth = true;
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/EosGrad").Value);
             trail2.shouldScrollColor = true;
 
             trail2.trailRot = Projectile.velocity.ToRotation();

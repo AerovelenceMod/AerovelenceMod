@@ -346,7 +346,7 @@ public class GaussianStar : ModProjectile
             overallAlpha: 0.15f, DrawWhiteCore: true, 1f, 1f); ;
 
         //Hit all enemies in a radius
-        GeneralUtils.strikeNPCsInRadius(Projectile.Center, 85f, Projectile.damage * 0.5f, Projectile.knockBack * 0.5f);
+        GeneralUtils.strikeNPCsInRadius(Projectile, Projectile.Center, 85f, Projectile.damage * 0.5f, Projectile.knockBack * 0.5f);
 
         SoundEngine.PlaySound(SoundID.Item94, Projectile.Center);
 

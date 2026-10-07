@@ -132,8 +132,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Sky.PoundOfFeathers
 
                     Vector2 mousePos = Vector2.Zero;
 
-                    if (Main.myPlayer == Projectile.owner)
-                        mousePos = Main.MouseWorld;
+                    mousePos = Projectile.AimWorld();
 
                     Vector2 toMouse = (mousePos - Projectile.Center).SafeNormalize(Vector2.UnitX);
                     toMouse *= turnPower;

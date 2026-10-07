@@ -70,7 +70,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             if (timer == 0)
             {
                 baseDamage = Projectile.damage;
-                storedMousePos = Main.MouseWorld;
+                storedMousePos = Projectile.AimWorld();
                 LaserRotation = Projectile.velocity.ToRotation() + (float)Math.PI;
                 storedCenter = Projectile.Center;
             }
@@ -79,7 +79,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             Player Player = Main.player[Projectile.owner];
 
-            storedMousePos = Vector2.Lerp(storedMousePos, Main.MouseWorld, 0.045f); //0.0075
+            storedMousePos = Vector2.Lerp(storedMousePos, Projectile.AimWorld(), 0.045f); //0.0075
 
             Projectile.Center = Player.Center + new Vector2(distFromPlayer, 0).RotatedBy((storedMousePos - Player.Center).ToRotation());
 

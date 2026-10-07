@@ -164,8 +164,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             Projectile.velocity = Vector2.Zero;
 
             Vector2 mousePos = Vector2.Zero;
-            if (Projectile.owner == Main.myPlayer)
-                mousePos = Main.MouseWorld;
+            mousePos = Projectile.AimWorld();
 
             float rotDir = (mousePos - player.Center).ToRotation();
 
@@ -221,8 +220,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
 
                 //Bolt Projectile
                 Vector2 vel = new Vector2(17, 0).RotatedBy(rotDir);
-                int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel, ModContent.ProjectileType<WandOfExplodingBolt>(),
-                    Projectile.damage, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int shot = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, vel, ModContent.ProjectileType<WandOfExplodingBolt>(),
+                        Projectile.damage, 0, Main.myPlayer);
+                }
 
                 //GPA Dust
                 for (int fg = 0; fg < 2 + Main.rand.Next(2); fg++)
@@ -415,10 +417,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             }
 
             //Explosion
-            int explo = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<WandOfExplodingExplosion>(), (int)(Projectile.damage * 1.25f), 0, Projectile.owner);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int explo = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<WandOfExplodingExplosion>(), (int)(Projectile.damage * 1.25f), 0, Projectile.owner);
 
-            if (Main.player[Projectile.owner].statMana <= Main.player[Projectile.owner].statManaMax2 / 2f)
-                SkillStrikeUtil.setSkillStrike(Main.projectile[explo], 1.3f, 100, 0.35f, 0f);
+                if (Main.player[Projectile.owner].statMana <= Main.player[Projectile.owner].statManaMax2 / 2f)
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[explo], 1.3f, 100, 0.35f, 0f);
+                Main.projectile[explo].netUpdate = true;
+            }
 
             //Sound
             SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_explosive_trap_explode_1") with { PitchVariance = 0.16f, Pitch = 0.5f };

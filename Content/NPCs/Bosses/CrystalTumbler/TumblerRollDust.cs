@@ -14,7 +14,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             dust.noGravity = true;
             dust.noLight = true;
             dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
-            dust.frame = ModContent.Request<Texture2D>(Texture).Value.Bounds;
+            if (!Main.dedServ) dust.frame = ModContent.Request<Texture2D>(Texture).Value.Bounds;
         }
 
         public override bool Update(Dust dust)

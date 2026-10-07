@@ -179,6 +179,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
             if (timer == 200 && !collided)
             {
                 collided = true;
+            if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
             timer++;
 
@@ -231,6 +232,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
         public override bool OnTileCollide(Vector2 oldVelocity)
         {
             collided = true;
+            if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             Projectile.velocity = Vector2.Zero;
 
             for (int ia = 0; ia < 1 + (Main.rand.NextBool() ? 1 : 0); ia++)
@@ -274,7 +276,28 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
             }
 
             collided = true;
+            if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             Projectile.velocity = Vector2.Zero;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(endPoint.X);
+            writer.Write(endPoint.Y);
+            writer.Write(Rotation);
+            writer.Write(timer);
+            writer.Write(collided);
+            writer.Write(timeAfterCollided);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            endPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            Rotation = reader.ReadSingle();
+            timer = reader.ReadInt32();
+            collided = reader.ReadBoolean();
+            timeAfterCollided = reader.ReadInt32();
         }
     }
 
@@ -349,6 +372,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
                         //Not sure if this will cause issue where it is only a skill strike for the owner
                         if (shotCount > 20)
                             SkillStrikeUtil.setSkillStrike(Main.projectile[a], 1.3f, 1, 0.5f, 0.15f);
+                        Main.projectile[a].netUpdate = true;
                     }
 
 
@@ -403,10 +427,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.ClockworkLazinator
             Player.itemTime = 2;
             Player.itemAnimation = 2;
 
-            if (Projectile.owner == Main.myPlayer)
-            {
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
-            }
+            Projectile.UpdateAimAngle(Player.Center, ref Angle);
 
             direction = Angle.ToRotationVector2();
             Player.ChangeDir(direction.X > 0 ? 1 : -1);
