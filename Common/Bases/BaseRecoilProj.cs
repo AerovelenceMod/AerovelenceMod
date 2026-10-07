@@ -63,6 +63,7 @@ namespace AerovelenceMod.Common.Bases
             GoalXOffset = DestXOffset;
             yRecoilPower = YRecoilAmount;
             HoldoutOffset = HoldOffset;
+            Projectile.netUpdate = true;
         }
 
         //TODO: Add summary for this function
@@ -75,6 +76,7 @@ namespace AerovelenceMod.Common.Bases
             GoalXOffset = DestXOffset;
             yRecoilPower = YRecoilAmount;
             HoldoutOffset = HoldOffset;
+            Projectile.netUpdate = true;
             TipPosition = TipPos;
             StarPosition = StarPos;
         }
@@ -99,13 +101,17 @@ namespace AerovelenceMod.Common.Bases
                 Projectile.active = false;
 
             //Store the shot angle
-            if (timer == 0 && Projectile.owner == Main.myPlayer)
+            if (timer == 0)
             {
-                shotAngle = (Main.MouseWorld - Player.Center).ToRotation();
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    shotAngle = (Projectile.AimWorld() - Player.Center).ToRotation();
+                    muzzleFlashNum = Main.rand.Next(1, 4);
+                    Projectile.netUpdate = true;
+                }
                 XOffset = BaseXOffset;
 
                 bonusPower = 1f;
-                muzzleFlashNum = Main.rand.Next(1, 4);
             }
 
             GunDirection = shotAngle.ToRotationVector2();
@@ -239,5 +245,57 @@ namespace AerovelenceMod.Common.Bases
         }
 
         public virtual void Draw(ref Color lightColor) { }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(muzzleFlashNum);
+            writer.Write(AnimationTime);
+            writer.Write(gunID);
+            writer.Write(BaseXOffset);
+            writer.Write(GoalXOffset);
+            writer.Write(yRecoilPower);
+            writer.Write(HoldoutOffset.X);
+            writer.Write(HoldoutOffset.Y);
+            writer.Write(TipPosition.X);
+            writer.Write(TipPosition.Y);
+            writer.Write(StarPosition.X);
+            writer.Write(StarPosition.Y);
+            writer.Write(timeToStartFade);
+            writer.Write(doCompositeArm);
+            writer.Write(compositeArmAlwaysFull);
+            writer.Write(shotAngle);
+            writer.Write(timer);
+            writer.Write(XOffset);
+            writer.Write(YRecoil);
+            writer.Write(bonusPower);
+            writer.Write(muzzleFlashPower);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            muzzleFlashNum = reader.ReadInt32();
+            AnimationTime = reader.ReadInt32();
+            gunID = reader.ReadInt32();
+            BaseXOffset = reader.ReadSingle();
+            GoalXOffset = reader.ReadSingle();
+            yRecoilPower = reader.ReadSingle();
+            HoldoutOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            TipPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            StarPosition = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            timeToStartFade = reader.ReadInt32();
+            doCompositeArm = reader.ReadBoolean();
+            compositeArmAlwaysFull = reader.ReadBoolean();
+            shotAngle = reader.ReadSingle();
+            timer = reader.ReadInt32();
+            XOffset = reader.ReadSingle();
+            YRecoil = reader.ReadSingle();
+            bonusPower = reader.ReadSingle();
+            muzzleFlashPower = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 }

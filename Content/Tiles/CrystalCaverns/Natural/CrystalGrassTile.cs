@@ -36,7 +36,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrystalDirtTile>();
             TileID.Sets.GeneralPlacementTiles[Type] = false;
 
-            glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Glowmask"));
         }
 
         public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem)

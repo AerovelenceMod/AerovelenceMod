@@ -73,7 +73,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
 
             //Face the direction of the mouse
             if (owner.whoAmI == Main.myPlayer)
-                owner.direction = Main.MouseWorld.X > owner.Center.X ? 1 : -1;
+                owner.direction = Projectile.AimWorld().X > owner.Center.X ? 1 : -1;
 
             Vector2 orbPosOffset = new Vector2(-11f * owner.direction, -30f + owner.gfxOffY);
 
@@ -106,7 +106,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
                 //Shoot the bomb | (Projectile.ai[0] tracks whether the bomb has been shot yet or not)
                 if (Projectile.ai[0] == 0 && Main.myPlayer == Projectile.owner)
                 {
-                    Vector2 toMouse = (Main.MouseWorld - owner.Center).SafeNormalize(Vector2.UnitX);
+                    Vector2 toMouse = (Projectile.AimWorld() - owner.Center).SafeNormalize(Vector2.UnitX);
                     Vector2 shotVel = toMouse * 12f;
 
                     Projectile.NewProjectile(Projectile.GetSource_FromThis(), owner.Center + orbPosOffset, shotVel, ModContent.ProjectileType<BooyahBombProj>(), Projectile.damage, Projectile.knockBack, owner.whoAmI);
@@ -258,7 +258,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.spriteBatch.Draw(ball, drawPos, null, Color.White with { A = 0 }, rot1, ball.Size() / 2, drawScale * sineScale3, 0f, 0f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
@@ -334,13 +334,20 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             d2.customData = DustBehaviorUtil.AssignBehavior_GSSBase(fadePower: 0.85f, shouldFadeColor: true);
 
             //VFX Projectiles
-            int gaussImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<GaussExplosionVFX>(), 0, 0, Main.myPlayer);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int gaussImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<GaussExplosionVFX>(), 0, 0, Main.myPlayer);
+            }
 
-            int booyahImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BooyahImpactVFX>(), 0, 0, Main.myPlayer);
-            Main.projectile[booyahImpact].spriteDirection = Projectile.velocity.X > 0 ? 1 : -1;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int booyahImpact = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<BooyahImpactVFX>(), 0, 0, Main.myPlayer);
+                Main.projectile[booyahImpact].spriteDirection = Projectile.velocity.X > 0 ? 1 : -1;
+                Main.projectile[booyahImpact].netUpdate = true;
+            }
 
             //Hit all enemies in a radius
-            GeneralUtils.strikeNPCsInRadius(Projectile.Center, 100f, Projectile.damage * 0.5f, Projectile.knockBack * 0.5f);
+            GeneralUtils.strikeNPCsInRadius(Projectile, Projectile.Center, 100f, Projectile.damage * 0.5f, Projectile.knockBack * 0.5f);
 
 
             return base.PreKill(timeLeft);
@@ -448,7 +455,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb
             Main.spriteBatch.Draw(ball, drawPos, null, Color.White with { A = 0 }, rot1, ball.Size() / 2, drawScale * sineScale3, 0f, 0f);
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 

@@ -14,6 +14,18 @@ namespace AerovelenceMod.Common.Utilities
 {
     internal static class ProjectileExtensions
     {
+        public static Vector2 AimWorld(this Projectile projectile)
+            => Main.netMode == NetmodeID.SinglePlayer ? Main.MouseWorld
+                : projectile.GetGlobalProjectile<global::AerovelenceMod.Common.Globals.ProjectileAim>().MouseWorld(projectile);
+
+        public static void UpdateAimAngle(this Projectile projectile, Vector2 origin, ref float angle)
+        {
+            if (projectile.owner != Main.myPlayer) return;
+            float aim = (Main.MouseWorld - origin).ToRotation();
+            if (System.Math.Abs(MathHelper.WrapAngle(aim - angle)) > 0.002f) projectile.netUpdate = true;
+            angle = aim;
+        }
+
         #region Projectile Drawing
 
         public static bool DrawProjectileCentered(this ModProjectile p, SpriteBatch spriteBatch, Color lightColor)

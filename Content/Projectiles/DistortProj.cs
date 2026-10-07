@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.Projectiles
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public Texture2D tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05");
+        public Texture2D tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_05"));
 
         public float scale = 1f;
 

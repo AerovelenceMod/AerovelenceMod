@@ -10,7 +10,7 @@ namespace AerovelenceMod.Content.Dusts
     {
         public override void OnSpawn(Dust dust)
         {
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/StillDust").Value;
+            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/StillDust").Value);
             dust.frame = new Rectangle(0, texture.Height / 5 * Main.rand.Next(5), texture.Width, texture.Height / 5);
         }
 

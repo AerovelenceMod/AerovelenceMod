@@ -173,9 +173,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Player.itemTime = 2;
             Player.itemAnimation = 2;
 
-            if (Projectile.owner == Main.myPlayer && timer == 0)
+            if (timer == 0)
             {
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
+                Projectile.UpdateAimAngle(Player.Center, ref Angle);
             }
 
             direction = Angle.ToRotationVector2();
@@ -304,7 +304,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             if (!justHit)
             {
                 Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-                trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/spark_07_Black").Value;
+                trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/spark_07_Black").Value);
                 trailColor = new Color(255, 10, 10);
                 trailTime = timer * 0.02f;
 
@@ -387,7 +387,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
             Collision.HitTiles(Projectile.position + (Projectile.velocity * 0.5f), Projectile.velocity * 0.5f, Projectile.width, Projectile.height);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 2; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleQuadStar>(),
@@ -400,7 +400,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         {
             if (target.HasBuff(ModContent.BuffType<ShotgunAxeDebuff>()))
             {
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 2 + (Main.rand.NextBool() ? 1 : 0); i++)
                 {
@@ -652,18 +652,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         {
             for (int i = 0; i < 1; i++)
             {
-                int b = Projectile.NewProjectile(null, target.Center, (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(1f, 1.5f), ModContent.ProjectileType<FadeExplosionHighRes>(), 0, 0);
-                Main.projectile[b].rotation = Main.rand.NextFloat(6.28f);
-                if (Main.projectile[b].ModProjectile is FadeExplosionHighRes explo)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    explo.color = Color.Crimson;
-                    explo.size = 0.5f;
-                    explo.multiplier = 10f;
-                    explo.colorIntensity = 0.25f; //0.5
+                    int b = Projectile.NewProjectile(null, target.Center, (Projectile.rotation + MathHelper.PiOver2).ToRotationVector2() * Main.rand.NextFloat(1f, 1.5f), ModContent.ProjectileType<FadeExplosionHighRes>(), 0, 0);
+                    Main.projectile[b].rotation = Main.rand.NextFloat(6.28f);
+                    if (Main.projectile[b].ModProjectile is FadeExplosionHighRes explo)
+                    {
+                        explo.color = Color.Crimson;
+                        explo.size = 0.5f;
+                        explo.multiplier = 10f;
+                        explo.colorIntensity = 0.25f; //0.5
+                    }
+                    Main.projectile[b].netUpdate = true;
                 }
             }
-            int a = Projectile.NewProjectile(null, target.Center, Vector2.Zero, ModContent.ProjectileType<ShotgunAxeBlood>(), 0, 0, Main.myPlayer);
-            Main.projectile[a].rotation = Projectile.rotation;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int a = Projectile.NewProjectile(null, target.Center, Vector2.Zero, ModContent.ProjectileType<ShotgunAxeBlood>(), 0, 0, Main.myPlayer);
+                Main.projectile[a].rotation = Projectile.rotation;
+                Main.projectile[a].netUpdate = true;
+            }
 
             for (int i = 0; i < 20; i++)
                 Dust.NewDust(target.position, 30, 30, DustID.Blood, 0f, 0f, 0, new Color(255, 255, 255), 1f);
@@ -794,7 +802,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         {
             if (BloodDebuff)
             {
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 if (DebuffTime % 1 == 0)
                 {

@@ -38,6 +38,11 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         }
     }
 
+    public interface IWinchWhip
+    {
+        int WinchChargeDuration { get; }
+    }
+
     internal static class RepurposedWinchWhipUtil
     {
         internal static bool IsWhip(Item item)
@@ -71,8 +76,9 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
         private int chargingItemType = -1;
         private int releaseEffectCooldown;
 
-        internal float ChargeProgress => MathHelper.Clamp(ChargeTicks / (float)ChargeDuration, 0f, 1f);
-        internal bool FullyCharged => ChargeTicks >= ChargeDuration;
+        internal int RequiredChargeTicks => Player.HeldItem.ModItem is IWinchWhip whip ? Math.Max(1, whip.WinchChargeDuration) : ChargeDuration;
+        internal float ChargeProgress => MathHelper.Clamp(ChargeTicks / (float)RequiredChargeTicks, 0f, 1f);
+        internal bool FullyCharged => ChargeTicks >= RequiredChargeTicks;
         internal bool Charging => charging;
 
         public override void ResetEffects()
@@ -118,7 +124,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 if (charging)
                 {
                     UpdateAim();
-                    if (ChargeTicks < ChargeDuration)
+                    if (ChargeTicks < RequiredChargeTicks)
                         ChargeTicks++;
                     CheckFullCharge();
                     Player.controlUseItem = false;
@@ -221,7 +227,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
                 return;
             Vector2 hand = GetHandPosition();
             Lighting.AddLight(hand, Vector3.One * (0.12f + intensity * 0.35f));
-            int dustChance = FullyCharged && charging ? 5 : ChargeTicks > ChargeDuration / 2 && charging ? 8 : 12;
+            int dustChance = FullyCharged && charging ? 5 : ChargeProgress > 0.5f && charging ? 8 : 12;
             if (charging && Main.rand.NextBool(dustChance))
             {
                 Vector2 offset = Main.rand.NextVector2CircularEdge(8f, 8f);

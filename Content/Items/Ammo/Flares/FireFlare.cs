@@ -64,7 +64,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
 
             int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
             Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
-            
+
             target.AddBuff(ModContent.BuffType<FlareFire>(), 200);
         }
     }

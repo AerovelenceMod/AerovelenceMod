@@ -167,7 +167,7 @@ namespace AerovelenceMod.Content.Items.Ammo
                 ? MathHelper.Clamp(timer / 4f, 0f, 1f)
                 : MathHelper.Clamp((Lifetime - timer) / (float)(Lifetime - ActiveTicks), 0f, 1f);
 
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
             trailColor = Color.Lerp(new Color(255, 35, 10), new Color(255, 130, 35), 0.25f + 0.15f * MathF.Sin(timer * 0.8f)) * fade;
             trailTime = timer * 0.045f;
             trailPointLimit = 90;

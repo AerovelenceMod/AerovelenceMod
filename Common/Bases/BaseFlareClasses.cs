@@ -151,7 +151,7 @@ namespace AerovelenceMod.Common.Bases
             //Dust
             if (timer % 7 == 0)
             {
-                ArmorShaderData dustShader1 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader1 = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
                 for (int i = 0; i < 1 + Main.rand.NextFloat(0, 1); i++)
                 {
                     Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleRise>(),
@@ -162,7 +162,7 @@ namespace AerovelenceMod.Common.Bases
 
             if (timer % 4 == 0)
             {
-                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader2 = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
                 for (int i = 0; i < 1; i++)
                 {
                     Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(5, 5), ModContent.DustType<GlowCircleRise>(),
@@ -248,7 +248,7 @@ namespace AerovelenceMod.Common.Bases
                 SoundEngine.PlaySound(style, Projectile.Center);
             }
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
             for (int i = 0; i < 5; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(0, 0), ModContent.DustType<GlowCircleRise>(),
@@ -269,7 +269,7 @@ namespace AerovelenceMod.Common.Bases
                 SoundEngine.PlaySound(style);
             }
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleRise>(),
@@ -330,7 +330,7 @@ namespace AerovelenceMod.Common.Bases
         {
             if (DebuffActive)
             {
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 if (DebuffTime % 3 == 0)
                 {
@@ -354,7 +354,7 @@ namespace AerovelenceMod.Common.Bases
                 }
 
                 //Very dumb, but should work
-                if (DebuffTime % timeBetweenHits == 0)
+                if (DebuffTime % timeBetweenHits == 0 && Main.netMode != NetmodeID.MultiplayerClient)
                 {
 
                     //Here we do something quite fuckywucky
@@ -369,6 +369,7 @@ namespace AerovelenceMod.Common.Bases
                     //myHit. = Direction;
 
                     npc.StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.Server) NetMessage.SendStrikeNPC(npc, myHit);
 
 
                     npc.HitSound = storedHitsound;

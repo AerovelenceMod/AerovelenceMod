@@ -12,7 +12,7 @@ namespace AerovelenceMod.Content.Dusts
         {
             dust.noGravity = false;
 
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/DashTrailDust").Value;
+            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/DashTrailDust").Value);
 
             //Chooses a random frame out of the 12 different Dust lengths, see dust image to better understand
             dust.frame = new Rectangle(0, texture.Height / 12 * Main.rand.Next(12), texture.Width, texture.Height / 12);

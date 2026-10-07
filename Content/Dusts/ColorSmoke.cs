@@ -28,7 +28,7 @@ namespace AerovelenceMod.Content.Dusts
         {
             dust.noGravity = true;
 
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Dusts/ColorSmoke2").Value;
+            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/ColorSmoke2").Value);
             dust.frame = new Rectangle(0, texture.Height / 3 * Main.rand.Next(3), texture.Width, texture.Height / 3); ;
         }
 

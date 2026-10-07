@@ -264,7 +264,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             if (!hasHitEnemy)
             {
                 //Strike all other enemies within a radius
-                GeneralUtils.strikeNPCsInRadius(target.Center, 75f, Projectile.damage * 0.75f, Projectile.knockBack * 0.5f, target.whoAmI);
+                GeneralUtils.strikeNPCsInRadius(Projectile, target.Center, 75f, Projectile.damage * 0.75f, Projectile.knockBack * 0.5f, target.whoAmI);
 
                 Vector2 orthToSwing = (MathHelper.PiOver2 + currentAngle).ToRotationVector2() * (Projectile.ai[0] == 1 ? -1 : 1f);
                 Vector2 impactCenter = target.Center;
@@ -322,7 +322,10 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
                     d.customData = DustBehaviorUtil.AssignBehavior_PGOBase(rotPower: 0.04f, timeBeforeSlow: 4, postSlowPower: 0.89f, velToBeginShrink: 1f, fadePower: 0.8f, colorFadePower: 1f, glowIntensity: 0.4f);
                 }
 
-                int windFX = Projectile.NewProjectile(null, impactCenter, Vector2.Zero, ModContent.ProjectileType<CerobaSkillStrikeFX>(), 0, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int windFX = Projectile.NewProjectile(null, impactCenter, Vector2.Zero, ModContent.ProjectileType<CerobaSkillStrikeFX>(), 0, 0, Main.myPlayer);
+                }
                 #endregion
 
 
@@ -395,10 +398,10 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
         public override void Load()
         {
-            circle_053 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053");
-            muzzle_flash_12 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/muzzle_flash_12");
-            star_07 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_07");
-            circle_053Black = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053Black");
+            circle_053 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053"));
+            muzzle_flash_12 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/muzzle_flash_12"));
+            star_07 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_07"));
+            circle_053Black = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053Black"));
         }
 
         public override void Unload()
@@ -713,7 +716,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
 
@@ -817,7 +820,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             if (!hasHitEnemy)
             {
                 //Hit all other enemies in radius
-                GeneralUtils.strikeNPCsInRadius(Projectile.Center, 200f, Projectile.damage, Projectile.knockBack * 0.5f, target.whoAmI);
+                GeneralUtils.strikeNPCsInRadius(Projectile, Projectile.Center, 200f, Projectile.damage, Projectile.knockBack * 0.5f, target.whoAmI);
 
                 //Want less hitpause at higher attack speeds
                 justHitTime = (19 - (int)((Main.player[Projectile.owner].GetTotalAttackSpeed(DamageClass.Melee) - 1) * 19f)) * Projectile.extraUpdates; //10
@@ -837,7 +840,10 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
                     d.customData = DustBehaviorUtil.AssignBehavior_GSSBase(rotPower: 0.04f, timeBeforeSlow: 4, postSlowPower: 0.89f, velToBeginShrink: 1.5f, fadePower: 0.8f, colorFadePower: 1f);
                 }
 
-                Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<OblivionExplosionPulse>(), 0, 0);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromThis(), target.Center, Vector2.Zero, ModContent.ProjectileType<OblivionExplosionPulse>(), 0, 0);
+                }
 
                 FlashSystem.SetCAFlashEffect(0.075f, 35, 1f, 0.35f, true, true);
 
@@ -1020,6 +1026,21 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             //Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, null, Color.White * overallAlpha, Projectile.rotation * -0.8f, Flare.Size() / 2, additiveScale * scales[2], SpriteEffects.None, 0f);
             #endregion
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(isBigOne);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            isBigOne = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     //Activate Animation
@@ -1035,10 +1056,10 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
 
         public override void Load()
         {
-            circle_053 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053");
-            muzzle_flash_12 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/muzzle_flash_12");
-            star_07 = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_07");
-            circle_053Black = ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053Black");
+            circle_053 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053"));
+            muzzle_flash_12 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/muzzle_flash_12"));
+            star_07 = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/star_07"));
+            circle_053Black = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/MuzzleFlashes/circle_053Black"));
         }
 
         public override void Unload()
@@ -1405,7 +1426,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.Oblivion
             #endregion
 
             Main.spriteBatch.End();
-            Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+            Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
             Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
         }
     }

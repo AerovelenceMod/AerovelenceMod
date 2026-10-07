@@ -200,16 +200,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         {
             float exploScale = isFading ? storedScale : globalScale;
 
-            int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolsearBombExplosion>(),
-                (int)(Projectile.damage * 3f * globalScale), 2f, Main.player[Projectile.owner].whoAmI);
-            (Main.projectile[explo].ModProjectile as SolsearBombExplosion).size = 0.35f * exploScale;
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SolsearBombExplosion>(),
+                    (int)(Projectile.damage * 3f * globalScale), 2f, Main.player[Projectile.owner].whoAmI);
+                (Main.projectile[explo].ModProjectile as SolsearBombExplosion).size = 0.35f * exploScale;
 
-            if (globalScale == 2f)
-                SkillStrikeUtil.setSkillStrike(Main.projectile[explo], 1.5f, 1000, 0f, 0f);
+                if (globalScale == 2f)
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[explo], 1.5f, 1000, 0f, 0f);
+                Main.projectile[explo].netUpdate = true;
+            }
 
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-            ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+            ArmorShaderData dustShader2 = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
             SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Pitch = -.53f, };
             SoundEngine.PlaySound(style2, Projectile.Center);
@@ -221,21 +225,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             SoundEngine.PlaySound(styleb, Projectile.Center);
 
 
-            int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
-
-            if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
+            if (Projectile.owner == Main.myPlayer)
             {
-                feh.color = Color.Lerp(Color.OrangeRed, Color.Red, 0.15f);
-                feh.colorIntensity = 1f;
-                feh.fadeSpeed = 0.045f;
-                for (int m = 0; m < 10; m++)
+                int explosion = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
+
+                if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
                 {
-                    FadeExplosionClass newSmoke = new FadeExplosionClass(Projectile.Center, Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(0.5f, 2f) * 2f);
+                    feh.color = Color.Lerp(Color.OrangeRed, Color.Red, 0.15f);
+                    feh.colorIntensity = 1f;
+                    feh.fadeSpeed = 0.045f;
+                    for (int m = 0; m < 10; m++)
+                    {
+                        FadeExplosionClass newSmoke = new FadeExplosionClass(Projectile.Center, Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(0.5f, 2f) * 2f);
 
-                    newSmoke.size = (0.45f + Main.rand.NextFloat(-0.15f, 0.15f)) * exploScale;
-                    feh.Smokes.Add(newSmoke);
+                        newSmoke.size = (0.45f + Main.rand.NextFloat(-0.15f, 0.15f)) * exploScale;
+                        feh.Smokes.Add(newSmoke);
 
+                    }
                 }
+                Main.projectile[explosion].netUpdate = true;
             }
 
             for (int fg = 0; fg < 10; fg++)

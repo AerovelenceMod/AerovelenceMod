@@ -240,7 +240,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             if (!initialized)
             {
                 initialized = true;
-                Projectile.rotation = Projectile.DirectionTo(Main.MouseWorld).ToRotation();
+                Projectile.rotation = Projectile.DirectionTo(Projectile.AimWorld()).ToRotation();
             }
 
             justShotPower = Math.Clamp(MathHelper.Lerp(justShotPower, -0.25f, 0.2f), 0f, 1f);

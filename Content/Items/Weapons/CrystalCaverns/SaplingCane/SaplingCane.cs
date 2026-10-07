@@ -106,6 +106,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                     int child = Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, Vector2.Zero,
                         ModContent.ProjectileType<BabySapper>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.identity, i);
                     Main.projectile[child].originalDamage = Projectile.originalDamage;
+                    Main.projectile[child].netUpdate = true;
                 }
             }
             if (timer == 1)
@@ -531,7 +532,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 

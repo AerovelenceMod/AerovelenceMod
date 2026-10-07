@@ -68,7 +68,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TheSling
 
         internal static void Cord(Vector2 start, Vector2 end, Vector2 bow, Color light, float opacity, float charge)
         {
-            Texture2D cord = ModContent.Request<Texture2D>(CordTexture).Value;
+            Texture2D cord = (Main.dedServ ? null : ModContent.Request<Texture2D>(CordTexture).Value);
             int count = Math.Max(2, (int)(Vector2.Distance(start, end) / 6f));
             Vector2 previous = start;
             for (int i = 1; i <= count; i++)
@@ -138,8 +138,11 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TheSling
             if (!Collision.CanHitLine(player.Center, 1, 1, muzzle, 1, 1))
                 muzzle = player.Center;
             float speed = SlingMotion.ReleaseSpeed(Projectile.ai[1], Projectile.ai[0], releaseReady) * Math.Max(0.1f, Projectile.velocity.X);
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), muzzle, tangent * speed + player.velocity * 0.15f,
-                (int)Projectile.ai[2], Projectile.damage, Projectile.knockBack, Projectile.owner, releaseReady ? 1f : 0f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromThis(), muzzle, tangent * speed + player.velocity * 0.15f,
+                    (int)Projectile.ai[2], Projectile.damage, Projectile.knockBack, Projectile.owner, releaseReady ? 1f : 0f);
+            }
         }
 
         public override void AI()
@@ -297,7 +300,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TheSling
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 
@@ -309,7 +312,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.TheSling
 
         internal static void Crystal(Vector2 center, float rotation, Vector2 size, float opacity = 1f, float charge = 0.3f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(CrystalTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(CrystalTexture).Value);
             Vector2 screen = center - Main.screenPosition;
             Vector2 scale = size / texture.Size();
             for (int i = 0; i < 4; i++)

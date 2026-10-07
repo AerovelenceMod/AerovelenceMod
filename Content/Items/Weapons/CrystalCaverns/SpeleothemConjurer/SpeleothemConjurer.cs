@@ -182,8 +182,11 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                             Vector2 spawn = source + new Vector2(Main.rand.NextFloat(-42f, 42f), 0f);
                             if (Collision.SolidCollision(spawn - new Vector2(6f, 12f), 12, 24))
                                 spawn = source;
-                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, new Vector2(Main.rand.NextFloat(-0.35f, 0.35f), 5f),
-                                ModContent.ProjectileType<EtherealStalactite>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.identity);
+                            if (Projectile.owner == Main.myPlayer)
+                            {
+                                Projectile.NewProjectile(Projectile.GetSource_FromThis(), spawn, new Vector2(Main.rand.NextFloat(-0.35f, 0.35f), 5f),
+                                    ModContent.ProjectileType<EtherealStalactite>(), Projectile.damage, Projectile.knockBack, Projectile.owner, Projectile.identity);
+                            }
                         }
                     }
                 }
@@ -209,8 +212,11 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 if (owner && Projectile.ai[0] >= 36f)
                 {
                     if (Projectile.ai[1] > 0f && groundedOrigin)
-                        Projectile.NewProjectile(Projectile.GetSource_FromThis(), floor, Vector2.Zero,
-                            ModContent.ProjectileType<GatheredStalagmite>(), (int)(Projectile.damage * (1f + Projectile.ai[1] * 0.09f)), 7f, Projectile.owner, Projectile.ai[1]);
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            Projectile.NewProjectile(Projectile.GetSource_FromThis(), floor, Vector2.Zero,
+                                ModContent.ProjectileType<GatheredStalagmite>(), (int)(Projectile.damage * (1f + Projectile.ai[1] * 0.09f)), 7f, Projectile.owner, Projectile.ai[1]);
+                        }
                     SetPhase(CastPhase.Fading);
                 }
             }
@@ -461,7 +467,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 
@@ -476,7 +482,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Crystal(Vector2 center, float rotation, Vector2 size, float opacity = 1f, float charge = 0.3f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(CrystalTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(CrystalTexture).Value);
             Vector2 screen = center - Main.screenPosition;
             Vector2 scale = size / texture.Size();
             for (int i = 0; i < 4; i++)

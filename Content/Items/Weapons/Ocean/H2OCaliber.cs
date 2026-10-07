@@ -109,6 +109,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
                     knockback,
                     player.whoAmI);
                 Main.projectile[proj].ai[2] = 1;
+                Main.projectile[proj].netUpdate = true;
             }
             return false;
         }
@@ -168,9 +169,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ocean
 
             Projectile.velocity = Vector2.Zero;
 
-            if (Projectile.owner == Main.myPlayer && timer == 0)
+            if (timer == 0)
             {
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
+                Projectile.UpdateAimAngle(Player.Center, ref Angle);
             }
 
             direction = Angle.ToRotationVector2();

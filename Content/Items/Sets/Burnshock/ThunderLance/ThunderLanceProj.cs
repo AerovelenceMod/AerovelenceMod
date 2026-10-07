@@ -113,7 +113,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                         for (int i = 0; i < 6; i++)
                         {
 
-                            Vector2 trueVel = owner.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX);
+                            Vector2 trueVel = owner.DirectionTo(Projectile.AimWorld()).SafeNormalize(Vector2.UnitX);
 
                             Dust a = Dust.NewDustPerfect(Projectile.Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * 10, ModContent.DustType<GlowStrong>(),
                                 trueVel.RotatedBy(Main.rand.NextFloat(-0.25f, 0.25f)) * Main.rand.NextFloat(5.0f, 7.5f),
@@ -158,7 +158,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 
 
 
-            Projectile.velocity = owner.DirectionTo(Main.MouseWorld).RotatedBy(angleOffsetBigStab);
+            Projectile.velocity = owner.DirectionTo(Projectile.AimWorld()).RotatedBy(angleOffsetBigStab);
 
             Projectile.timeLeft = 2;
 
@@ -176,7 +176,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
         public void Trail()
         {
             //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value);
             trail1.trailColor = Color.White * 0.7f;
             trail1.trailPointLimit = 100;
             trail1.trailWidth = 11;
@@ -189,7 +189,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
             trail1.TrailLogic();
 
             //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail5Loop").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail5Loop").Value);
             trail2.trailColor = Color.DeepSkyBlue;
             trail2.trailPointLimit = 100;
             trail2.trailWidth = 40;
@@ -197,7 +197,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
             trail2.timesToDraw = 2;
 
             //trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = vfxTimer * 0.03f;
 
@@ -239,9 +239,9 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
         #region DrawMethods
         public void spearBackGlow()
         {
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceBackGlow");
-            Texture2D DiamondGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/DiamondGlow");
-            Texture2D TipGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTipGlow");
+            Texture2D Glow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceBackGlow"));
+            Texture2D DiamondGlow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/DiamondGlow"));
+            Texture2D TipGlow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTipGlow"));
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
@@ -291,9 +291,9 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
 
         public void spearTop()
         {
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTipGlow");
-            Texture2D Star = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/flare_1");
-            Texture2D Tip = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTip");
+            Texture2D Glow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTipGlow"));
+            Texture2D Star = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/flare_1"));
+            Texture2D Tip = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Sets/Burnshock/ThunderLance/ThunderLanceTip"));
 
             Vector2 tipGlowOffset = new Vector2(0, 10f).RotatedBy(Projectile.rotation);
 
@@ -339,7 +339,10 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock.ThunderLance
                     Vector2 ai = PolarVector(10, direction.ToRotation());
                     float ai2 = Main.rand.Next(100);
 
-                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, PolarVector(10, direction.ToRotation()) * 0.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai.ToRotation(), ai2);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, PolarVector(10, direction.ToRotation()) * 0.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai.ToRotation(), ai2);
+                    }
 
                 }
 

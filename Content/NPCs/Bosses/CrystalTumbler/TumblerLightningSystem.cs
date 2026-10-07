@@ -107,7 +107,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (system.captureOwner != null && system.captured.TryGetValue(system.captureOwner, out CapturedLightning capture) && capture.Paths.Count < 64)
                 capture.Paths.Add(path);
             if (layer.HasValue)
-                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(layer.Value, () => Draw(path, 1f, true));
+                ModContent.GetInstance<PixelationSystem>().QueueRenderAction(layer.Value, () => Draw(path, true));
             else
                 ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path));
             if (emitDust && !Main.gamePaused)
@@ -125,7 +125,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 LightningPath path = tail.Path with { Opacity = tail.Path.Opacity * fade * fade, Width = Math.Max(1f, tail.Path.Width * fade), Bloom = tail.Path.Bloom * fade };
                 if (path.Layer.HasValue)
                 {
-                    ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path, 1f, true));
+                    ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () => Draw(path, true));
                 }
                 else
                 {
@@ -196,10 +196,10 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             captureOwner = null;
         }
 
-        private static void Draw(LightningPath path, float scale = 0.5f, bool alphaBlend = false)
+        private static void Draw(LightningPath path, bool alphaBlend = false)
         {
             LightningStrokeRenderer.DrawPath(Main.spriteBatch, path.Points, path.Color, path.Opacity,
-                Math.Max(1f, path.Width), Math.Max(1f, path.Width), path.Bloom, scale, !alphaBlend);
+                Math.Max(1f, path.Width), Math.Max(1f, path.Width), path.Bloom, additive: !alphaBlend);
         }
     }
     public class TumblerActorVisuals : GlobalNPC

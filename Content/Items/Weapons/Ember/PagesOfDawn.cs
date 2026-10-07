@@ -87,13 +87,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             timer++;
 
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTexture").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTexture").Value);
             //trailColor = Color.DodgerBlue;
             trailTime = timer * 0.05f;
             shouldScrollColor = true;
             gradient = true;
             gradientTime = 0.7f;
-            gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/FireGradLoop").Value;
+            gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/FireGradLoop").Value);
 
             // other things you can adjust
             trailPointLimit = 120;

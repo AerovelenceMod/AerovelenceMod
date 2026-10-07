@@ -20,7 +20,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 SpriteBatch spriteBatch = Main.spriteBatch;
-                Vector2 position = (center - Main.screenPosition) * 0.5f;
+                Vector2 position = center - Main.screenPosition;
                 Texture2D bloom = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/SoftGlow64", AssetRequestMode.ImmediateLoad).Value;
                 Texture2D shell = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/whiteFireEye", AssetRequestMode.ImmediateLoad).Value;
                 Texture2D crown = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/ElectricPopD", AssetRequestMode.ImmediateLoad).Value;
@@ -41,17 +41,17 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                 effect.Parameters["squashValue"].SetValue(0f);
                 effect.Parameters["uTime"].SetValue(time * 0.009f);
                 effect.Parameters["colorIntensity"].SetValue(opacity * (0.65f + charge * 0.25f));
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, effect, Matrix.Identity);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, effect, Main.GameViewMatrix.EffectMatrix);
                 spriteBatch.Draw(bloom, position, null, Color.White, -time * 0.004f, bloom.Size() * 0.5f, radius * 1.15f / bloom.Width, SpriteEffects.None, 0f);
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, null, Matrix.Identity);
+                spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, null, Main.GameViewMatrix.EffectMatrix);
                 spriteBatch.Draw(shell, position, null, orange * (opacity * 0.62f), time * 0.007f, shell.Size() * 0.5f, radius * 1.32f * pulse / shell.Width, SpriteEffects.None, 0f);
                 spriteBatch.Draw(shell, position, null, gold * (opacity * 0.33f), -time * 0.011f, shell.Size() * 0.5f, radius * 1.02f / shell.Width, SpriteEffects.FlipHorizontally, 0f);
                 spriteBatch.Draw(crown, position, null, orange * (opacity * 0.52f), -time * 0.005f, crown.Size() * 0.5f, radius * 1.7f / crown.Width, SpriteEffects.None, 0f);
                 spriteBatch.Draw(bloom, position, null, gold * (opacity * 0.75f), 0f, bloom.Size() * 0.5f, radius * 0.95f / bloom.Width, SpriteEffects.None, 0f);
                 spriteBatch.Draw(bloom, position, null, Color.White * (opacity * 0.9f), 0f, bloom.Size() * 0.5f, radius * 0.45f / bloom.Width, SpriteEffects.None, 0f);
                 spriteBatch.End();
-                spriteBatch.Begin(SpriteSortMode.Texture, BlendState.Additive, Main.DefaultSamplerState, default, Main.Rasterizer, null, Matrix.Identity);
+                spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, default, Main.Rasterizer, null, Main.GameViewMatrix.EffectMatrix);
             });
 
             for (int strand = 0; strand < 5; strand++)

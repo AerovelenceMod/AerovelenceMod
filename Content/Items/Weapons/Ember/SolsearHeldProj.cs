@@ -59,7 +59,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
-            storedMousePos = Vector2.Lerp(storedMousePos, Main.MouseWorld, 0.42f); //0.08
+            storedMousePos = Vector2.Lerp(storedMousePos, Projectile.AimWorld(), 0.42f); //0.08
 
             Vector2 exhaustLocation;
             if (Player.direction == 1)
@@ -70,8 +70,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             if (timer % 5 == 0 && Main.rand.NextBool()) //40 | 30
             {
 
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+                ArmorShaderData dustShader2 = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
                 if (!Main.rand.NextBool(3))
                 {
                     Dust m = GlowDustHelper.DrawGlowDustPerfect(exhaustLocation, ModContent.DustType<GlowCircleRise>(),
@@ -87,9 +87,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
             if (timer == 0)
             {
-                storedMousePos = Main.MouseWorld;
-                Projectile.NewProjectile(null, Player.Center, (storedMousePos - Player.Center).SafeNormalize(Vector2.UnitX) * 2, ModContent.ProjectileType<SolsearLaser>(),
-                    Projectile.damage, 1, Main.myPlayer);
+                storedMousePos = Projectile.AimWorld();
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(null, Player.Center, (storedMousePos - Player.Center).SafeNormalize(Vector2.UnitX) * 2, ModContent.ProjectileType<SolsearLaser>(),
+                        Projectile.damage, 1, Main.myPlayer);
+                }
             }
 
             Projectile.velocity = Vector2.Zero;

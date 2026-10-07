@@ -174,6 +174,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
                 {
                     SkillStrikeUtil.setSkillStrike(Main.projectile[a], 1.3f);
                 }
+                Main.projectile[a].netUpdate = true;
 
                 for (int i = 0; i < 3 + (Main.rand.NextBool() ? 1 : 0); i++)
                 {
@@ -234,10 +235,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee.HandBlades
 
                     if (Main.projectile[afg].ModProjectile is DistortProj distort)
                     {
-                        distort.tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
+                        distort.tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall"));
                         distort.implode = false;
                         distort.scale = 0.2f;
                     }
+                    Main.projectile[afg].netUpdate = true;
 
                     SoundEngine.PlaySound(new SoundStyle("AerovelenceMod/Sounds/Effects/GloogaSlide") with { Volume = 0.4f, Pitch = 0.3f, PitchVariance = 0.2f }, player.Center);
 

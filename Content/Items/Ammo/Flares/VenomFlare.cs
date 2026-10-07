@@ -32,7 +32,6 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             flareCol = Color.Purple;
             dustCol = Color.Purple;
             lightCol = Color.Purple.ToVector3() * 1.5f; //Color of light
-
             BaseAILogic();
         }
 

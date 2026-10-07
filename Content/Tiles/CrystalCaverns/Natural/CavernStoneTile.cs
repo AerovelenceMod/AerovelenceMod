@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
             CommonTileHelper.SetTileProtection(this);
             TileID.Sets.GeneralPlacementTiles[Type] = false;
 
-            glowTexture = ModContent.Request<Texture2D>(Texture + "_Glowmask");
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Glowmask"));
         }
         public static Vector2 TileOffset => Lighting.LegacyEngine.Mode > 1 ? Vector2.Zero : Vector2.One * 12;
 

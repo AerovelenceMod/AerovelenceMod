@@ -56,7 +56,16 @@ namespace AerovelenceMod.Common.Systems.Traversal
             if (!showPreview && !BlockerVisible && !Main.SmartCursorIsUsed) return;
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, SamplerState.PointClamp,
                 DepthStencilState.None, RasterizerState.CullNone, null, Main.GameViewMatrix.TransformationMatrix);
-            if (showPreview) DrawSpan(preview, 0.5f, true);
+            if (showPreview)
+            {
+                DrawSpan(preview, 0.5f, true);
+                if (preview.Zipline)
+                {
+                    ZiplinePostTile post = ModContent.GetInstance<ZiplinePostTile>();
+                    post.DrawConnectionHook(preview.Left, Main.spriteBatch);
+                    post.DrawConnectionHook(preview.Right, Main.spriteBatch);
+                }
+            }
             DrawOverlay(showPreview);
             Main.spriteBatch.End();
         }
@@ -98,51 +107,52 @@ namespace AerovelenceMod.Common.Systems.Traversal
             foreach (RopeSpan span in RopeSpanSystem.Spans.Values)
             {
                 if (!span.Bounds.Intersects(view)) continue;
-                if (span.Zipline)
-                {
-                    Main.spriteBatch.Draw(ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/Traversal/ZiplinePostHook").Value,
-                        Screen(new Vector2(span.Left.X * 16 + 12, span.Left.Y * 16 - (span.LeftCeiling ? -2 : 48))),
-                        null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.FlipHorizontally, 0);
-                    Main.spriteBatch.Draw(ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/Traversal/ZiplinePostHook").Value,
-                        Screen(new Vector2(span.Right.X * 16 - 8, span.Right.Y * 16 - (span.RightCeiling ? -2 : 48))),
-                        null, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
-                }
                 DrawSpan(span, 1, false);
+            }
+            foreach (RopeSpan span in RopeSpanSystem.Spans.Values)
+            {
+                if (!span.Zipline || !span.Bounds.Intersects(view)) continue;
+                DrawRopeEnd(span, false, 1, false);
+                DrawRopeEnd(span, true, 1, false);
             }
         }
 
         private static void DrawSpan(RopeSpan span, float opacity, bool ghost)
         {
+            int ropeType = RopeSpanSystem.RopeTileType(span.RopeType);
             for (int i = 1; i < span.Nodes.Length - 1; i++)
             {
                 if (!Visible(span.Nodes[i - 1], span.Nodes[i + 1])) continue;
                 int section = i - 1;
-                Point ropeTile = span.Zipline ? span.Rest[i].ToTileCoordinates() : span.RopeTiles[section];
+                Point ropeTile = span.RopeTile(i);
                 Tile rope = Main.tile[ropeTile.X, ropeTile.Y];
                 Vector2 center = span.Nodes[i];
                 Vector2 a = (span.Nodes[i - 1] + center) * 0.5f;
                 Vector2 b = (center + span.Nodes[i + 1]) * 0.5f;
                 if (ghost || !rope.IsTileInvisible || Main.ShouldShowInvisibleWalls())
                 {
-                    int type = span.Zipline ? ModContent.TileType<ZiplineRopeTile>() : ModContent.TileType<RopeBridgeRopeTile>();
-                    Texture2D texture = ghost ? TextureAssets.Tile[type].Value : PaintedTexture(rope, type);
+                    Texture2D texture = ghost ? TextureAssets.Tile[ropeType].Value : PaintedTexture(rope, ropeType);
                     Color light = (ghost || rope.IsTileFullbright ? Color.White : Lighting.GetColor(ropeTile.X, ropeTile.Y)) * opacity;
                     Vector2 start = i == 1 ? span.Nodes[0] : a;
                     Vector2 end = i == span.Nodes.Length - 2 ? span.Nodes[^1] : b;
                     if (span.Zipline)
                     {
-                        DrawRope(texture, start, center, light);
-                        DrawRope(texture, center, end, light);
+                        DrawRope(texture, start, center, light, ropeType: ropeType);
+                        DrawRope(texture, center, end, light, ropeType: ropeType);
                     }
                     else
                     {
                         Vector2 rail = new(0, -32);
                         Vector2 stringOffset = new(0, 4);
-                        DrawRope(texture, start + stringOffset, center + stringOffset, light);
-                        DrawRope(texture, center + stringOffset, end + stringOffset, light);
-                        DrawRope(texture, center + stringOffset, center + rail, light);
-                        DrawRope(texture, start + rail, center + rail, light);
-                        DrawRope(texture, center + rail, end + rail, light);
+                        Vector2 stringStart = i == 1 ? span.BridgeAnchor(false, false) : start + stringOffset;
+                        Vector2 stringEnd = i == span.Nodes.Length - 2 ? span.BridgeAnchor(true, false) : end + stringOffset;
+                        Vector2 railStart = i == 1 ? span.BridgeAnchor(false, true) : start + rail;
+                        Vector2 railEnd = i == span.Nodes.Length - 2 ? span.BridgeAnchor(true, true) : end + rail;
+                        DrawRope(texture, stringStart, center + stringOffset, light, ropeType: ropeType);
+                        DrawRope(texture, center + stringOffset, stringEnd, light, ropeType: ropeType);
+                        DrawRope(texture, center + stringOffset, center + rail, light, ropeType: ropeType);
+                        DrawRope(texture, railStart, center + rail, light, ropeType: ropeType);
+                        DrawRope(texture, center + rail, railEnd, light, ropeType: ropeType);
                     }
                 }
                 if (!span.Zipline)
@@ -163,6 +173,28 @@ namespace AerovelenceMod.Common.Systems.Traversal
                     }
                 }
             }
+            if (span.Zipline && ghost)
+            {
+                DrawRopeEnd(span, false, opacity, ghost);
+                DrawRopeEnd(span, true, opacity, ghost);
+            }
+        }
+
+        private static void DrawRopeEnd(RopeSpan span, bool right, float opacity, bool ghost)
+        {
+            int node = right ? span.Nodes.Length - 2 : 1;
+            Point point = span.RopeTile(node);
+            Tile tile = Main.tile[point.X, point.Y];
+            if (!ghost && tile.IsTileInvisible && !Main.ShouldShowInvisibleWalls()) return;
+            int type = RopeSpanSystem.RopeTileType(span.RopeType);
+            Texture2D texture = ghost ? TextureAssets.Tile[type].Value : PaintedTexture(tile, type);
+            bool chain = type == TileID.Chain;
+            Rectangle frame = new(108 + ((span.Id + (right ? 1 : 0)) % 3) * 18, chain ? 54 : 0, 16, 16);
+            Vector2 direction = span.Nodes[node + (right ? -1 : 1)] - span.Nodes[node];
+            Color color = ghost || tile.IsTileFullbright ? Color.White : Lighting.GetColor(point.X, point.Y);
+            Main.spriteBatch.Draw(texture, Screen(span.Nodes[node]), frame, color * opacity,
+                direction.ToRotation() + (chain ? MathHelper.PiOver2 : -MathHelper.PiOver2),
+                chain ? new Vector2(7, 16) : new Vector2(8, 0), 1, SpriteEffects.None, 0);
         }
 
         private static void DrawOverlay(bool showPreview)
@@ -186,13 +218,14 @@ namespace AerovelenceMod.Common.Systems.Traversal
             {
                 float pulse = 0.7f + MathF.Sin((float)Main.GlobalTimeWrappedHourly * 5) * 0.2f;
                 Color yellow = new Color(255, 225, 55) * pulse;
+                int ropeType = RopeSpanSystem.RopeTileType(highlighted.RopeType);
                 for (int i = 1; i < highlighted.Nodes.Length - 1; i++)
                 {
                     Vector2 node = highlighted.Nodes[i];
                     Vector2 start = i == 1 ? highlighted.Nodes[0] : (highlighted.Nodes[i - 1] + node) * 0.5f;
                     Vector2 end = i == highlighted.Nodes.Length - 2 ? highlighted.Nodes[^1] : (node + highlighted.Nodes[i + 1]) * 0.5f;
-                    DrawRope(TextureAssets.MagicPixel.Value, start, node, yellow, true);
-                    DrawRope(TextureAssets.MagicPixel.Value, node, end, yellow, true);
+                    DrawRope(TextureAssets.MagicPixel.Value, start, node, yellow, true, ropeType);
+                    DrawRope(TextureAssets.MagicPixel.Value, node, end, yellow, true, ropeType);
                 }
                 Vector2 center = highlighted.At(selectedParameter);
                 int radius = (int)MathF.Round((12 + pulse * 4) / 2);
@@ -204,7 +237,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
         private static Texture2D PaintedTexture(Tile tile, int type)
             => Main.instance.TilePaintSystem.TryGetTileAndRequestIfNotReady(type, 0, tile.TileColor) ?? TextureAssets.Tile[type].Value;
 
-        private static void DrawRope(Texture2D texture, Vector2 a, Vector2 b, Color color, bool outline = false)
+        private static void DrawRope(Texture2D texture, Vector2 a, Vector2 b, Color color, bool outline = false, int ropeType = TileID.Rope)
         {
             Vector2 edge = b - a;
             float length = edge.Length();
@@ -213,17 +246,19 @@ namespace AerovelenceMod.Common.Systems.Traversal
             for (int i = 0; i * 16 < length; i++)
             {
                 int pixels = Math.Min(16, (int)MathF.Ceiling(length - i * 16));
-                Rectangle source = new(94, (i + (int)(a.X / 16)) % 3 * 18, 8, pixels);
+                int frame = (i + (int)(a.X / 16)) % 3;
+                Rectangle source = new(90, frame * 18, 16, pixels);
                 Vector2 position = Screen(a + direction * (i * 16));
                 float rotation = edge.ToRotation() - MathHelper.PiOver2;
                 if (outline)
                 {
                     Rectangle pixel = new(0, 0, 1, 1);
                     Vector2 scale = new(2, pixels);
-                    Main.spriteBatch.Draw(texture, position, pixel, color, rotation, new Vector2(2, 0), scale, SpriteEffects.None, 0);
-                    Main.spriteBatch.Draw(texture, position, pixel, color, rotation, new Vector2(-1, 0), scale, SpriteEffects.None, 0);
+                    float width = ropeType == TileID.VineRope ? 16 : ropeType == TileID.WebRope && frame != 1 ? 12 : ropeType == TileID.Chain ? 10 : 8;
+                    Main.spriteBatch.Draw(texture, position, pixel, color, rotation, new Vector2(width / 4, 0), scale, SpriteEffects.None, 0);
+                    Main.spriteBatch.Draw(texture, position, pixel, color, rotation, new Vector2(1 - width / 4, 0), scale, SpriteEffects.None, 0);
                 }
-                else Main.spriteBatch.Draw(texture, position, source, color, rotation, new Vector2(4, 0), 1, SpriteEffects.None, 0);
+                else Main.spriteBatch.Draw(texture, position, source, color, rotation, new Vector2(ropeType == TileID.Chain ? 7 : 8, 0), 1, SpriteEffects.None, 0);
             }
         }
 

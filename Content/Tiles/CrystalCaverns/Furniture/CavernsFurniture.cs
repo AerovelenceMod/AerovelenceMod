@@ -19,7 +19,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         private Asset<Texture2D> flameTexture;
         public override void SetStaticDefaults()
         {
-            flameTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CrystalTorchTile_Flame");
+            flameTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CrystalTorchTile_Flame"));
             CommonTileHelper.SetupTorch(this, new Color(123, 123, 123), ModContent.ItemType<CrystalTorchItem>(), DustID.BlueCrystalShard, true, true, false);
         }
 
@@ -142,7 +142,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             AddMapEntry(new Color(254, 121, 2), Terraria.Localization.Language.GetText("ItemName.Campfire"));
 
             // Assets
-            flameTexture = ModContent.Request<Texture2D>(Texture + "_Flame");
+            flameTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture + "_Flame"));
         }
 
         public override void NearbyEffects(int i, int j, bool closer)
@@ -489,7 +489,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         private Asset<Texture2D> flameTexture;
         public override void SetStaticDefaults()
         {
-            flameTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/GlimmerwoodChandelierTile_Flame");
+            flameTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/GlimmerwoodChandelierTile_Flame"));
             CommonTileHelper.SetupChandelier(this, new Color(123, 123, 123), ModContent.ItemType<GlimmerwoodChandelierItem>(), DustID.BlueCrystalShard, true, true, false);
         }
 

@@ -1,19 +1,30 @@
 using System;
-using System.Diagnostics;
 using AerovelenceMod.Common.Systems;
-
-
-
-
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Content;
+using Terraria;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace AerovelenceMod.Common.Systems.Gas;
 
 public sealed class GasRenderer : ModSystem
 {
-    private readonly GasRenderMesh mesh = new();
-    private BasicEffect effect;
+    private GasFieldRenderer fieldRenderer;
+    private Asset<Effect> effect;
+    private readonly Texture[] textures = new Texture[5];
+    private readonly SamplerState[] samplers = new SamplerState[5];
+    private readonly Func<int, int, Color> readLighting = ReadLighting;
+    private readonly Func<int, int, GasTileShape> readTerrain = ReadTerrain;
     private Action persistentDraw;
     private bool alphaRegistered;
+
+    public override void Load()
+    {
+        if (!Main.dedServ)
+            effect = ModContent.Request<Effect>("AerovelenceMod/Assets/Shaders/Gas", AssetRequestMode.AsyncLoad);
+    }
 
     public override void PostUpdateEverything()
     {
@@ -22,9 +33,8 @@ public sealed class GasRenderer : ModSystem
         persistentDraw ??= DrawGas;
         if (!alphaRegistered)
             alphaRegistered = ModContent.GetInstance<PixelationSystem>().RegisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, HasGas, persistentDraw);
-        if (!Main.gameMenu && GasPerfControl.LightingEnabled)
+        if (!Main.gameMenu)
         {
-            long start = Stopwatch.GetTimestamp();
             GasSystem system = ModContent.GetInstance<GasSystem>();
             if (system.HasAnyGas)
             {
@@ -36,13 +46,12 @@ public sealed class GasRenderer : ModSystem
                 foreach (GasFluid visual in system.VisualFields)
                     AddLights(visual, ref budget);
             }
-            GasPerfControl.UpdateLighting(start);
         }
     }
 
     private static bool HasGas()
     {
-        if (Main.gameMenu || !GasPerfControl.RenderingEnabled)
+        if (Main.gameMenu)
             return false;
         GasSystem system = ModContent.GetInstance<GasSystem>();
         return system.HasAnyGas;
@@ -50,71 +59,90 @@ public sealed class GasRenderer : ModSystem
 
     private void DrawGas()
     {
-        long start = Stopwatch.GetTimestamp();
-        DrawGas(false);
-        DrawGas(true);
-        GasPerfControl.UpdateRender(start);
-    }
-
-    private void DrawGas(bool additive)
-    {
         GasSystem system = ModContent.GetInstance<GasSystem>();
-        GasFluid colliding = additive ? system.AdditiveColliding : system.Colliding;
-        GasFluid free = additive ? system.AdditiveFree : system.Free;
-        if (colliding is null)
+        if (!system.HasAnyGas)
             return;
+        GraphicsDevice device = Main.instance.GraphicsDevice;
+        fieldRenderer ??= new GasFieldRenderer(device, effect.Value);
         SpriteBatch spriteBatch = Main.spriteBatch;
         spriteBatch.End();
-        GraphicsDevice device = Main.instance.GraphicsDevice;
-        effect ??= new BasicEffect(device) { VertexColorEnabled = true, TextureEnabled = false };
         BlendState blend = device.BlendState;
         DepthStencilState depth = device.DepthStencilState;
         RasterizerState rasterizer = device.RasterizerState;
+        for (int i = 0; i < textures.Length; i++)
+        {
+            textures[i] = device.Textures[i];
+            samplers[i] = device.SamplerStates[i];
+        }
         try
         {
             device.BlendState = BlendState.AlphaBlend;
             device.DepthStencilState = DepthStencilState.None;
             device.RasterizerState = RasterizerState.CullNone;
-            effect.World = Matrix.Identity;
-            effect.View = Main.GameViewMatrix.EffectMatrix;
-            effect.Projection = Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, -1f, 1f);
-            DrawField(colliding, true, system.RenderBlend, additive);
-            DrawField(free, false, system.RenderBlend, additive);
-            DrawField(system.VisualFields[additive ? 2 : 0], true, system.RenderBlend, additive);
-            DrawField(system.VisualFields[additive ? 3 : 1], false, system.RenderBlend, additive);
+            DrawField(system.Colliding, true, system.RenderBlend, false);
+            DrawField(system.Free, false, system.RenderBlend, false);
+            DrawField(system.VisualFields[0], true, system.RenderBlend, false);
+            DrawField(system.VisualFields[1], false, system.RenderBlend, false);
+            DrawField(system.AdditiveColliding, true, system.RenderBlend, true);
+            DrawField(system.AdditiveFree, false, system.RenderBlend, true);
+            DrawField(system.VisualFields[2], true, system.RenderBlend, true);
+            DrawField(system.VisualFields[3], false, system.RenderBlend, true);
         }
         finally
         {
             device.BlendState = blend;
             device.DepthStencilState = depth;
             device.RasterizerState = rasterizer;
+            for (int i = 0; i < textures.Length; i++)
+            {
+                device.Textures[i] = textures[i];
+                device.SamplerStates[i] = samplers[i];
+                textures[i] = null;
+                samplers[i] = null;
+            }
             spriteBatch.Begin(default, default, Main.DefaultSamplerState, default, RasterizerState.CullNone, null, Main.GameViewMatrix.EffectMatrix);
         }
     }
 
     private void DrawField(GasFluid field, bool tileCollision, float blend, bool additive)
     {
+        if (field is null || field.ChunkCount == 0)
+            return;
         Vector2 zoom = Main.GameViewMatrix.Zoom;
         Vector2 screenSize = new(Main.screenWidth, Main.screenHeight);
         Vector2 viewSize = screenSize / Math.Max(0.25f, Math.Min(zoom.X, zoom.Y));
         Vector2 minimum = (screenSize - viewSize) * 0.5f - new Vector2(16f);
         Vector2 maximum = (screenSize + viewSize) * 0.5f + new Vector2(16f);
-        mesh.Build(field, tileCollision, blend, additive, Main.screenPosition, minimum, maximum, ReadLighting, 2f / Math.Max(1f, Math.Max(zoom.X, zoom.Y)));
-        if (mesh.IndexCount == 0)
-            return;
-        foreach (EffectPass pass in effect.CurrentTechnique.Passes)
-        {
-            pass.Apply();
-            Main.instance.GraphicsDevice.DrawUserIndexedPrimitives(PrimitiveType.TriangleList, mesh.Vertices, 0, mesh.VertexCount, mesh.Indices, 0, mesh.IndexCount / 3);
-        }
+        Matrix transform = Main.GameViewMatrix.EffectMatrix * Matrix.CreateOrthographicOffCenter(0f, Main.screenWidth, Main.screenHeight, 0f, -1f, 1f);
+        fieldRenderer.Draw(field, tileCollision, blend, additive, Main.screenPosition, minimum, maximum, readLighting, readTerrain,
+            transform, 2f / Math.Max(1f, Math.Max(zoom.X, zoom.Y)));
     }
 
-    private static Vector3 ReadLighting(int x, int y)
-        => Lighting.GetColor(Math.Clamp(x, 0, Main.maxTilesX - 1), Math.Clamp(y, 0, Main.maxTilesY - 1)).ToVector3();
+    private static Color ReadLighting(int x, int y)
+        => Lighting.GetColor(Math.Clamp(x, 0, Main.maxTilesX - 1), Math.Clamp(y, 0, Main.maxTilesY - 1));
+
+    private static GasTileShape ReadTerrain(int x, int y)
+    {
+        if (!WorldGen.InWorld(x, y, 1))
+            return GasTileShape.Solid;
+        Tile tile = Main.tile[x, y];
+        if (!tile.HasUnactuatedTile || !Main.tileSolid[tile.TileType] || Main.tileSolidTop[tile.TileType])
+            return GasTileShape.Empty;
+        if (tile.IsHalfBlock)
+            return GasTileShape.HalfBlock;
+        return tile.Slope switch
+        {
+            SlopeType.SlopeDownRight => GasTileShape.DownRight,
+            SlopeType.SlopeDownLeft => GasTileShape.DownLeft,
+            SlopeType.SlopeUpRight => GasTileShape.UpRight,
+            SlopeType.SlopeUpLeft => GasTileShape.UpLeft,
+            _ => GasTileShape.Solid
+        };
+    }
 
     private static void AddLights(GasFluid field, ref int budget)
     {
-        if (field is null || budget <= 0)
+        if (field is null || !field.HasLight || budget <= 0)
             return;
         float zoom = Math.Max(0.25f, Main.GameViewMatrix.Zoom.X);
         Vector2 view = new Vector2(Main.screenWidth, Main.screenHeight) / zoom;
@@ -149,7 +177,8 @@ public sealed class GasRenderer : ModSystem
             ModContent.GetInstance<PixelationSystem>().UnregisterPersistentRenderAction(RenderLayer.BeforeSolidTiles, persistentDraw);
         alphaRegistered = false;
         persistentDraw = null;
-        BasicEffect old = effect;
+        GasFieldRenderer old = fieldRenderer;
+        fieldRenderer = null;
         effect = null;
         Main.QueueMainThreadAction(() => old?.Dispose());
     }

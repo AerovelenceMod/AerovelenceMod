@@ -31,7 +31,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
             dust.customData = dust.scale;
 
             dust.frame = new Rectangle(0, 0, 64, 64);
-            dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            dust.shader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
         }
 
         public override bool Update(Dust dust)

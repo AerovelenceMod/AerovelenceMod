@@ -68,11 +68,7 @@ namespace AerovelenceMod.Common.Bases
             Player player = Main.player[Projectile.owner];
             player.heldProj = Projectile.whoAmI;
 
-            float angleToProj = 0;
-            if (Projectile.owner == Main.myPlayer)
-            {
-                angleToProj = (Projectile.Center - (player.MountedCenter)).ToRotation();
-            }
+            float angleToProj = (Projectile.Center - player.MountedCenter).ToRotation();
 
             //Store player direction
             if (firstFrame)
@@ -111,7 +107,7 @@ namespace AerovelenceMod.Common.Bases
             if (firstFrame)
             {
                 //For drawing correctly
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.spriteDirection = Projectile.velocity.X > 0f ? 1 : -1;
 
                 storedTimeAfterEnd = timeAfterEnd;
                 easingProgress = startingProgress;
@@ -147,6 +143,7 @@ namespace AerovelenceMod.Common.Bases
 
                 currentAngle = startingAngle;
                 firstFrame = false;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
 
             }
 
@@ -221,5 +218,55 @@ namespace AerovelenceMod.Common.Bases
             return toReturn;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(SwingHalfAngle);
+            writer.Write(startingProgress);
+            writer.Write(offset);
+            writer.Write(positionOffset.X);
+            writer.Write(positionOffset.Y);
+            writer.Write(frameToStartSwing);
+            writer.Write(easingAdditionAmount);
+            writer.Write(timeAfterEnd);
+            writer.Write(progressToKill);
+            writer.Write(useMeleeSpeed);
+            writer.Write(timer);
+            writer.Write(startingAngle);
+            writer.Write(currentAngle);
+            writer.Write(originalAngle);
+            writer.Write(firstFrame);
+            writer.Write(easingProgress);
+            writer.Write(storedDirection);
+            writer.Write(storedTimeAfterEnd);
+            writer.Write(justHitTime);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            SwingHalfAngle = reader.ReadSingle();
+            startingProgress = reader.ReadSingle();
+            offset = reader.ReadSingle();
+            positionOffset = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            frameToStartSwing = reader.ReadInt32();
+            easingAdditionAmount = reader.ReadSingle();
+            timeAfterEnd = reader.ReadSingle();
+            progressToKill = reader.ReadSingle();
+            useMeleeSpeed = reader.ReadBoolean();
+            timer = reader.ReadInt32();
+            startingAngle = reader.ReadSingle();
+            currentAngle = reader.ReadSingle();
+            originalAngle = reader.ReadSingle();
+            firstFrame = reader.ReadBoolean();
+            easingProgress = reader.ReadSingle();
+            storedDirection = reader.ReadInt32();
+            storedTimeAfterEnd = reader.ReadSingle();
+            justHitTime = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 }

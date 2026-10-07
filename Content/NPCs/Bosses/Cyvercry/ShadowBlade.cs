@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         public override void AI()
         {
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             Player player = Main.player[(int)Projectile.ai[0]];
 
 

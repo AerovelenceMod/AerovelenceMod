@@ -148,9 +148,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
             Projectile.velocity = Vector2.Zero;
 
-            if (Projectile.owner == Main.myPlayer && timer == 0)
+            if (timer == 0)
             {
-                Angle = (Main.MouseWorld - Player.Center).ToRotation();
+                Projectile.UpdateAimAngle(Player.Center, ref Angle);
             }
 
             direction = Angle.ToRotationVector2();
@@ -289,11 +289,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                 Vector2 outVec2 = (target.Center - p.Center).SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.ToRadians(-128f)) * 8f;
 
 
-                int marstar = Projectile.NewProjectile(Projectile.GetSource_FromAI(), p.Center, outVec, ModContent.ProjectileType<MarbleStar>(), Projectile.damage, 4, p.whoAmI);
-                int marstar2 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), p.Center, outVec2, ModContent.ProjectileType<MarbleStar>(), Projectile.damage, 4, p.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int marstar = Projectile.NewProjectile(Projectile.GetSource_FromAI(), p.Center, outVec, ModContent.ProjectileType<MarbleStar>(), Projectile.damage, 4, p.whoAmI);
+                    int marstar2 = Projectile.NewProjectile(Projectile.GetSource_FromAI(), p.Center, outVec2, ModContent.ProjectileType<MarbleStar>(), Projectile.damage, 4, p.whoAmI);
 
-                SkillStrikeUtil.setSkillStrike(Main.projectile[marstar], 1.5f);
-                SkillStrikeUtil.setSkillStrike(Main.projectile[marstar2], 1.5f);
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[marstar], 1.5f);
+                    Main.projectile[marstar].netUpdate = true;
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[marstar2], 1.5f);
+                    Main.projectile[marstar2].netUpdate = true;
+                }
 
                 //Star dust
                 for (int sd = 0; sd < 11; sd++)

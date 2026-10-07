@@ -2065,12 +2065,12 @@ Items: {
 	}
 
 	CrystalCampfireItem: {
-		DisplayName: Crystal Campfire Item
+		DisplayName: Crystal Campfire
 		Tooltip: ""
 	}
 
 	CrystalTorchItem: {
-		DisplayName: Crystal Torch Item
+		DisplayName: Crystal Torch
 		Tooltip: ""
 	}
 

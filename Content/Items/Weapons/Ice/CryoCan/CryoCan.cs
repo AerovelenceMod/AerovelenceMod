@@ -67,6 +67,11 @@ public sealed class CryoCanHeld : ModProjectile
 {
     public override string Texture => "AerovelenceMod/Content/Items/Weapons/Ice/CryoCan/CryoCan";
     public override Terraria.Localization.LocalizedText DisplayName => ModContent.GetInstance<CryoCan>().DisplayName;
+    private static readonly GasSettings aerosol = GasSettings.ForAerosol() with
+    {
+        Color = new Color(35, 165, 255),
+        ColorFadeRate = 0.065f
+    };
     private int age;
 
     public override void SetDefaults()
@@ -100,7 +105,7 @@ public sealed class CryoCanHeld : ModProjectile
                 Projectile.Kill();
                 return;
             }
-            Vector2 aim = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
+            Vector2 aim = (Projectile.AimWorld() - player.MountedCenter).SafeNormalize(Vector2.UnitX * player.direction);
             if (Vector2.DistanceSquared(aim, Projectile.velocity) > 0.0001f || age % 12 == 0)
             {
                 Projectile.velocity = aim;
@@ -132,12 +137,7 @@ public sealed class CryoCanHeld : ModProjectile
             {
                 float shimmer = 0.62f + MathF.Sin(Main.GameUpdateCount * 0.035f) * 0.06f;
                 Color settled = Color.Lerp(new Color(70, 220, 245), new Color(235, 255, 255), shimmer);
-                GasSettings settings = GasSettings.ForAerosol() with
-                {
-                    Color = new Color(35, 165, 255),
-                    FadeColor = settled,
-                    ColorFadeRate = 0.065f
-                };
+                GasSettings settings = aerosol with { FadeColor = settled };
                 GasUtil.Emit(Projectile.GetSource_FromThis(), muzzle, direction * player.HeldItem.shootSpeed, settings, Projectile.damage, player.whoAmI);
             }
         }

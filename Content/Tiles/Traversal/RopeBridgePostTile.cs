@@ -6,10 +6,12 @@ namespace AerovelenceMod.Content.Tiles.Traversal
     public sealed class RopeBridgePostTile : RopePost
     {
         public override int Height => 3;
+        public override string Texture => "AerovelenceMod/Content/Tiles/Traversal/RopeBridgePostTile";
 
         public override void SetStaticDefaults()
         {
             base.SetStaticDefaults();
+            TileObjectData.newTile.StyleHorizontal = true;
             TileObjectData.addTile(Type);
             RegisterItemDrop(ModContent.ItemType<RopeBridgePost>());
             AddMapEntry(new Color(120, 90, 57), this.Localize("Rope Bridge Post"));
@@ -22,17 +24,20 @@ namespace AerovelenceMod.Content.Tiles.Traversal
                 RopeSpanSystem.ClickPost(Bottom(i, j), false);
             return true;
         }
+
+        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+            => DrawPost(i, j, spriteBatch, Main.tile[i, j].TileFrameY / 18 % Height, false, column: Main.tile[i, j].TileFrameX / 18);
     }
 
     public sealed class RopeBridgePost : TranslatableModItem
     {
-        public override string Texture => "Terraria/Images/Item_" + ItemID.WoodenBeam;
+        public override string Texture => "AerovelenceMod/Content/Tiles/Traversal/RopeBridgePostItem";
 
         public override void SetStaticDefaults()
         {
             this.AddName(Language.Default, "Rope Bridge Post")
-                .AddTooltip(Language.Default, "Right-click two posts with rope to connect"
-                    + "\nConsumes 2 rope per section");
+                .AddTooltip(Language.Default, "Right-click two posts with ropes or chains to connect"
+                    + "\nConsumes 2 ropes or chains per section");
         }
 
         public override void SetDefaults()

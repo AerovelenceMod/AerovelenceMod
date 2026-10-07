@@ -311,7 +311,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 

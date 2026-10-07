@@ -302,7 +302,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet
         private readonly int head;
         internal BabyCondurtleProfile(string path, string headPath)
         {
-            texture = ModContent.Request<Texture2D>(path);
+            texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(path));
             head = ModContent.GetModHeadSlot(headPath);
         }
         public int RollVariation() => 0;

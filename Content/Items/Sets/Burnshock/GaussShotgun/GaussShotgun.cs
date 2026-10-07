@@ -518,7 +518,7 @@ public class GaussianStar : ModProjectile
         Main.spriteBatch.Draw(Tex2, drawPos, null, Color.White, Projectile.rotation, Tex2.Size() / 2, scale, SpriteEffects.None, 0f);
 
         Main.spriteBatch.End();
-        Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
+        Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.EffectMatrix);
         Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
     }
 }

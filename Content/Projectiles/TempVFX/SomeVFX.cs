@@ -200,7 +200,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
         {
 
             //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value);
             trail1.trailColor = Color.White * 0f;
             trail1.trailPointLimit = 800;
             trail1.trailWidth = 60;
@@ -215,7 +215,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.TrailLogic();
 
             //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/LavaTrailV1").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/LavaTrailV1").Value);
             trail2.trailColor = Color.Wheat;
             trail2.trailPointLimit = 800;
             trail2.trailWidth = 40;
@@ -224,7 +224,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail2.pinch = true;
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/FireGradLoop").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/FireGradLoop").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.03f;
 
@@ -668,7 +668,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             #region trailInfo
             //Trail1 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/LineGraduation2").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/LineGraduation2").Value);
             trail1.trailColor = Color.OrangeRed;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = 15;
@@ -684,7 +684,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.TrailLogic();
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail4").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail4").Value);
             trail2.trailColor = Color.OrangeRed;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = 30;
@@ -767,7 +767,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             #region trailInfo
             //Trail1 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value);
             trail1.trailColor = Color.LightGreen;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = 15;
@@ -783,7 +783,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.TrailLogic();
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail4").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trail4").Value);
             trail2.trailColor = Color.DarkGreen;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = 10;
@@ -876,7 +876,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
 
             #region trailInfo
             //Trail1 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FireEdge").Value);
             //trail1.trailColor = Color.DodgerBlue;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = 30;
@@ -892,12 +892,12 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail1.TrailLogic();
 
             trail1.gradient = true;
-            trail1.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;
+            trail1.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value);
             trail1.shouldScrollColor = true;
             trail1.gradientTime = (float)Main.timeForVisualEffects * 0.03f;
 
             //Trail2
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
             trail2.trailColor = Color.White;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = 100;
@@ -910,7 +910,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
             trail2.trailRot = Projectile.velocity.ToRotation();
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = ((float)Main.timeForVisualEffects * 0.02f) + 0.3f;
 
@@ -1045,7 +1045,7 @@ namespace AerovelenceMod.Content.Projectiles.TempVFX
                 Projectile.Kill();
 
             //trail
-            relativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/gooeyLightningDim").Value;
+            relativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/gooeyLightningDim").Value);
             relativeTrail.trailColor = new Color(78, 225, 245) * 0.75f;
             relativeTrail.trailPointLimit = 800;
             relativeTrail.trailWidth = 18;

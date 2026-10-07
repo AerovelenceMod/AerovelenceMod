@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
-
+using System.Runtime.Intrinsics;
+using System.Runtime.InteropServices;
+using Microsoft.Xna.Framework;
 using Vector4 = System.Numerics.Vector4;
 
 namespace AerovelenceMod.Common.Systems.Gas;
@@ -35,6 +37,8 @@ internal sealed class GasFluid
     public const int ChunkPixels = CellSize * ChunkSize;
     public const int MaxChunks = 128;
     private const int ChunkCells = ChunkSize * ChunkSize;
+    internal static GasSimulationWorker Worker;
+    private readonly Action<int, int, float> advectVelocity, predictDye, correctDye;
 
     internal sealed class Chunk
     {
@@ -50,14 +54,17 @@ internal sealed class GasFluid
     private readonly Dictionary<int, GasDye> pendingInjection;
     private readonly int[] active;
     private readonly int[][] parityCells;
+    private readonly int[] parityCounts = new int[2];
     private readonly int[] left;
     private readonly int[] right;
     private readonly int[] up;
     private readonly int[] down;
+    private readonly int[] neighborChunks;
     private readonly int[] cellX;
     private readonly int[] cellY;
     private readonly bool[] solid;
     private readonly ushort[] solidBlocks;
+    private readonly ushort[] dyeBlocks;
     private readonly float[] divergence;
     private readonly float[] source;
     private readonly float[] curl;
@@ -77,13 +84,22 @@ internal sealed class GasFluid
     private int activeCount;
     private bool topologyDirty;
     private bool pressureTopologyDirty = true;
+    private bool reclaimExhausted;
     private int cachedX = int.MinValue;
     private int cachedY = int.MinValue;
     private int cachedOffset;
     public int Revision { get; private set; }
-    public IEnumerable<Chunk> Chunks => chunks.Values;
+    public bool HasLight { get; private set; }
+    public Dictionary<long, Chunk>.ValueCollection Chunks => chunks.Values;
     public int ChunkCount => chunks.Count;
-    public int CellCount => activeCount;
+    public int CellCount
+    {
+        get
+        {
+            Rebuild();
+            return activeCount;
+        }
+    }
     public int CellPixels { get; }
     public int ChunkWorldSize => CellPixels * ChunkSize;
     private int fastUpdateTicks;
@@ -92,6 +108,9 @@ internal sealed class GasFluid
     public GasFluid(Func<Vector2, bool> obstacle = null, int maxChunks = MaxChunks, int cellSize = CellSize)
     {
         this.obstacle = obstacle;
+        advectVelocity = AdvectVelocity;
+        predictDye = PredictDye;
+        correctDye = CorrectDye;
         CellPixels = cellSize <= 4 ? 4 : CellSize;
         if (CellPixels < CellSize)
             pendingInjection = new Dictionary<int, GasDye>();
@@ -103,10 +122,12 @@ internal sealed class GasFluid
         right = new int[capacity];
         up = new int[capacity];
         down = new int[capacity];
+        neighborChunks = new int[maxChunks * 9];
         cellX = new int[capacity];
         cellY = new int[capacity];
         solid = new bool[capacity];
         solidBlocks = new ushort[maxChunks];
+        dyeBlocks = new ushort[maxChunks];
         divergence = new float[capacity];
         source = new float[capacity];
         curl = new float[capacity];
@@ -144,7 +165,9 @@ internal sealed class GasFluid
     private void AddChunk(Point point)
     {
         long key = Key(point.X, point.Y);
-        if (chunks.ContainsKey(key) || free.Count == 0)
+        if (chunks.ContainsKey(key))
+            return;
+        if (free.Count == 0 && !ReclaimEmptyChunk(point))
             return;
         Chunk chunk = new() { Position = point, Offset = free.Pop() * ChunkCells + 1 };
         chunks.Add(key, chunk);
@@ -171,14 +194,17 @@ internal sealed class GasFluid
         if (!topologyDirty)
             return;
         activeCount = 0;
-        int red = 0;
-        int black = 0;
+        foreach (Chunk chunk in chunks.Values)
+        {
+            int slot = (chunk.Offset - 1) / ChunkCells;
+            for (int y = -1; y <= 1; y++)
+                for (int x = -1; x <= 1; x++)
+                    neighborChunks[slot * 9 + (y + 1) * 3 + x + 1] = chunks.TryGetValue(Key(chunk.Position.X + x, chunk.Position.Y + y), out Chunk neighbor) ? neighbor.Offset : 0;
+        }
         foreach (Chunk chunk in chunks.Values)
             for (int i = chunk.Offset; i < chunk.Offset + ChunkCells; i++)
             {
                 active[activeCount++] = i;
-                int parity = (cellX[i] + cellY[i]) & 1;
-                parityCells[parity][parity == 0 ? red++ : black++] = i;
                 left[i] = Index(cellX[i] - 1, cellY[i]);
                 right[i] = Index(cellX[i] + 1, cellY[i]);
                 up[i] = Index(cellX[i], cellY[i] - 1);
@@ -201,7 +227,6 @@ internal sealed class GasFluid
         for (int y = minChunkY; y <= maxChunkY; y++)
             for (int x = minChunkX; x <= maxChunkX; x++)
                 AddChunk(new Point(x, y));
-        Rebuild();
     }
 
     private void InjectCell(int i, Vector2 impulse, Vector3 color, float amount, float weight, float lift, float turbulence, float viscosity, float decay, float expansion, int damage, bool hostile, Vector4? appearance, Vector4? colorFade)
@@ -217,6 +242,7 @@ internal sealed class GasFluid
             Appearance = (appearance ?? new Vector4(1f, 0f, 0f, 1f)) * mass,
             ColorFade = (colorFade ?? Vector4.Zero) * mass
         };
+        HasLight |= injected.Appearance.Z > 0f;
         dye[i] += injected;
         float densityLimit = Math.Min(1f, 6f / Math.Max(0.0001f, dye[i].Density));
         dye[i] *= densityLimit;
@@ -285,28 +311,51 @@ internal sealed class GasFluid
     private float Face(float value, int a, int b) => solid[a] || solid[b] ? 0f : value;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private void CornerIndices(int x, int y, out int a, out int b, out int c, out int d)
+    private int SampleIndex(int origin, int x, int y)
     {
-        a = Index(x, y);
-        if ((x & 15) != 15 && (y & 15) != 15)
-        {
-            b = a == 0 ? 0 : a + 1;
-            c = a == 0 ? 0 : a + ChunkSize;
-            d = a == 0 ? 0 : a + ChunkSize + 1;
-            return;
-        }
-        b = Index(x + 1, y);
-        c = Index(x, y + 1);
-        d = Index(x + 1, y + 1);
+        if (origin == 0)
+            return Index(x, y);
+        int cx = (x >> 4) - (cellX[origin] >> 4) + 1;
+        int cy = (y >> 4) - (cellY[origin] >> 4) + 1;
+        int offset;
+        if (cx == 1 && cy == 1)
+            offset = ((origin - 1) & ~(ChunkCells - 1)) + 1;
+        else
+            offset = (uint)cx < 3 && (uint)cy < 3
+                ? neighborChunks[((origin - 1) / ChunkCells) * 9 + cy * 3 + cx]
+                : chunks.TryGetValue(Key(x >> 4, y >> 4), out Chunk chunk) ? chunk.Offset : 0;
+        return offset == 0 ? 0 : offset + ((y & 15) << 4) + (x & 15);
     }
 
-    private float SampleComponent(float x, float y, bool horizontal)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private void CornerIndices(int x, int y, out int a, out int b, out int c, out int d, int origin = 0)
+    {
+        a = SampleIndex(origin, x, y);
+        if ((x & 15) != 15)
+        {
+            b = a == 0 ? 0 : a + 1;
+            c = (y & 15) == 15 ? SampleIndex(origin, x, y + 1) : a == 0 ? 0 : a + ChunkSize;
+            d = c == 0 ? 0 : c + 1;
+            return;
+        }
+        b = SampleIndex(origin, x + 1, y);
+        if ((y & 15) != 15)
+        {
+            c = a == 0 ? 0 : a + ChunkSize;
+            d = b == 0 ? 0 : b + ChunkSize;
+            return;
+        }
+        c = SampleIndex(origin, x, y + 1);
+        d = SampleIndex(origin, x + 1, y + 1);
+    }
+
+    private float SampleComponent(float x, float y, bool horizontal, int origin = 0)
     {
         int ix = (int)MathF.Floor(x);
         int iy = (int)MathF.Floor(y);
         float fx = x - ix;
         float fy = y - iy;
-        CornerIndices(ix, iy, out int a, out int b, out int c, out int d);
+        CornerIndices(ix, iy, out int a, out int b, out int c, out int d, origin);
         float va = horizontal ? Face(velocity[a].X, a, right[a]) : Face(velocity[a].Y, a, down[a]);
         float vb = horizontal ? Face(velocity[b].X, b, right[b]) : Face(velocity[b].Y, b, down[b]);
         float vc = horizontal ? Face(velocity[c].X, c, right[c]) : Face(velocity[c].Y, c, down[c]);
@@ -314,12 +363,15 @@ internal sealed class GasFluid
         return MathHelper.Lerp(MathHelper.Lerp(va, vb, fx), MathHelper.Lerp(vc, vd, fx), fy);
     }
 
-    private Vector2 Trace(Vector2 origin, Vector2 displacement)
+    private Vector2 Trace(Vector2 origin, Vector2 displacement, int near = 0)
     {
-        float distance = displacement.Length();
-        if (distance < 0.00001f)
+        const float epsilon = 0.00001f;
+        float distanceSquared = displacement.LengthSquared();
+        if (distanceSquared <= epsilon * epsilon && displacement.Length() < epsilon)
             return origin;
-        displacement *= Math.Min(1f, (CellSize * 5f / CellPixels) / distance);
+        float maxDistance = CellSize * 5f / CellPixels;
+        if (!(distanceSquared <= maxDistance * maxDistance))
+            displacement *= Math.Min(1f, maxDistance / displacement.Length());
         if (obstacle is null)
             return origin + displacement;
         Vector2 destination = origin + displacement;
@@ -328,7 +380,7 @@ internal sealed class GasFluid
         if ((originX >> 4) == ((int)MathF.Floor(destination.X) >> 4)
             && (originY >> 4) == ((int)MathF.Floor(destination.Y) >> 4))
         {
-            int originIndex = Index(originX, originY);
+            int originIndex = SampleIndex(near, originX, originY);
             int blocks = originIndex == 0 ? 0 : solidBlocks[(originIndex - 1) / ChunkCells];
             if (blocks == 0)
                 return destination;
@@ -341,12 +393,16 @@ internal sealed class GasFluid
             if ((blocks & mask) == 0)
                 return destination;
         }
+        else if (!ContainsBlocks(solidBlocks, near, Math.Min(originX, (int)MathF.Floor(destination.X)),
+            Math.Min(originY, (int)MathF.Floor(destination.Y)), Math.Max(originX, (int)MathF.Floor(destination.X)),
+            Math.Max(originY, (int)MathF.Floor(destination.Y))))
+            return destination;
         int steps = Math.Max(1, (int)MathF.Ceiling(displacement.Length() * 3f));
         Vector2 last = origin;
         for (int s = 1; s <= steps; s++)
         {
             Vector2 point = origin + displacement * (s / (float)steps);
-            int i = Index((int)MathF.Floor(point.X), (int)MathF.Floor(point.Y));
+            int i = SampleIndex(near, (int)MathF.Floor(point.X), (int)MathF.Floor(point.Y));
             if (solid[i])
                 return last;
             last = point;
@@ -354,7 +410,7 @@ internal sealed class GasFluid
         return last;
     }
 
-    private void Corners(GasDye[] field, Vector2 point, out GasDye a, out GasDye b, out GasDye c, out GasDye d, out float fx, out float fy)
+    private void Corners(GasDye[] field, Vector2 point, out GasDye a, out GasDye b, out GasDye c, out GasDye d, out float fx, out float fy, int origin = 0)
     {
         float x = point.X - 0.5f;
         float y = point.Y - 0.5f;
@@ -362,19 +418,27 @@ internal sealed class GasFluid
         int iy = (int)MathF.Floor(y);
         fx = x - ix;
         fy = y - iy;
-        CornerIndices(ix, iy, out int ia, out int ib, out int ic, out int id);
+        CornerIndices(ix, iy, out int ia, out int ib, out int ic, out int id, origin);
         a = field[ia];
         b = field[ib];
         c = field[ic];
         d = field[id];
     }
 
-    private GasDye SampleDye(GasDye[] field, Vector2 point)
+    private GasDye SampleDye(GasDye[] field, Vector2 point, int origin = 0)
     {
-        Corners(field, point, out GasDye a, out GasDye b, out GasDye c, out GasDye d, out float fx, out float fy);
-        if (a.Density == 0f && b.Density == 0f && c.Density == 0f && d.Density == 0f)
+        float x = point.X - 0.5f;
+        float y = point.Y - 0.5f;
+        int ix = (int)MathF.Floor(x);
+        int iy = (int)MathF.Floor(y);
+        float fx = x - ix;
+        float fy = y - iy;
+        CornerIndices(ix, iy, out int a, out int b, out int c, out int d, origin);
+        if (field[a].Density == 0f && field[b].Density == 0f && field[c].Density == 0f && field[d].Density == 0f)
             return default;
-        return (a * (1f - fx) + b * fx) * (1f - fy) + (c * (1f - fx) + d * fx) * fy;
+        if (fx == 0f && fy == 0f)
+            return field[a];
+        return (field[a] * (1f - fx) + field[b] * fx) * (1f - fy) + (field[c] * (1f - fx) + field[d] * fx) * fy;
     }
 
     public GasDye Sample(Vector2 position) => SampleDye(dye, position / CellPixels);
@@ -404,6 +468,7 @@ internal sealed class GasFluid
     }
     public float DensityAt(int x, int y) => dye[Index(x, y)].Density;
     public GasDye CellAt(int x, int y) => dye[Index(x, y)];
+    internal bool CellIsSolid(int x, int y) => solid[Index(x, y)];
     public GasDye RenderCell(int x, int y, float blend)
     {
         int i = Index(x, y);
@@ -430,12 +495,15 @@ internal sealed class GasFluid
     public Vector3 TileLight(int tileX, int tileY)
     {
         int cells = 16 / CellPixels;
+        int start = Index(tileX * cells, tileY * cells);
+        if (start == 0)
+            return Vector3.Zero;
         Vector3 brightest = Vector3.Zero;
         float brightness = 0f;
         for (int y = 0; y < cells; y++)
             for (int x = 0; x < cells; x++)
             {
-                GasDye cell = CellAt(tileX * cells + x, tileY * cells + y);
+                GasDye cell = dye[start + y * ChunkSize + x];
                 Vector3 light = GasAppearance.Light(cell.Optical, cell.Appearance);
                 float strength = light.LengthSquared();
                 if (strength <= brightness)
@@ -522,6 +590,7 @@ internal sealed class GasFluid
 
     public Vector2 FlowAt(Vector2 position)
     {
+        Rebuild();
         Vector2 point = position / CellPixels;
         return new Vector2(SampleComponent(point.X - 1f, point.Y - 0.5f, true), SampleComponent(point.X - 0.5f, point.Y - 1f, false)) * CellPixels;
     }
@@ -574,6 +643,7 @@ internal sealed class GasFluid
 
     public void ApplyVacuum(Vector2 position, Vector2 direction, bool radial, Func<Vector2, Vector2, bool> visible = null)
     {
+        reclaimExhausted = false;
         float range = radial ? 160f : 260f;
         Rebuild();
         for (int k = 0; k < activeCount; k++)
@@ -605,9 +675,11 @@ internal sealed class GasFluid
 
     public void Step(float timeStep = 1f)
     {
+        reclaimExhausted = false;
         if (chunks.Count == 0)
         {
             fastUpdateTicks = 0;
+            HasLight = false;
             return;
         }
         timeStep = Math.Clamp(timeStep, 0.25f, 2f);
@@ -616,6 +688,7 @@ internal sealed class GasFluid
         if (activeCount == 0)
         {
             fastUpdateTicks = 0;
+            HasLight = false;
             return;
         }
         if (Revision % 12 == 0 && obstacle is not null)
@@ -658,13 +731,47 @@ internal sealed class GasFluid
             StepCore(timeStep / steps);
         }
         pendingInjection?.Clear();
+        reclaimExhausted = false;
         if (fastUpdateTicks > 0)
             fastUpdateTicks--;
     }
 
     private void StepCore(float timeStep)
     {
-        for (int k = 0; k < activeCount; k++)
+        RunPass(advectVelocity, timeStep);
+        (velocity, velocityNext) = (velocityNext, velocity);
+        Array.Clear(dyeBlocks);
+        UpdateCurl();
+        ApplyForces(timeStep);
+        (velocity, velocityNext) = (velocityNext, velocity);
+        Project(CellPixels < CellSize ? 6 : 12);
+        RunPass(predictDye, timeStep);
+        RunPass(correctDye, timeStep);
+        (dye, dyeNext) = (dyeNext, dye);
+        Revision++;
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private Vector2 LimitVelocity(Vector2 value)
+    {
+        float limit = 2.5f * CellSize / CellPixels;
+        if (value.LengthSquared() <= limit * limit)
+            return value;
+        float speed = value.Length();
+        return speed > limit ? value * (limit / speed) : value;
+    }
+
+    private void RunPass(Action<int, int, float> pass, float timeStep)
+    {
+        if (activeCount < 8192 || Worker is null)
+            pass(0, activeCount, timeStep);
+        else
+            Worker.Run(pass, activeCount / ChunkCells, timeStep);
+    }
+
+    private void AdvectVelocity(int start, int end, float timeStep)
+    {
+        for (int k = start; k < end; k++)
         {
             int i = active[k];
             if (solid[i])
@@ -678,16 +785,29 @@ internal sealed class GasFluid
                 velocityNext[i] = Vector2.Zero;
                 continue;
             }
-            Vector2 traceX = Trace(faceX, -flowX * timeStep);
-            Vector2 traceY = Trace(faceY, -flowY * timeStep);
-            velocityNext[i] = new Vector2(SampleComponent(traceX.X - 1f, traceX.Y - 0.5f, true), SampleComponent(traceY.X - 0.5f, traceY.Y - 1f, false)) * (1f - 0.002f * timeStep);
+            bool blockedX = solid[right[i]] && velocity[i].X == 0f;
+            bool blockedY = solid[down[i]] && velocity[i].Y == 0f;
+            Vector2 traceX = blockedX ? faceX : Trace(faceX, -flowX * timeStep, i);
+            Vector2 traceY = blockedY ? faceY : Trace(faceY, -flowY * timeStep, i);
+            float x = blockedX ? 0f : SampleComponent(traceX.X - 1f, traceX.Y - 0.5f, true, i);
+            float y = blockedY ? 0f : SampleComponent(traceY.X - 0.5f, traceY.Y - 1f, false, i);
+            velocityNext[i] = new Vector2(x, y) * (1f - 0.002f * timeStep);
         }
-        (velocity, velocityNext) = (velocityNext, velocity);
+    }
+
+    private void UpdateCurl()
+    {
         for (int k = 0; k < activeCount; k++)
         {
             int i = active[k];
             curl[i] = (velocity[right[i]].Y - velocity[left[i]].Y - velocity[down[i]].X + velocity[up[i]].X) * 0.5f;
+            if (dye[i].Density > 0f)
+                dyeBlocks[(i - 1) / ChunkCells] |= (ushort)(1 << (((cellY[i] & 15) >> 2) * 4 + ((cellX[i] & 15) >> 2)));
         }
+    }
+
+    private void ApplyForces(float timeStep)
+    {
         for (int k = 0; k < activeCount; k++)
         {
             int i = active[k];
@@ -697,6 +817,11 @@ internal sealed class GasFluid
                 continue;
             }
             GasDye cell = dye[i];
+            if (cell.Material == Vector4.Zero)
+            {
+                velocityNext[i] = LimitVelocity(velocity[i]);
+                continue;
+            }
             float inverseDensity = 1f / Math.Max(0.001f, cell.Density);
             Vector2 gradient = new(Math.Abs(curl[right[i]]) - Math.Abs(curl[left[i]]), Math.Abs(curl[down[i]]) - Math.Abs(curl[up[i]]));
             gradient /= Math.Max(0.00001f, gradient.Length());
@@ -706,22 +831,31 @@ internal sealed class GasFluid
             Vector2 laplacian = velocity[left[i]] + velocity[right[i]] + velocity[up[i]] + velocity[down[i]] - velocity[i] * 4f;
             Vector2 value = velocity[i] + (laplacian * viscosity + force * confinement) * timeStep;
             value.Y -= cell.Material.X * 0.45f * timeStep * CellSize / CellPixels;
-            float speed = value.Length();
-            float limit = 2.5f * CellSize / CellPixels;
-            velocityNext[i] = speed > limit ? value * (limit / speed) : value;
+            velocityNext[i] = LimitVelocity(value);
         }
-        (velocity, velocityNext) = (velocityNext, velocity);
-        Project(CellPixels < CellSize ? 6 : 12);
+    }
 
-        for (int k = 0; k < activeCount; k++)
+    private void PredictDye(int start, int end, float timeStep)
+    {
+        for (int k = start; k < end; k++)
         {
             int i = active[k];
             Vector2 position = new(cellX[i] + 0.5f, cellY[i] + 0.5f);
             Vector2 flow = new((velocity[i].X + velocity[left[i]].X) * 0.5f, (velocity[i].Y + velocity[up[i]].Y) * 0.5f);
-            dyeTrace[i] = solid[i] ? position : Trace(position, -flow * timeStep);
-            predicted[i] = solid[i] ? default : SampleDye(dye, dyeTrace[i]);
+            if (solid[i] || (dye[i].Density == 0f && !ContainsDye(i, position - flow * timeStep)))
+            {
+                dyeTrace[i] = position;
+                predicted[i] = default;
+                continue;
+            }
+            dyeTrace[i] = Trace(position, -flow * timeStep, i);
+            predicted[i] = SampleDye(dye, dyeTrace[i], i);
         }
-        for (int k = 0; k < activeCount; k++)
+    }
+
+    private void CorrectDye(int start, int end, float timeStep)
+    {
+        for (int k = start; k < end; k++)
         {
             int i = active[k];
             if (solid[i] || (predicted[i].Density < 0.0003f && dye[i].Density < 0.0003f))
@@ -732,11 +866,17 @@ internal sealed class GasFluid
             }
             Vector2 position = new(cellX[i] + 0.5f, cellY[i] + 0.5f);
             Vector2 flow = new((velocity[i].X + velocity[left[i]].X) * 0.5f, (velocity[i].Y + velocity[up[i]].Y) * 0.5f);
-            GasDye reverse = SampleDye(predicted, Trace(position, flow * timeStep));
-            Corners(dye, dyeTrace[i], out GasDye a, out GasDye b, out GasDye c, out GasDye d, out _, out _);
-            GasDye min = GasDye.Min(GasDye.Min(a, b), GasDye.Min(c, d));
-            GasDye max = GasDye.Max(GasDye.Max(a, b), GasDye.Max(c, d));
-            GasDye corrected = GasDye.Clamp(predicted[i] + (dye[i] - reverse) * 0.5f, min, max);
+            GasDye corrected;
+            if (flow == Vector2.Zero)
+                corrected = predicted[i];
+            else
+            {
+                GasDye reverse = SampleDye(predicted, Trace(position, flow * timeStep, i), i);
+                Corners(dye, dyeTrace[i], out GasDye a, out GasDye b, out GasDye c, out GasDye d, out _, out _, i);
+                GasDye min = GasDye.Min(GasDye.Min(a, b), GasDye.Min(c, d));
+                GasDye max = GasDye.Max(GasDye.Max(a, b), GasDye.Max(c, d));
+                corrected = GasDye.Clamp(predicted[i] + (dye[i] - reverse) * 0.5f, min, max);
+            }
             float decay = corrected.Material.W / Math.Max(corrected.Density, 0.001f);
             corrected *= 1f / (1f + Math.Clamp(decay, 0.002f, 0.1f) * timeStep);
             if (corrected.ColorFade.W > 0f && corrected.Density >= 0.0003f)
@@ -749,8 +889,6 @@ internal sealed class GasFluid
             dyeNext[i] = corrected.Density < 0.0003f ? default : corrected;
             source[i] = 0f;
         }
-        (dye, dyeNext) = (dyeNext, dye);
-        Revision++;
     }
 
     internal void Project(int iterations)
@@ -769,9 +907,15 @@ internal sealed class GasFluid
         }
         if (pressureTopologyDirty)
         {
+            Array.Clear(parityCounts);
             for (int k = 0; k < activeCount; k++)
             {
                 int i = active[k];
+                if (!solid[i])
+                {
+                    int parity = (cellX[i] + cellY[i]) & 1;
+                    parityCells[parity][parityCounts[parity]++] = i;
+                }
                 pressureLeft[i] = solid[left[i]] ? 0 : left[i];
                 pressureRight[i] = solid[right[i]] ? 0 : right[i];
                 pressureUp[i] = solid[up[i]] ? 0 : up[i];
@@ -782,17 +926,39 @@ internal sealed class GasFluid
             pressureTopologyDirty = false;
         }
 
+        ref float values = ref MemoryMarshal.GetArrayDataReference(pressure);
+        ref float div = ref MemoryMarshal.GetArrayDataReference(divergence);
+        ref float inverse = ref MemoryMarshal.GetArrayDataReference(inverseNeighbors);
+        ref int pLeft = ref MemoryMarshal.GetArrayDataReference(pressureLeft);
+        ref int pRight = ref MemoryMarshal.GetArrayDataReference(pressureRight);
+        ref int pUp = ref MemoryMarshal.GetArrayDataReference(pressureUp);
+        ref int pDown = ref MemoryMarshal.GetArrayDataReference(pressureDown);
         for (int iteration = 0; iteration < iterations; iteration++)
             for (int parity = 0; parity < 2; parity++)
             {
                 int[] cells = parityCells[parity];
-                for (int k = 0; k < activeCount / 2; k++)
+                ref int indices = ref MemoryMarshal.GetArrayDataReference(cells);
+                int k = 0;
+                int count = parityCounts[parity];
+                if (Vector128.IsHardwareAccelerated)
+                    for (; k + 4 <= count; k += 4)
+                    {
+                        Vector128<float> sum = GatherPressure(ref values, ref pLeft, ref indices, k) + GatherPressure(ref values, ref pRight, ref indices, k)
+                            + GatherPressure(ref values, ref pUp, ref indices, k) + GatherPressure(ref values, ref pDown, ref indices, k);
+                        Vector128<float> value = Gather(ref values, ref indices, k);
+                        Vector128<float> next = value + ((sum - Gather(ref div, ref indices, k)) * Gather(ref inverse, ref indices, k) - value) * Vector128.Create(1.5f);
+                        Unsafe.Add(ref values, Unsafe.Add(ref indices, k)) = next.GetElement(0);
+                        Unsafe.Add(ref values, Unsafe.Add(ref indices, k + 1)) = next.GetElement(1);
+                        Unsafe.Add(ref values, Unsafe.Add(ref indices, k + 2)) = next.GetElement(2);
+                        Unsafe.Add(ref values, Unsafe.Add(ref indices, k + 3)) = next.GetElement(3);
+                    }
+                for (; k < count; k++)
                 {
-                    int i = cells[k];
-                    if (solid[i])
-                        continue;
-                    float sum = pressure[pressureLeft[i]] + pressure[pressureRight[i]] + pressure[pressureUp[i]] + pressure[pressureDown[i]];
-                    pressure[i] = MathHelper.Lerp(pressure[i], (sum - divergence[i]) * inverseNeighbors[i], 1.5f);
+                    int i = Unsafe.Add(ref indices, k);
+                    float sum = Unsafe.Add(ref values, Unsafe.Add(ref pLeft, i)) + Unsafe.Add(ref values, Unsafe.Add(ref pRight, i))
+                        + Unsafe.Add(ref values, Unsafe.Add(ref pUp, i)) + Unsafe.Add(ref values, Unsafe.Add(ref pDown, i));
+                    ref float value = ref Unsafe.Add(ref values, i);
+                    value = MathHelper.Lerp(value, (sum - Unsafe.Add(ref div, i)) * Unsafe.Add(ref inverse, i), 1.5f);
                 }
             }
         for (int k = 0; k < activeCount; k++)
@@ -802,6 +968,18 @@ internal sealed class GasFluid
             velocity[i].Y = Face(velocity[i].Y - pressure[down[i]] + pressure[i], i, down[i]);
         }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Vector128<float> Gather(ref float values, ref int cells, int start)
+        => Vector128.Create(Unsafe.Add(ref values, Unsafe.Add(ref cells, start)), Unsafe.Add(ref values, Unsafe.Add(ref cells, start + 1)),
+            Unsafe.Add(ref values, Unsafe.Add(ref cells, start + 2)), Unsafe.Add(ref values, Unsafe.Add(ref cells, start + 3)));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static Vector128<float> GatherPressure(ref float values, ref int neighbors, ref int cells, int start)
+        => Vector128.Create(Unsafe.Add(ref values, Unsafe.Add(ref neighbors, Unsafe.Add(ref cells, start))),
+            Unsafe.Add(ref values, Unsafe.Add(ref neighbors, Unsafe.Add(ref cells, start + 1))),
+            Unsafe.Add(ref values, Unsafe.Add(ref neighbors, Unsafe.Add(ref cells, start + 2))),
+            Unsafe.Add(ref values, Unsafe.Add(ref neighbors, Unsafe.Add(ref cells, start + 3))));
 
     private void GrowAndPrune()
     {
@@ -843,36 +1021,131 @@ internal sealed class GasFluid
             chunk.EmptyTicks = peak < 0.001f ? chunk.EmptyTicks + 1 : 0;
         }
         foreach (Point point in pending)
-        {
-            AddChunk(point);
             if (chunks.TryGetValue(Key(point.X, point.Y), out Chunk supported))
                 supported.EmptyTicks = 0;
-        }
+        foreach (Point point in pending)
+            AddChunk(point);
         pending.Clear();
         foreach (Chunk chunk in chunks.Values)
             if (chunk.EmptyTicks > 60)
                 pending.Add(chunk.Position);
         foreach (Point point in pending)
+            RemoveChunk(chunks[Key(point.X, point.Y)]);
+    }
+
+    private bool ContainsDye(int i, Vector2 destination)
+    {
+        int x = (int)MathF.Floor(destination.X - 0.5f);
+        int y = (int)MathF.Floor(destination.Y - 0.5f);
+        int minX = Math.Min(cellX[i], x);
+        int minY = Math.Min(cellY[i], y);
+        int maxX = Math.Max(cellX[i], x) + 1;
+        int maxY = Math.Max(cellY[i], y) + 1;
+        if ((minX >> 4) == (maxX >> 4) && (minY >> 4) == (maxY >> 4))
         {
-            long key = Key(point.X, point.Y);
-            Chunk chunk = chunks[key];
-            for (int i = chunk.Offset; i < chunk.Offset + ChunkCells; i++)
-            {
-                dye[i] = dyeNext[i] = predicted[i] = default;
-                pendingInjection?.Remove(i);
-                velocity[i] = velocityNext[i] = Vector2.Zero;
-                pressure[i] = source[i] = curl[i] = 0f;
-                solid[i] = false;
-            }
-            chunks.Remove(key);
-            cachedX = int.MinValue;
-            free.Push((chunk.Offset - 1) / ChunkCells);
-            topologyDirty = true;
+            int blocks = dyeBlocks[(i - 1) / ChunkCells];
+            int first = (minX & 15) >> 2;
+            int last = (maxX & 15) >> 2;
+            int row = ((1 << (last + 1)) - 1) & ~((1 << first) - 1);
+            for (int by = (minY & 15) >> 2; by <= (maxY & 15) >> 2; by++)
+                if ((blocks & (row << (by * 4))) != 0)
+                    return true;
+            return false;
         }
+        return ContainsBlocks(dyeBlocks, i, minX, minY, maxX, maxY);
+    }
+
+    private bool ContainsBlocks(ushort[] occupancy, int origin, int minX, int minY, int maxX, int maxY)
+    {
+        for (int cy = minY >> 4; cy <= maxY >> 4; cy++)
+            for (int cx = minX >> 4; cx <= maxX >> 4; cx++)
+            {
+                int index = SampleIndex(origin, cx * ChunkSize, cy * ChunkSize);
+                if (index == 0)
+                    continue;
+                int blocks = occupancy[(index - 1) / ChunkCells];
+                if (blocks == 0)
+                    continue;
+                int x1 = (Math.Max(minX, cx * ChunkSize) & 15) >> 2;
+                int x2 = (Math.Min(maxX, cx * ChunkSize + ChunkSize - 1) & 15) >> 2;
+                int y1 = (Math.Max(minY, cy * ChunkSize) & 15) >> 2;
+                int y2 = (Math.Min(maxY, cy * ChunkSize + ChunkSize - 1) & 15) >> 2;
+                int row = ((1 << (x2 + 1)) - 1) & ~((1 << x1) - 1);
+                for (int by = y1; by <= y2; by++)
+                    if ((blocks & (row << (by * 4))) != 0)
+                        return true;
+            }
+        return false;
+    }
+
+    private bool ReclaimEmptyChunk(Point position)
+    {
+        if (reclaimExhausted) return false;
+        Chunk candidate = null;
+        long farthest = 0;
+        foreach (Chunk chunk in chunks.Values)
+        {
+            if (chunk.EmptyTicks == 0 || chunk.Peak >= 0.001f)
+                continue;
+            long dx = (long)chunk.Position.X - position.X;
+            long dy = (long)chunk.Position.Y - position.Y;
+            long distance = dx * dx + dy * dy;
+            if (distance <= farthest)
+                continue;
+            bool empty = true;
+            for (int i = chunk.Offset; i < chunk.Offset + ChunkCells; i++)
+                if (dye[i].Density >= 0.001f || dyeNext[i].Density >= 0.001f)
+                {
+                    empty = false;
+                    break;
+                }
+            if (!empty)
+                continue;
+            int cellX = chunk.Position.X * ChunkSize;
+            int cellY = chunk.Position.Y * ChunkSize;
+            for (int y = -4; y < ChunkSize + 6 && empty; y++)
+                for (int x = -4; x < ChunkSize + 6; x++)
+                {
+                    int i = Index(cellX + x, cellY + y);
+                    if (dye[i].Density > 0.003f || dyeNext[i].Density > 0.003f)
+                    {
+                        empty = false;
+                        break;
+                    }
+                }
+            if (!empty)
+                continue;
+            candidate = chunk;
+            farthest = distance;
+        }
+        if (candidate is null)
+        {
+            reclaimExhausted = true;
+            return false;
+        }
+        RemoveChunk(candidate);
+        return true;
+    }
+
+    private void RemoveChunk(Chunk chunk)
+    {
+        for (int i = chunk.Offset; i < chunk.Offset + ChunkCells; i++)
+        {
+            dye[i] = dyeNext[i] = predicted[i] = default;
+            pendingInjection?.Remove(i);
+            velocity[i] = velocityNext[i] = Vector2.Zero;
+            pressure[i] = source[i] = curl[i] = 0f;
+            solid[i] = false;
+        }
+        chunks.Remove(Key(chunk.Position.X, chunk.Position.Y));
+        cachedX = int.MinValue;
+        free.Push((chunk.Offset - 1) / ChunkCells);
+        topologyDirty = true;
     }
 
     public float TotalDensity()
     {
+        Rebuild();
         float total = 0f;
         for (int k = 0; k < activeCount; k++) total += dye[active[k]].Density;
         return total;
@@ -880,6 +1153,7 @@ internal sealed class GasFluid
 
     public float DivergenceNorm()
     {
+        Rebuild();
         float sum = 0f;
         for (int k = 0; k < activeCount; k++)
         {

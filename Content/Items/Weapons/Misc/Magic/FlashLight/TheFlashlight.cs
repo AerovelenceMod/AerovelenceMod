@@ -134,10 +134,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
 
             if (player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Angle = (Main.MouseWorld - (player.MountedCenter)).ToRotation();
-                }
+                Projectile.UpdateAimAngle(player.MountedCenter, ref Angle);
 
                 direction = Angle.ToRotationVector2();
                 player.ChangeDir(direction.X > 0 ? 1 : -1);
@@ -271,7 +268,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight
                             if ((!(npc.lifeMax < 10 || npc.type == NPCID.TargetDummy || npc.catchItem != 0) && ignoreCritters) || !ignoreCritters)
                             {
                                 //cache this
-                                float compDist = Main.MouseWorld.DistanceSQ(npc.Center);
+                                float compDist = Projectile.AimWorld().DistanceSQ(npc.Center);
                                 //Distance is shorter than current distance, but did not overflow (underflow)
                                 if (compDist < dist && compDist > 0)
                                 {

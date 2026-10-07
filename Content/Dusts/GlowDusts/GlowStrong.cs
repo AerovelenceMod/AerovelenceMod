@@ -170,7 +170,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
         private Texture2D circleGlow;
 
 
-        public override void Load() => circleGlow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/PartiGlowPMA");
+        public override void Load() => circleGlow = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/PartiGlowPMA"));
 
         public override void Unload() => circleGlow = null;
 

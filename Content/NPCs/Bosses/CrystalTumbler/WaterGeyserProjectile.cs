@@ -40,8 +40,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             if (timer == 0)
             {
                 initialPosition = Projectile.Center;
-                smokeTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Smoke/smoke_01").Value;
-                slashTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/pixelKennySlash").Value;
+                smokeTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Smoke/smoke_01").Value);
+                slashTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Flare/pixelKennySlash").Value);
             }
             if (Projectile.position.Y <= initialPosition.Y - stopHeight || timer >= ascendTime)
             {
@@ -69,7 +69,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             }
             ApplyWetDebuff();
 
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value);
             trail1.trailPointLimit = (int)(1200 * fadeFactor);
             trail2.trailMaxLength = 1000 * fadeFactor;
             trail1.trailWidth = (int)(100 * fadeFactor);
@@ -82,7 +82,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail1.trailPos = Projectile.Center;
             trail1.TrailLogic();
 
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
             trail2.trailPointLimit = (int)(1200 * fadeFactor);
             trail2.trailMaxLength = 1000 * fadeFactor;
             trail2.trailWidth = (int)(120 * fadeFactor);
@@ -91,7 +91,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             trail2.pinchAmount = 0.55f;
 
             trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingWaterGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingWaterGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.01f;
 

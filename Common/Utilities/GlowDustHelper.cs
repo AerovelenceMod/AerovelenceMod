@@ -21,7 +21,7 @@ namespace AerovelenceMod.Common.Utilities
         {
 
             Dust p = Dust.NewDustPerfect(position, type, velocity, newColor: color, Scale: scale);
-            p.shader = effecty.UseColor(color).UseOpacity(threshold).UseSaturation(strength);
+            p.shader = effecty?.UseColor(color).UseOpacity(threshold).UseSaturation(strength);
             //Position, type, velocity, Color, scale, threshold, strength
             return p;
         }
@@ -29,7 +29,7 @@ namespace AerovelenceMod.Common.Utilities
         public static Dust DrawGlowDustPerfect(Vector2 position, int type, Vector2 velocity, Color color, float scale, ArmorShaderData effecty)
         {
             Dust p = Dust.NewDustPerfect(position, type, velocity, newColor: color, Scale: scale);
-            p.shader = effecty.UseColor(color).UseOpacity(0.4f).UseSaturation(1.2f);
+            p.shader = effecty?.UseColor(color).UseOpacity(0.4f).UseSaturation(1.2f);
             return p;
         }
         #endregion
@@ -40,7 +40,7 @@ namespace AerovelenceMod.Common.Utilities
         {
             //position, width, height, type, speed x, speed y, color, scale, effect || threshold, strength
             int d = Dust.NewDust(position, width, height, type, newColor: dustColor, Scale: scale);
-            Main.dust[d].shader = effect.UseColor(dustColor).UseOpacity(0.4f).UseSaturation(1.2f);
+            Main.dust[d].shader = effect?.UseColor(dustColor).UseOpacity(0.4f).UseSaturation(1.2f);
             return d;
         }
 
@@ -49,7 +49,7 @@ namespace AerovelenceMod.Common.Utilities
         {
             //position, width, height, type, speed x, speed y, color, scale, effect || threshold, strength
             int d = Dust.NewDust(position, width, height, type, newColor: dustColor, Scale: scale);
-            Main.dust[d].shader = effect.UseColor(dustColor).UseOpacity(threshold).UseSaturation(strength);
+            Main.dust[d].shader = effect?.UseColor(dustColor).UseOpacity(threshold).UseSaturation(strength);
             return d;
         }
         //with speedx speedy
@@ -57,7 +57,7 @@ namespace AerovelenceMod.Common.Utilities
         {
             //position, width, height, type, speed x, speed y, color, scale, effect || threshold, strength
             int d = Dust.NewDust(position, width, height, type, SpeedX: velX, SpeedY: velY, newColor: dustColor, Scale: scale);
-            Main.dust[d].shader = effect.UseColor(dustColor).UseOpacity(0.4f).UseSaturation(1.2f);
+            Main.dust[d].shader = effect?.UseColor(dustColor).UseOpacity(0.4f).UseSaturation(1.2f);
             return d;
         }
 
@@ -66,7 +66,7 @@ namespace AerovelenceMod.Common.Utilities
         {
             //position, width, height, type, speed x, speed y, color, scale, effect || threshold, strength
             int d = Dust.NewDust(position, width, height, type, SpeedX: velX, SpeedY: velY, newColor: dustColor, Scale: scale);
-            Main.dust[d].shader = effect.UseColor(dustColor).UseOpacity(threshold).UseSaturation(strength);
+            Main.dust[d].shader = effect?.UseColor(dustColor).UseOpacity(threshold).UseSaturation(strength);
             return d;
         }
 

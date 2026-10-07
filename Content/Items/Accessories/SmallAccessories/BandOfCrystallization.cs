@@ -203,7 +203,7 @@ namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 
         internal static void Crystal(Vector2 center, float rotation, Vector2 size, float opacity = 1f, float charge = 0.3f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(CrystalTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(CrystalTexture).Value);
             Vector2 screen = center - Main.screenPosition;
             Vector2 scale = size / texture.Size();
             for (int i = 0; i < 4; i++)

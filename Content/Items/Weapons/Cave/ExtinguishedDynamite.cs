@@ -114,6 +114,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Cave
                         feh.Smokes.Add(newSmoke);
                     }
                 }
+                Main.projectile[explosion].netUpdate = true;
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
                     NPC nearbyNPC = Main.npc[i];

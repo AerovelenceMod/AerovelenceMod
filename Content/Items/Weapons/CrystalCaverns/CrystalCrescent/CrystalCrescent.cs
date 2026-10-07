@@ -110,7 +110,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
 
             #region Trails
 
-            relativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value;
+            relativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value);
             relativeTrail.trailColor = Color.MidnightBlue;
             relativeTrail.trailPointLimit = 75;
             relativeTrail.trailWidth = 30;
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
 
             relativeTrail.trailPos = Projectile.Center + Projectile.rotation.ToRotationVector2().RotatedBy(-1f) * (60) - Main.player[Projectile.owner].Center;
 
-            counterrelativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value;
+            counterrelativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value);
             counterrelativeTrail.trailColor = Color.SteelBlue;
             counterrelativeTrail.trailPointLimit = 75;
             counterrelativeTrail.trailWidth = 30;
@@ -162,8 +162,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
 
             if (Projectile.ai[0] == 0f)
             {
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
-                Projectile.velocity = Vector2.Normalize(player.Center.DirectionTo(Main.MouseWorld)) + player.velocity / VelocityMult / 2;
+                Projectile.spriteDirection = Projectile.AimWorld().X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.velocity = Vector2.Normalize(player.Center.DirectionTo(Projectile.AimWorld())) + player.velocity / VelocityMult / 2;
                 initialVelocity = Projectile.velocity;
             }
             else
@@ -304,7 +304,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
             }
 
             //Trail
-            relativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value;
+            relativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value);
             relativeTrail.trailColor = Color.MidnightBlue;
             relativeTrail.trailPointLimit = 75;
             relativeTrail.trailWidth = 20;
@@ -316,7 +316,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
 
             relativeTrail.trailPos = Projectile.Center / 2 + Projectile.rotation.ToRotationVector2().RotatedBy(-1f) * (60 + intensity * 30) / 2 - Main.player[Projectile.owner].Center / 2;
 
-            counterrelativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value;
+            counterrelativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/RealLightningBloom").Value);
             counterrelativeTrail.trailColor = Color.SteelBlue;
             counterrelativeTrail.trailPointLimit = 75;
             counterrelativeTrail.trailWidth = 20;
@@ -347,6 +347,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.CrystalCrescent
 
         public override void OnKill(int timeLeft)
         {
+            if (Projectile.owner != Main.myPlayer) return;
             Player player = Main.player[Projectile.owner];
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), player.Center, Vector2.Zero, ModContent.ProjectileType<CrystalCrescentThrowProj>(), Projectile.damage, Projectile.knockBack, player.whoAmI, 0, tick ? -1 : 1);
 

@@ -186,14 +186,14 @@ namespace AerovelenceMod.Content.Items.Accessories.Boss
             ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
             {
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, null, null, null, null, Main.GameViewMatrix.EffectMatrix);
 
                 Main.spriteBatch.Draw(Ball, oldPos - Main.screenPosition, null, Color.White, Projectile.rotation + timer * -0.05f, Ball.Size() / 2 * auraSize, Projectile.scale * 0.40f * scaley, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(Ball, oldPos - Main.screenPosition, null, Color.DodgerBlue, Projectile.rotation + timer * 0.02f, Ball.Size() / 2 * auraSize, Projectile.scale * 0.5f * scaley, SpriteEffects.None, 0f);
                 Main.spriteBatch.Draw(Ball, oldPos - Main.screenPosition, null, Color.DodgerBlue, Projectile.rotation + timer * 0.035f, Ball.Size() / 2 * auraSize, Projectile.scale * 0.5f * scaley, SpriteEffects.None, 0f);
 
                 Main.spriteBatch.End();
-                Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
+                Main.spriteBatch.Begin(SpriteSortMode.Deferred, AdditivePixelationSystem.AdditiveBlend, null, null, null, null, Main.GameViewMatrix.EffectMatrix);
             });
             return false;
         }

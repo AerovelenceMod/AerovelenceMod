@@ -8,6 +8,7 @@
   <ItemGroup>
     <AdditionalFiles Remove="Common\Systems\Generation\GenUtils\**" />
     <Compile Remove="Common\Systems\Generation\GenUtils\**" />
+    <Compile Remove="Tests\**" />
     <EmbeddedResource Remove="Common\Systems\Generation\GenUtils\**" />
     <None Remove="Common\Systems\Generation\GenUtils\**" />
   </ItemGroup>

@@ -112,7 +112,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                     case (int)TravelDustType.glowProjCenter:
                         if (dustTimer % 20 == 0)
                         {
-                            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                             int p = GlowDustHelper.DrawGlowDust(projectile.position, projectile.width, projectile.height, ModContent.DustType<GlowCircleQuadStar>(), 0f, 0f,
                                 Color.Gold, Main.rand.NextFloat(0.3f, 0.5f), 0.3f, 0f, dustShader);
@@ -122,7 +122,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                     case (int)TravelDustType.glowPlayerCenter:
                         if (dustTimer % 20 == 0)
                         {
-                            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                             int p = GlowDustHelper.DrawGlowDust(Main.player[projectile.owner].position, projectile.width, projectile.height, ModContent.DustType<GlowCircleQuadStar>(), 0f, 0f,
                                 Color.Gold, Main.rand.NextFloat(0.3f, 0.5f), 0.3f, 0f, dustShader);
@@ -156,7 +156,7 @@ namespace AerovelenceMod.Common.Globals.SkillStrikes
                 SoundStyle style2 = new SoundStyle("Terraria/Sounds/Custom/dd2_wither_beast_death_2") with { Pitch = -.26f, PitchVariance = .12f, MaxInstances = -1, Volume = 0.25f * hitSoundVolume };
                 SoundEngine.PlaySound(style2, target.Center);
 
-                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader2 = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 float pixelHitRotation = (impactRot == -1 ? Main.rand.NextFloat(6.28f) : impactRot);
 

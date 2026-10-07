@@ -328,7 +328,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     {
         internal static void Disc(SpriteBatch batch, Vector2 center, float rotation, Vector2 size, Color light, float opacity, float charge, int variant = 0)
         {
-            Texture2D rock = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock" + (Math.Abs(variant % 3) + 1)).Value;
+            Texture2D rock = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock" + (Math.Abs(variant % 3) + 1)).Value);
             Rectangle frame = rock.Bounds;
             Vector2 scale = size / frame.Size();
             if (charge > 0f)
@@ -402,7 +402,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Rock(Vector2 center, float rotation, float size, Color light, float opacity = 1f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(RockTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(RockTexture).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, RockFrame, Color.Lerp(light, Color.White, 0.2f) * opacity,
                 rotation, RockFrame.Size() * 0.5f, size / RockFrame.Width, SpriteEffects.None);
         }

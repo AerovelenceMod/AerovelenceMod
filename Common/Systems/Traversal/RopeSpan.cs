@@ -1,3 +1,4 @@
+using AerovelenceMod.Content.Tiles.Traversal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public Point Left { get; }
         public Point Right { get; }
         public bool Zipline { get; }
-        public int RopeType { get; }
+        public int RopeType { get; internal set; }
         public bool LeftCeiling { get; }
         public bool RightCeiling { get; }
         public float Sag { get; }
@@ -21,13 +22,28 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public Vector2[] Rest { get; }
         public Point[] DeckTiles { get; }
         public Point[] RopeTiles { get; }
+        private readonly Point[] ropePaintTiles;
         private readonly float[] velocity;
         private readonly float[] load;
         private readonly float maximumStep;
         private readonly Vector2 motionAxis;
-        public int Segments => Nodes.Length - 1;
+        public int Segments { get; }
+        internal int PathSegments => Nodes.Length - 1;
         public int Sections => Segments - 1;
         public Rectangle Bounds { get; }
+
+        internal Vector2 HookAnchor(bool right)
+        {
+            Point post = right ? Right : Left;
+            bool ceiling = right ? RightCeiling : LeftCeiling;
+            return ZiplinePostTile.ConnectionPoint(post, ceiling);
+        }
+
+        internal Vector2 BridgeAnchor(bool right, bool rail)
+        {
+            Point post = right ? Right : Left;
+            return new Vector2(post.X * 16 + (right ? 0 : 16), post.Y * 16 + (rail ? -18 : 12));
+        }
 
         public RopeSpan(int id, Point left, Point right, bool zipline, int ropeType, float? sag = null, int? segments = null,
             bool? leftCeiling = null, bool? rightCeiling = null)
@@ -42,36 +58,59 @@ namespace AerovelenceMod.Common.Systems.Traversal
             int width = right.X - left.X;
             int height = Math.Abs(right.Y - left.Y);
             int extent = Math.Max(width, height);
-            int count = (segments ?? (zipline ? Math.Max(2, extent) : width)) + 1;
+            Segments = segments ?? (zipline ? Math.Max(2, extent) : width);
+            int count = Segments + 1;
+            int nodeCount = count + (zipline ? 2 : 0);
             motionAxis = zipline && width == 0 ? Vector2.UnitX : Vector2.UnitY;
-            Nodes = new Vector2[count];
-            Previous = new Vector2[count];
-            Rest = new Vector2[count];
-            velocity = new float[count];
-            load = new float[count];
+            ropePaintTiles = zipline ? new Point[nodeCount] : Array.Empty<Point>();
+            Nodes = new Vector2[nodeCount];
+            Previous = new Vector2[nodeCount];
+            Rest = new Vector2[nodeCount];
+            velocity = new float[nodeCount];
+            load = new float[nodeCount];
             DeckTiles = zipline ? Array.Empty<Point>() : new Point[count - 2];
             List<Point> ropeTiles = new();
-            Vector2 a = new(left.X * 16 + 8, (left.Y + 1) * 16 - (zipline ? LeftCeiling ? 6 : 58 : 4));
-            Vector2 b = new(right.X * 16 + 8, (right.Y + 1) * 16 - (zipline ? RightCeiling ? 6 : 58 : 4));
+            Vector2 markerA = new(left.X * 16 + 8, left.Y * 16 + (LeftCeiling ? 10 : -42));
+            Vector2 markerB = new(right.X * 16 + 8, right.Y * 16 + (RightCeiling ? 10 : -42));
+            Vector2 a = zipline ? HookAnchor(false) : new Vector2(left.X * 16 + 8, left.Y * 16 + 12);
+            Vector2 b = zipline ? HookAnchor(true) : new Vector2(right.X * 16 + 8, right.Y * 16 + 12);
             Sag = sag ?? (zipline ? Math.Min(64f, count * 0.65f) * width / Math.Max(1f, extent)
                 : Math.Min(12f, count * 0.3f));
+            if (zipline)
+            {
+                ropePaintTiles[1] = markerA.ToTileCoordinates();
+                ropePaintTiles[^2] = markerB.ToTileCoordinates();
+            }
             maximumStep = 9;
             for (int i = 0; i < count; i++)
             {
                 float t = i / (float)(count - 1);
-                Rest[i] = Vector2.Lerp(a, b, t) + new Vector2(0, Sag * 4 * t * (1 - t));
-                Nodes[i] = Previous[i] = Rest[i];
-                if (i > 0) maximumStep = Math.Max(maximumStep, Math.Abs(Vector2.Dot(Rest[i] - Rest[i - 1], motionAxis)));
+                int node = i + (zipline ? 1 : 0);
+                Rest[node] = Vector2.Lerp(a, b, t) + new Vector2(0, Sag * 4 * t * (1 - t));
+                Nodes[node] = Previous[node] = Rest[node];
+                if (i > 0) maximumStep = Math.Max(maximumStep, Math.Abs(Vector2.Dot(Rest[node] - Rest[node - 1], motionAxis)));
                 if (i == 0 || i == count - 1) continue;
-                Point tile = Rest[i].ToTileCoordinates();
+                Point tile = Rest[node].ToTileCoordinates();
+                if (zipline)
+                {
+                    tile = (Vector2.Lerp(markerA, markerB, t) + new Vector2(0, Sag * 4 * t * (1 - t))).ToTileCoordinates();
+                    ropePaintTiles[node] = tile;
+                }
                 if (!zipline) DeckTiles[i - 1] = tile;
                 if (!zipline || !PostTile(tile, left) && !PostTile(tile, right))
                     ropeTiles.Add(new Point(tile.X, tile.Y - (zipline ? 0 : 2)));
+            }
+            if (zipline)
+            {
+                Rest[0] = Nodes[0] = Previous[0] = a;
+                Rest[^1] = Nodes[^1] = Previous[^1] = b;
             }
             RopeTiles = ropeTiles.Distinct().ToArray();
             Bounds = new Rectangle(left.X * 16 - 32, (int)Math.Min(a.Y, b.Y) - 64,
                 (width + 1) * 16 + 64, (int)Math.Abs(b.Y - a.Y) + 160);
         }
+
+        internal Point RopeTile(int node) => Zipline ? ropePaintTiles[node] : RopeTiles[node - 1];
 
         private static bool PostTile(Point tile, Point post)
             => tile.X == post.X && tile.Y <= post.Y + 1 && tile.Y >= post.Y - 3;
@@ -87,25 +126,27 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public void Update()
         {
             Array.Copy(Nodes, Previous, Nodes.Length);
-            for (int i = 1; i < Nodes.Length - 1; i++)
+            int first = Zipline ? 2 : 1;
+            int last = Nodes.Length - first - 1;
+            for (int i = first; i <= last; i++)
             {
                 float offset = Vector2.Dot(Nodes[i] - Rest[i], motionAxis);
                 float neighbors = Vector2.Dot(Nodes[i - 1] - Rest[i - 1] + Nodes[i + 1] - Rest[i + 1], motionAxis) * 0.5f;
                 velocity[i] = (velocity[i] + (neighbors - offset) * 0.18f - offset * 0.035f + load[i] * 0.38f) * 0.9f;
             }
-            for (int i = 1; i < Nodes.Length - 1; i++)
+            for (int i = first; i <= last; i++)
                 Nodes[i] = Rest[i] + motionAxis * MathHelper.Clamp(Vector2.Dot(Nodes[i] - Rest[i], motionAxis) + velocity[i], -8, 18);
-            for (int i = 1; i < Nodes.Length - 1; i++)
+            for (int i = first; i <= last; i++)
             {
-                float remaining = (Nodes.Length - 1 - i) * maximumStep;
-                float lower = Math.Max(Vector2.Dot(Nodes[i - 1], motionAxis) - maximumStep, Vector2.Dot(Nodes[^1], motionAxis) - remaining);
-                float upper = Math.Min(Vector2.Dot(Nodes[i - 1], motionAxis) + maximumStep, Vector2.Dot(Nodes[^1], motionAxis) + remaining);
+                float remaining = (last + 1 - i) * maximumStep;
+                float lower = Math.Max(Vector2.Dot(Nodes[i - 1], motionAxis) - maximumStep, Vector2.Dot(Nodes[last + 1], motionAxis) - remaining);
+                float upper = Math.Min(Vector2.Dot(Nodes[i - 1], motionAxis) + maximumStep, Vector2.Dot(Nodes[last + 1], motionAxis) + remaining);
                 Nodes[i] += motionAxis * (MathHelper.Clamp(Vector2.Dot(Nodes[i], motionAxis), lower, upper) - Vector2.Dot(Nodes[i], motionAxis));
             }
-            for (int i = Nodes.Length - 2; i > 0; i--)
+            for (int i = last; i >= first; i--)
             {
-                float lower = Math.Max(Vector2.Dot(Nodes[i + 1], motionAxis) - maximumStep, Vector2.Dot(Nodes[0], motionAxis) - i * maximumStep);
-                float upper = Math.Min(Vector2.Dot(Nodes[i + 1], motionAxis) + maximumStep, Vector2.Dot(Nodes[0], motionAxis) + i * maximumStep);
+                float lower = Math.Max(Vector2.Dot(Nodes[i + 1], motionAxis) - maximumStep, Vector2.Dot(Nodes[first - 1], motionAxis) - (i - first + 1) * maximumStep);
+                float upper = Math.Min(Vector2.Dot(Nodes[i + 1], motionAxis) + maximumStep, Vector2.Dot(Nodes[first - 1], motionAxis) + (i - first + 1) * maximumStep);
                 Nodes[i] += motionAxis * (MathHelper.Clamp(Vector2.Dot(Nodes[i], motionAxis), lower, upper) - Vector2.Dot(Nodes[i], motionAxis));
                 if (!Zipline)
                 {
@@ -123,10 +164,10 @@ namespace AerovelenceMod.Common.Systems.Traversal
 
         public float Advance(float parameter, float distance, out float remaining)
         {
-            float index = MathHelper.Clamp(parameter, 0, 1) * Segments;
+            float index = MathHelper.Clamp(parameter, 0, 1) * PathSegments;
             int direction = Math.Sign(distance);
             float travel = Math.Abs(distance);
-            while (direction != 0 && (direction > 0 ? index < Segments : index > 0))
+            while (direction != 0 && (direction > 0 ? index < PathSegments : index > 0))
             {
                 int segment = direction > 0 ? (int)MathF.Floor(index) : (int)MathF.Ceiling(index) - 1;
                 int end = direction > 0 ? segment + 1 : segment;
@@ -135,13 +176,13 @@ namespace AerovelenceMod.Common.Systems.Traversal
                 if (travel < available)
                 {
                     remaining = 0;
-                    return (index + direction * travel / length) / Segments;
+                    return (index + direction * travel / length) / PathSegments;
                 }
                 travel -= available;
                 index = end;
             }
             remaining = travel * direction;
-            return index / Segments;
+            return index / PathSegments;
         }
 
         public Vector2 At(float parameter, bool previous = false)
@@ -165,6 +206,7 @@ namespace AerovelenceMod.Common.Systems.Traversal
         public Vector2 Tangent(float parameter)
         {
             int i = Math.Min((int)(MathHelper.Clamp(parameter, 0, 1) * (Nodes.Length - 1)), Nodes.Length - 2);
+            if (Zipline) i = Math.Clamp(i, 1, Nodes.Length - 3);
             return Vector2.Normalize(Nodes[i + 1] - Nodes[i]);
         }
 

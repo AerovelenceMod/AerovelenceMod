@@ -311,7 +311,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Sprite(string asset, Vector2 center, Vector2 size, Color color, float rotation = 0f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(asset).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(asset).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, null, color, rotation, texture.Size() * 0.5f, size / texture.Size(), SpriteEffects.None);
         }
 
@@ -326,7 +326,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Crystal(Vector2 center, float rotation, Vector2 size, float opacity = 1f, float charge = 0.3f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(CrystalTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(CrystalTexture).Value);
             Vector2 screen = center - Main.screenPosition;
             Vector2 scale = size / texture.Size();
             for (int i = 0; i < 4; i++)
@@ -340,7 +340,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
         internal static void Rock(Vector2 center, float rotation, float size, Color light, float opacity = 1f)
         {
-            Texture2D texture = ModContent.Request<Texture2D>(RockTexture).Value;
+            Texture2D texture = (Main.dedServ ? null : ModContent.Request<Texture2D>(RockTexture).Value);
             Main.EntitySpriteDraw(texture, center - Main.screenPosition, RockFrame, Color.Lerp(light, Color.White, 0.2f) * opacity,
                 rotation, RockFrame.Size() * 0.5f, size / RockFrame.Width, SpriteEffects.None);
         }

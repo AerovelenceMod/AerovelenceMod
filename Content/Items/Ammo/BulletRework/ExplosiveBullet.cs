@@ -50,7 +50,7 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
         public override void AI()
         {
             Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-            trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value;
+            trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
             trailColor = new Color(255, 111, 20);
             trailTime = timer * 0.02f;
 
@@ -94,7 +94,7 @@ namespace AerovelenceMod.Content.Items.Ammo.BulletRework
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_40") with { Pitch = -.71f, PitchVariance = .28f, MaxInstances = 1, Volume = 0.5f };
             SoundEngine.PlaySound(style, Projectile.Center);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleDust>(),
