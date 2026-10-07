@@ -70,50 +70,17 @@ namespace AerovelenceMod.Content.Items.Tools
 
         public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            Texture2D texture = TextureAssets.Item[Type].Value;
             int cooldown = Main.gameMenu ? 0 : Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
-            float pulse = 0.82f + MathF.Sin(Main.GlobalTimeWrappedHourly * 4f) * 0.12f;
-            Color glow = CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, (cooldown > 0 ? 0.1f : 0.24f) * pulse);
-            float glowDistance = cooldown > 0 ? 1f : 1.75f;
-            for (int i = 0; i < 4; i++)
-                spriteBatch.Draw(texture, position + (MathHelper.PiOver2 * i).ToRotationVector2() * glowDistance * scale, frame, glow, 0f, origin, scale, SpriteEffects.None, 0f);
-            Color color = cooldown > 0 ? new Color(105, 155, 180) * 0.38f : drawColor;
-            spriteBatch.Draw(texture, position, frame, color, 0f, origin, scale, SpriteEffects.None, 0f);
+            ItemCooldownDraw.DrawBase(spriteBatch, TextureAssets.Item[Type].Value, position, frame, drawColor, origin, scale,
+                cooldown, CrystallineDynamiteVFX.CrystalBlue, new Color(105, 155, 180));
             return false;
         }
 
         public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
         {
-            if (Main.gameMenu)
-                return;
-
-            int cooldown = Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
-            if (cooldown <= 0)
-                return;
-            Texture2D texture = TextureAssets.Item[Type].Value;
-            float progress = CrystallineDynamitePlayer.RegenerationProgress(cooldown);
-            int height = Math.Clamp((int)MathF.Ceiling(frame.Height * progress), 0, frame.Height);
-            float pulse = 0.8f + MathF.Sin(Main.GlobalTimeWrappedHourly * 5f) * 0.12f;
-            if (height > 0)
-            {
-                int offset = frame.Height - height;
-                Rectangle fill = new(frame.X, frame.Y + offset, frame.Width, height);
-                Vector2 fillOrigin = origin - new Vector2(0f, offset);
-                spriteBatch.Draw(texture, position, fill, Color.White * (0.45f + progress * 0.5f), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
-                spriteBatch.Draw(texture, position, fill, CrystallineDynamiteVFX.Additive(CrystallineDynamiteVFX.CrystalBlue, 0.55f * pulse), 0f, fillOrigin, scale, SpriteEffects.None, 0f);
-            }
-            Vector2 topLeft = position - origin * scale;
-            Vector2 bottomRight = position + (frame.Size() - origin) * scale;
-            int barWidth = Math.Max(16, (int)MathF.Round(frame.Width * scale));
-            Rectangle bar = new((int)MathF.Round(topLeft.X), (int)MathF.Round(bottomRight.Y + 2f), barWidth, 3);
-            spriteBatch.Draw(TextureAssets.MagicPixel.Value, bar, new Color(7, 20, 30) * 0.9f);
-            if (progress > 0f)
-                spriteBatch.Draw(TextureAssets.MagicPixel.Value, new Rectangle(bar.X + 1, bar.Y + 1, Math.Max(1, (int)MathF.Round((bar.Width - 2) * progress)), 1), CrystallineDynamiteVFX.CrystalBlue);
-            string timer = MathF.Ceiling(cooldown / 60f).ToString("0");
-            float timerScale = 0.65f * scale;
-            Vector2 timerSize = FontAssets.ItemStack.Value.MeasureString(timer) * timerScale;
-            Vector2 timerPosition = bottomRight - timerSize + new Vector2(1f, -2f);
-            Utils.DrawBorderStringFourWay(spriteBatch, FontAssets.ItemStack.Value, timer, timerPosition.X, timerPosition.Y, Color.White, new Color(20, 80, 115), Vector2.Zero, timerScale);
+            int cooldown = Main.gameMenu ? 0 : Main.LocalPlayer.GetModPlayer<CrystallineDynamitePlayer>().Cooldown;
+            ItemCooldownDraw.DrawFill(spriteBatch, TextureAssets.Item[Type].Value, position, frame, origin, scale,
+                cooldown, CrystallineDynamitePlayer.CooldownDuration, CrystallineDynamiteVFX.CrystalBlue, new Color(20, 80, 115));
         }
     }
 
@@ -121,7 +88,7 @@ namespace AerovelenceMod.Content.Items.Tools
     {
         internal const int CooldownDuration = 1800;
         internal int Cooldown;
-        internal static float RegenerationProgress(int cooldown) => MathHelper.Clamp(1f - cooldown / (float)CooldownDuration, 0f, 1f);
+        internal static float RegenerationProgress(int cooldown) => ItemCooldownDraw.Progress(cooldown, CooldownDuration);
 
         public override void PostUpdate()
         {
