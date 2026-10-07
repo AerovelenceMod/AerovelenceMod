@@ -82,14 +82,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
 
         public override bool Slope(int i, int j)
         {
-            if (Main.netMode == NetmodeID.MultiplayerClient)
-            {
-                ModPacket packet = RopeSpanSystem.NewPacket(11);
-                packet.Write((short)i);
-                packet.Write((short)j);
-                packet.Send();
-            }
-            else Hammer(Main.myPlayer, i, j);
+            Hammer(Main.myPlayer, i, j);
             return false;
         }
 
@@ -103,7 +96,16 @@ namespace AerovelenceMod.Content.Tiles.Traversal
                 || !player.IsInTileInteractionRange(i, j, TileReachCheckSettings.Simple)) return;
             Point point = ModContent.GetInstance<ZiplinePostTile>().Bottom(i, j);
             if (!RopeSpanSystem.ValidPost(point, true) || RopeSpanSystem.ConnectionCount(point) > 1) return;
-            SetEndStop(point, !IsEndStop(point));
+            if (Main.netMode == NetmodeID.MultiplayerClient)
+            {
+                ModPacket packet = RopeSpanSystem.NewPacket(11);
+                packet.Write((short)i);
+                packet.Write((short)j);
+                packet.Send();
+            }
+            else SetEndStop(point, !IsEndStop(point));
+            if (!Main.dedServ && Main.netMode != NetmodeID.Server)
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, new Vector2(i * 16, j * 16));
             if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, point.X, point.Y - 3, 1, 4);
         }
 
@@ -126,7 +128,16 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             int row = tile.TileFrameY / 18 % Height;
             bool ceiling = tile.TileFrameX % 36 == 18;
             if (ceiling) row = Height - 1 - row;
-            return DrawPost(i, j, spriteBatch, row, ceiling, column: tile.TileFrameX / 36);
+            int column = tile.TileFrameX / 36;
+            if (row == 1) column = 0;
+            return DrawPost(i, j, spriteBatch, row, ceiling, column: column,
+                flipHorizontal: tile.TileFrameX >= 36 && StopFacesRight(Bottom(i, j)));
+        }
+
+        internal static bool StopFacesRight(Point post)
+        {
+            RopeSpan span = RopeSpanSystem.AtTile(post);
+            return span != null && (span.Left == post ? span.Right : span.Left).X > post.X;
         }
 
         public override void PostDraw(int i, int j, SpriteBatch spriteBatch)
@@ -182,7 +193,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             this.AddName(Language.Default, "Zipline Post")
                 .AddTooltip(Language.Default, "Right-click two posts with ropes or chains to connect"
                     + "\nConsumes 2 ropes or chains per section"
-                    + "\nHammer an end post to change it to a sotpper");
+                    + "\nHammer an end post to change it to a stopper");
         }
 
         public override void SetDefaults()

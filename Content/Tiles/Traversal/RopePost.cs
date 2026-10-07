@@ -41,7 +41,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
         public override bool PreDrawPlacementPreview(int i, int j, SpriteBatch spriteBatch, ref Rectangle frame, ref Vector2 position, ref Color color, bool validPlacement, ref SpriteEffects spriteEffects)
             => DrawPost(i, j, spriteBatch, frame.Y / 18 % Height, false, true, validPlacement);
 
-        protected bool DrawPost(int i, int j, SpriteBatch spriteBatch, int row, bool ceiling, bool preview = false, bool validPlacement = true, int column = 0)
+        protected bool DrawPost(int i, int j, SpriteBatch spriteBatch, int row, bool ceiling, bool preview = false, bool validPlacement = true, int column = 0, bool flipHorizontal = false)
         {
             Tile tile = Main.tile[i, j];
             if (tile.IsTileInvisible && !Main.ShouldShowInvisibleWalls()) return false;
@@ -50,7 +50,7 @@ namespace AerovelenceMod.Content.Tiles.Traversal
             Color color = new(255, validPlacement ? 255 : 127, validPlacement ? 255 : 127, preview ? 127 : 255);
             spriteBatch.Draw(preview ? ModContent.Request<Texture2D>(Texture).Value : Main.instance.TilesRenderer.GetTileDrawTexture(tile, i, j),
                 new Vector2(i * 16, j * 16 + (ceiling ? -2 : 2)) - Main.screenPosition + offset, frame,
-                tile.IsTileFullbright ? color : Lighting.GetColor(i, j).MultiplyRGBA(color), 0, Vector2.Zero, 1, ceiling ? SpriteEffects.FlipVertically : SpriteEffects.None, 0);
+                tile.IsTileFullbright ? color : Lighting.GetColor(i, j).MultiplyRGBA(color), 0, Vector2.Zero, 1, (ceiling ? SpriteEffects.FlipVertically : SpriteEffects.None) | (flipHorizontal ? SpriteEffects.FlipHorizontally : SpriteEffects.None), 0);
             return false;
         }
     }
