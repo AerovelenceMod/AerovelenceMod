@@ -9,6 +9,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
     public sealed class RockCollectorsWhip : ModProjectile
     {
         private const int SwingTime = 28;
+        private const int Segments = 16;
         private readonly List<Vector2> points = new(17);
         public override void SetDefaults()
         {
@@ -62,18 +63,42 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         {
             points.Clear();
             float progress = Math.Clamp(Projectile.ai[2] / SwingTime, 0, 1);
-            int direction = MathF.Cos(Projectile.ai[1]) < 0 ? -1 : 1;
-            float angle = Projectile.ai[1] + MathF.Cos(progress * MathHelper.Pi) * direction * .8f;
-            Vector2 along = angle.ToRotationVector2();
-            Vector2 across = new(-along.Y, along.X);
-            float reach = MathF.Sin(progress * MathHelper.Pi) * 260;
-            for (int i = 0; i <= 16; i++)
+            Projectile.spriteDirection = MathF.Cos(Projectile.ai[1]) < 0 ? -1 : 1;
+            float curl = MathHelper.Pi * 10f * (1f - progress * 1.5f) * -Projectile.spriteDirection / Segments;
+            float extension = progress * 1.5f;
+            float retract = 0f;
+            if (extension > 1f)
             {
-                float t = i / 16f;
-                points.Add(Projectile.Center + along * (reach * t)
-                    + across * (MathF.Sin(t * MathHelper.Pi) * MathF.Sin(progress * MathHelper.TwoPi) * 35));
+                retract = (extension - 1f) / .5f;
+                extension = 1f - retract;
+            }
+            float length = 260f * progress * extension / Segments;
+            Vector2 origin = Projectile.Center;
+            Vector2 folded = origin, loop = origin, straight = origin;
+            float foldedAngle = -MathHelper.PiOver2;
+            float loopAngle = MathHelper.PiOver2 + MathHelper.PiOver2 * Projectile.spriteDirection;
+            float straightAngle = MathHelper.PiOver2;
+            float blend = 1f - (1f - extension) * (1f - extension);
+            float rotation = Projectile.ai[1] + MathHelper.PiOver2 + MathHelper.Pi * 1.5f * retract * retract * Projectile.spriteDirection;
+            points.Add(origin);
+            for (int i = 0; i < Segments; i++)
+            {
+                Vector2 nextFolded = folded + foldedAngle.ToRotationVector2() * length;
+                Vector2 nextStraight = straight + straightAngle.ToRotationVector2() * length * 2f;
+                Vector2 nextLoop = loop + loopAngle.ToRotationVector2() * length * 2f;
+                Vector2 point = Vector2.Lerp(nextLoop, Vector2.Lerp(nextStraight, nextFolded, blend * .9f + .1f), blend * .7f + .3f);
+                point = origin + (point - origin) * new Vector2(1f, 1.5f);
+                points.Add(point.RotatedBy(rotation, origin));
+                float turn = curl * (i / (float)Segments);
+                foldedAngle += turn;
+                straightAngle += turn;
+                loopAngle += turn;
+                folded = nextFolded;
+                straight = nextStraight;
+                loop = nextLoop;
             }
         }
+
         public override bool? CanDamage() => Projectile.ai[2] >= 4 && Projectile.ai[2] <= SwingTime - 4 ? null : false;
         public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
         {
@@ -89,6 +114,8 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
             Texture2D texture = TextureAssets.Projectile[Type].Value;
             Texture2D glow = ModContent.Request<Texture2D>(Texture + "_Glowmask").Value;
             Texture2D line = TextureAssets.FishingLine.Value;
+            SpriteEffects effects = Projectile.spriteDirection < 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
+            float progress = Projectile.ai[2] / SwingTime;
             for (int i = 0; i < points.Count - 1; i++)
             {
                 Vector2 edge = points[i + 1] - points[i];
@@ -96,14 +123,14 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
                 Color light = Lighting.GetColor(points[i].ToTileCoordinates());
                 Main.EntitySpriteDraw(line, points[i] - Main.screenPosition, null, light.MultiplyRGB(new Color(115, 140, 170)), rotation,
                     new Vector2(line.Width * .5f, 0), new Vector2(.6f, (edge.Length() + 1) / line.Height), SpriteEffects.None);
-                Rectangle frame = i == 0 ? new(0, 0, 26, 30) : new(0, 32 + Math.Min(2, (i - 1) / 5) * 16, 26, 14);
+                bool tip = i == points.Count - 2;
+                Rectangle frame = i == 0 ? new(0, 0, 26, 30) : tip ? new(0, 80, 26, 14) : new(0, 32 + Math.Min(2, (i - 1) / 5) * 16, 26, 14);
+                float scale = tip ? MathHelper.Lerp(.5f, 1.5f, Utils.GetLerpValue(.1f, .7f, progress, true)
+                    * Utils.GetLerpValue(.9f, .7f, progress, true)) : 1f;
                 Vector2 origin = new(13, i == 0 ? 6 : 7);
-                Main.EntitySpriteDraw(texture, points[i] - Main.screenPosition, frame, light, rotation, origin, 1, SpriteEffects.None);
-                Main.EntitySpriteDraw(glow, points[i] - Main.screenPosition, frame, new Color(105, 190, 255, 0) * .7f, rotation, origin, 1, SpriteEffects.None);
+                Main.EntitySpriteDraw(texture, points[i] - Main.screenPosition, frame, light, rotation, origin, scale, effects);
+                Main.EntitySpriteDraw(glow, points[i] - Main.screenPosition, frame, new Color(105, 190, 255, 0) * .7f, rotation, origin, scale, effects);
             }
-            float tipRotation = (points[^1] - points[^2]).ToRotation() - MathHelper.PiOver2;
-            Main.EntitySpriteDraw(texture, points[^1] - Main.screenPosition, new Rectangle(0, 80, 26, 14), lightColor, tipRotation, new Vector2(13, 7), 1, SpriteEffects.None);
-            Main.EntitySpriteDraw(glow, points[^1] - Main.screenPosition, new Rectangle(0, 80, 26, 14), new Color(105, 190, 255, 0) * .7f, tipRotation, new Vector2(13, 7), 1, SpriteEffects.None);
             return false;
         }
     }
