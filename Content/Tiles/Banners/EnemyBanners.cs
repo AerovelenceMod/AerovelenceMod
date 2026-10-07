@@ -1,9 +1,6 @@
-using Terraria.Enums;
-
-
-using Terraria.ObjectData;
-
 using System.Collections.Generic;
+using Terraria.Enums;
+using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.Banners
 {
@@ -103,16 +100,13 @@ namespace AerovelenceMod.Content.Tiles.Banners
 
     public abstract class BaseBannerItem : ModItem
     {
-        private EnemyBanners.StyleID bannerStyle;
+        public EnemyBanners.StyleID bannerStyle;
 
         protected BaseBannerItem(EnemyBanners.StyleID style) => bannerStyle = style;
 
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<EnemyBanners>(), (int)bannerStyle);
-            Item.width = 10;
-            Item.height = 24;
-            Item.SetShopValues(ItemRarityColor.Blue1, Item.buyPrice(silver: 10));
+            CommonItemHelper.SetupPlaceableItem(this, 10, 24, Item.buyPrice(silver: 10), ModContent.TileType<EnemyBanners>(), ItemRarities.EarlyPHM, (int)bannerStyle);
         }
     }
 

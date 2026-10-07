@@ -1,11 +1,6 @@
 using AerovelenceMod.Content.Items.Crafting;
-
-
 using System.Collections.Generic;
-
 using Terraria.GameContent.Metadata;
-
-
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
@@ -183,19 +178,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
     {
         public override void SetDefaults()
         {
-            Item.autoReuse = true;
-            Item.useTurn = true;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.useAnimation = 15;
-            Item.rare = ItemRarities.BasicMaterials;
-            Item.useTime = 10;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.consumable = true;
-            Item.placeStyle = 0;
-            Item.width = 12;
-            Item.height = 14;
-            Item.value = Item.buyPrice(0, 0, 5, 0);
-            Item.createTile = ModContent.TileType<PrismaticAster>();
+            CommonItemHelper.SetupPlaceableItem(this, 12, 14, Item.sellPrice(0, 0, 0, 16), ModContent.TileType<PrismaticAster>());
         }
     }
 }

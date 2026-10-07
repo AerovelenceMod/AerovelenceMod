@@ -49,18 +49,7 @@ namespace AerovelenceMod.Content.Tiles.Citadel
     {
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<CitadelStone>();
-            Item.rare = ItemRarities.BasicMaterials;
-            Item.value = 5;
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 0, ModContent.TileType<CitadelStone>());
         }
     }
 }

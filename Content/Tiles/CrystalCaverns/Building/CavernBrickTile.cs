@@ -1,9 +1,5 @@
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
-
-
-
-
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
 {
     [LegacyName("CavernBrick")]
@@ -20,7 +16,6 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
             AddMapEntry(new Color(061, 079, 110));
             DustType = 59;
             HitSound = SoundID.Tink;
-            AddMapEntry(new Color(069, 066, 088));
         }
     }
 
@@ -28,7 +23,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Building
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<CavernBrickTile>());
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 0, ModContent.TileType<CavernBrickTile>());
         }
     }
 }

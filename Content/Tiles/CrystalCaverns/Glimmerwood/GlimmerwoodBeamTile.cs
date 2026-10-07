@@ -1,9 +1,3 @@
-
-
-
-
-
-
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
 {
     public class GlimmerwoodBeamTile : ModTile

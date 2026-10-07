@@ -1,9 +1,3 @@
-
-
-
-
-
-
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
 {
     public class GlimmerwoodTile : ModTile
@@ -22,11 +16,11 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
         }
     }
 
-    public class GlimmerwoodItem : ModItem
+    public class GlimmerwoodItem : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-
+            this.ModifyLocalization("Glimmerwood", "");
         }
 
         public override void SetDefaults()

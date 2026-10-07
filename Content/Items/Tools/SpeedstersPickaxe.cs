@@ -1,13 +1,6 @@
-﻿
-
-
-
-
+﻿using System;
 using System.Collections.Generic;
 using Terraria.DataStructures;
-using System;
-
-
 
 namespace AerovelenceMod.Content.Items.Tools
 {

@@ -134,11 +134,11 @@ namespace AerovelenceMod.Common.Bases
                 //we set Projectile.ai[0] in the wep. This is so the sword alternates direction
                 if (Projectile.ai[0] == 1)
                 {
-                    startingAngle = startingAngle - MathHelper.ToRadians(-SwingHalfAngle);
+                    startingAngle -= MathHelper.ToRadians(-SwingHalfAngle);
                 }
                 else
                 {
-                    startingAngle = startingAngle + MathHelper.ToRadians(-SwingHalfAngle);
+                    startingAngle += MathHelper.ToRadians(-SwingHalfAngle);
                 }
 
                 currentAngle = startingAngle;

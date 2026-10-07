@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Tiles.Citadel
 {
     public class RuinedCitadelBrick : ModTile
@@ -23,7 +18,6 @@ namespace AerovelenceMod.Content.Tiles.Citadel
             AddMapEntry(new Color(102, 108, 117));
             DustType = 116;
             HitSound = SoundID.Tink;
-            //ItemDrop/* tModPorter Note: Removed. Tiles and walls will drop the item which places them automatically. Use RegisterItemDrop to alter the automatic drop if necessary. */ = ModContent.ItemType<RuinedCitadelBrickItem>();
         }
         public override bool CanExplode(int i, int j)
         {
@@ -35,18 +29,7 @@ namespace AerovelenceMod.Content.Tiles.Citadel
     {
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<RuinedCitadelBrick>();
-            Item.rare = ItemRarities.BasicMaterials;
-            Item.value = 5;
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 0, ModContent.TileType<RuinedCitadelBrick>());
         }
     }
 }

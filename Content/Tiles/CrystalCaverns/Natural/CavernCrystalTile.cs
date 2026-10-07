@@ -1,12 +1,6 @@
-
-
-
 using System;
-
 using Terraria.GameContent;
 using Terraria.GameContent.RGB;
-
-
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
 {
@@ -48,9 +42,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<CavernCrystalTile>());
+            CommonItemHelper.SetupPlaceableItem(this, 14, 22, Item.sellPrice(copper: 5), ModContent.TileType<CavernCrystalTile>());
             Item.rare = ItemRarities.EarlyPHM;
-            Item.value = Item.sellPrice(copper: 5);
         }
     }
 }

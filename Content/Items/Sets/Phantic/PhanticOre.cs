@@ -1,21 +1,13 @@
 /*
 using Terraria.Localization;
 
-
-
-
-
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
     public class PhanticOre : ModItem
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<PhanticOreTile>());
-            Item.knockBack = 6;
-            Item.value = 10000;
-            Item.rare = ItemRarities.MidPHM;
-            Item.autoReuse = true;
+            CommonItemHelper.SetupPlaceableItem(this, 14, 16, 10000, ModContent.TileType<PhanticOreTile>(), ItemRarities.MidPHM);
         }
     }
 

@@ -43,9 +43,9 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             {
                 DebuffIndex = ModContent.BuffType<FlareFire>();
                 DebuffTime = 0;
-                baseResetEffects(npc);
+                BaseResetEffects(npc);
             }
-            baseResetEffects(npc);
+            BaseResetEffects(npc);
         }
 
         public override void UpdateLifeRegen(NPC npc, ref int damage)
@@ -58,7 +58,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
                 colorA = new Color(255, 75, 50);
                 colorB = Color.OrangeRed;
                 DebuffIndex = ModContent.BuffType<FlareFire>();
-                baseUpdateLifeRegen(npc, ref damage);
+                BaseUpdateLifeRegen(npc, ref damage);
             }
         }
         public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers)

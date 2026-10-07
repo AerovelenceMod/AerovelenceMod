@@ -46,11 +46,7 @@ namespace AerovelenceMod.Content.Tiles.Crates
 
 		public override void SetDefaults()
 		{
-			Item.DefaultToPlaceableTile(ModContent.TileType<ThunderCrateTile>());
-			Item.width = 12;
-			Item.height = 12;
-			Item.rare = ItemRarities.MidPHM;
-			Item.value = Item.sellPrice(0, 2);
+			CommonItemHelper.SetupPlaceableItem(this, 12, 12, Item.sellPrice(0, 2), ModContent.TileType<ThunderCrateTile>(), ItemRarities.MidPHM);
 		}
 
 		public override void ModifyResearchSorting(ref ContentSamples.CreativeHelper.ItemGroup itemGroup)

@@ -1,17 +1,11 @@
-
 using Terraria.Audio;
-
-
 using Terraria.ObjectData;
-
 using Terraria.DataStructures;
 using Terraria.GameContent.Drawing;
 using Terraria.GameContent.ObjectInteractions;
 using Terraria.GameContent;
-
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood;
 using Terraria.Localization;
-
 using ReLogic.Content;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
@@ -91,54 +85,21 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         }
     }
 
-    public class CrystalTorchItem : ModItem
+    public class CrystalTorchItem : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            Item.ResearchUnlockCount = 100;
-            ItemID.Sets.Torches[Item.type] = true;
-            ItemID.Sets.SingleUseInGamepad[Type] = true;
-            ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.ShimmerTorch;
+            this.ModifyLocalization("Crystal Torch", "Provides light");
         }
 
-        public override void SetDefaults()
-        {
-            Item.width = 14;
-            Item.height = 18;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.holdStyle = 1;
-            Item.noWet = true;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.consumable = true;
-            Item.createTile = ModContent.TileType<CrystalTorchTile>();
-            Item.flame = true;
-            Item.value = 500;
-        }
-
-        public override void HoldItem(Player player)
-        {
-            bool killTorch = Collision.DrownCollision(player.position, player.width, player.height, player.gravDir) || Item.wet;
-            Vector2 position = player.RotatedRelativePoint(new Vector2(player.itemLocation.X + 12f * player.direction + player.velocity.X, player.itemLocation.Y - 14f + player.velocity.Y), true);
-            if (!killTorch)
-                Lighting.AddLight(position, 0.9f, 1.2f, 0.3f);
-        }
-
-        public override void PostUpdate()
-        {
-            if (!Item.wet)
-                Lighting.AddLight((int)((Item.position.X + Item.width / 2) / 16f), (int)((Item.position.Y + Item.height / 2) / 16f), 0.5f, 0.75f, 1.2f);
-        }
+        public override void SetDefaults() => CommonItemHelper.SetupTorch(this, ModContent.TileType<CrystalTorchTile>(), 0.9f, 1.2f, 0.3f);
 
         public override void AddRecipes()
         {
-            CreateRecipe(3).
-            AddIngredient(ItemID.Torch, 3).
-            AddIngredient<CavernCrystalItem>().
-            Register();
+            CreateRecipe(3)
+                .AddIngredient(ItemID.Torch, 3)
+                .AddIngredient<CavernCrystalItem>()
+                .Register();
         }
     }
     #endregion
@@ -347,12 +308,14 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         }
     }
 
-    public class CrystalCampfireItem : ModItem
+    public class CrystalCampfireItem : TranslatableModItem
     {
-        public override void SetDefaults()
+        public override void SetStaticDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<CrystalCampfireTile>(), 0);
+            this.ModifyLocalization("Crystal Campfire", "Life regen is increased when near a campfire");
         }
+        
+        public override void SetDefaults() => CommonItemHelper.SetupPlaceableItem(this, 26, 18, 0, ModContent.TileType<CrystalCampfireTile>());
 
         public override void AddRecipes()
         {

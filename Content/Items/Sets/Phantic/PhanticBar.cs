@@ -1,10 +1,6 @@
 /*
-
-
-
 using Terraria.Localization;
 using Terraria.ObjectData;
-
 
 namespace AerovelenceMod.Content.Items.Sets.Phantic
 {
@@ -12,11 +8,7 @@ namespace AerovelenceMod.Content.Items.Sets.Phantic
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<PhanticBarTile>());
-            Item.knockBack = 6;
-            Item.value = 10000;
-            Item.rare = ItemRarities.MidPHM;
-            Item.autoReuse = true;
+            CommonItemHelper.SetupPlaceableItem(this, 32, 24, 10000, ModContent.TileType<PhanticBarTile>(), ItemRarities.MidPHM);
         }
 
         public override void AddRecipes()

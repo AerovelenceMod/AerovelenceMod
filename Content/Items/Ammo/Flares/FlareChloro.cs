@@ -8,7 +8,7 @@ using Terraria.Audio;
 
 namespace AerovelenceMod.Content.Items.Ammo.Flares
 {
-    public class FlareFrostburn : ModBuff
+    public class FlareChloro : ModBuff
     {
         public int timer = 0;
         public override void SetStaticDefaults()
@@ -20,12 +20,12 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.GetGlobalNPC<FlareFrostburnModNPC>().DebuffActive = true;
+            npc.GetGlobalNPC<FlareChloroModNPC>().DebuffActive = true;
             timer++;
         }
     }
 
-    public class FlareFrostburnModNPC : BaseFlareDebuffNPC
+    public class FlareChloroModNPC : BaseFlareDebuffNPC
     {
         public override bool InstancePerEntity => true;
 
@@ -33,7 +33,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             if (!DebuffActive)
             {
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                DebuffIndex = ModContent.BuffType<FlareChloro>();
                 DebuffTime = 0;
                 BaseResetEffects(npc);
             }
@@ -47,9 +47,9 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
                 timeBetweenHits = 30;
                 tickDamage = 3;
                 sound = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
-                colorA = Color.DodgerBlue;
-                colorB = Color.Teal;
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                colorA = Color.LawnGreen;
+                colorB = Color.Green;
+                DebuffIndex = ModContent.BuffType<FlareChloro>();
                 BaseUpdateLifeRegen(npc, ref damage);
             }
         }
@@ -57,12 +57,12 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             if (DebuffActive)
             {
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                DebuffIndex = ModContent.BuffType<FlareChloro>();
                 timeBetweenHits = 30;
                 tickDamage = 3;
                 sound = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
-                colorA = Color.DeepSkyBlue;
-                colorB = Color.SkyBlue;
+                colorA = Color.LawnGreen;
+                colorB = Color.Green;
                 tagDamage = 3;
                 tagCrit = 4;
             }

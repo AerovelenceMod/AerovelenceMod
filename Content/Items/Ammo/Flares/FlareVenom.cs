@@ -8,11 +8,13 @@ using Terraria.Audio;
 
 namespace AerovelenceMod.Content.Items.Ammo.Flares
 {
-    public class FlareFrostburn : ModBuff
+    public class FlareVenom : ModBuff
     {
         public int timer = 0;
         public override void SetStaticDefaults()
         {
+            // DisplayName.SetDefault("Frost Fire"); // Buff display name
+            // Description.SetDefault("So cold it burns!"); // Buff description
             Main.debuff[Type] = true;  // Is it a debuff?
             Main.buffNoSave[Type] = true; // Causes this buff not to persist when exiting and rejoining the world
             BuffID.Sets.IsATagBuff[Type] = true;
@@ -20,12 +22,12 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
 
         public override void Update(NPC npc, ref int buffIndex)
         {
-            npc.GetGlobalNPC<FlareFrostburnModNPC>().DebuffActive = true;
+            npc.GetGlobalNPC<FlareVenomModNPC>().DebuffActive = true;
             timer++;
         }
     }
 
-    public class FlareFrostburnModNPC : BaseFlareDebuffNPC
+    public class FlareVenomModNPC : BaseFlareDebuffNPC
     {
         public override bool InstancePerEntity => true;
 
@@ -33,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             if (!DebuffActive)
             {
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                DebuffIndex = ModContent.BuffType<FlareVenom>();
                 DebuffTime = 0;
                 BaseResetEffects(npc);
             }
@@ -47,9 +49,9 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
                 timeBetweenHits = 30;
                 tickDamage = 3;
                 sound = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
-                colorA = Color.DodgerBlue;
-                colorB = Color.Teal;
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                colorA = Color.Purple;
+                colorB = Color.Magenta;
+                DebuffIndex = ModContent.BuffType<FlareVenom>();
                 BaseUpdateLifeRegen(npc, ref damage);
             }
         }
@@ -57,12 +59,12 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         {
             if (DebuffActive)
             {
-                DebuffIndex = ModContent.BuffType<FlareFrostburn>();
+                DebuffIndex = ModContent.BuffType<FlareVenom>();
                 timeBetweenHits = 30;
                 tickDamage = 3;
                 sound = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_1") with { Pitch = -.53f, PitchVariance = 0.3f, Volume = 0.5f, MaxInstances = -1 };
-                colorA = Color.DeepSkyBlue;
-                colorB = Color.SkyBlue;
+                colorA = Color.Purple;
+                colorB = Color.Magenta;
                 tagDamage = 3;
                 tagCrit = 4;
             }

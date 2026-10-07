@@ -198,15 +198,12 @@ namespace AerovelenceMod.Content.Tiles.Traversal
 
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableTile(ModContent.TileType<ZiplinePostTile>());
-            Item.width = 16;
-            Item.height = 32;
-            Item.value = Item.buyPrice(copper: 20);
+            CommonItemHelper.SetupPlaceableItem(this, 16, 32, Item.buyPrice(copper: 20), ModContent.TileType<ZiplinePostTile>());
         }
 
         public override void AddRecipes() => CreateRecipe()
             .AddIngredient(ItemID.WoodenBeam, 6)
-            .AddRecipeGroup(RecipeGroupID.IronBar, 1)
+            .AddRecipeGroup(RecipeGroupID.IronBar)
             .AddTile(TileID.Anvils)
             .Register();
     }

@@ -1,10 +1,5 @@
-
-
-
 using Terraria.DataStructures;
-
 using Terraria.Localization;
-
 using Terraria.ObjectData;
 using static Terraria.ModLoader.ModContent;
 
@@ -46,17 +41,7 @@ namespace AerovelenceMod.Content.Tiles.MusicBoxes
 
         public override void SetDefaults()
         {
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.useTurn = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.autoReuse = true;
-            Item.consumable = true;
-            Item.createTile = TileType<CrystalCavernsBox>();
-            Item.width = 24;
-            Item.height = 24;
-            Item.rare = ItemRarities.LatePHM;
-            Item.value = 100000;
+            CommonItemHelper.SetupPlaceableItem(this, 24, 24, 100000, TileType<CrystalCavernsBox>(), ItemRarities.LatePHM);
             Item.accessory = true;
         }
     }

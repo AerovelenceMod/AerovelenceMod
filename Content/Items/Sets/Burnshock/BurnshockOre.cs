@@ -1,10 +1,4 @@
 /*
-
-
-
-using Terraria.Localization;
-
-
 namespace AerovelenceMod.Content.Items.Sets.Burnshock
 {
     public class BurnshockOre : TranslatableModItem
@@ -16,18 +10,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock
 
         public override void SetDefaults()
         {
-            Item.useTurn = true;
-            Item.consumable = true;
-            Item.autoReuse = true;
-
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-
-            Item.createTile = ModContent.TileType<BurnshockOreTile>();
-
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.sellPrice(silver: 12);
+            CommonItemHelper.SetupPlaceableItem(this, 20, 18, Item.sellPrice(silver: 12), ModContent.TileType<BurnshockOreTile>(), ItemRarities.EarlyHM);
         }
     }
 

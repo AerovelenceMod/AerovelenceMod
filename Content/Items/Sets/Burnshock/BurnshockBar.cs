@@ -1,11 +1,7 @@
 /*
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
 using Terraria.DataStructures;
-
 using Terraria.Localization;
-
 using Terraria.ObjectData;
 
 namespace AerovelenceMod.Content.Items.Sets.Burnshock
@@ -19,20 +15,7 @@ namespace AerovelenceMod.Content.Items.Sets.Burnshock
 		}
 		public override void SetDefaults()
 		{
-			Item.useStyle = ItemUseStyleID.Swing;
-			Item.useTurn = true;
-			Item.useAnimation = 15;
-			Item.useTime = 10;
-			Item.width = 66;
-			Item.height = 24;
-			Item.autoReuse = true;
-			Item.consumable = true;
-			Item.noUseGraphic = true;
-			Item.placeStyle = 0;
-			Item.consumable = true;
-			Item.createTile = ModContent.TileType<BurnshockBarTile>();
-			Item.maxStack = Item.CommonMaxStack;
-			Item.value = Item.sellPrice(0, 0, 20, 0);
+			CommonItemHelper.SetupPlaceableItem(this, 66, 24, Item.sellPrice(0, 0, 20, 0), ModContent.TileType<BurnshockBarTile>(), ItemRarities.EarlyHM);
 		}
 		public override void AddRecipes()
 		{

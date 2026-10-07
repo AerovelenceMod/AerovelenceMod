@@ -1,12 +1,6 @@
-
 using AerovelenceMod.Content.Dusts;
-
-
 using Terraria.DataStructures;
-
-
 using Terraria.ObjectData;
-using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
 {
@@ -18,7 +12,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
             Main.tileNoAttach[Type] = false;
             Main.tileLavaDeath[Type] = false;
             HitSound = SoundID.Shatter;
-            DustType = DustType<CavernCrystalDust>();
+            DustType = ModContent.DustType<CavernCrystalDust>();
             TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
             TileObjectData.addTile(Type);
             AddMapEntry(new Color(099, 155, 255));
@@ -33,17 +27,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture
         }
         public override void SetDefaults()
         {
-            Item.width = 16;
-            Item.height = 16;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.useTurn = true;
-            Item.autoReuse = true;
-            Item.useAnimation = 15;
-            Item.useTime = 10;
-            Item.consumable = true;
-            Item.useStyle = ItemUseStyleID.Swing;
-            Item.value = Item.sellPrice(0, 0, 0, 0);
-            Item.createTile = ModContent.TileType<CrystalMugTile>();
+            CommonItemHelper.SetupPlaceableItem(this, 16, 16, 0, ModContent.TileType<CrystalMugTile>());
         }
     }
 }

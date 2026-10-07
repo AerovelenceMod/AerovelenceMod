@@ -587,7 +587,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Launchers
         }
     }
 
-    public class TitaniumLauncherHeldLarge : BaseRecoilProj
+    public class TitaniumLauncherHeldLarge : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
