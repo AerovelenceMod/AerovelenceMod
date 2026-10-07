@@ -21,6 +21,9 @@ namespace AerovelenceMod.Content.Items.TreasureBags
             ItemID.Sets.PreHardmodeLikeBossBag[Type] = true;
             Item.ResearchUnlockCount = 3;
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+            => GlowmaskUtilities.DrawItemGlowmask(spriteBatch, ModContent.Request<Texture2D>(Texture + "_Glowmask").Value, Item, rotation, scale);
+
         public override void SetDefaults()
         {
             base.SetDefaults();

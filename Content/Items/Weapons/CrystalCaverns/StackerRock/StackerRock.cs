@@ -328,7 +328,10 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     {
         internal static void Disc(SpriteBatch batch, Vector2 center, float rotation, Vector2 size, Color light, float opacity, float charge, int variant = 0)
         {
-            Texture2D rock = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock" + (Math.Abs(variant % 3) + 1)).Value);
+			if (Main.dedServ) return;
+            string texture = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock" + (Math.Abs(variant % 3) + 1);
+            Texture2D rock = ModContent.Request<Texture2D>(texture).Value;
+            Texture2D glow = ModContent.Request<Texture2D>(texture + "_Glowmask").Value;
             Rectangle frame = rock.Bounds;
             Vector2 scale = size / frame.Size();
             if (charge > 0f)
@@ -336,7 +339,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                     batch.Draw(rock, center + (i * MathHelper.PiOver2).ToRotationVector2(), frame, StackerRockVFX.Additive(Color.White, opacity * charge * 0.65f),
                         rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
             batch.Draw(rock, center, frame, Color.Lerp(light, Color.White, 0.15f) * opacity, rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            batch.Draw(rock, center, frame, StackerRockVFX.Additive(StackerRockVFX.Aqua, opacity * charge * 0.3f), rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            batch.Draw(glow, center, frame, Color.White * opacity, rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+            batch.Draw(glow, center, frame, StackerRockVFX.Additive(StackerRockVFX.Aqua, opacity * charge * 0.3f), rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
         }
     }
 

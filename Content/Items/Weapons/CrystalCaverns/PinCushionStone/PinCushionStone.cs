@@ -30,6 +30,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             this.AddSkillStrike(Language.Spanish, "Golpea a los enemigos con la piedra poco después de empujarla con un dardo");
             base.SetStaticDefaults();
         }
+        public override void PostDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, float rotation, float scale, int whoAmI)
+            => GlowmaskUtilities.DrawItemGlowmask(spriteBatch, ModContent.Request<Texture2D>(Texture + "_Glowmask").Value, Item, rotation, scale);
+
         public override void SetDefaults()
         {
             base.SetDefaults();
