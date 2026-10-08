@@ -7,10 +7,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 
 using Terraria.GameContent;
-using AerovelenceMod.Common.Systems;
-using System.Collections.Generic;
 using System;
-using AerovelenceMod.Content.Dusts.GlowDusts;
 
 
 namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
@@ -71,13 +68,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         private const float CollisionDistance = 10f;
         private const float MagneticStrength = 0.5f;
 
-        private bool lightningSpawned = false;
+        private bool magnetized
+        {
+            get => Projectile.ai[2] == 1f;
+            set => Projectile.ai[2] = value ? 1f : 0f;
+        }
+        internal Projectile Arc { get; set; }
 
         private bool frameAssigned = false;
 
         public override void SetStaticDefaults()
         {
             Main.projFrames[Projectile.type] = 2;
+            ProjectileID.Sets.NeedsUUID[Type] = true;
         }
 
         public override void SetDefaults()
@@ -98,11 +101,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         {
             if (!frameAssigned)
             {
-                Projectile.frame = (Projectile.whoAmI % 2 == 0) ? 0 : 1;
+                Projectile.frame = Projectile.identity % 2;
                 frameAssigned = true;
             }
 
 
+            Projectile.tileCollide = !magnetized;
             Projectile.rotation += 0.5f;
             Projectile.ai[0] += 1f;
 
@@ -111,8 +115,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                 Projectile.velocity.Y += 0.1f;
             }
 
-            if (Projectile.ai[0] == 1f)
+            if (Projectile.ai[0] == 1f && Projectile.owner == Main.myPlayer)
+            {
                 Projectile.velocity *= Main.rand.NextFloat(0.9f, 1.1f);
+                Projectile.netUpdate = true;
+            }
 
             if (Projectile.ai[0] >= 40f)
             {
@@ -132,17 +139,23 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
                         {
                             toOther.Normalize();
                             Projectile.velocity += toOther * MagneticStrength;
-                            if (!lightningSpawned)
+                            if (!magnetized)
                             {
-                                Vector2 zapOffset = other.Center - Projectile.Center;
-                                int zapID = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, zapOffset, ModContent.ProjectileType<MagneticZap>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
-                                if (zapID >= 0 && zapID < Main.maxProjectiles)
-                                {
-                                    Main.projectile[zapID].localAI[0] = other.Center.X;
-                                    Main.projectile[zapID].localAI[1] = other.Center.Y;
-                                }
                                 Projectile.tileCollide = false;
-                                lightningSpawned = true;
+                                magnetized = true;
+                                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
+                                if (Projectile.owner == Main.myPlayer && Projectile.identity < other.identity)
+                                {
+                                    int zapId = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero,
+                                        ModContent.ProjectileType<MagneticZap>(), Projectile.damage, Projectile.knockBack,
+                                        Projectile.owner, Projectile.identity, other.identity);
+                                    if (zapId >= 0 && zapId < Main.maxProjectiles)
+                                    {
+                                        Arc = Main.projectile[zapId];
+                                        if (other.ModProjectile is MagneticRock partner)
+                                            partner.Arc = Arc;
+                                    }
+                                }
                             }
                         }
 
@@ -160,6 +173,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
         private void TriggerCollisionEffect()
         {
+            if (Projectile.owner != Main.myPlayer) return;
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<MagneticRockExplosion>(), Projectile.damage, Projectile.knockBack, Projectile.owner);
             Projectile.Kill();
             for (int i = 0; i < Main.maxProjectiles; i++)
@@ -172,6 +186,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
         public override void OnKill(int timeLeft)
         {
+            if (Arc is { active: true } && Arc.owner == Projectile.owner
+                && Arc.type == ModContent.ProjectileType<MagneticZap>()
+                && (Arc.ai[0] == Projectile.identity || Arc.ai[1] == Projectile.identity))
+                Arc.Kill();
             SoundEngine.PlaySound(SoundID.DD2_SkeletonHurt, Projectile.Center);
             for (float m = 0f; m < 5f; m += 0.5f)
             {
@@ -185,27 +203,12 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
 
     public class MagneticZap : ModProjectile
     {
-        private const int MAX_SEGMENTS = 12;
-        private const float BRANCH_CHANCE = 1f;
-        private const int MAX_BRANCHES = 2;
-        private Vector2[] segmentPositions;
-        private Vector2 targetPosition;
-        private float[] segmentOffsets;
-        private List<Branch> branches;
-        private float alpha = 1f;
-        private bool initialized;
-        private float distanceToTarget;
+        private LightningUtils.LightningData lightning;
+        private Projectile firstRock;
+        private Projectile secondRock;
+        private int age;
 
         public override string Texture => "Terraria/Images/Projectile_0";
-
-
-        private class Branch
-        {
-            public Vector2[] Positions { get; set; }
-            public float[] Offsets { get; set; }
-            public float Alpha { get; set; }
-            public int LifeTime { get; set; }
-        }
 
         public override void SetDefaults()
         {
@@ -214,422 +217,108 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
             Projectile.friendly = true;
             Projectile.hostile = false;
             Projectile.penetrate = -1;
-            Projectile.timeLeft = 30;
+            Projectile.timeLeft = 2;
             Projectile.ignoreWater = true;
-            Projectile.tileCollide = true;
+            Projectile.tileCollide = false;
             Projectile.light = 0.8f;
         }
 
+        private bool MatchesRock(Projectile rock, float identity)
+            => rock is { active: true } && rock.owner == Projectile.owner && rock.identity == identity
+                && rock.type == ModContent.ProjectileType<MagneticRock>();
+
+        private Projectile ResolveRock(float identity)
+        {
+            int index = Projectile.GetByUUID(Projectile.owner, identity);
+            return (uint)index < Main.maxProjectiles && MatchesRock(Main.projectile[index], identity) ? Main.projectile[index] : null;
+        }
+
+        private bool Connected => MatchesRock(firstRock, Projectile.ai[0]) && MatchesRock(secondRock, Projectile.ai[1])
+            && firstRock.ai[1] == secondRock.ai[1];
+
         public override void AI()
         {
-            Projectile.velocity = Vector2.Zero;
-            if (!initialized)
+            if (!Connected)
             {
-                Initialize();
-                initialized = true;
+                firstRock = ResolveRock(Projectile.ai[0]);
+                secondRock = ResolveRock(Projectile.ai[1]);
             }
-
-            UpdateSegments();
-            UpdateBranches();
-
-            if (Main.dedServ || Main.gamePaused)
+            if (!Connected)
+            {
+                if (Projectile.owner == Main.myPlayer || ++age >= 60)
+                    Projectile.Kill();
+                else
+                    Projectile.timeLeft = 2;
                 return;
-
-            Vector2 randomSegment = segmentPositions[Main.rand.Next(0, MAX_SEGMENTS)];
-            Vector2 dir = (segmentPositions[MAX_SEGMENTS - 1] - segmentPositions[0]).SafeNormalize(Vector2.Zero);
-
-            Color sparkColor = Color.Lerp(
-                new Color(0, 236, 255),
-                new Color(0, 255, 191),
-                Main.rand.NextFloat()
-            );
-
-            Dust a = Dust.NewDustPerfect(randomSegment + dir * 2f,
-                ModContent.DustType<GlowStrong>(),
-                dir.RotatedByRandom(0.5f) * Main.rand.NextFloat(1f, 3f),
-                0, newColor: sparkColor, Main.rand.NextFloat(0.08f, 0.18f));
-            a.alpha = 2;
-            foreach (Branch branch in branches)
+            }
+            if (lightning == null)
             {
-                if (Main.rand.NextBool(3))
+                if (firstRock.ModProjectile is MagneticRock first) first.Arc = Projectile;
+                if (secondRock.ModProjectile is MagneticRock second) second.Arc = Projectile;
+                lightning = new LightningUtils.LightningData(Projectile)
                 {
-                    for (int i = 0; i < branch.Positions.Length - 1; i++)
-                    {
-                        Vector2 dustPos = Vector2.Lerp(
-                            branch.Positions[i],
-                            branch.Positions[i + 1],
-                            Main.rand.NextFloat()
-                        );
-
-                        Color dustColor = Color.Lerp(
-                            Color.Aqua,
-                            Color.LightBlue,
-                            Main.rand.NextFloat()
-                        );
-
-                        Dust dust = Dust.NewDustPerfect(
-                            dustPos,
-                            DustID.Electric,
-                            Vector2.Zero,
-                            0,
-                            dustColor * branch.Alpha,
-                            Main.rand.NextFloat(0.6f, 0.9f) * branch.Alpha
-                        );
-                        dust.noGravity = true;
-                        dust.fadeIn = 0f;
-                    }
-                }
+                    MaxSegments = 17,
+                    CoreColorOverride = Color.White,
+                    OuterColorOverride = new Color(100, 180, 255),
+                    StartThickness = 2f,
+                    EndThickness = 2f,
+                    GlowIntensity = 0.2f,
+                    GlowScale = 0.1f
+                };
+                LightningUtils.InitializeBetweenPoints(lightning, firstRock.Center, secondRock.Center);
+                SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(0.3f, 1f) });
             }
-
-            if (Projectile.timeLeft < 10)
-                alpha *= 0.7f;
-        }
-		
-        private void Initialize()
-        {
-            FindTargetPosition();
-
-            segmentPositions = new Vector2[MAX_SEGMENTS];
-            segmentOffsets = new float[MAX_SEGMENTS];
-            branches = [];
-
-            Vector2 direction = targetPosition - Projectile.Center;
-            distanceToTarget = direction.Length();
-            float segmentLength = distanceToTarget / (MAX_SEGMENTS - 1);
-            direction.Normalize();
-
-            for (int i = 0; i < MAX_SEGMENTS; i++)
-            {
-                segmentPositions[i] = Projectile.Center + direction * (segmentLength * i);
-                segmentOffsets[i] = 0f;
-            }
-            SoundEngine.PlaySound(SoundID.Item79 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(0.3f, 1) });
+            Projectile.Center = firstRock.Center;
+            Projectile.velocity = Vector2.Zero;
+            Projectile.timeLeft = 2;
+            if (age++ % 3 == 0)
+                DisplaceOffsets(lightning.SegmentOffsets, 0, lightning.MaxSegments - 1, 1f);
+            UpdateLightning();
+            if (age % 6 == 0)
+                LightningUtils.SpawnDust(lightning);
         }
 
-        private void UpdateSegments()
+        private void UpdateLightning()
         {
-            float time = Main.GameUpdateCount;
-            float globalIntensity = (float)(Math.Sign(Math.Sin(time * 0.1f)) * 0.2f + Math.Sign(Math.Cos(time * 0.15f)) * 0.1f + 0.3f);
-            for (int i = 1; i < MAX_SEGMENTS - 1; i++)
-            {
-                float centerEmphasis = (float)Math.Exp(-(Math.Pow(i - MAX_SEGMENTS / 2f, 2) / (2 * Math.Pow(MAX_SEGMENTS / 4f, 2)))) * 0.7f;
-                float noise = (float)(Math.Sign(Math.Sin(time * 0.8f + i * 0.5f)) * 1.2f + Math.Sign(Math.Cos(time * 0.5f + i * 0.7f)) * 1.0f + (Math.Sin(time * 1.2f + i * 0.2f) > 0 ? 1 : -1) * globalIntensity * 1.8f) * centerEmphasis;
-                if (Main.rand.NextBool(30) && i > MAX_SEGMENTS / 4 && i < MAX_SEGMENTS * 3 / 4)
-                {
-                    noise += Main.rand.NextFloat(-1f, 1f) * centerEmphasis;
-                    if (Main.rand.NextBool(2))
-                        noise *= 1.5f;
-                }
-                float finalAmplitude = Math.Min(5f, distanceToTarget * 0.06f);
-                segmentOffsets[i] = noise * finalAmplitude;
-                Vector2 normal = (segmentPositions[i + 1] - segmentPositions[i - 1]).RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.Zero);
-                Vector2 tangent = (segmentPositions[i + 1] - segmentPositions[i - 1]).SafeNormalize(Vector2.Zero);
-                float tangentOffset = Math.Sign(Math.Sin(time * 0.6f + i * 0.8f)) * 0.7f * centerEmphasis;
-                float suddenMultiplier = Main.rand.NextBool(20) ? 1.5f : 1f;
-                segmentPositions[i] += (normal * segmentOffsets[i] + tangent * tangentOffset) * suddenMultiplier;
-            }
-            if (Main.rand.NextBool(6))
-            {
-                int segment = Main.rand.Next(MAX_SEGMENTS / 4, (MAX_SEGMENTS * 3) / 4);
-                float displacementAmount = Main.rand.NextFloat(-4f, 4f);
-                Vector2 normal = (segmentPositions[segment + 1] - segmentPositions[segment - 1]).RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.Zero);
-                segmentPositions[segment] += normal * displacementAmount;
-                if (Main.rand.NextBool(2))
-                {
-                    int adjacentSegment = segment + (Main.rand.NextBool() ? 1 : -1);
-                    if (adjacentSegment > 0 && adjacentSegment < MAX_SEGMENTS - 1)
-                        segmentPositions[adjacentSegment] += normal * displacementAmount * 0.7f;
-                }
-            }
-            if (Main.rand.NextFloat() < BRANCH_CHANCE && branches.Count < MAX_BRANCHES)
-                CreateBranch();
+            LightningUtils.InitializeBetweenPoints(lightning, firstRock.Center, secondRock.Center);
+            Vector2 direction = (secondRock.Center - firstRock.Center).SafeNormalize(Vector2.UnitX);
+            Vector2 normal = new(-direction.Y, direction.X);
+            float amplitude = Math.Min(7f, lightning.DistanceToTarget * 0.05f);
+            for (int i = 1; i < lightning.MaxSegments - 1; i++)
+                lightning.SegmentPositions[i] += normal * (lightning.SegmentOffsets[i] * amplitude);
         }
 
-        private void CreateBranch()
+        private static void DisplaceOffsets(float[] offsets, int first, int last, float amplitude)
         {
-            int startSegment = Main.rand.Next(1, MAX_SEGMENTS - 2);
-            int branchSegments = Main.rand.Next(3, 6);
-            Branch branch = new()
-            {
-                Positions = new Vector2[branchSegments],
-                Offsets = new float[branchSegments],
-                Alpha = 0.7f,
-                LifeTime = Main.rand.Next(10, 20)
-            };
-            Vector2 branchDirection = (segmentPositions[startSegment + 1] - segmentPositions[startSegment]).RotatedBy(Main.rand.NextFloat(-0.7f, 0.7f));
-            branchDirection.Normalize();
-            for (int i = 0; i < branchSegments; i++)
-            {
-                branch.Positions[i] = segmentPositions[startSegment] + branchDirection * (i * 8);
-                branch.Offsets[i] = 0f;
-            }
-            branches.Add(branch);
-        }
-
-        private void UpdateBranches()
-        {
-            for (int i = branches.Count - 1; i >= 0; i--)
-            {
-                Branch branch = branches[i];
-                branch.LifeTime--;
-                if (branch.LifeTime <= 0)
-                {
-                    branches.RemoveAt(i);
-                    continue;
-                }
-                branch.Alpha *= 0.95f;
-                float time = Main.GameUpdateCount;
-                for (int j = 1; j < branch.Positions.Length - 1; j++)
-                {
-                    float noise = (float)(Math.Sin(time * 0.7f + j * 0.3f) * 1.5f + Math.Cos(time * 0.4f + j * 0.6f) * 1.0f);
-                    branch.Offsets[j] = noise;
-                    Vector2 normal = (branch.Positions[j + 1] - branch.Positions[j - 1]).RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.Zero);
-                    branch.Positions[j] += normal * (branch.Offsets[j] - branch.Offsets[j]);
-                }
-            }
+            if (last - first < 2) return;
+            int middle = (first + last) / 2;
+            offsets[middle] = (offsets[first] + offsets[last]) * 0.5f + Main.rand.NextFloat(-amplitude, amplitude);
+            DisplaceOffsets(offsets, first, middle, amplitude * 0.7f);
+            DisplaceOffsets(offsets, middle, last, amplitude * 0.7f);
         }
 
         public override bool PreDraw(ref Color lightColor)
         {
-            if (segmentPositions == null) return false;
-            ModContent.GetInstance<AdditivePixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+            if (lightning != null && Connected)
             {
-                SpriteBatch spriteBatch = Main.spriteBatch;
-                Texture2D lineTexture = TextureAssets.MagicPixel.Value;
-                Rectangle sourceRect = new(0, 0, 1, 1);
-                float spawnProgress = 1f - (Projectile.timeLeft / 30f);
-                float flashIntensity = (float)Math.Pow(1f - spawnProgress, 2);
-                float energyPulse = (float)Math.Sin(Main.GameUpdateCount * 0.2f) * 0.3f + 0.7f;
-                for (int i = 0; i < MAX_SEGMENTS - 1; i++)
-                {
-                    Vector2 start = segmentPositions[i] - Main.screenPosition;
-                    Vector2 end = segmentPositions[i + 1] - Main.screenPosition;
-                    Vector2 direction = end - start;
-                    float distance = direction.Length();
-                    float rotation = direction.ToRotation();
-                    if (flashIntensity > 0)
-                    {
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            Color.Aqua * flashIntensity,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 3f),
-                            SpriteEffects.None,
-                            0
-                        );
-                    }
-
-                    //core beam
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        Color.Yellow * alpha * energyPulse,
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 1f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    //middle glow
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        new Color(150, 220, 255) * (alpha * 0.5f * energyPulse),
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 2f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    //outer glow
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start,
-                        sourceRect,
-                        new Color(100, 180, 255) * (alpha * 0.3f * energyPulse),
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 3f),
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    //distortion
-                    float distortionOffset = (float)Math.Sin(Main.GameUpdateCount * 0.8f + i * 0.5f);
-                    spriteBatch.Draw(
-                        lineTexture,
-                        start + new Vector2(0, distortionOffset),
-                        sourceRect,
-                        new Color(200, 230, 255) * (alpha * 0.2f),
-                        rotation,
-                        new Vector2(0, 0.5f),
-                        new Vector2(distance, 1.5f),
-                        SpriteEffects.None,
-                        0
-                    );
-                }
-
-                Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Clear/GlowTrailSlice").Value;
-                for (int i = 0; i < MAX_SEGMENTS - 1; i++)
-                {
-                    Vector2 start = segmentPositions[i] - Main.screenPosition;
-                    Vector2 end = segmentPositions[i + 1] - Main.screenPosition;
-                    Vector2 direction = end - start;
-                    float distance = direction.Length();
-                    float rotation = direction.ToRotation();
-                    float glowWidth = 0.4f * (1f + (float)Math.Sin(Main.GameUpdateCount * 0.1f) * 0.1f);
-                    Color glowColor = new Color(150, 220, 255) * (alpha * 0.2f);
-                    for (int g = 0; g < 2; g++)
-                    {
-                        float offsetAngle = g * MathHelper.PiOver2;
-                        Vector2 offset = new((float)Math.Cos(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f, (float)Math.Sin(offsetAngle + Main.GameUpdateCount * 0.05f) * 0.5f);
-                        spriteBatch.Draw(
-                            glowTexture,
-                            start + offset,
-                            null,
-                            glowColor * (1f - g * 0.3f),
-                            rotation,
-                            new Vector2(0, glowTexture.Height / 2f),
-                            new Vector2(distance / (glowTexture.Width / 1f), glowWidth * (1f - g * 0.2f)),
-                            SpriteEffects.None,
-                            0
-                        );
-                    }
-                }
-                //tiny impact points
-                void DrawImpactPoint(Vector2 position, float size)
-                {
-                    position = position - Main.screenPosition;
-                    float time = Main.GameUpdateCount * 0.1f;
-                    float pulseSize = 1f + (float)Math.Sin(time) * 0.2f;
-
-                    Texture2D starTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Pixel/CrispStarPMA").Value;
-
-                    //rotating pixels
-                    for (int i = 0; i < 4; i++)
-                    {
-                        float angle = i * MathHelper.PiOver2 + time;
-                        Vector2 offset = new Vector2((float)Math.Cos(angle), (float)Math.Sin(angle)) * size * pulseSize;
-
-                        spriteBatch.Draw(
-                            lineTexture,
-                            position + offset,
-                            sourceRect,
-                            new Color(150, 220, 255) * (alpha * 0.5f),
-                            angle,
-                            new Vector2(0.5f),
-                            new Vector2(size * 0.25f, 1f),
-                            SpriteEffects.None,
-                            0
-                        );
-                    }
-
-                    //first star
-                    Color color1 = Color.Lerp(
-                        new Color(0, 236, 255),
-                        Color.White,
-                        0.5f + (float)Math.Sin(time) * 0.2f
-                    );
-                    spriteBatch.Draw(
-                        starTexture,
-                        position,
-                        null,
-                        color1 * alpha,
-                        time * 0.5f,
-                        starTexture.Size() / 2f,
-                        0.2f * pulseSize,
-                        SpriteEffects.None,
-                        0
-                    );
-
-                    //second star
-                    Color color2 = Color.Lerp(
-                        new Color(0, 255, 191),
-                        Color.White,
-                        0.3f + (float)Math.Sin(time * 1.5f) * 0.2f
-                    );
-                    spriteBatch.Draw(
-                        starTexture,
-                        position,
-                        null,
-                        color2 * alpha,
-                        -time * 0.7f,
-                        starTexture.Size() / 2f,
-                        0.125f * pulseSize,
-                        SpriteEffects.None,
-                        0
-                    );
-                }
-
-                DrawImpactPoint(segmentPositions[0], 4f);
-                DrawImpactPoint(segmentPositions[MAX_SEGMENTS - 1], 4f);
-
-                //draw branches
-                foreach (Branch branch in branches)
-                {
-                    float branchEnergy = (float)Math.Sin(Main.GameUpdateCount * 0.3f) * 0.2f + 0.8f;
-
-                    for (int i = 0; i < branch.Positions.Length - 1; i++)
-                    {
-                        Vector2 start = branch.Positions[i] - Main.screenPosition;
-                        Vector2 end = branch.Positions[i + 1] - Main.screenPosition;
-                        Vector2 direction = end - start;
-                        float distance = direction.Length();
-                        float rotation = direction.ToRotation();
-
-                        //core
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            Color.White * branch.Alpha * branchEnergy,
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 0.5f),
-                            SpriteEffects.None,
-                            0
-                        );
-
-                        //glow
-                        spriteBatch.Draw(
-                            lineTexture,
-                            start,
-                            sourceRect,
-                            new Color(150, 220, 255) * (branch.Alpha * 0.3f * branchEnergy),
-                            rotation,
-                            new Vector2(0, 0.5f),
-                            new Vector2(distance, 1f),
-                            SpriteEffects.None,
-                            0
-                        );
-                    }
-                }
-            });
+                UpdateLightning();
+                LightningUtils.DrawTaperedLightning(lightning, Main.spriteBatch);
+            }
             return false;
         }
 
-        private void FindTargetPosition()
-        {
-            targetPosition = new Vector2(Projectile.localAI[0], Projectile.localAI[1]);
-            if (targetPosition == Vector2.Zero)
-            {
-                targetPosition = Projectile.Center + Projectile.velocity;
-            }
-        }
+        public override void OnKill(int timeLeft) => lightning?.StrokeRenderer?.Dispose();
     }
 
     public class MagneticRockExplosion : ModProjectile
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public int timer = 0;
+        public int timer
+        {
+            get => (int)Projectile.ai[0];
+            set => Projectile.ai[0] = value;
+        }
 
         public override void SetStaticDefaults() => Main.projFrames[Projectile.type] = 7;
         public float alphaPercent = 0;
