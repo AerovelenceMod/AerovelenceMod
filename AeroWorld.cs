@@ -1,4 +1,6 @@
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
+using MarbleMusket = AerovelenceMod.Content.Items.Weapons.Cave.MarbleMusket.MarbleMusket;
+using GraniteCannon = AerovelenceMod.Content.Items.Weapons.Cave.GraniteCannon.GraniteCannon;
 using System.Collections.Generic;
 using Terraria.WorldBuilding;
 using Terraria.ModLoader.IO;

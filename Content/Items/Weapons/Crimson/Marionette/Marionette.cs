@@ -52,7 +52,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Crimson.Marionette
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.useTime = Item.useAnimation = 20;
             Item.shoot = ModContent.ProjectileType<MarionetteProj>();
-            Item.rare = ItemRarities.MidPHM;
+            Item.rare = ItemRarities.EarlyPHM;
             Item.channel = true;
             Item.noMelee = true;
             Item.useTurn = true;

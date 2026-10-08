@@ -4,7 +4,12 @@ namespace AerovelenceMod.Common.Utilities
 {
     public sealed class SlimeFacetStyle
     {
+        public bool SmoothShading { get; set; }
         public bool InteriorLine { get; set; }
+        public Color? Outline { get; set; }
+        public Color? OutlineLight { get; set; }
+        public Color? OutlineMid { get; set; }
+        public Color? OutlineHighlight { get; set; }
         public Color Highlight { get; set; }
         public Color AccentA { get; set; }
         public Color AccentB { get; set; }
@@ -21,6 +26,9 @@ namespace AerovelenceMod.Common.Utilities
         public bool BodyHighlights { get; set; }
         public bool DitherShading { get; set; }
         public Color Outline { get; set; }
+        public Color? OutlineLight { get; set; }
+        public Color? OutlineShadow { get; set; }
+        public Color? BacklightOutline { get; set; }
         public Color BackDark { get; set; }
         public Color BackSecondary { get; set; }
         public Color BackBright { get; set; }

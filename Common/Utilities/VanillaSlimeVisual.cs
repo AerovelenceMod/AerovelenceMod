@@ -13,16 +13,24 @@ public sealed class VanillaSlimeVisual : IDisposable
     private sealed record SpritePalette(Vector2 Size, Color[] Shades);
     private static readonly Dictionary<int, SpritePalette> sprites = new();
     private static readonly List<(VanillaSlimeVisual Visual, NPC Npc)> pending = new(256);
-    private readonly SlimeShape shape = new(1, 3) { BodyDome = .72f, BottomCutoff = .98f, RippleStrength = .35f };
-    private readonly SlimeRenderer skin = new(new SlimeAppearance
+    private readonly SlimeShape shape;
+    private readonly SlimeRenderer skin;
+    private readonly bool customPalette;
+    public VanillaSlimeVisual() : this(null, null) { }
+    public VanillaSlimeVisual(SlimeRenderer renderer, SlimeShape shape = null)
     {
-        PixelSize = 2,
-        LightDirection = new Vector2(-.58f, -.82f),
-        EdgeSmoothing = .45f,
-        BodyBacklight = true,
-        BodyHighlights = true,
-        UniformOutline = true
-    });
+        this.shape = shape ?? new(1, 3) { BodyDome = .72f, BottomCutoff = .98f, RippleStrength = .35f };
+        customPalette = renderer != null;
+        skin = renderer ?? new(new SlimeAppearance
+        {
+            PixelSize = 2,
+            LightDirection = new Vector2(-.58f, -.82f),
+            EdgeSmoothing = .45f,
+            BodyBacklight = true,
+            BodyHighlights = true,
+            UniformOutline = true
+        });
+    }
     private Vector2 bodySize;
     private Vector2 bodyOffset;
     private Vector2 bodyOffsetVelocity;
@@ -56,6 +64,9 @@ public sealed class VanillaSlimeVisual : IDisposable
     public bool MotherBuds { get; set; }
     public bool Rainbow { get; set; }
     public Vector2? BodyDimensions { get; set; }
+    public float GroundOffset { get; set; } = 1f;
+    public float? JumpAnticipation { get; set; }
+    public Action<NPC> ShapeModifier { get; set; }
     public SlimeShape Shape => shape;
     public float Opacity => opacity;
     public bool EmitParticles { get; set; } = true;
@@ -138,6 +149,7 @@ public sealed class VanillaSlimeVisual : IDisposable
         Vector2 basis = footprint * .5f;
         float threshold = npc.ai[0] < -1500f ? -2000f : npc.ai[0] < -500f ? -1000f : 0f;
         float anticipation = grounded && npc.ai[0] < threshold ? MathHelper.SmoothStep(0f, 1f, MathHelper.Clamp((npc.ai[0] - threshold + 24f) / 24f, 0f, 1f)) : 0f;
+        if (JumpAnticipation is float preparation) anticipation = grounded ? MathHelper.Clamp(preparation, 0f, 1f) : 0f;
         float flightStretch = npc.velocity.Y > 0f ? MathHelper.Clamp(npc.velocity.Y * npc.velocity.Y * .0016f, 0f, .36f)
             : MathHelper.Clamp(-npc.velocity.Y * .017f, 0f, .17f);
         float breathing = idle * (MathF.Sin(time * .81f) * .06f + MathF.Sin(time * 1.39f + 1.8f) * .025f);
@@ -146,7 +158,7 @@ public sealed class VanillaSlimeVisual : IDisposable
         compression = MathHelper.Clamp(compression + compressionVelocity, -.42f, .5f);
         float stretch = 1f - compression;
         Vector2 size = basis * new Vector2(1f / stretch, stretch);
-        float bottom = grounded ? groundPoint.Y - npc.Center.Y + 1f : npc.height * .5f + 1f;
+        float bottom = grounded ? groundPoint.Y - npc.Center.Y + GroundOffset : npc.height * .5f + GroundOffset;
         Vector2 offset = new(-npc.velocity.X * .65f, grounded ? bottom - size.Y / travelStretch : bottom - basis.Y - npc.velocity.Y * .15f);
         if (Suspended)
             offset = (SuspensionCenter ?? npc.Center - Vector2.UnitY * 5f * npc.scale) - npc.Center
@@ -210,6 +222,7 @@ public sealed class VanillaSlimeVisual : IDisposable
         wasGrounded = grounded;
         wasWall = npc.collideX;
         previousLife = npc.life;
+        ShapeModifier?.Invoke(npc);
     }
 
     public void Draw(NPC npc, SpriteBatch batch, Vector2 screenPosition, Color light)
@@ -229,6 +242,11 @@ public sealed class VanillaSlimeVisual : IDisposable
 
     private void EnsurePalette(NPC npc)
     {
+        if (customPalette)
+        {
+            opacity = npc.Opacity;
+            return;
+        }
         if (previousType == npc.type && previousNetId == npc.netID && (Rainbow || previousColor == npc.color) && previousAlpha == npc.alpha) return;
         int sourceType = npc.type == NPCID.SpikedIceSlime ? NPCID.IceSlime : npc.type == NPCID.SlimeSpiked ? NPCID.BlueSlime : npc.type;
         if (!sprites.TryGetValue(sourceType, out SpritePalette sprite))

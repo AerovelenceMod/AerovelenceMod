@@ -100,10 +100,15 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             set => NPC.ai[1] = value;
         }
 
-        private bool dashing;
+        private bool dashing
+        {
+            get => NPC.ai[2] == 1f;
+            set => NPC.ai[2] = value ? 1f : 0f;
+        }
 
         public override void AI()
         {
+            bool wasDashing = dashing;
             NPC.TargetClosest();
 
             Player player = Main.player[NPC.target];
@@ -157,6 +162,9 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 NPC.velocity.Y += sine;
             }
 
+            if (Main.netMode != NetmodeID.MultiplayerClient && wasDashing != dashing)
+                NPC.netUpdate = true;
+
             if (Main.rand.NextBool(20))
             {
                 Dust dust = Dust.NewDustDirect(NPC.position, NPC.width, NPC.height, DustID.GemSapphire);
@@ -164,7 +172,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 dust.fadeIn = 1f;
                 dust.scale = Main.rand.NextFloat(0.6f, 1f);
 
-                NPC.netUpdate = true;
+
             }
         }
 

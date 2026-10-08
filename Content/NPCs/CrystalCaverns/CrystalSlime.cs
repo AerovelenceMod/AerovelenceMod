@@ -6,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 
 
@@ -23,7 +22,10 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             FloorSplat,
             Stretch
         }
-        private readonly SlimeShape shape = new(9);
+        private readonly SlimeShape shape = new(9) { BottomCutoff = 1f };
+        private readonly VanillaSlimeVisual movement;
+        private const int AttackCooldown = 300;
+        private const int RadialReachTime = 28;
         private readonly SlimeRenderer skin = new(new SlimeAppearance
         {
             PixelSize = 2,
@@ -32,8 +34,18 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             BodyBacklight = true,
             BodyHighlights = true,
             DitherShading = false,
+            UniformOutline = true,
+            PixelStyle = new SlimePixelStyle(
+            [
+                new(19, 13, 44), new(0, 0, 0), new(36, 32, 52),
+                new(69, 66, 88), new(90, 92, 110), new(134, 146, 166)
+            ], SlimePixelStyle.Ice.Material, backlight: new(82, 145, 228), outlineLight: new(36, 32, 52),
+                joinHighlights: SlimePixelStyle.Ice.JoinHighlights, shadowWidth: SlimePixelStyle.Ice.ShadowWidth),
             Outline = new(0, 0, 0),
-            BackDark = new(6, 5, 38),
+            OutlineLight = new(36, 32, 52),
+            OutlineShadow = new(19, 13, 44),
+            BacklightOutline = new(23, 20, 90),
+            BackDark = new(14, 12, 58),
             BackSecondary = new(23, 20, 90),
             BackBright = new(65, 30, 96),
             BackInner = new(51, 45, 159),
@@ -45,7 +57,12 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             BodyHighlight = new(134, 146, 166),
             FacetStyle = new SlimeFacetStyle
             {
+                SmoothShading = true,
                 InteriorLine = true,
+                Outline = new(19, 13, 44),
+                OutlineLight = new(23, 20, 90),
+                OutlineMid = new(36, 0, 126),
+                OutlineHighlight = new(65, 30, 96),
                 Highlight = Color.White,
                 AccentA = new(244, 255, 0),
                 AccentB = new(209, 245, 196),
@@ -54,7 +71,16 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 Bright = new(81, 232, 255)
             }
         });
-        private float landingImpulse;
+        public CrystalSlime()
+        {
+            movement = new(skin, shape)
+            {
+                BodyDimensions = new Vector2(34, 24),
+                GroundOffset = 2f,
+                EmitParticles = false,
+                ShapeModifier = ApplyCrystalShape
+            };
+        }
         private Vector2 previousVelocity;
         private Vector2 bodySize = new(17, 12);
         private Vector2 bodySizeVelocity;
@@ -107,7 +133,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             NPC.noGravity = false;
             NPC.noTileCollide = false;
             NPC.HitSound = SoundID.NPCHit1;
-            NPC.DeathSound = SoundID.NPCDeath44;
+            NPC.DeathSound = null;
             SpawnModBiomes = new int[] { ModContent.GetInstance<CrystalCavernsSurfaceBiome>().Type };
         }
         public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry)
@@ -198,7 +224,10 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     break;
             }
             NPC.knockBackResist = CurrentState == ActionState.FloorSplat && Phase == 2 ? 0 : airborneBlob ? .95f : .2f;
-            UpdateShape();
+            previousVelocity = NPC.velocity;
+            ConfigureMovement();
+            if (Main.dedServ) UpdateShape();
+            else movement.QueueUpdate(NPC);
         }
         private void DoIdle(Player target)
         {
@@ -215,7 +244,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             }
             NPC.direction = target.Center.X >= NPC.Center.X ? 1 : -1;
             NPC.spriteDirection = NPC.direction;
-            if (grounded)
+            if (grounded && NPC.velocity.Y == 0f)
             {
                 if (airborneBlob)
                 {
@@ -224,6 +253,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     NPC.netUpdate = Main.netMode != NetmodeID.MultiplayerClient;
                 }
                 NPC.velocity.X *= .8f;
+                if (Math.Abs(NPC.velocity.X) < .1f) NPC.velocity.X = 0f;
                 hopTimer++;
                 int wait = hopIndex == 2 ? 58 : 38;
                 if (hopTimer >= wait && Main.netMode != NetmodeID.MultiplayerClient)
@@ -235,14 +265,13 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     hopIndex = (hopIndex + 1) % 3;
                     hopTimer = 0;
                     NPC.netUpdate = true;
-                    SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .28f, Pitch = .22f }, NPC.Center);
                 }
-                if (!airborneBlob && Timer >= 168 && hopTimer >= 12 && Vector2.DistanceSquared(NPC.Center, target.Center) < 760 * 760 && Main.netMode != NetmodeID.MultiplayerClient)
+                if (!airborneBlob && Timer >= AttackCooldown && hopTimer >= 12 && Vector2.DistanceSquared(NPC.Center, target.Center) < 760 * 760 && Main.netMode != NetmodeID.MultiplayerClient)
                     ChooseAttack();
             }
             else
             {
-                airborneBlob = true;
+                airborneBlob = !grounded;
                 if (!NPC.collideX) NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * 2.1f, .018f);
             }
         }
@@ -266,7 +295,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         private void ReturnToIdle(float launchY = -2.8f)
         {
             State = (float)ActionState.Idle;
-            Timer = Main.rand.Next(12, 34);
+            Timer = -Main.rand.Next(60);
             Phase = 0f;
             airborneBlob = true;
             hopTimer = 0;
@@ -295,7 +324,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     Phase = 1;
                     Timer = 0;
                     NPC.netUpdate = true;
-                    SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .5f, Pitch = .3f }, NPC.Center);
                 }
                 return;
             }
@@ -317,7 +345,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                         NPC.netUpdate = true;
                         SpawnHazards(3);
                         BurstDust(anchorA + Vector2.UnitY * 4, 8, 1.7f);
-                        SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .5f, Pitch = -.3f }, NPC.Center);
                     }
                     else if (Timer > leapTicks + 12 || Timer > 2 && NPC.collideX) DropFromCeiling(target);
                 }
@@ -384,21 +411,20 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 NPC.velocity.Y = 0f;
             else
                 NPC.velocity.Y = Math.Min(NPC.velocity.Y + 0.28f, 8f);
-            if (Phase == 0f && Timer >= 25f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Phase == 0f && Timer >= 36f && Main.netMode != NetmodeID.MultiplayerClient)
             {
-                float baseAngle = Main.rand.NextFloat(-.12f, .12f);
+                float baseAngle = Main.rand.NextFloat(-.18f, .18f);
                 for (int i = 0; i < 4; i++)
                 {
-                    float angle = baseAngle + MathHelper.Lerp(-2.8f, -.34f, i / 3f);
+                    float angle = baseAngle + MathHelper.Lerp(-2.8f, -.34f, i / 3f) + Main.rand.NextFloat(-.1f, .1f);
                     Vector2 direction = angle.ToRotationVector2();
-                    radialAnchors[i] = TraceAnchor(NPC.Center, direction, Main.rand.NextFloat(76f, 120f));
+                    radialAnchors[i] = TraceAnchor(NPC.Center, direction, Main.rand.NextFloat(56f, 152f));
                 }
                 Phase = 1f;
                 Timer = 0f;
                 NPC.netUpdate = true;
-                SoundEngine.PlaySound(SoundID.Item9 with { Volume = 0.52f, Pitch = 0.35f }, NPC.Center);
             }
-            if (Phase == 1f && Timer >= 16f && Main.netMode != NetmodeID.MultiplayerClient)
+            if (Phase == 1f && Timer >= RadialReachTime && Main.netMode != NetmodeID.MultiplayerClient)
             {
                 SpawnHazards(4);
                 Phase = 2f;
@@ -430,7 +456,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     NPC.direction = target.Center.X >= NPC.Center.X ? 1 : -1;
                     NPC.velocity = new Vector2(NPC.direction * 2.7f, -8.2f);
                     airborneBlob = true;
-                    SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .45f, Pitch = -.12f }, NPC.Center);
                 }
                 if (Timer > 3 && TryImpactSplat(true)) return;
                 if (Phase == 0 && Timer >= 20 && Main.netMode != NetmodeID.MultiplayerClient)
@@ -494,9 +519,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             NPC.noTileCollide = false;
             BuildSplatPatch();
             NPC.netUpdate = true;
-            landingImpulse = 1;
             BurstDust(contact + surfaceNormal * 3, 14, MathHelper.Clamp(impact.Length() * .35f, 1.5f, 4));
-            SoundEngine.PlaySound(SoundID.NPCHit1 with { Volume = .6f, Pitch = -.35f }, contact);
             return true;
         }
         private void BuildSplatPatch()
@@ -558,7 +581,6 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     NPC.noGravity = true;
                     NPC.noTileCollide = false;
                     NPC.netUpdate = true;
-                    SoundEngine.PlaySound(SoundID.Item9 with { Volume = 0.52f, Pitch = 0.05f }, NPC.Center);
                 }
                 return;
             }
@@ -635,23 +657,31 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             return true;
         }
         internal bool HazardCollides(int slot, Rectangle target) => GetHazardSegment(slot, out _, out _, out _) && shape.TendrilIntersects(slot, NPC.Center, target);
-        public override bool CanHitPlayer(Player target, ref int cooldownSlot) => target.Hitbox.Intersects(new Rectangle((int)(NPC.Center.X + bodyOffset.X - bodySize.X), (int)(NPC.Center.Y + bodyOffset.Y - bodySize.Y), (int)(bodySize.X * 2), (int)(bodySize.Y * 2)));
+        public override bool CanHitPlayer(Player target, ref int cooldownSlot)
+        {
+            Vector2 extent = shape.BodyExtent(bodySize);
+            return target.Hitbox.Intersects(new Rectangle((int)(NPC.Center.X + bodyOffset.X - extent.X), (int)(NPC.Center.Y + bodyOffset.Y - extent.Y), (int)(extent.X * 2f), (int)(extent.Y * 2f)));
+        }
         public override void FindFrame(int frameHeight) { NPC.frame = new Rectangle(0, 0, 38, frameHeight); }
+        private void ConfigureMovement()
+        {
+            int wait = hopIndex == 2 ? 58 : 38;
+            movement.JumpAnticipation = CurrentState == ActionState.Idle ? EaseInOut((hopTimer - wait + 24f) / 24f) : 0f;
+        }
         private void UpdateShape()
         {
-            bool grounded = SlimeSurface.TryGroundContact(NPC, out Vector2 groundPoint, out _);
-            if (grounded && previousVelocity.Y > 1) landingImpulse = Math.Min(1, previousVelocity.Y / 10);
-            previousVelocity = NPC.velocity;
-            landingImpulse *= .85f;
-            float breathe = MathF.Sin(VisualTime * 1.4f);
-            float flight = MathHelper.Clamp(-NPC.velocity.Y * .045f, -.18f, .4f);
+            ConfigureMovement();
+            movement.Update(NPC);
+        }
+        private void ApplyCrystalShape(NPC npc)
+        {
             float preparation = CurrentState != ActionState.Idle && Phase == 0 ? EaseInOut(Timer / 26f) : 0;
-            Vector2 size = new(17 - flight * 8 + landingImpulse * 8 + preparation * 3, 12 + flight * 8 - landingImpulse * 5 - preparation * 2 + breathe * .5f);
-            Vector2 offset = new(-NPC.velocity.X * .45f, 18 - size.Y * shape.BottomCutoff);
+            Vector2 size = shape.Size + new Vector2(preparation * 3f, -preparation * 2f);
+            Vector2 offset = shape.Center;
             float tuck = CurrentState == ActionState.Idle ? airborneBlob ? 1 : EaseInOut((hopTimer - (hopIndex == 2 ? 48 : 28)) / 10f) : CurrentState == ActionState.FloorSplat && Phase < 2 ? 1 : 0;
             blobAmount = MathHelper.Lerp(blobAmount, tuck, tuck > blobAmount ? .42f : .2f);
-            float ceilingBlob = CurrentState == ActionState.Ceiling ? Phase == 0 ? EaseInOut(Timer / 26) : Phase == 1 ? 1 : 0 : blobAmount;
-            if (ceilingBlob > 0)
+            float ceilingBlob = CurrentState == ActionState.Ceiling ? Phase == 0 ? EaseInOut(Timer / 26) : Phase == 1 ? 1 : 0 : blobAmount * .2f;
+            if (ceilingBlob > 0 && CurrentState == ActionState.Ceiling)
             {
                 size = Vector2.Lerp(size, new Vector2(12, 12), ceilingBlob);
                 offset = Vector2.Lerp(offset, Vector2.Zero, ceilingBlob);
@@ -676,16 +706,25 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 size = Vector2.Lerp(size, new Vector2(10 + Math.Abs(spanAxis.X) * 4, 10 + Math.Abs(spanAxis.Y) * 4), stretch);
                 offset = Vector2.Lerp(offset, Vector2.Zero, stretch);
             }
-            if (!shape.Initialized) { bodySize = size; bodyOffset = offset; }
-            SlimeShape.Spring(ref bodySize, ref bodySizeVelocity, size, .2f, .64f);
-            SlimeShape.Spring(ref bodyOffset, ref bodyOffsetVelocity, offset, .16f, .65f);
-            bodySize = Vector2.Max(bodySize, new Vector2(5));
-            if (grounded && CurrentState == ActionState.Idle)
+            if (CurrentState == ActionState.Idle)
             {
-                bodyOffset.Y = groundPoint.Y - NPC.Center.Y + 2f - bodySize.Y * shape.BottomCutoff;
-                bodyOffsetVelocity.Y = 0f;
+                bodySize = size;
+                bodyOffset = offset;
+                bodySizeVelocity = bodyOffsetVelocity = Vector2.Zero;
             }
-            shape.Begin(bodyOffset, bodySize, VisualTime, NPC.Center);
+            else
+            {
+                SlimeShape.Spring(ref bodySize, ref bodySizeVelocity, size, .2f, .64f);
+                SlimeShape.Spring(ref bodyOffset, ref bodyOffsetVelocity, offset, .16f, .65f);
+                bodySize = Vector2.Max(bodySize, new Vector2(5));
+            }
+            shape.Center = bodyOffset;
+            shape.Size = bodySize;
+            float attached = MathHelper.Clamp(Math.Max(splat, stretch), 0f, 1f);
+            shape.TravelStretch = MathHelper.Lerp(shape.TravelStretch, 1f, attached);
+            shape.AirborneBlend *= 1f - Math.Min(1f, attached);
+            shape.Shear *= 1f - Math.Min(1f, attached);
+            shape.Wobble *= 1f - Math.Min(1f, attached);
             shape.SurfaceCount = splat > 0 ? surfaceCount : 0;
             shape.SurfaceBlend = MathHelper.Clamp(splat, 0, 1);
             for (int i = 0; i < shape.SurfaceCount; i++)
@@ -698,8 +737,8 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             {
                 float angle = MathHelper.Lerp(-2.85f, -.3f, Math.Min(i, 3) / 3f);
                 Vector2 outward = angle.ToRotationVector2();
-                Vector2 root = bodyOffset + outward * bodySize * .65f;
-                Vector2 tip = bodyOffset + outward * bodySize + outward * (i % 2 == 0 ? 2 : 5);
+                Vector2 root = shape.GetGelPoint(outward * .65f);
+                Vector2 tip = shape.GetGelPoint(outward) + SafeNormalize(shape.TransformBodyOffset(outward), outward) * (i % 2 == 0 ? 2 : 5);
                 Vector2 bend = Vector2.Lerp(root, tip, .5f) + new Vector2(-NPC.velocity.X * .9f, MathF.Sin(VisualTime * 1.6f + i) * 2);
                 float radius = i < 4 ? 5.2f : 0;
                 float crystal = i < 4 ? i % 2 == 0 ? 16 : 23 : 0;
@@ -792,7 +831,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         }
         public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor)
         {
-            if (!shape.Initialized) UpdateShape();
+            UpdateShape();
             shape.AlignPinnedTips(NPC.Center);
             skin.Draw(spriteBatch, shape, NPC.Center - screenPos, drawColor, NPC.Opacity);
             return false;
@@ -800,7 +839,7 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
         private float GetRadialAmount()
         {
             if (Phase == 1f)
-                return EaseOutBack(MathHelper.Clamp(Timer / 16f, 0f, 1f));
+                return EaseOutBack(MathHelper.Clamp(Timer / RadialReachTime, 0f, 1f));
             if (Phase == 2f)
                 return 1f;
             if (Phase == 3f)

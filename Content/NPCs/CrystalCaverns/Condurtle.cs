@@ -142,7 +142,10 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                     SoundEngine.PlaySound(SoundID.Item93 with { Volume = 0.35f, Pitch = Timer == 1f ? 0.2f : 0.45f, MaxInstances = 4 }, NPC.Center);
                     if (Authority && !linked)
                         for (int direction = -1; direction <= 1; direction += 2)
-                            Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(direction * 28f, -4f), new Vector2(direction * 5.5f, 0f), ModContent.ProjectileType<CondurtleSpark>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer);
+                            if (Main.netMode != NetmodeID.MultiplayerClient)
+                            {
+                                Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + new Vector2(direction * 28f, -4f), new Vector2(direction * 5.5f, 0f), ModContent.ProjectileType<CondurtleSpark>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer);
+                            }
                 }
                 if (Authority && Timer >= Duration)
                 {
@@ -206,7 +209,10 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
             for (int i = 0; i < amount; i++)
             {
                 float angle = -MathHelper.PiOver2 + (i - 2) * 0.39f + Main.rand.NextFloat(-0.08f, 0.08f);
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), ShellPoint, angle.ToRotationVector2() * Main.rand.NextFloat(6.7f, 8.7f), ModContent.ProjectileType<CondurtleShard>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), ShellPoint, angle.ToRotationVector2() * Main.rand.NextFloat(6.7f, 8.7f), ModContent.ProjectileType<CondurtleShard>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer);
+                }
             }
         }
 
@@ -232,7 +238,10 @@ namespace AerovelenceMod.Content.NPCs.CrystalCaverns
                 }
                 if (total >= 12 || sourceLinks >= 3) break;
                 if (duplicate || targetLinks >= 3) continue;
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), ShellPoint, Vector2.Zero, ModContent.ProjectileType<CondurtleArc>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer, NPC.whoAmI, other.whoAmI, warning);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(NPC.GetSource_FromAI(), ShellPoint, Vector2.Zero, ModContent.ProjectileType<CondurtleArc>(), Math.Max(1, NPC.damage / 2), 0f, Main.myPlayer, NPC.whoAmI, other.whoAmI, warning);
+                }
             }
             return neighbors.Count > 0;
         }

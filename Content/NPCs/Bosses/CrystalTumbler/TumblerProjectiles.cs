@@ -515,7 +515,6 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                         TumblerProjectileRetirement.Begin(Projectile);
                     return;
                 }
-                timer = Math.Min(timer, WarningTime - 1);
                 Projectile.timeLeft = 240;
                 return;
             }
@@ -563,6 +562,8 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         public override bool PreDraw(ref Color lightColor)
         {
             float telegraph = MathHelper.Clamp(timer / (float)WarningTime, 0f, 1f);
+            if (Projectile.ai[2] > 0f && Main.npc[(int)Projectile.ai[2] - 1].ModNPC is CrystalTumbler boss)
+                telegraph = boss.LoopSlamProgress;
             float strike = Projectile.ai[2] <= 0f && timer >= WarningTime ? MathHelper.Clamp((WarningTime + ActiveDuration + FadeDuration - timer) / (Projectile.ai[2] < 0f ? FadeDuration : 14f), 0f, 1f) : 0f;
             Color color = Projectile.ai[1] >= 1f ? new Color(255, 182, 48) : new Color(45, 225, 255);
             Vector2 start = Projectile.Center - Main.screenPosition;

@@ -6,6 +6,7 @@ using AerovelenceMod.Content.Dusts;
 using AerovelenceMod.Content.EmoteBubbles;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
+using PouchOfMagnets = AerovelenceMod.Content.Items.Weapons.CrystalCaverns.PouchOfMagnets.PouchOfMagnets;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 using System;
 using System.Collections.Generic;
@@ -273,7 +274,7 @@ namespace AerovelenceMod.Content.NPCs.TownNPC.RockCollector
         public override void AddShops()
         {
             var npcShop = new NPCShop(Type, ShopName)
-                .Add<PouchOfRocks>()
+                .Add<PouchOfMagnets>()
                 .Add<SpeedstersPickaxe>()
                 .Add<ResonanceDrill>()
                 .Add<OpalOfCaVea>()

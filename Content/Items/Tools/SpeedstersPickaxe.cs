@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Terraria.DataStructures;
+using ReLogic.Content;
 
 namespace AerovelenceMod.Content.Items.Tools
 {
@@ -8,8 +9,8 @@ namespace AerovelenceMod.Content.Items.Tools
     {
         private const int BaseUseTime = 10;
         private const int MinUseTime = 4;
-        private const int MaxStacks = 40;
-        private const int DecayInterval = 5;
+        internal const int MaxStacks = 40;
+        private static Texture2D glowTexture;
 
         public override void SetStaticDefaults()
         {
@@ -34,7 +35,7 @@ namespace AerovelenceMod.Content.Items.Tools
             Item.width = 34;
             Item.height = 34;
             Item.useTime = BaseUseTime;
-            Item.useAnimation = BaseUseTime;
+            Item.useAnimation = BaseUseTime * 3;
 
             Item.pick = 64;
             Item.UseSound = SoundID.Item1;
@@ -46,155 +47,116 @@ namespace AerovelenceMod.Content.Items.Tools
             Item.useTurn = true;
         }
 
-        public override void HoldItem(Player player)
+        public override void Load()
         {
-            var modPlayer = player.GetModPlayer<SpeedsterPlayer>();
-            if (!player.controlUseItem || player.itemAnimation <= 0)
+            if (Main.dedServ) return;
+            Main.QueueMainThreadAction(() =>
             {
-                modPlayer.MiningDecayTimer++;
-                if (modPlayer.MiningDecayTimer >= DecayInterval)
+                Texture2D source = ModContent.Request<Texture2D>(Texture + "_Glow", AssetRequestMode.ImmediateLoad).Value;
+                Color[] pixels = new Color[source.Width * source.Height];
+                source.GetData(pixels);
+                for (int i = 0; i < pixels.Length; i++)
                 {
-                    modPlayer.MiningDecayTimer = 0;
-                    modPlayer.MiningStacks--;
-                    if (modPlayer.MiningStacks < 0)
-                        modPlayer.MiningStacks = 0;
+                    byte value = Math.Max(pixels[i].R, Math.Max(pixels[i].G, pixels[i].B));
+                    pixels[i] = new Color(value, value, value, pixels[i].A);
                 }
-            }
-
-            float fraction = modPlayer.MiningStacks / (float)MaxStacks;
-            player.pickSpeed -= 0.01f * modPlayer.MiningStacks;
-            int possibleReduction = BaseUseTime - MinUseTime;
-            int reduction = (int)(possibleReduction * fraction);
-            int newUse = BaseUseTime - reduction;
-            if (newUse < MinUseTime) newUse = MinUseTime;
-            Item.useTime = newUse;
-            Item.useAnimation = newUse * 3;
+                glowTexture = new Texture2D(Main.instance.GraphicsDevice, source.Width, source.Height);
+                glowTexture.SetData(pixels);
+            });
         }
 
-        public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        public override void Unload()
         {
-            var modPlayer = Main.LocalPlayer.GetModPlayer<SpeedsterPlayer>();
-            float fraction = modPlayer.MiningStacks / (float)MaxStacks;
-            if (fraction <= 0f)
-                return true;
-            Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Tools/SpeedstersPickaxe_Glow").Value;
-            int sparkCount = (int)(5 + 15 * fraction);
-            for (int i = 0; i < sparkCount; i++)
+            Texture2D texture = glowTexture;
+            glowTexture = null;
+            if (texture != null) Main.QueueMainThreadAction(texture.Dispose);
+        }
+
+        public override float UseSpeedMultiplier(Player player)
+        {
+            float charge = player.GetModPlayer<SpeedsterPlayer>().MiningStacks / (float)MaxStacks;
+            return BaseUseTime / MathHelper.Lerp(BaseUseTime, MinUseTime, charge);
+        }
+
+        public override void PostDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale)
+        {
+            float charge = Main.LocalPlayer.GetModPlayer<SpeedsterPlayer>().MiningStacks / (float)MaxStacks;
+            if (charge <= 0f || glowTexture == null) return;
+            float pulse = 0.35f + MathF.Sin(Main.GlobalTimeWrappedHourly * 6f) * 0.08f;
+            spriteBatch.Draw(glowTexture, position, frame, new Color(255, 135, 40, 0) * (charge * pulse), 0f, origin, scale, SpriteEffects.None, 0f);
+        }
+
+        public override bool ModifyItemDraw(ref PlayerDrawSet drawInfo, ref DrawData drawData, ref DrawData? coloredDrawData, ref DrawData? glowMaskDrawData)
+        {
+            SpeedsterPlayer player = drawInfo.drawPlayer.GetModPlayer<SpeedsterPlayer>();
+            float charge = player.MiningStacks / (float)MaxStacks;
+            if (charge <= 0f || glowTexture == null || drawInfo.shadow != 0f) return true;
+            if (player.LastTrailUpdate != Main.GameUpdateCount)
             {
-                float colorIntensity = MathHelper.Lerp(0.3f, 0.9f, fraction);
-                Color sparkColor = Color.Lerp(Color.SkyBlue, Color.DeepSkyBlue, Main.rand.NextFloat()) * colorIntensity;
-                sparkColor.A = 0;
-                float randomRange = MathHelper.Lerp(1f, 2f, fraction);
-                Vector2 randomOffset = Main.rand.NextVector2Circular(randomRange, randomRange);
-                float sparkScale = scale * (0.5f + 0.5f * fraction);
-                spriteBatch.Draw(glowTexture, position + randomOffset, frame, sparkColor, 0f, origin, sparkScale, SpriteEffects.None, 0f);
+                DrawData sample = drawData;
+                sample.texture = glowTexture;
+                sample.position += Main.screenPosition;
+                sample.shader = 0;
+                player.Trail.Insert(0, sample);
+                if (player.Trail.Count > 5) player.Trail.RemoveAt(5);
+                player.LastTrailUpdate = Main.GameUpdateCount;
             }
-            spriteBatch.Draw(texture, position, frame, drawColor, 0f, origin, scale, SpriteEffects.None, 0f);
-            return false;
+            for (int i = player.Trail.Count - 1; i > 0; i--)
+            {
+                DrawData afterimage = player.Trail[i];
+                afterimage.position -= Main.screenPosition;
+                afterimage.color = new Color(255, 105, 25, 0) * (charge * (1f - i / 5f) * 0.35f);
+                drawInfo.DrawDataCache.Add(afterimage);
+            }
+            DrawData glow = drawData;
+            glow.texture = glowTexture;
+            glow.color = new Color(255, 150, 55, 0) * (charge * 0.55f);
+            glow.shader = 0;
+            glowMaskDrawData = glow;
+            return true;
         }
     }
 
-    public class WhyCantIDoThisInAModItemClassGlobalTile : GlobalTile
+    public class SpeedsterMining : GlobalTile
     {
         public override void KillTile(int i, int j, int type, ref bool fail, ref bool effectOnly, ref bool noItem)
         {
-            if (fail || effectOnly) return;
-            if (!WorldGen.SolidTile(i, j)) return;
+            if (Main.dedServ || WorldGen.gen || fail || effectOnly || !Main.tileSolid[type]) return;
             Player player = Main.LocalPlayer;
-            if (player.HeldItem.type == ModContent.ItemType<SpeedstersPickaxe>())
-            {
-                const int MaxStacks = 40;
-                var modPlayer = player.GetModPlayer<SpeedsterPlayer>();
-                modPlayer.MiningStacks = Math.Min(modPlayer.MiningStacks + 1, MaxStacks);
-                modPlayer.MiningDecayTimer = 0;
-            }
+            if (player.HeldItem.type != ModContent.ItemType<SpeedstersPickaxe>() || !player.controlUseItem || player.itemAnimation <= 0) return;
+            if (i != Player.tileTargetX || j != Player.tileTargetY) return;
+            SpeedsterPlayer modPlayer = player.GetModPlayer<SpeedsterPlayer>();
+            modPlayer.MiningStacks = Math.Min(modPlayer.MiningStacks + 1, SpeedstersPickaxe.MaxStacks);
+            modPlayer.MiningDecayTimer = 0;
         }
-
-
     }
+
     public class SpeedsterPlayer : ModPlayer
     {
-        public int MiningStacks = 0;
-        public int MiningDecayTimer = 0;
-    }
+        public int MiningStacks;
+        public int MiningDecayTimer;
+        internal readonly List<DrawData> Trail = new(5);
+        internal ulong LastTrailUpdate = ulong.MaxValue;
 
-    internal struct AfterimageData(Vector2 pos, float rot, SpriteEffects effects)
-    {
-        public Vector2 PositionOnScreen = pos;
-        public float Rotation = rot;
-        public SpriteEffects Effects = effects;
-    }
-
-    public class SpeedstersPickaxeDrawLayer : PlayerDrawLayer
-    {
-        private const int MaxAfterimages = 5;
-        private static readonly List<AfterimageData> _trail = [];
-
-        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo)
+        public override void PostUpdate()
         {
-            Player p = drawInfo.drawPlayer;
-            bool visible =
-                p.HeldItem.type == ModContent.ItemType<SpeedstersPickaxe>()
-                && p.itemAnimation > 0;
-            if (!visible)
-                _trail.Clear();
-            return visible;
-        }
-
-        public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.HeldItem);
-
-        protected override void Draw(ref PlayerDrawSet drawInfo)
-        {
-            Player p = drawInfo.drawPlayer;
-            if (p.HeldItem.type != ModContent.ItemType<SpeedstersPickaxe>())
-                return;
-
-            SpeedsterPlayer modPlayer = p.GetModPlayer<SpeedsterPlayer>();
-            float fractionActual = modPlayer.MiningStacks / 20f;
-            if (fractionActual <= 0f)
-                return;
-
-            float swingProgress = 1f - (p.itemAnimation / (float)p.itemAnimationMax);
-            Texture2D texture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Tools/SpeedstersPickaxe_Glow").Value;
-            float realRotation = p.itemRotation + p.fullRotation;
-            SpriteEffects effects = drawInfo.playerEffect;
-            Vector2 origin = new(0f, texture.Height);
-            if (effects.HasFlag(SpriteEffects.FlipHorizontally))
-                origin.X = texture.Width;
-            if (effects.HasFlag(SpriteEffects.FlipVertically))
-                origin.Y = 0f;
-            Vector2 screenPos = drawInfo.ItemLocation - Main.screenPosition;
-            _trail.Insert(0, new AfterimageData(screenPos, realRotation, effects));
-            if (_trail.Count > MaxAfterimages)
-                _trail.RemoveAt(_trail.Count - 1);
-            int maxSparksAtFullCharge = 10;
-            float sparkFactor = swingProgress;
-            float chargeFactor = fractionActual;
-            int sparkCount = (int)(5 + maxSparksAtFullCharge * chargeFactor * sparkFactor);
-
-            for (int i = _trail.Count - 1; i >= 0; i--)
+            bool swinging = Player.HeldItem.type == ModContent.ItemType<SpeedstersPickaxe>() && Player.itemAnimation > 0;
+            if (!swinging || MiningStacks == 0) Trail.Clear();
+            if (Player.dead)
             {
-                float progress = i / (float)_trail.Count;
-                AfterimageData data = _trail[i];
-                float alpha = (1f - progress) * 0.8f;
-                Color trailColor = Color.DeepSkyBlue * alpha;
-                trailColor.A = 0;
-                Main.EntitySpriteDraw(texture, data.PositionOnScreen, null, trailColor, data.Rotation, origin, 1f, data.Effects, 0);
-                if (sparkCount <= 0)
-                    continue;
-                int perFrameSpark = sparkCount / _trail.Count;
-                for (int s = 0; s < perFrameSpark; s++)
-                {
-                    float fraction = modPlayer.MiningStacks / (float)40;
-                    float randomRange = MathHelper.Lerp(1f, 2f, fraction);
-                    Vector2 randomOffset = Main.rand.NextVector2Circular(randomRange, randomRange);
-                    float sparkIntensity = MathHelper.Lerp(0.4f, 1f, chargeFactor);
-                    sparkIntensity *= sparkFactor;
-                    Color sparkColor = Color.Lerp(Color.DeepSkyBlue, Color.DarkTurquoise, Main.rand.NextFloat()) * sparkIntensity;
-                    sparkColor.A = 0;
-                    Main.EntitySpriteDraw(texture, data.PositionOnScreen + randomOffset, null, sparkColor, data.Rotation, origin, 1.1f, data.Effects, 0);
-                }
+                MiningStacks = MiningDecayTimer = 0;
+                Trail.Clear();
+                return;
+            }
+            if (swinging && Player.controlUseItem)
+            {
+                MiningDecayTimer = 0;
+                return;
+            }
+            if (MiningStacks > 0 && ++MiningDecayTimer >= 5)
+            {
+                MiningDecayTimer = 0;
+                MiningStacks--;
             }
         }
     }

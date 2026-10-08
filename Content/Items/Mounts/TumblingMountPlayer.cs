@@ -34,12 +34,13 @@ namespace AerovelenceMod.Content.Items.Mounts
             walkCycle = 0;
         }
 
-        internal void ReceiveRide(bool riding, float angle, int direction, float charge)
+        internal void ReceiveRide(bool riding, float angle, float speed, int direction, float charge)
         {
             if (Player.whoAmI == Main.myPlayer)
                 return;
             Riding = riding;
             Angle = angle;
+            Speed = speed;
             Direction = direction;
             Charge = charge;
         }
@@ -50,11 +51,21 @@ namespace AerovelenceMod.Content.Items.Mounts
                 Rotation = MathHelper.WrapAngle(Rotation + MathHelper.WrapAngle(rotation - Rotation) * 0.25f);
         }
 
+        public override void PostUpdateRunSpeeds()
+        {
+            if (!Mounted || launchCharge <= 0 || Riding || Player.velocity.Y == 0f)
+                return;
+            Player.maxRunSpeed = Math.Max(TumblingRampMotion.GroundSpeed, Math.Abs(Player.velocity.X));
+            Player.accRunSpeed = Player.maxRunSpeed;
+            Player.runSlowdown *= 0.3f;
+        }
+
         public override void PreUpdateMovement()
         {
             if (!Mounted || Player.dead || Player.whoAmI != Main.myPlayer)
                 return;
-            Player.velocity.X = MathHelper.Clamp(Player.velocity.X, -TumblingRampMotion.MaximumSpeed, TumblingRampMotion.MaximumSpeed);
+            float limit = launchCharge > 0 ? TumblingRampMotion.LaunchSpeed : TumblingRampMotion.MaximumSpeed;
+            Player.velocity.X = MathHelper.Clamp(Player.velocity.X, -limit, limit);
             if (!Player.controlUp)
                 upReleased = true;
             bool canRide = !Player.CCed && !Player.pulley && !Player.tongued && !Player.shimmering && Player.grappling[0] == -1 && Player.gravDir == 1f;
@@ -71,6 +82,7 @@ namespace AerovelenceMod.Content.Items.Mounts
                 Riding = true;
                 upReleased = false;
                 rampAge = 0;
+                launchCharge = 0;
                 Angle = 0f;
                 Direction = Math.Abs(Player.velocity.X) > 1f ? Math.Sign(Player.velocity.X) : Player.direction;
                 Speed = MathHelper.Clamp(Math.Abs(Player.velocity.X), TumblingRampMotion.MinimumSpeed, TumblingRampMotion.MaximumSpeed);
@@ -109,7 +121,7 @@ namespace AerovelenceMod.Content.Items.Mounts
         private void EndRamp(bool launch)
         {
             Riding = false;
-            if (launch)
+            if (launch && rampAge >= 30)
             {
                 Player.velocity = TumblingRampMotion.Launch(Angle, Speed, Direction);
                 launchCharge = 60;
@@ -131,6 +143,9 @@ namespace AerovelenceMod.Content.Items.Mounts
             }
             float walkSpeed = Riding ? Math.Abs(Speed) : Math.Abs(Player.velocity.X);
             walkCycle = walkSpeed > .1f ? (walkCycle + walkSpeed / 6f) % 14 : 0;
+            int frame = walkSpeed > .1f ? 6 + (int)walkCycle : 0;
+            Player.legFrame.Y = frame * Player.legFrame.Height;
+            if (Player.itemAnimation == 0) Player.bodyFrame.Y = frame * Player.bodyFrame.Height;
             if (Player.whoAmI != Main.myPlayer)
             {
                 float distance = hadPosition ? Vector2.Distance(Player.Center, lastCenter) : 0f;
@@ -158,13 +173,5 @@ namespace AerovelenceMod.Content.Items.Mounts
                 Projectile.NewProjectile(Player.GetSource_Misc("TumblingHarness"), BallCenter, Vector2.Zero, ModContent.ProjectileType<TumblingMountTrail>(), 24, 5f, Player.whoAmI);
         }
 
-        public override void FrameEffects()
-        {
-            if (!Mounted || Player.dead) return;
-            bool moving = Riding || Player.velocity.X * Player.direction > .1f;
-            int frame = moving ? 6 + (int)walkCycle : 0;
-            Player.legFrame.Y = frame * Player.legFrame.Height;
-            if (Player.itemAnimation == 0) Player.bodyFrame.Y = frame * Player.bodyFrame.Height;
-        }
     }
 }

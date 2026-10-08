@@ -59,6 +59,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
 
         public override void HoldItem(Player player)
         {
+            if (player.whoAmI != Main.myPlayer) return;
             bool foundExistingProj = false;
             for (int i = 0; i < Main.maxProjectiles; i++)
             {
@@ -100,6 +101,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
 
                 if (Main.projectile[heldProj].ModProjectile is LightOfTheAncientsProjectile gunProj)
                     gunProj.TriggerShoot();
+                Main.projectile[heldProj].netUpdate = true;
             }
             return false;
         }
@@ -160,6 +162,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
         public void TriggerShoot()
         {
             needToShoot = true;
+            Projectile.netUpdate = true;
         }
 
         public override void SetDefaults()
@@ -222,8 +225,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 2;
-            if (Projectile.owner == Main.myPlayer)
-                Angle = (Main.MouseWorld - (Owner.MountedCenter)).ToRotation();
+            Projectile.UpdateAimAngle(Owner.MountedCenter, ref Angle);
             direction = Angle.ToRotationVector2();
             Owner.ChangeDir(direction.X > 0 ? 1 : -1);
             lerpVal = Math.Clamp(MathHelper.Lerp(lerpVal, -0.2f, 0.002f), 0, 0.4f);
@@ -279,7 +281,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
                 {
                     if (correctItemSlot != -1)
                     {
-                        player.selectedItem = correctItemSlot;
+                        if (Projectile.owner == Main.myPlayer)
+                            player.selectedItem = correctItemSlot;
                         inactiveCounter = 0;
                     }
                     else
@@ -301,7 +304,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
                 _offset = -15f;
             //_offset = MathHelper.Lerp(_offset, 0f, 0.2f);
             Projectile.ai[0]++;
-            Vector2 aimDirection = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
+            Vector2 aimDirection = Vector2.Normalize(Projectile.AimWorld() - Projectile.Center);
             HandleHeatMechanics(player, aimDirection);
             UpdateVisualEffects();
             UpdateAnimations();
@@ -338,35 +341,39 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
                 Vector2 velocity = aimDirection * player.HeldItem.shootSpeed;
                 int bulletType = ModContent.ProjectileType<LightOfTheAncientsBullet>();
                 bool skillStrikeShot = canSkillStrike;
-                int bulletProj = Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem), Projectile.Center + aimDirection * 36f, velocity, bulletType, bulletDamage / 3, player.HeldItem.knockBack, player.whoAmI);
-
-                ApplyRecoil();
-
-                if (skillStrikeShot)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    SkillStrikeUtil.setSkillStrikeWithImpactType(Main.projectile[bulletProj], 1.5f, 1, SkillStrikeImpactType.Basic, 0.6f, 1.2f);
-                    for (int i = 0; i < 12; i++)
+                    int bulletProj = Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem), Projectile.Center + aimDirection * 36f, velocity, bulletType, bulletDamage / 3, player.HeldItem.knockBack, player.whoAmI);
+
+                    ApplyRecoil();
+                    Projectile.netUpdate = true;
+
+                    if (skillStrikeShot)
                     {
-                        Dust d = Dust.NewDustDirect(
-                            Projectile.Center,
-                            10, 10,
-                            DustID.GoldFlame,
-                            aimDirection.X * 2f, aimDirection.Y * 2f,
-                            0, Color.Orange, 1.2f);
-                        d.noGravity = true;
+                        SkillStrikeUtil.setSkillStrikeWithImpactType(Main.projectile[bulletProj], 1.5f, 1, SkillStrikeImpactType.Basic, 0.6f, 1.2f);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            Dust d = Dust.NewDustDirect(
+                                Projectile.Center,
+                                10, 10,
+                                DustID.GoldFlame,
+                                aimDirection.X * 2f, aimDirection.Y * 2f,
+                                0, Color.Orange, 1.2f);
+                            d.noGravity = true;
+                        }
+                        SoundStyle skillStrikeSound = new SoundStyle("Terraria/Sounds/Item_14") with { Pitch = 0.15f, Volume = 0.7f };
+                        SoundStyle shootSound = new("AerovelenceMod/Sounds/Effects/DeagleShoot");
+                        SoundStyle normalSound = shootSound with { Pitch = 0.3f, Volume = 0.5f };
+                        SoundEngine.PlaySound(normalSound, Projectile.position);
+                        SoundEngine.PlaySound(skillStrikeSound, Projectile.position);
                     }
-                    SoundStyle skillStrikeSound = new SoundStyle("Terraria/Sounds/Item_14") with { Pitch = 0.15f, Volume = 0.7f };
-                    SoundStyle shootSound = new("AerovelenceMod/Sounds/Effects/DeagleShoot");
-                    SoundStyle normalSound = shootSound with { Pitch = 0.3f, Volume = 0.5f };
-                    SoundEngine.PlaySound(normalSound, Projectile.position);
-                    SoundEngine.PlaySound(skillStrikeSound, Projectile.position);
-                }
-                else
-                {
-                    float pitchVariation = 0.1f + (heatLevel / MAX_HEAT) * 0.2f;
-                    SoundStyle shootSound = new("AerovelenceMod/Sounds/Effects/DeagleShoot");
-                    SoundStyle normalSound = shootSound with { Pitch = 0.3f, Volume = 0.5f };
-                    SoundEngine.PlaySound(normalSound, Projectile.position);
+                    else
+                    {
+                        float pitchVariation = 0.1f + (heatLevel / MAX_HEAT) * 0.2f;
+                        SoundStyle shootSound = new("AerovelenceMod/Sounds/Effects/DeagleShoot");
+                        SoundStyle normalSound = shootSound with { Pitch = 0.3f, Volume = 0.5f };
+                        SoundEngine.PlaySound(normalSound, Projectile.position);
+                    }
                 }
                 heatLevel = Math.Min(heatLevel + HEAT_PER_SHOT, MAX_HEAT);
                 if (heatLevel >= OVERHEAT_THRESHOLD)
@@ -629,6 +636,37 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
                 Main.spriteBatch.Draw(overlayTexture, meterPosition, overlayRect, Color.White, 0f, new Vector2(frameWidth / 2, frameHeight / 2), 1f, SpriteEffects.None, 0f);
             }
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(heatLevel);
+            writer.Write(isOverheated);
+            writer.Write(canSkillStrike);
+            writer.Write(needToShoot);
+            writer.Write(shotCooldown);
+            writer.Write(inactiveCounter);
+            writer.Write(hasRecoil);
+            writer.Write(recoilStrength);
+            writer.Write(recoilRotation);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            heatLevel = reader.ReadSingle();
+            isOverheated = reader.ReadBoolean();
+            canSkillStrike = reader.ReadBoolean();
+            needToShoot = reader.ReadBoolean();
+            shotCooldown = reader.ReadInt32();
+            inactiveCounter = reader.ReadInt32();
+            hasRecoil = reader.ReadBoolean();
+            recoilStrength = reader.ReadSingle();
+            recoilRotation = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class LightOfTheAncientsBullet : TrailProjBase
@@ -666,7 +704,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
             Projectile.velocity = Vector2.Zero;
             justHit = true;
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleQuadStar>(),
@@ -680,7 +718,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
             if (!justHit)
             {
                 Projectile.rotation = Projectile.velocity.ToRotation() - MathHelper.PiOver2;
-                trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+                trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
                 trailColor = new Color(255, 140, 0);
                 trailTime = timer * 0.02f;
 
@@ -759,7 +797,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Underworld
 
             Collision.HitTiles(Projectile.position + (Projectile.velocity * 0.5f), Projectile.velocity * 0.5f, Projectile.width, Projectile.height);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleQuadStar>(),

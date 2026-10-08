@@ -175,11 +175,12 @@ public class AmmoniteMinion : ModProjectile
             {
                 float t = j / 7f;
                 Vector2 next = TendrilPoint(9f + 16f * t, 7f + i * 2f + MathF.Sin(age * .07f + i + t * 3f) * t * 5f);
-                ShellYeah.Line(previous, next, new Color(230, 173, 122) * fade, 2f - t);
+                Color light = Lighting.GetColor(((previous + next) * 0.5f + Main.screenPosition).ToTileCoordinates());
+                ShellYeah.Line(previous, next, light.MultiplyRGB(new Color(230, 173, 122)) * fade, 2f - t);
                 previous = next;
             }
         }
-        Main.EntitySpriteDraw(shell, center, null, Color.Lerp(lightColor, Color.White, .15f) * fade, Projectile.rotation, shell.Size() * .5f, drawScale, flip);
+        Main.EntitySpriteDraw(shell, center, null, Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * fade, Projectile.rotation, shell.Size() * .5f, drawScale, flip);
         return false;
     }
 

@@ -53,7 +53,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld.MagnifiedGlass
         private readonly float[] raySamples = new float[3];
         private readonly Vector2[] lensJoints = new Vector2[3];
         private readonly Vector2[] previousJoints = new Vector2[3];
-        private readonly List<DrawData> lensDraws = new();
+        private readonly List<DrawData> lensDraws = [];
         private readonly float[] beamStops = new float[17];
         private readonly float[] incomingStops = new float[5];
         private Vector2 tracedOrigin;
