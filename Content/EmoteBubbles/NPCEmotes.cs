@@ -1,6 +1,4 @@
-
 using Terraria.GameContent.UI;
-
 
 namespace AerovelenceMod.Content.EmoteBubbles
 {

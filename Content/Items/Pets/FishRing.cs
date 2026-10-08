@@ -1,6 +1,4 @@
-﻿using Terraria.Localization;
-
-namespace AerovelenceMod.Content.Items.Pets
+﻿namespace AerovelenceMod.Content.Items.Pets
 {
     public class FishRing : TranslatableModItem
     {

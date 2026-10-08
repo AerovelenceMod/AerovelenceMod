@@ -1,12 +1,9 @@
 using AerovelenceMod.Backgrounds.CrystalCaverns.Underground;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
-
 using System;
-
 using Terraria.Graphics.Capture;
 using Terraria.Graphics.Effects;
-
 
 namespace AerovelenceMod.Content.Biomes
 {

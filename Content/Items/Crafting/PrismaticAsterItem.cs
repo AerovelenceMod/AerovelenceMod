@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Items.Crafting
 {
     public class PrismaticAsterItem : TranslatableModItem

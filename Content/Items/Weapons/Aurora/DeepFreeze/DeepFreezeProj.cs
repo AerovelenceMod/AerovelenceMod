@@ -1,19 +1,15 @@
 ﻿using System;
-
-
-
-
-
 using Terraria.GameContent;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 
-
 namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 {
     public class DeepFreezeProj : ModProjectile
     {
+        public override string Texture => "Terraria/Images/Projectile_0";
+
         int timer = 0;
         public float colorIntensity = 1f;
         public Color color = Color.White;
@@ -84,7 +80,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
         public override bool PreDraw(ref Color lightColor)
         {
 
-            var Tex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Aurora/DeepFreeze/DeepFreezeProj").Value;
+            var Tex = Mod.Assets.Request<Texture2D>("Assets/Smoke/DeepFreezeProj").Value;
 
             int frameHeight = Tex.Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
@@ -117,19 +113,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
         {
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
-        }
-        public Color FetchRainbow()
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians(timer));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians(timer + 120));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians(timer + 240));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
         }
 
         public override void SendExtraAI(System.IO.BinaryWriter writer)

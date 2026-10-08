@@ -1,10 +1,6 @@
 using System;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-
-
 using Terraria.Audio;
-
-
 
 namespace AerovelenceMod.Content.Items.Mounts
 {

@@ -1,8 +1,4 @@
-﻿
-
-
-
-namespace AerovelenceMod.Content.Dusts
+﻿namespace AerovelenceMod.Content.Dusts
 {
     public sealed class CavernCrystalDust : ModDust
     {

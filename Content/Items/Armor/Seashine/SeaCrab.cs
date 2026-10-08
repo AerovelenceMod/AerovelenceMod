@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AerovelenceMod.Common;
+using AerovelenceMod.Common.Systems;
+using AerovelenceMod.Content.Dusts.GlowDusts;
+using System;
+using System.Collections.Generic;
+using Terraria.Audio;
 
 namespace AerovelenceMod.Content.Items.Armor.Seashine
 {
@@ -606,93 +611,188 @@ namespace AerovelenceMod.Content.Items.Armor.Seashine
 				}
 			}
 		}
+	}
 
-		public class SeaCrabProjectile : ModProjectile
+	public class SeaCrabProjectile : ModProjectile
+	{
+    	public override string Texture => "Terraria/Images/Projectile_0";
+
+		public override void SetStaticDefaults()
 		{
-        	public override string Texture => "Terraria/Images/Projectile_0";
+			this.AddName(Language.Default, "Sea Spray");
+		}
+		public override void SetDefaults()
+		{
+			Projectile.width = 12;
+			Projectile.damage = 10;
+			Projectile.height = 12;
+			Projectile.tileCollide = true;
+			Projectile.friendly = true;
+			Projectile.hostile = false;
+			Projectile.DamageType = DamageClass.Summon;
+			Projectile.aiStyle = 2;
+			Projectile.alpha = 255;
+			Projectile.timeLeft = 600;
+			Projectile.ignoreWater = true;
+			Projectile.tileCollide = true;
+			Projectile.extraUpdates = 1;
+		}
 
-			private static int AquaSceptreAiStyle;
-			public override void SetStaticDefaults()
-			{
-				this.AddName(Language.Default, "Sea Spray");
-
-				var aquaSceptreProj = new Projectile();
-				aquaSceptreProj.SetDefaults(ProjectileID.WaterStream);
-
-				AquaSceptreAiStyle = aquaSceptreProj.aiStyle;
-			}
-			public override void SetDefaults()
-			{
-				Projectile.width = 12;
-				Projectile.damage = 10;
-				Projectile.height = 12;
-				Projectile.tileCollide = true;
-				Projectile.friendly = true;
-				Projectile.hostile = false;
-				Projectile.DamageType = DamageClass.Melee;
-				Projectile.aiStyle = 2;
-				Projectile.alpha = 255;
-				Projectile.timeLeft = 600;
-				Projectile.ignoreWater = true;
-				Projectile.tileCollide = true;
-				Projectile.extraUpdates = 1;
-			}
-
-            public override void AI()
+ 		public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox)
+        {
+            //Check collision in a radius for every 2 positions
+            int i = 0;
+            foreach (Vector2 vec in previousPostions)
             {
-				Projectile proj = Projectile;
-				for (int dusts = 0; dusts < 1; dusts++)
-				{
-					int castAheadDist = 6;
-					var pos = new Vector2(
-						proj.position.X + castAheadDist,
-						proj.position.Y + castAheadDist
-					);
+                if (i % 2 == 0 && targetHitbox.Distance(vec) < 10)
+                    return true;
+                i++;
 
-					for (int subDusts = 0; subDusts < 3; subDusts++)
-					{
-						float dustCastAheadX = proj.velocity.X / 3f * subDusts;
-						float dustCastAheadY = proj.velocity.Y / 3f * subDusts;
+            }
+            return false;
+        }
 
-						int dustIdx = Dust.NewDust(
-							Position: pos,
-							Width: proj.width - castAheadDist * 2,
-							Height: proj.height - castAheadDist * 2,
-							Type: 59,
-							SpeedX: 0f,
-							SpeedY: 0f,
-							Alpha: 100,
-							newColor: default,
-							Scale: 1.2f
-						);
+    	public List<float> previousRotations = new List<float>();
+    	public List<Vector2> previousPostions = new List<Vector2>();
 
-						Main.dust[dustIdx].noGravity = true;
-						Main.dust[dustIdx].velocity *= 0.3f;
-						Main.dust[dustIdx].velocity += proj.velocity * 0.5f;
+        int timer = 0;
+        public override void AI()
+        {
+            int trailCount = 20;
 
-						Dust dust = Main.dust[dustIdx];
-						dust.position.X -= dustCastAheadX;
-						dust.position.Y -= dustCastAheadY;
-					}
+            if (timer % 2 == 0)
+            {
+                previousRotations.Add(Projectile.velocity.ToRotation());
+                previousPostions.Add(Projectile.Center);
 
-					if (Main.rand.Next(8) == 0)
-					{
-						int dustIdx = Dust.NewDust(
-							Position: pos,
-							Width: proj.width - castAheadDist * 2,
-							Height: proj.height - castAheadDist * 2,
-							Type: 60,
-							SpeedX: 0f,
-							SpeedY: 0f,
-							Alpha: 100,
-							newColor: default,
-							Scale: 0.75f
-						);
-						Main.dust[dustIdx].velocity *= 0.5f;
-						Main.dust[dustIdx].velocity += proj.velocity * 0.5f;
-					}
-				}
+                if (previousRotations.Count > trailCount)
+                    previousRotations.RemoveAt(0);
+
+                if (previousPostions.Count > trailCount)
+                    previousPostions.RemoveAt(0);
+            }
+
+
+            Projectile.velocity.Y += 0.05f;
+
+            //Dust
+            if (timer % 2 == 0 && timer > 3 && Main.rand.NextBool(2))
+            {
+                Vector2 dustVel = Main.rand.NextVector2Circular(3f, 3f);
+
+                Dust da = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowPixelAlts>(), dustVel, newColor: Color.DeepSkyBlue * 0.65f, Scale: Main.rand.NextFloat(0.15f, 0.25f) * 1.75f);
+                da.velocity -= Projectile.velocity.RotatedByRandom(0.2f) * 0.65f;
+                da.alpha = 12;
+            }
+
+            if (timer % 3 == 0 && Main.rand.NextBool(5) && timer > 3)
+            {
+                Vector2 vel = Main.rand.NextVector2Circular(7f, 7f);
+                Dust de = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowFlare>(), vel, newColor: Color.DodgerBlue, Scale: 0.5f);
+                de.customData = new GlowFlareBehavior(0.4f, 2.5f, 1f);
+
+                de.velocity *= 0.45f;
+                de.velocity += Projectile.velocity * 0.5f;
+            }
+
+            Lighting.AddLight(Projectile.Center, Color.DeepSkyBlue.ToVector3() * 0.7f);
+
+            timer++;
+        }
+
+		public override bool PreDraw(ref Color lightColor)
+        {
+        	ModContent.GetInstance<PixelationSystem>().QueueRenderAction(RenderLayer.Dusts, () =>
+        	{
+        	    DrawTrail();
+        	});
+
+        	return false;
+        }
+
+        public void DrawTrail()
+        {
+            Texture2D line = CommonTextures.Flare.Value;
+
+            //After-Image
+            if (previousRotations != null && previousPostions != null)
+            {
+                for (int i = 0; i < previousRotations.Count; i++)
+                {
+                    float progress = (float)i / previousRotations.Count;
+
+                    float sineScale = MathF.Sin((float)Main.timeForVisualEffects * 0.25f) * 0.1f;
+
+                    Vector2 AfterImagePos = previousPostions[i] - Main.screenPosition + Main.rand.NextVector2Circular(2f, 2f); //3f
+
+                    float startScale = Projectile.scale + sineScale;
+
+                    Color between = Color.Lerp(Color.DeepSkyBlue, Color.DodgerBlue, 0.8f);
+                    Color col = Color.Lerp(between, Color.DodgerBlue, 1f - progress);
+
+                    float easedFadeValue = Easings.easeInSine(progress);
+
+
+                    Vector2 lineScale = new Vector2(1.25f, 0.5f + 0.4f * progress); //
+                    Vector2 lineScale2 = new Vector2(1.25f, 0.08f + 0.05f * progress); //0.1f 0.2f
+
+                    //Main
+                    Main.EntitySpriteDraw(line, AfterImagePos, null, col with { A = 0 } * 1f * easedFadeValue,
+                        previousRotations[i], line.Size() / 2f, lineScale * startScale, SpriteEffects.None);
+
+                    //White
+                    Main.EntitySpriteDraw(line, AfterImagePos, null, Color.White with { A = 0 } * 1f * easedFadeValue,
+                        previousRotations[i], line.Size() / 2f, lineScale2 * startScale, SpriteEffects.None);
+
+                }
+
             }
         }
-	}
+
+        public override void OnKill(int timeLeft)
+        {
+            Color col = Color.Lerp(Color.DeepSkyBlue, Color.DodgerBlue, 0.5f);
+
+            //Dust On Trail
+            int i = 0;
+            foreach (Vector2 pos in previousPostions)
+            {
+                i++;
+                if (Main.rand.NextBool(2))
+                {
+                    int a = Dust.NewDust(pos, 0, 0, ModContent.DustType<GlowFlare>(), 0, 0, newColor: col, Scale: Main.rand.NextFloat(0.45f, 0.55f));
+                    Main.dust[a].customData = new GlowFlareBehavior(0.4f, 2.5f, 1f);
+                    Main.dust[a].velocity *= 0.55f + ((i * 0.04f));
+                    Main.dust[a].velocity += Projectile.velocity * 0.2f;
+                }
+            }
+
+            //Dust on tip
+            for (int j = 0; j < Main.rand.Next(4, 7); j++)
+            {
+                Vector2 dustVel = Main.rand.NextVector2CircularEdge(1f, 1f) * Main.rand.NextFloat(1f, 5f);
+
+                float dustScale = Main.rand.NextFloat(0.5f, 0.65f);
+
+                Dust d = Dust.NewDustPerfect(Projectile.Center, ModContent.DustType<GlowFlare>(), dustVel, newColor: col, Scale: dustScale);
+                d.customData = new GlowFlareBehavior(0.4f, 2.5f, 1f);
+                d.velocity += Projectile.velocity * 0.1f;
+            }
+
+            SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/ENV_water_splash_01") with { Volume = 0.5f, Pitch = 0.5f, MaxInstances = -1 };
+            SoundEngine.PlaySound(style, Projectile.Center);
+        }
+
+
+        public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
+        {
+            Color dustCol = Color.DeepSkyBlue;
+            for (int i = 0; i < 2 + Main.rand.Next(0, 3); i++)
+            {
+                Vector2 dustVel = Main.rand.NextVector2Circular(2f, 2f);
+
+                Dust.NewDustPerfect(target.Center, ModContent.DustType<GlowPixelCross>(), dustVel, newColor: dustCol, Scale: Main.rand.NextFloat(0.2f, 0.3f));
+            }
+        }
+    }
 }

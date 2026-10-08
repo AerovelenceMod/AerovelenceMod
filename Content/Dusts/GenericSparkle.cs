@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Dusts;
 
 public class GenericSparkle : ModDust

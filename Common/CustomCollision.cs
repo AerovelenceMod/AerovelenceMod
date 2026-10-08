@@ -1,8 +1,4 @@
-﻿
-using System;
-
-
-
+﻿using System;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;

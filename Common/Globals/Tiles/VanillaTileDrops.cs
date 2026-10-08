@@ -1,8 +1,5 @@
 using AerovelenceMod.Content.Items.Quest;
-
 using Terraria.DataStructures;
-
-
 
 namespace AerovelenceMod.Common.Globals.Tiles
 {

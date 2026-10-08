@@ -1,7 +1,5 @@
 using AerovelenceMod.Common.Globals.Players;
 
-
-
 namespace AerovelenceMod.Backgrounds.CrystalCaverns
 {
     public class CrystalCavernsSurfaceBgStyle : ModSurfaceBackgroundStyle

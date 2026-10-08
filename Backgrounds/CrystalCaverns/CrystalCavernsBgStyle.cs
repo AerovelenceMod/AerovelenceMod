@@ -1,8 +1,5 @@
 using AerovelenceMod.Content.Biomes;
-
 using System;
-
-
 
 namespace AerovelenceMod.Backgrounds.CrystalCaverns
 {

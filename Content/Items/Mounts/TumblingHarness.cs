@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Items.Mounts
 {
     public class TumblingHarness : TranslatableModItem

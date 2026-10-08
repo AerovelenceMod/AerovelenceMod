@@ -1,15 +1,9 @@
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-
-
-
 using System.Collections.Generic;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics;
-
-
 
 namespace AerovelenceMod.Content.Items.Accessories.Boss
 {

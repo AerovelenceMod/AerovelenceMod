@@ -1,17 +1,10 @@
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using ReLogic.Content;
 using System.Collections.Generic;
 using System;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-
-
-using tModPorter;
 using static Terraria.ModLoader.ModContent;
 using Terraria.GameContent;
 using ReLogic.Graphics;

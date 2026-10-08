@@ -1,10 +1,5 @@
-
-
-
 using Terraria.DataStructures;
 using Terraria.GameContent;
-
-
 
 namespace AerovelenceMod.Content.Items.Pets
 {

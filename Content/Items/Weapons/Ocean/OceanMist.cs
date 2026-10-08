@@ -14,7 +14,6 @@ using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Systems;
-
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 
 namespace AerovelenceMod.Content.Items.Weapons.Ocean

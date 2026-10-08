@@ -1,10 +1,6 @@
 ﻿using AerovelenceMod.Content.Biomes;
-
-
 using Terraria.DataStructures;
-
 using Terraria.Localization;
-
 
 namespace AerovelenceMod.Common.Globals.Players
 {

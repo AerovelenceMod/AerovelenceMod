@@ -1,9 +1,4 @@
-
-
-
 using Terraria.GameContent;
-
-
 
 namespace AerovelenceMod.Content.Dusts
 {

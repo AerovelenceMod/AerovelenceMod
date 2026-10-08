@@ -1,8 +1,4 @@
-﻿
-
-
-using System;
-
+﻿using System;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using System.Collections.Generic;
@@ -12,80 +8,12 @@ using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
-
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {
-    /*
-	public class GlowPixel : ModDust
-    {
-		public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/PixelGlow2";
-
-		private bool rotationDir;
-		public override void OnSpawn(Dust dust)
-        {
-			dust.customData = false;
-			rotationDir = Main.rand.NextBool();
-			dust.noGravity = true;
-			dust.frame = new Rectangle(0, 0, 64, 64);
-			dust.shader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-        }
-
-		public override Color? GetAlpha(Dust dust, Color lightColor)
-		{
-			return dust.color;
-		}
-
-		public override bool Update(Dust dust)
-        {
-			if (dust.customData is false)
-			{
-				dust.position = dust.position + new Vector2(-32, -32) * dust.scale; //Vector2.One * 64 * dust.scale;
-				dust.alpha = dust.color.A;
-				dust.customData = true;
-			}
-
-			Vector2 currentCenter = dust.position + Vector2.One.RotatedBy(dust.rotation) * 32 * dust.scale;
-
-			if (dust.noGravity)
-				dust.scale *= 1 - 0.04f;
-			else
-				dust.scale *= 0.98f;
-
-			//Vector2 nextCenter = dust.position + dust.velocity; + Vector2.One.RotatedBy(dust.rotation + (rotationDir ? 0.03f : -0.03f))  * 32 * dust.scale; 
-
-			//dust.rotation += rotationDir ? 0.03f : -0.03f; //.06
-			//dust.position += currentCenter - nextCenter;
-
-			dust.position += dust.velocity; //Idk why we have to do this ourselves
-			dust.position += new Vector2(1, 1) * dust.scale;
-			//dust.position = dust.position + new Vector2(-32, -32) * dust.scale;
-
-			dust.velocity *= 0.94f;
-
-			if (!dust.noLight && dust.scale > 0.2f)
-				Lighting.AddLight(dust.position, dust.color.R * dust.scale * 0.005f, dust.color.G * dust.scale * 0.005f, dust.color.B * dust.scale * 0.005f);
-
-			dust.shader.UseColor(dust.color);
-
-			//255 is base, set to literally anything else to have dust fade
-			if (dust.alpha != 255)
-				dust.color *= 0.95f;
-
-
-			if (dust.scale < 0.05f)
-			{
-				dust.active = false;
-			}
-
-			return false;
-		}
-
-    }
-	*/
     public class GlowPixel : ModDust
     {
         public override string Texture => "AerovelenceMod/Content/Dusts/GlowDusts/DustTextures/PixelGlow";
@@ -186,7 +114,7 @@ namespace AerovelenceMod.Content.Dusts.GlowDusts
 
         public override void OnSpawn(Dust dust)
         {
-            Texture2D texture = (Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value);
+            Texture2D texture = Main.dedServ ? null : Mod.Assets.Request<Texture2D>("Content/Dusts/GlowDusts/DustTextures/PixelGlowShapes").Value;
 
             dust.customData = false;
             dust.noGravity = true;

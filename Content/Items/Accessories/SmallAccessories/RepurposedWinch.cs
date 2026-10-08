@@ -1,14 +1,7 @@
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using System;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
-
-
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {

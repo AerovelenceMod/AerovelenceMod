@@ -1,9 +1,4 @@
-﻿
-
-
-using Terraria.DataStructures;
-
-
+﻿using Terraria.DataStructures;
 
 namespace AerovelenceMod.Content.Items.Potions
 {

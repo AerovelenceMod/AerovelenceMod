@@ -1,5 +1,3 @@
-
-
 namespace AerovelenceMod.Common.Interfaces
 {
     interface IDrawAdditive

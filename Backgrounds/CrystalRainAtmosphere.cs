@@ -1,12 +1,6 @@
 using System;
 using System.Collections.Generic;
-
 using AerovelenceMod.Content.Biomes;
-
-
-
-
-
 using Terraria.GameContent;
 
 namespace AerovelenceMod.Backgrounds

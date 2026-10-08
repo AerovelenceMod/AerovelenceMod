@@ -1,7 +1,6 @@
 ﻿using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Common.Systems;
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb;
@@ -20,27 +19,18 @@ using AerovelenceMod.Content.Particles;
 using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Projectiles.TempVFX;
 using Microsoft.CodeAnalysis;
-
-
 using ReLogic.Content;
 using System;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
-
-
 using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 
 namespace AerovelenceMod.Content.Items
 {
     public class DebugItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("DebugItem");
-            /* Tooltip.SetDefault("You shouldn't have this...\n" +
-                "[i:" + ModContent.ItemType<Emoji>() + "]"); */
-        }
+        public override string Texture => "Terraria/Images/Projectile_0";
+
         public override void SetDefaults()
         {
             //Item.UseSound = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .86f, };

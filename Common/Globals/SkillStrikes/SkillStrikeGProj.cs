@@ -1,14 +1,8 @@
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using ReLogic.Content;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
-
-
 using static Terraria.ModLoader.ModContent;
 
 namespace AerovelenceMod.Common.Globals.SkillStrikes

@@ -1,9 +1,4 @@
-﻿
-
-
-using System;
-
-
+﻿using System;
 
 namespace AerovelenceMod.Content.Dusts.OverTile
 {

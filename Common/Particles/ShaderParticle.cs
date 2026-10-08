@@ -1,9 +1,6 @@
 ﻿using AerovelenceMod.Common.Systems;
-
-
 using Steamworks;
 using System;
-
 
 namespace AerovelenceMod.Common.Particles
 {

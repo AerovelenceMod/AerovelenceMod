@@ -1,11 +1,5 @@
-
-
 using ReLogic.Content;
 using AerovelenceMod.Common.Interfaces;
-
-
-
-
 
 namespace AerovelenceMod.Common.Drawing
 {

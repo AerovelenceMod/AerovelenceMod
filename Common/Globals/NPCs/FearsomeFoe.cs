@@ -1,8 +1,6 @@
 ﻿using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 
-
-
 namespace AerovelenceMod.Common.Globals.NPCs
 {
     public class FearsomeFoeGNPC : GlobalNPC

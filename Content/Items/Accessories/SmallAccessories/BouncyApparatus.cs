@@ -1,7 +1,6 @@
 using AerovelenceMod.Common.Systems.Traversal;
 using AerovelenceMod.Common.Systems.Language;
 using System;
-using AerovelenceMod.Content.Items.Accessories.SmallAccessories;
 using Terraria.Audio;
 using Terraria.GameContent;
 

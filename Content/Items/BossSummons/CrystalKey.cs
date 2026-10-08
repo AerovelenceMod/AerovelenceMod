@@ -1,14 +1,9 @@
-using System;
-using System.Collections.Generic;
 using AerovelenceMod.Common.Systems;
-
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
-
-
+using System;
+using System.Collections.Generic;
 
 namespace AerovelenceMod.Content.Items.BossSummons
 {

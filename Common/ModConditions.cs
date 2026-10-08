@@ -1,6 +1,5 @@
 ﻿using AerovelenceMod.Content.Biomes;
 
-
 namespace AerovelenceMod.Common
 {
     public static class ModConditions

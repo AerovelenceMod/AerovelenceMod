@@ -1,8 +1,4 @@
-﻿
-
-
-
-namespace AerovelenceMod.Content.Dusts.OverTile
+﻿namespace AerovelenceMod.Content.Dusts.OverTile
 {
 	public abstract class DrawOverTilesDust : ModDust
 	{

@@ -1,6 +1,5 @@
 using AerovelenceMod.Common.Globals.Worlds;
 using Terraria.GameContent.UI;
-using Terraria.ModLoader;
 
 namespace AerovelenceMod.Content.EmoteBubbles
 {
