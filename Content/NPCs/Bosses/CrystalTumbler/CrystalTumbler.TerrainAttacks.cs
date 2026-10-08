@@ -16,6 +16,17 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
         internal bool CascadeFinished => State != TumblerState.RailDash || substate >= 3;
         internal float LoopRailProgress => railProgress;
         internal bool LoopRailFinished => State != TumblerState.LoopSlam || substate >= 4;
+        internal float LoopSlamProgress
+        {
+            get
+            {
+                if (substate < 4)
+                    return railProgress * 0.85f;
+                float fallStart = TumblerLoopRail.Point(rampStart, storedDirection, 1f).Y + NPC.height * 0.5f;
+                float fall = MathHelper.Clamp((NPC.Bottom.Y - fallStart) / Math.Max(1f, FloorY - fallStart), 0f, 1f);
+                return 0.85f + fall * 0.15f;
+            }
+        }
 
         private void RailDash()
         {
