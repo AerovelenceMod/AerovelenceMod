@@ -23,9 +23,9 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRock";
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Stacker Rock", "Throws discs that linger on the floor; More can be piled up in one stack\nHit a tower from the side to topple it, sending rocks rolling")
+            this.ModifyLocalization("Stacker Rock", "Throws discs that linger on the floor; More can be piled up in one stack\nHit a tower from the side to topple it, sending rocks rolling\nRight-click to throw without aiming at a stack")
                 .AddName(Common.Systems.Language.Language.Spanish, "Roca Apilable")
-                .AddTooltip(Common.Systems.Language.Language.Spanish, "Rocas hechas para apilar\nLos discos se anclan en suelos sólidos y se apilan desde arriba\nCada roca añadida prolonga la duración de la torre\nGolpea una torre por el costado para derribarla antes\nLas rocas derribadas caen, rebotan y ruedan hacia delante");
+                .AddTooltip(Common.Systems.Language.Language.Spanish, "Rocas hechas para apilar\nLos discos se anclan en suelos sólidos y se apilan desde arriba\nCada roca añadida prolonga la duración de la torre\nGolpea una torre por el costado para derribarla antes\nLas rocas derribadas caen, rebotan y ruedan hacia delante\nClic derecho para lanzar sin apuntar a una torre");
             this.AddSkillStrike(Language.Default, "Topple a tower of at least five rocks to Skill Strike");
             this.AddSkillStrike(Language.Spanish, "Derriba una torre de al menos cinco rocas");
             base.SetStaticDefaults();
@@ -46,17 +46,16 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.shoot = ModContent.ProjectileType<StackerRockShot>();
             Item.shootSpeed = 9;
             Item.knockBack = 3;
-            Item.consumable = true;
-            Item.maxStack = Item.CommonMaxStack;
-            Item.value = Item.sellPrice(copper: 3);
-            Item.noUseGraphic = true;
-            Item.useStyle = ItemUseStyleID.Swing;
+            Item.consumable = false;
+            Item.maxStack = 1;
             Item.UseSound = SoundID.Item1;
         }
-        public override void AddRecipes() => CreateRecipe(30).AddIngredient<CavernStoneItem>(3).AddTile(TileID.WorkBenches).Register();
+        public override void AddRecipes() => CreateRecipe().AddIngredient<CavernStoneItem>(3).AddTile(TileID.WorkBenches).Register();
+        public override bool AltFunctionUse(Player player) => true;
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
+            if (player.altFunctionUse == 2) return true;
             StackerRockTower target = null;
             float closest = 80 * 80;
             foreach (Projectile projectile in Main.ActiveProjectiles)
@@ -68,7 +67,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 closest = distance;
                 target = tower;
             }
-            bool assisted = target != null && StackerRockShot.TryStackArc(position, new Vector2(target.Projectile.Center.X, target.Top - 4), out velocity);
+            bool assisted = target != null && StackerRockShot.TryStackArc(position, new Vector2(target.Projectile.Center.X, target.Top - 6), out velocity);
             if (!assisted) return true;
             Projectile.NewProjectile(source, position, velocity, type, damage, knockback, player.whoAmI, 1);
             return false;
@@ -96,7 +95,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 for (int tick = 0; tick < ticks; tick++)
                 {
                     step.Y += Gravity;
-                    Vector2 allowed = Collision.TileCollision(point - new Vector2(7, 4), step, 14, 8);
+                    Vector2 allowed = Collision.TileCollision(point - new Vector2(13, 6), step, 26, 12);
                     if (Vector2.DistanceSquared(allowed, step) > .01f) { clear = false; break; }
                     point += step;
                 }
@@ -109,8 +108,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool? CanDamage() => Projectile.timeLeft <= 15 ? false : null;
         public override void SetDefaults()
         {
-            Projectile.width = 14;
-            Projectile.height = 8;
+            Projectile.width = 26;
+            Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.penetrate = 1;
@@ -163,7 +162,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool PreDraw(ref Color lightColor)
         {
             float fade = Math.Min(1f, Projectile.timeLeft / 15f);
-            StackerRockRelicArt.Disc(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.rotation, new Vector2(20f, 8f), lightColor, fade, 0.2f, Projectile.identity);
+            StackerRockRelicArt.Disc(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.rotation, lightColor, fade, 0.2f, Projectile.identity);
             return false;
         }
     }
@@ -172,7 +171,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock1";
         internal const int MaximumRocks = 7;
         public int Count => Math.Clamp((int)Projectile.ai[0], 1, MaximumRocks);
-        private const float RockHeight = 14f;
+        private const float RockHeight = 12f;
         public float Height => Count * RockHeight;
         public float Top => Projectile.Center.Y - Height;
         public override void SetDefaults()
@@ -217,7 +216,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 Vector2 velocity = new(Projectile.ai[2] * (2.8f + height * 3.2f), -0.6f - height * 0.7f);
                 Projectile.NewProjectile(Projectile.GetSource_FromAI(), position, velocity,
                     ModContent.ProjectileType<StackerRockSkipper>(), (int)(Projectile.damage * (0.6f + Count * 0.08f)),
-                    Projectile.knockBack, Projectile.owner, Projectile.identity + i, Count, 30f - i % 3);
+                    Projectile.knockBack, Projectile.owner, Projectile.identity + i, Count);
             }
             SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.45f, Pitch = -0.2f }, Projectile.Center);
             Projectile.Kill();
@@ -248,7 +247,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
                 Vector2 center = Projectile.Center + new Vector2(shake, -(i + 0.5f) * RockHeight).RotatedBy(Projectile.rotation);
                 float charge = Count >= 5 ? 0.6f + MathF.Sin(Main.GlobalTimeWrappedHourly * 3f + i) * 0.15f : 0f;
                 StackerRockRelicArt.Disc(Main.spriteBatch, center - Main.screenPosition, Projectile.rotation + shake * 0.02f,
-                    new Vector2(30f - i % 3, RockHeight), lightColor, fade, charge, Projectile.identity + i);
+                    lightColor, fade, charge, Projectile.identity + i);
             }
             return false;
         }
@@ -261,8 +260,8 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         private bool grounded;
         public override void SetDefaults()
         {
-            Projectile.width = 24;
-            Projectile.height = 14;
+            Projectile.width = 26;
+            Projectile.height = 12;
             Projectile.friendly = true;
             Projectile.DamageType = DamageClass.Ranged;
             Projectile.tileCollide = true;
@@ -317,7 +316,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
         public override bool PreDraw(ref Color lightColor)
         {
             StackerRockRelicArt.Disc(Main.spriteBatch, Projectile.Center - Main.screenPosition, Projectile.rotation,
-                new Vector2(Math.Clamp(Projectile.ai[2], 28f, 30f), 14f), lightColor, Math.Min(1f, Projectile.timeLeft / 25f),
+                lightColor, Math.Min(1f, Projectile.timeLeft / 25f),
                 Projectile.ai[1] >= 5f ? 0.7f : 0f, (int)Projectile.ai[0]);
             return false;
         }
@@ -326,21 +325,20 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
 
     internal static class StackerRockRelicArt
     {
-        internal static void Disc(SpriteBatch batch, Vector2 center, float rotation, Vector2 size, Color light, float opacity, float charge, int variant = 0)
+        internal static void Disc(SpriteBatch batch, Vector2 center, float rotation, Color light, float opacity, float charge, int variant = 0)
         {
 			if (Main.dedServ) return;
             string texture = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/StackerRock/StackerRockRock" + (Math.Abs(variant % 3) + 1);
             Texture2D rock = ModContent.Request<Texture2D>(texture).Value;
             Texture2D glow = ModContent.Request<Texture2D>(texture + "_Glowmask").Value;
             Rectangle frame = rock.Bounds;
-            Vector2 scale = size / frame.Size();
             if (charge > 0f)
                 for (int i = 0; i < 4; i++)
                     batch.Draw(rock, center + (i * MathHelper.PiOver2).ToRotationVector2(), frame, StackerRockVFX.Additive(Color.White, opacity * charge * 0.65f),
-                        rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            batch.Draw(rock, center, frame, Color.Lerp(light, Color.White, 0.15f) * opacity, rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            batch.Draw(glow, center, frame, Color.White * opacity, rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
-            batch.Draw(glow, center, frame, StackerRockVFX.Additive(StackerRockVFX.Aqua, opacity * charge * 0.3f), rotation, frame.Size() * 0.5f, scale, SpriteEffects.None, 0f);
+                        rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            batch.Draw(rock, center, frame, Color.Lerp(light, Color.White, 0.15f) * opacity, rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            batch.Draw(glow, center, frame, Color.White * opacity, rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
+            batch.Draw(glow, center, frame, StackerRockVFX.Additive(StackerRockVFX.Aqua, opacity * charge * 0.3f), rotation, frame.Size() * 0.5f, 1f, SpriteEffects.None, 0f);
         }
     }
 
