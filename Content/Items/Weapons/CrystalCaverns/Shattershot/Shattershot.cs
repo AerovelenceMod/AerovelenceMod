@@ -18,7 +18,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
     public class Shattershot : TranslatableModItem
     {
         internal const string GunTexture = "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Shattershot/Shattershot";
-        private const string EnglishTooltip = "Blasts pieces of flint and gravel in a wide spread\nConsumes one stone block or cavern stone per blast\nCavern stone fires glowing gravel and sometimes an extra white-hot crystal fragment";
+        private const string EnglishTooltip = "Uses stone, cavern stone or cavern gravel as ammo\nCavern ammo fires glowing gravel and sometimes an extra white-hot crystal fragment";
         public override string Texture => "AerovelenceMod/Content/Items/Weapons/CrystalCaverns/Shattershot/Shattershot";
 
         public override void SetStaticDefaults()
@@ -26,7 +26,7 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             this.ModifyLocalization("Shattershot", EnglishTooltip)
                 .AddSkillStrike(Language.Default, "The white-hot crystal Skill Strikes")
                 .AddName(Language.Spanish, "Romperrocas")
-                .AddTooltip(Language.Spanish, "Dispara cuatro trozos pesados de pedernal y grava en un amplio abanico\nConsume un bloque de piedra o piedra cavernosa por disparo\nLa piedra cavernosa dispara grava luminosa y, a veces, un fragmento adicional de cristal incandescente");
+                .AddTooltip(Language.Spanish, "Usa piedra, piedra cavernosa o grava cavernosa como munición\nLa munición cavernosa dispara grava luminosa y, a veces, un fragmento adicional de cristal incandescente");
             base.SetStaticDefaults();
         }
 
@@ -44,28 +44,17 @@ namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns
             Item.useStyle = ItemUseStyleID.Shoot;
             Item.noMelee = Item.noUseGraphic = Item.autoReuse = true;
             Item.shoot = ModContent.ProjectileType<ShattershotPellet>();
+            Item.useAmmo = ItemID.StoneBlock;
             Item.shootSpeed = 11f;
             Item.knockBack = 3f;
         }
 
-        private static int FindStone(Player player)
-        {
-            for (int i = 0; i < 58; i++)
-                if (player.inventory[i].stack > 0 && (player.inventory[i].type == ItemID.StoneBlock || player.inventory[i].type == ModContent.ItemType<CavernStoneItem>()))
-                    return i;
-            return -1;
-        }
-
-        public override bool CanUseItem(Player player) => FindStone(player) >= 0;
+        public override bool? CanChooseAmmo(Item ammo, Player player)
+            => ammo.type == ItemID.StoneBlock || ammo.type == ModContent.ItemType<CavernStoneItem>() || ammo.type == ModContent.ItemType<CavernSandItem>();
 
         public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback)
         {
-            int slot = FindStone(player);
-            if (slot < 0)
-                return false;
-            bool crystal = player.inventory[slot].type == ModContent.ItemType<CavernStoneItem>();
-            if (--player.inventory[slot].stack <= 0)
-                player.inventory[slot].TurnToAir();
+            bool crystal = source.AmmoItemIdUsed == ModContent.ItemType<CavernStoneItem>() || source.AmmoItemIdUsed == ModContent.ItemType<CavernSandItem>();
             Vector2 aim = velocity.SafeNormalize(Vector2.UnitX * player.direction);
             Vector2 muzzle = player.MountedCenter + aim * 40f;
             if (!Collision.CanHitLine(player.Center, 1, 1, muzzle, 1, 1))
