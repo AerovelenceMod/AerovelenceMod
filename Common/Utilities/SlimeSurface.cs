@@ -1,4 +1,5 @@
 using System;
+using AerovelenceMod.Common.Systems.Traversal;
 
 
 
@@ -86,6 +87,7 @@ namespace AerovelenceMod.Common.Utilities
             point = npc.Bottom;
             normal = -Vector2.UnitY;
             if (npc.noTileCollide || npc.velocity.Y < -.5f) return false;
+            if (RopeSpanNPCs.TryGroundContact(npc, out point)) return true;
             bool found = false;
             for (int i = 0; i < 5; i++)
             {
