@@ -1,21 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-
-
-
-
-
 using Terraria.Audio;
 using ReLogic.Content;
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
 using AerovelenceMod.Common;
 using Terraria.Graphics;
 using AerovelenceMod.Common.Systems;
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
+namespace AerovelenceMod.Content.Items.Weapons.Overworld.WandOfExploding
 {
     public class WandOfExploding : TranslatableModItem
     {
@@ -23,7 +15,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
         {
             Item.staff[Item.type] = true;
 
-            this.ModifyLocalization("WandOfExploding", "Inflicts Mana Burn, causing enemies to leak stars that restore mana")
+            this.ModifyLocalization("Wand of Exploding", "Inflicts Mana Burn, causing enemies to leak stars that restore mana")
             .AddName(Language.Default, "Wand of Exploding")
             .AddTooltip(Language.Default, "Inflicts Mana Burn, causing enemies to leak stars that restore mana")
             .AddSkillStrike(Language.Default, "Explosion Skill Strikes under 50% mana")
@@ -279,8 +271,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
         {
             Player player = Main.player[Projectile.owner];
 
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Magic/WandOfExploding/WandOfExploding").Value;
-            Texture2D glowMask = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Magic/WandOfExploding/WandOfExplodingGlowmask").Value;
+            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Overworld/WandOfExploding/WandOfExploding").Value;
+            Texture2D glowMask = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Overworld/WandOfExploding/WandOfExplodingGlowmask").Value;
 
             Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, player.gfxOffY);
 
@@ -444,7 +436,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
             });
             DrawTrail(giveUp: true);
 
-            Texture2D fireball = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Magic/WandOfExploding/ExplodingBolt").Value;
+            Texture2D fireball = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Overworld/WandOfExploding/ExplodingBolt").Value;
 
             Vector2 drawPos = Projectile.Center - Main.screenPosition;
             drawPos += Projectile.velocity.SafeNormalize(Vector2.UnitX) * -3f;

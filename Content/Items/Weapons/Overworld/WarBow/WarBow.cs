@@ -10,13 +10,13 @@ using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
+namespace AerovelenceMod.Content.Items.Weapons.Overworld.WarBow
 {
     public class WarBow : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("WarBow", "Hold to charge, increasing damage and velocity\nEmbeds a spike into enemies at full charge")
+            this.ModifyLocalization("War Bow", "Hold to charge, increasing damage and velocity\nEmbeds a spike into enemies at full charge")
             .AddName(Language.Default, "War Bow")
             .AddTooltip(Language.Default, "Hold to charge, increasing damage and velocity\nEmbeds a spike into enemies at full charge")
             .AddSkillStrike(Language.Default, "Skill Strikes by releasing with perfect timing")
@@ -65,6 +65,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             {
                 wb.projToShootID = type;
             }
+            proj2.netUpdate = true;
             return false;
         }
     }
@@ -133,10 +134,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
             if (Player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Angle = (Main.MouseWorld - Player.MountedCenter).ToRotation();
-                }
+                Projectile.UpdateAimAngle(Player.MountedCenter, ref Angle);
 
                 direction = Angle.ToRotationVector2();
                 Player.ChangeDir(direction.X > 0 ? 1 : -1);
@@ -161,7 +159,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
                 Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, Projectile.rotation - MathHelper.PiOver2);
 
-                if (timeBeforeKill == 0)
+                if (timeBeforeKill == 0 && Projectile.owner == Main.myPlayer)
                 {
                     float vel = MathHelper.Clamp(20 * percentDrawnBack, 6, 20);
                     Projectile proj = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), Projectile.Center, direction.SafeNormalize(Vector2.UnitX) * vel, projToShootID, (Projectile.damage / 2 + (int)(Projectile.damage * percentDrawnBack)), 0, Player.whoAmI);
@@ -170,6 +168,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                     {
                         WarBowTrail globalProjectile = proj.GetGlobalProjectile<WarBowTrail>();
                         globalProjectile.trailActive = true;
+                        proj.netUpdate = true;
 
                         if (skillCritWindow >= 0) globalProjectile.trailColor = Color.Gold * 0.5f;
                         if (skillCritWindow >= 0) globalProjectile.sparkColor = Color.Gold;
@@ -333,6 +332,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
         bool hasHitYet = false;
 
+        public override void SendExtraAI(Projectile projectile, Terraria.ModLoader.IO.BitWriter bitWriter, System.IO.BinaryWriter writer)
+        {
+            bitWriter.WriteBit(trailActive);
+            if (!trailActive) return;
+            writer.Write(trailType);
+            writer.Write(trailIntensity);
+            writer.Write(trailColor.PackedValue);
+            writer.Write(sparkColor.PackedValue);
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, Terraria.ModLoader.IO.BitReader bitReader, System.IO.BinaryReader reader)
+        {
+            trailActive = bitReader.ReadBit();
+            if (!trailActive) return;
+            trailType = reader.ReadSingle();
+            trailIntensity = reader.ReadSingle();
+            trailColor = new Color { PackedValue = reader.ReadUInt32() };
+            sparkColor = new Color { PackedValue = reader.ReadUInt32() };
+        }
+
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!trailActive)
@@ -352,7 +371,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                     rotPower: 0.15f, preSlowPower: 0.97f, timeBeforeSlow: 6, postSlowPower: 0.92f, velToBeginShrink: 4f, fadePower: 0.85f, shouldFadeColor: true);
             }
 
-            if (!hasHitYet)
+            if (!hasHitYet && projectile.owner == Main.myPlayer)
             {
 
                 int a = Projectile.NewProjectile(projectile.GetSource_FromAI(), projectile.Center, Vector2.Zero, ModContent.ProjectileType<WarBowSpike>(), (int)(hit.Damage / 6f), 0f, Main.player[projectile.owner].whoAmI);
@@ -362,6 +381,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                     wbs.relativeNPCPos = (projectile.Center - target.Center);
                     wbs.IsStickingToTarget = true;
                     wbs.TargetWhoAmI = target.whoAmI;
+                    Main.projectile[a].netUpdate = true;
                 }
             }
 
@@ -371,7 +391,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         public override void PostAI(Projectile projectile)
         {
             if (!trailActive) return;
-            fireTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlameTrail").Value;
+            fireTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlameTrail").Value);
             fireTrail.trailColor = Color.Gray * 0.5f;
             fireTrail.trailPointLimit = (int)(200 * projectile.scale);
             fireTrail.trailWidth = (int)(10 * projectile.scale);
@@ -514,7 +534,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
                         Main.npc[npcTarget].HitSound = style;
 
-                        Main.npc[npcTarget].StrikeNPC(Main.npc[npcTarget].CalculateHitInfo(Projectile.damage, 1, false, 0, DamageClass.Ranged, true));
+                        if (Projectile.owner == Main.myPlayer)
+                        {
+                            NPC.HitInfo hit = Main.npc[npcTarget].CalculateHitInfo(Projectile.damage, 1, false, 0, DamageClass.Ranged, true);
+                            Main.npc[npcTarget].StrikeNPC(hit);
+                            if (Main.netMode == NetmodeID.MultiplayerClient)
+                                NetMessage.SendStrikeNPC(Main.npc[npcTarget], hit);
+                        }
 
                         Main.npc[npcTarget].HitSound = storedHitsound;
 
@@ -566,7 +592,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         float extraScaleMult = 2f;
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D spike = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/Bows/WarBowSpike").Value;
+            Texture2D spike = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Weapons/Overworld/WarBow/WarBowSpike").Value;
             //Projectile.gfxOffY = Main.npc[npcTarget].gfxOffY;
 
             Vector2 gfxYOffset = IsStickingToTarget ? new Vector2(0f, Main.npc[TargetWhoAmI].gfxOffY) : Vector2.Zero;
@@ -575,6 +601,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Main.EntitySpriteDraw(spike, Projectile.Center - Main.screenPosition + Main.rand.NextVector2Circular(1f, 1f) + gfxYOffset, null, Color.White with { A = 0 } * 0.25f * alpha, Projectile.rotation, spike.Size() / 2, new Vector2(Projectile.scale * 0.5f, Projectile.scale) * extraScaleMult, SpriteEffects.None);
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(relativeNPCPos.X);
+            writer.Write(relativeNPCPos.Y);
+            writer.Write(Projectile.rotation);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            relativeNPCPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            Projectile.rotation = reader.ReadSingle();
         }
     }
 }

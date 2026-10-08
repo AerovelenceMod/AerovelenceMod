@@ -11,7 +11,7 @@ using Terraria.Audio;
 
 
 
-namespace AerovelenceMod.Content.Items.Weapons.Cave
+namespace AerovelenceMod.Content.Items.Weapons.Cave.ExtinguishedDynamite
 {
     public class ExtinguishedDynamiteNPC : GlobalNPC
     {

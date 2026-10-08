@@ -1,18 +1,11 @@
-﻿
-
-
-
-using Terraria.DataStructures;
-
-
+﻿using Terraria.DataStructures;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
 using Terraria.Audio;
 using System.Collections.Generic;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 
-
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
+namespace AerovelenceMod.Content.Items.Weapons.Cave.GraniteCannon
 {
     public class GraniteCannon : TranslatableModItem
     {
@@ -183,8 +176,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         public override bool PreDraw(ref Color lightColor)
         {
             Player Player = Main.player[Projectile.owner];
-            Texture2D Weapon = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/GraniteCannon");
-            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/GraniteCannonOverglow");
+            Texture2D Weapon = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Cave/GraniteCannon/GraniteCannon");
+            Texture2D Glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Cave/GraniteCannon/GraniteCannonOverglow");
 
             Vector2 drawPos = (Projectile.Center - Main.screenPosition) + new Vector2(0f, Player.gfxOffY);
 
@@ -302,7 +295,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         public List<Vector2> previousPostions;
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D Chunk = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/GraniteChunk");
+            Texture2D Chunk = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Cave/GraniteCannon/GraniteChunk");
 
             #region after image
             if (previousRotations != null && previousPostions != null)

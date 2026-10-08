@@ -1,35 +1,8 @@
-﻿using AerovelenceMod.Common.Globals.SkillStrikes;
-using AerovelenceMod.Common.Particles;
-using AerovelenceMod.Common.Systems;
-
-using AerovelenceMod.Content.Dusts.GlowDusts;
+﻿using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
-using AerovelenceMod.Content.Items.Weapons.CrystalCaverns.BooyahBomb;
-using AerovelenceMod.Content.Items.Weapons.Ember;
-using AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba;
-using AerovelenceMod.Content.Items.Weapons.Misc.Magic.CrystalGlade;
-using AerovelenceMod.Content.Items.Weapons.Misc.Magic.FlashLight;
-using AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding;
-using AerovelenceMod.Content.Items.Weapons.Misc.Ranged;
-using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;
-using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight;
-using AerovelenceMod.Content.Items.Weapons.Starglass;
-using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
-using AerovelenceMod.Content.NPCs.Bosses.FeatheredFoe;
 using AerovelenceMod.Content.Particles;
-using AerovelenceMod.Content.Projectiles;
 using AerovelenceMod.Content.Projectiles.TempVFX;
-using Microsoft.CodeAnalysis;
-
-
-using ReLogic.Content;
-using System;
-
-using Terraria.Audio;
 using Terraria.DataStructures;
-
-
-using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 
 namespace AerovelenceMod.Content.Items
 {

@@ -10,9 +10,9 @@ using Terraria.GameContent;
 using System;
 
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
+namespace AerovelenceMod.Content.Items.Weapons.CrystalCaverns.PouchOfMagnets
 {
-    public class PouchOfRocks : TranslatableModItem
+    public class PouchOfMagnets : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {

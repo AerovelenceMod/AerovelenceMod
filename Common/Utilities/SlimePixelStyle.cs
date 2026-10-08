@@ -101,10 +101,11 @@ public sealed class SlimePixelStyle
     ], SlimeMaterial.Lava);
     public Color this[int shade] => colors[Math.Clamp(shade, 0, colors.Length - 1)];
 
-    private SlimePixelStyle(Color[] colors, SlimeMaterial material = SlimeMaterial.Gel,
+    public SlimePixelStyle(Color[] colors, SlimeMaterial material = SlimeMaterial.Gel,
         Color? backlight = null, Color? outlineLight = null, bool joinHighlights = false, float shadowWidth = .49f)
     {
-        this.colors = colors;
+        if (colors == null || colors.Length != 6) throw new ArgumentException("A slime palette needs six colors", nameof(colors));
+        this.colors = (Color[])colors.Clone();
         Material = material;
         Backlight = backlight ?? colors[5];
         OutlineLight = outlineLight ?? colors[2];

@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using Terraria.Audio;
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
+namespace AerovelenceMod.Content.Items.Weapons.Jungle.BookOfBees
 {
     public class BookOfBees : ModItem
     {
@@ -147,7 +147,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
         public List<Vector2> previousPositions = new List<Vector2>();
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D MainTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Magic/BookOfBees/HiveProjectile").Value;
+            Texture2D MainTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Jungle/BookOfBees/HiveProjectile").Value;
             Texture2D Orb = CommonTextures.feather_circle128PMA.Value;
             Texture2D flare = CommonTextures.Flare.Value;
 
@@ -176,7 +176,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.BookOfBees
 
         public void DrawTrail()
         {
-            Texture2D MainTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Magic/BookOfBees/HiveProjectile").Value;
+            Texture2D MainTex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Jungle/BookOfBees/HiveProjectile").Value;
             Texture2D Orb = CommonTextures.feather_circle128PMA.Value;
             Texture2D flare = CommonTextures.Flare.Value;
 

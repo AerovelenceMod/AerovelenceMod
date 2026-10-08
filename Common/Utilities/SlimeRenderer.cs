@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace AerovelenceMod.Common.Utilities
 {
-    public sealed class SlimeRenderer : IDisposable
+    public sealed partial class SlimeRenderer : IDisposable
     {
         private float PixelScale => MathHelper.Clamp(palette.PixelSize, 1, 4);
         private readonly SlimeAppearance palette;
@@ -32,6 +32,7 @@ namespace AerovelenceMod.Common.Utilities
         private Color lighting;
         private float[] facetCoverage = Array.Empty<float>();
         private readonly HashSet<int> facetMask = new();
+        private readonly HashSet<int> facetOutlineMask = new();
         private readonly List<int> facetPrune = new();
         private readonly List<int> facetLine = new();
         private readonly Vector2[] facetPolygon = new Vector2[5];
@@ -309,15 +310,21 @@ namespace AerovelenceMod.Common.Utilities
                         Vector2 normal = SafeNormalize(new Vector2(field[index + 1] - field[index - 1], field[index + width] - field[index - width]), Vector2.UnitX);
                         float facing = Vector2.Dot(normal, LightDirection);
                         int outlineShade = facing > .25f ? 2 : 1;
+                        Color outline = palette.PixelStyle != null ? outlineShade == 2 ? palette.PixelStyle.OutlineLight : palette.PixelStyle[1]
+                            : outlineShade == 2 ? palette.OutlineLight ?? palette.BodyAA : palette.Outline;
+                        if (outlineShade == 1 && facing > -.55f && palette.OutlineShadow.HasValue)
+                            outline = palette.OutlineShadow.Value;
                         Vector2 local = bodyLocal[index];
                         if (palette.BodyBacklight && local.X > .02f && local.Y > -.12f && local.Y < .85f)
                         {
                             float backlight = Vector2.Dot(normal, BacklightDirection(shape));
-                            if (backlight > .64f) outlineShade = 2;
+                            if (backlight > .64f)
+                            {
+                                outlineShade = 2;
+                                outline = palette.BacklightOutline ?? palette.PixelStyle?.OutlineLight ?? palette.OutlineLight ?? palette.BodyAA;
+                            }
                         }
                         contourShade[index] = (byte)outlineShade;
-                        Color outline = palette.PixelStyle != null ? outlineShade == 2 ? palette.PixelStyle.OutlineLight : palette.PixelStyle[1]
-                            : outlineShade == 2 ? palette.BodyAA : palette.Outline;
                         pixels[index] = Lit(outline);
                         continue;
                     }
@@ -541,9 +548,11 @@ namespace AerovelenceMod.Common.Utilities
             Vector2 side = new(-axis.Y, axis.X);
             float length = tendril.TipExtension / PixelScale;
             float halfWidth = Math.Clamp(length * (variant % 3 == 1 ? .31f : .27f), 1.8f, 4.2f);
+            if (facet.SmoothShading) halfWidth = Math.Clamp(length * .2f, 1.3f, 2.6f);
             Vector2 root = ToRaster(tendril.Tip) + new Vector2(.5f);
             Vector2 tipCenter = root + axis * length;
             float cap = MathHelper.Clamp(halfWidth * .22f, .55f, .85f);
+            if (facet.SmoothShading) cap = .4f;
             Vector2 tipLeft = tipCenter + side * cap;
             Vector2 tipRight = tipCenter - side * cap;
             Vector2 shoulder = root + axis * (length * .2f);
@@ -561,6 +570,12 @@ namespace AerovelenceMod.Common.Utilities
             facetPolygon[4] = tipRight;
             HashSet<int> mask = BuildFacetMask(facetPolygon);
             if (mask.Count == 0) return;
+            if (facet.SmoothShading)
+            {
+                PaintCrystalFacet(mask, root, axis, side, length, halfWidth, variant, facet);
+                if (facet.Outline.HasValue) DrawCrystalOutline(mask, facet);
+                return;
+            }
             FillFacetMask(mask, facet.Dark);
             FillFacetMasked(mask, tipCenter, litShoulder, ridge, facet.Mid, facet.Bright, variant + 1, facet);
             FillFacetMasked(mask, tipCenter, ridge, darkShoulder, facet.Mid, facet.Bright, variant + 5, facet);
@@ -612,7 +627,7 @@ namespace AerovelenceMod.Common.Utilities
                 for (int dy = -1; dy <= 1; dy++)
                     for (int dx = -1; dx <= 1; dx++)
                         if ((dx != 0 || dy != 0) && x + dx >= 0 && x + dx < width && y + dy >= 0 && y + dy < height && mask.Contains((y + dy) * width + x + dx)) neighbors++;
-                if (neighbors <= 1) facetPrune.Add(index);
+                if (neighbors <= (palette.FacetStyle?.SmoothShading == true ? 0 : 1)) facetPrune.Add(index);
             }
             foreach (int index in facetPrune) mask.Remove(index);
             return mask;

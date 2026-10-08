@@ -14,13 +14,13 @@ using Terraria.Graphics.CameraModifiers;
 using Terraria.Graphics.Shaders;
 using static Terraria.ModLoader.ModContent;
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
+namespace AerovelenceMod.Content.Items.Weapons.Desert.TheSahara
 {
     public class TheSahara : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("TheSahara", "Hold to charge, increasing damage and velocity\nReleases a fire vortex at full charge")
+            this.ModifyLocalization("The Sahara", "Hold to charge, increasing damage and velocity\nReleases a fire vortex at full charge")
             .AddName(Language.Default, "The Sahara")
             .AddTooltip(Language.Default, "Hold to charge, increasing damage and velocity\nReleases a fire vortex at full charge")
             .AddSkillStrike(Language.Default, "The Fire Vortex Skill Strikes")
@@ -68,6 +68,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             {
                 wb.projToShootID = type;
             }
+            proj2.netUpdate = true;
 
             return false;
         }
@@ -136,10 +137,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
             if (Player.channel)
             {
-                if (Projectile.owner == Main.myPlayer)
-                {
-                    Angle = (Main.MouseWorld - (Player.MountedCenter)).ToRotation();
-                }
+                Projectile.UpdateAimAngle(Player.MountedCenter, ref Angle);
 
                 direction = Angle.ToRotationVector2();
                 Player.ChangeDir(direction.X > 0 ? 1 : -1);
@@ -164,7 +162,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
                 Player.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.None, Projectile.rotation - MathHelper.PiOver2);
 
-                if (timeBeforeKill == 0)
+                if (timeBeforeKill == 0 && Projectile.owner == Main.myPlayer)
                 {
                     float vel = MathHelper.Clamp(18f * percentDrawnBack, 3.5f, 18f);
 
@@ -184,6 +182,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                     {
                         SaharaFlameEffect globalProjectile = proj.GetGlobalProjectile<SaharaFlameEffect>();
                         globalProjectile.trailActive = true;
+                        proj.netUpdate = true;
 
                     }
 
@@ -196,19 +195,23 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                         dust2.rotation = Main.rand.NextFloat(6.28f);
                     }
 
-                    int Mura = Projectile.NewProjectile(null, Projectile.Center + direction.SafeNormalize(Vector2.UnitX) * 10, Vector2.Zero, ModContent.ProjectileType<MuraLineHandler>(), 5, 0, Projectile.owner);
-
-                    if (Main.projectile[Mura].ModProjectile is MuraLineHandler mlh)
+                    if (Projectile.owner == Main.myPlayer)
                     {
-                        //mlh.fadeMult = 2f;
+                        int Mura = Projectile.NewProjectile(null, Projectile.Center + direction.SafeNormalize(Vector2.UnitX) * 10, Vector2.Zero, ModContent.ProjectileType<MuraLineHandler>(), 5, 0, Projectile.owner);
 
-                        for (int m = 0; m < 5; m++)
+                        if (Main.projectile[Mura].ModProjectile is MuraLineHandler mlh)
                         {
-                            float xScaleMinus = Main.rand.NextFloat(0f, 1.1f);
-                            MuraLine newWind = new MuraLine(Main.projectile[Mura].Center, direction.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(2f, 4.2f), 2 - xScaleMinus);
-                            newWind.color = Color.OrangeRed;
-                            mlh.lines.Add(newWind);
+                            //mlh.fadeMult = 2f;
+
+                            for (int m = 0; m < 5; m++)
+                            {
+                                float xScaleMinus = Main.rand.NextFloat(0f, 1.1f);
+                                MuraLine newWind = new MuraLine(Main.projectile[Mura].Center, direction.RotatedBy(Main.rand.NextFloat(-0.5f, 0.5f)) * Main.rand.NextFloat(2f, 4.2f), 2 - xScaleMinus);
+                                newWind.color = Color.OrangeRed;
+                                mlh.lines.Add(newWind);
+                            }
                         }
+                        Main.projectile[Mura].netUpdate = true;
                     }
 
                     for (int i = 0; i < 8; i++)
@@ -281,7 +284,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         {
             Player Player = Main.player[Projectile.owner];
 
-            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/Bows/TheSaharaNoString").Value;
+            Texture2D texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Desert/TheSahara/TheSaharaNoString").Value;
             Vector2 origin = texture.Size() / 2f;
 
             Vector2 pos = Projectile.Center - Main.screenPosition - (0.5f * (direction * OFFSET * -1)) + new Vector2(0f, Player.gfxOffY);
@@ -409,9 +412,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
 
             if (timer == 65 || timer == 77 || timer == 89)
             {
-                int fire = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SaharaFirePulse>(), Projectile.damage, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int fire = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SaharaFirePulse>(), Projectile.damage, 0, Main.myPlayer);
 
-                SkillStrikeUtil.setSkillStrike(Main.projectile[fire], 1.3f, 100, 0.35f);
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[fire], 1.3f, 100, 0.35f);
+                    Main.projectile[fire].netUpdate = true;
+                }
 
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_0") with { Pitch = -.33f, MaxInstances = -1, Volume = 0.8f };
                 SoundEngine.PlaySound(style, Projectile.Center);
@@ -442,8 +449,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D glow = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Assets/Orbs/feather_circle128PMA");
-            Texture2D Tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/Bows/SaharaFireVortex");
-            Texture2D White = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/Bows/SaharaFireVortexWhite");
+            Texture2D Tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Desert/TheSahara/Ranged/Bows/SaharaFireVortex");
+            Texture2D White = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Desert/TheSahara/Ranged/Bows/SaharaFireVortexWhite");
 
             int frameHeight = Tex.Height / Main.projFrames[Projectile.type];
             int startY = frameHeight * Projectile.frame;
@@ -571,6 +578,22 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
         public List<Vector2> previousPositions = new List<Vector2>();
         int timer = 0;
 
+        public override void SendExtraAI(Projectile projectile, Terraria.ModLoader.IO.BitWriter bitWriter, System.IO.BinaryWriter writer)
+        {
+            bitWriter.WriteBit(trailActive);
+            if (!trailActive) return;
+            writer.Write(trailType);
+            writer.Write(trailIntensity);
+        }
+
+        public override void ReceiveExtraAI(Projectile projectile, Terraria.ModLoader.IO.BitReader bitReader, System.IO.BinaryReader reader)
+        {
+            trailActive = bitReader.ReadBit();
+            if (!trailActive) return;
+            trailType = reader.ReadSingle();
+            trailIntensity = reader.ReadSingle();
+        }
+
         public override void OnHitNPC(Projectile projectile, NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!trailActive)
@@ -601,7 +624,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
                 previousPositions.Clear();
                 return;
             }
-            fireTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Extra_196_Black").Value;
+            fireTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Extra_196_Black").Value);
             fireTrail.trailColor = new Color(255, 100, 5);
             fireTrail.trailPointLimit = (int)(120 * projectile.scale);
             fireTrail.trailWidth = (int)(20 * projectile.scale);
@@ -655,7 +678,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Bows
             Vector2 scale = new Vector2(0.25f, 0.5f) * 0.5f;
 
             Texture2D arrowTex = TextureAssets.Projectile[projectile.type].Value;
-            Texture2D arrowWhite = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Misc/Ranged/Bows/WoodenArrowWhiteGlow").Value;
+            Texture2D arrowWhite = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Projectiles/WoodenArrowWhiteGlow").Value;
 
             for (int i = 1; i < previousPositions.Count; i++)
             {

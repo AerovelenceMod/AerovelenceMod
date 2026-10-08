@@ -11,7 +11,7 @@ using AerovelenceMod.Content.Dusts.GlowDusts;
 using System;
 using AerovelenceMod.Content.Dusts;
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.WandOfExploding
+namespace AerovelenceMod.Content.Items.Weapons.Overworld.WandOfExploding
 {
     public class ManaLeech : ModBuff
     {

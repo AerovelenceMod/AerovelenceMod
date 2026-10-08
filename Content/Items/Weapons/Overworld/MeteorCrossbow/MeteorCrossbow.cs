@@ -11,7 +11,7 @@ using Terraria.DataStructures;
 
 
 
-namespace AerovelenceMod.Content.Items.Weapons.Overworld
+namespace AerovelenceMod.Content.Items.Weapons.Overworld.MeteorCrossbow
 {
     public class MeteorCrossbow : TranslatableModItem
     {
@@ -102,7 +102,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
         private float _glowIntensity = 1f;
         private float _offset = 0f;
 
-        public override string Texture => "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorCrossbow";
+        public override string Texture => "AerovelenceMod/Content/Items/Weapons/Overworld/MeteorCrossbow/MeteorCrossbow";
 
         private Vector2 CurrentDirection => Projectile.rotation.ToRotationVector2();
         private Player Owner => Main.player[Projectile.owner];
@@ -147,7 +147,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
         public override bool PreDraw(ref Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Overworld/MeteorCrossbowGlow").Value;
+            Texture2D glowTexture = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Overworld/MeteorCrossbow/MeteorCrossbowGlow").Value;
             Vector2 position = (Owner.MountedCenter + (CurrentDirection * _offset)) - Main.screenPosition;
             position.Y += Owner.gfxOffY;
             Vector2 handOffset = new Vector2(20, 0).RotatedBy(Projectile.rotation);
@@ -327,7 +327,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Overworld
         public override void PostDraw(Color lightColor)
         {
             Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
-            Texture2D OuterGlow = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Overworld/MeteorArrowGlow").Value;
+            Texture2D OuterGlow = ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Overworld/MeteorCrossbow/MeteorArrowGlow").Value;
             Vector2 drawOrigin = new(texture.Width * 0.5f, texture.Height * 0.5f);
 
             if (_rocketIgnited)

@@ -14,7 +14,7 @@ using static AerovelenceMod.Common.Utilities.DustBehaviorUtil;
 using static AerovelenceMod.Common.Utilities.ProjectileExtensions;
 
 
-namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
+namespace AerovelenceMod.Content.Items.Weapons.Cave.MarbleMusket
 {
     public class MarbleMusket : TranslatableModItem
     {
@@ -204,8 +204,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged
         private float glowIntensity = 1f;
         public override bool PreDraw(ref Color lightColor)
         {
-            Texture2D Texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/MarbleMusket").Value;
-            Texture2D TextureGlowLayer = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Misc/Ranged/MarbleMusketGlowLayer").Value;
+            Texture2D Texture = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Cave/MarbleMusket/MarbleMusket").Value;
+            Texture2D TextureGlowLayer = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Cave/MarbleMusket/MarbleMusketGlowLayer").Value;
 
             Texture2D MuzzleFlash = Mod.Assets.Request<Texture2D>("Assets/MuzzleFlashes/WhitePixelMuzzleFlash").Value;
             Texture2D MuzzleFlashGlow = Mod.Assets.Request<Texture2D>("Assets/MuzzleFlashes/WhitePixelMuzzleFlashGlow").Value;
