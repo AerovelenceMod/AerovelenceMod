@@ -112,7 +112,7 @@ public class CoralClawHand : ModProjectile
         Array.Clear(Projectile.localNPCImmunity);
         snapped = false;
         Projectile.netUpdate = true;
-        SoundEngine.PlaySound(SoundID.Item1 with { Volume = .5f, Pitch = .15f }, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.Item1 with { Volume = .25f, Pitch = .15f }, Projectile.Center);
     }
 
     public override void SendExtraAI(BinaryWriter writer)
@@ -173,7 +173,7 @@ public class CoralClawHand : ModProjectile
         {
             snapped = true;
             bool golden = Overhead(mouth - player.MountedCenter);
-            SoundEngine.PlaySound(SoundID.Item37 with { Volume = .55f, Pitch = golden ? .3f : -.15f }, mouth);
+            SoundEngine.PlaySound(SoundID.Item37 with { Volume = .25f, Pitch = golden ? .3f : -.15f }, mouth);
             for (int i = 0; i < 12; i++) CoralClawArt.Dust(mouth, Main.rand.NextVector2Circular(3f, 3f), golden);
         }
         if (Projectile.ai[1] > 0f)
