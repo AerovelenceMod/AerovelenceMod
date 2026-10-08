@@ -89,7 +89,7 @@ namespace AerovelenceMod.Content.Items.Mounts
                     TumblingRampMotion.Advance(ref angle, ref speed, direction, ++rampAge);
                     Projectile.ai[1] = angle;
                 }
-                rider.ReceiveRide(riding, Projectile.ai[1], direction, Projectile.ai[0]);
+                rider.ReceiveRide(riding, Projectile.ai[1], speed, direction, Projectile.ai[0]);
             }
             if (riding)
             {

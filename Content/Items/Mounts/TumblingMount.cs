@@ -1,11 +1,6 @@
 using System.Collections.Generic;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-
-
-
 using Terraria.DataStructures;
-
-
 
 namespace AerovelenceMod.Content.Items.Mounts
 {

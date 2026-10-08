@@ -1,18 +1,13 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Items.Mounts
 {
     public class TumblingHarness : TranslatableModItem
     {
         public override void SetStaticDefaults()
         {
-            const string englishTooltip = "Summons a rideable tumblerock\nHold Up while grounded to conjure an electric ramp; keep holding to loop\nRelease Up to leap off along the ramp's direction\nElectrifies the ball while ramp riding and briefly after launching, dealing contact damage\nNegates fall damage while mounted";
+            const string englishTooltip = "Summons a rideable tumblerock\nHold Up while grounded to conjure an electric ramp; keep holding to loop\nNegates fall damage while mounted";
             this.ModifyLocalization("Tumbling Harness", englishTooltip)
                 .AddName(Language.Default, "Tumbling Harness").AddTooltip(Language.Default, englishTooltip)
-                .AddName(Language.Spanish, "Arnés Rodante").AddTooltip(Language.Spanish, "Invoca una roca rodante que puedes montar\nMantén pulsado Arriba mientras estás en el suelo para conjurar una rampa eléctrica; sigue pulsando para hacer bucles\nSuelta Arriba para salir impulsado en la dirección de la rampa\nLa roca se electrifica al recorrer la rampa y brevemente tras salir impulsada, e inflige daño por contacto\nAnula el daño por caída mientras montas");
+                .AddName(Language.Spanish, "Arnés Rodante").AddTooltip(Language.Spanish, "Invoca una roca rodante que puedes montar\nMantén pulsado Arriba mientras estás en el suelo para conjurar una rampa eléctrica; sigue pulsando para hacer bucles\nAnula el daño por caída mientras montas");
             base.SetStaticDefaults();
         }
 

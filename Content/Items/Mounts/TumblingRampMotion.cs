@@ -6,9 +6,10 @@ namespace AerovelenceMod.Content.Items.Mounts
     internal static class TumblingRampMotion
     {
         internal const float Radius = 16f;
-        internal const float GroundSpeed = 5.5f;
+        internal const float GroundSpeed = 4.5f;
         internal const float MinimumSpeed = 4.5f;
         internal const float MaximumSpeed = 6.5f;
+        internal const float LaunchSpeed = 13.5f;
 
         internal static Vector2 Advance(ref float angle, ref float speed, int direction, int age)
         {
@@ -27,8 +28,8 @@ namespace AerovelenceMod.Content.Items.Mounts
 
         internal static Vector2 Launch(float angle, float speed, int direction)
         {
-            Vector2 launch = Tangent(angle, direction) * MathHelper.Clamp(speed, MinimumSpeed, MaximumSpeed) - Normal(angle, direction) * 1.75f;
-            return launch * Math.Min(1f, MaximumSpeed / launch.Length());
+            Vector2 launch = Tangent(angle, direction) * (MathHelper.Clamp(speed, MinimumSpeed, MaximumSpeed) + 6f) - Normal(angle, direction) * 2.5f;
+            return launch * Math.Min(1f, LaunchSpeed / launch.Length());
         }
     }
 }
