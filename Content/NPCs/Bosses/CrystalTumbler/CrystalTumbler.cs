@@ -5,6 +5,7 @@ using AerovelenceMod.Common.Globals.Worlds;
 
 using AerovelenceMod.Content.Items.BossSummons;
 using AerovelenceMod.Content.Items.Mounts;
+using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
 
 
 
@@ -935,7 +936,6 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
 
         public override void ModifyNPCLoot(NPCLoot npcLoot)
         {
-            npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<Content.Items.Weapons.BossDrops.CrystalTumbler.TumblerEnrichmentScepter>(), 4));
             npcLoot.Add(ItemDropRule.MasterModeCommonDrop(ModContent.ItemType<Content.Tiles.Relics.CrystalTumblerRelicItem>()));
             npcLoot.Add(ItemDropRule.MasterModeDropOnAllPlayers(ModContent.ItemType<TumblingHarness>(), 4));
             npcLoot.Add(ItemDropRule.BossBag(ModContent.ItemType<Content.Items.TreasureBags.CrystalTumblerBag>()));
@@ -943,6 +943,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
             LeadingConditionRule normal = new LeadingConditionRule(new Conditions.NotExpert());
             normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<Content.Items.Armor.Vanity.CrystalTumblerMask>(), 7));
             normal.OnSuccess(ItemDropRule.OneFromOptions(1, Content.Items.TreasureBags.CrystalTumblerBag.Weapons));
+            normal.OnSuccess(ItemDropRule.Common(ModContent.ItemType<CavernCrystalItem>(), 1, 10, 15));
             npcLoot.Add(normal);
         }
 

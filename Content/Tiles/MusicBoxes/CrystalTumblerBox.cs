@@ -35,7 +35,7 @@ namespace AerovelenceMod.Content.Tiles.MusicBoxes
     {
         public override void SetStaticDefaults()
         {
-            this.ModifyLocalization("Music Box (Crystal Tumbler)", "Composed by A44");
+            this.ModifyLocalization("Music Box (Crystal Tumbler)", "\"Rolling Thunder\" - Composed by Arcri");
             MusicLoader.AddMusicBox(Mod, MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalTumbler"), ModContent.ItemType<CrystalTumblerBoxItem>(), ModContent.TileType<CrystalTumblerBox>());
         }
 
