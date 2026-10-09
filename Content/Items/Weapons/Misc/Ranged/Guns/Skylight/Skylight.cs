@@ -121,7 +121,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             if (timer == 0)
-                Projectile.velocity = player.DirectionTo(Main.MouseWorld);
+                Projectile.velocity = player.DirectionTo(Projectile.AimWorld());
 
 
             player.heldProj = Projectile.whoAmI;
@@ -150,12 +150,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             //Shoot the solo shot
             if (burstTimer % 19 == 0 && burstTimer > 0 && burstTimer < 85)
             {
-                Projectile.velocity = player.DirectionTo(Main.MouseWorld);
+                Projectile.velocity = player.DirectionTo(Projectile.AimWorld());
                 Projectile.velocity = Vector2.Normalize(Projectile.velocity);
 
                 Vector2 rotatedVelocity = Projectile.velocity.RotatedByRandom(-0.07f) * 25f;
 
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, rotatedVelocity, ModContent.ProjectileType<SkylightElectricShot>(), Projectile.damage, 0, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, rotatedVelocity, ModContent.ProjectileType<SkylightElectricShot>(), Projectile.damage, 0, player.whoAmI);
+                }
 
                 Projectile.velocity = rotatedVelocity.SafeNormalize(Vector2.UnitX);
 
@@ -194,12 +197,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             if (burstTimer == 85 || burstTimer == 90 || burstTimer == 95 || burstTimer == 100)
             {
 
-                Projectile.velocity = player.DirectionTo(Main.MouseWorld);
+                Projectile.velocity = player.DirectionTo(Projectile.AimWorld());
                 Projectile.velocity = Vector2.Normalize(Projectile.velocity);
 
                 Vector2 rotatedVelocity = Projectile.velocity.RotatedByRandom(-0.15f) * 30f;
 
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, rotatedVelocity, ModContent.ProjectileType<SkylightElectricShot>(), Projectile.damage, 0, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, rotatedVelocity, ModContent.ProjectileType<SkylightElectricShot>(), Projectile.damage, 0, player.whoAmI);
+                }
 
                 Projectile.velocity = rotatedVelocity.SafeNormalize(Vector2.UnitX);
 
@@ -347,7 +353,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
         public override void AI()
         {
             //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/FlamesTextureButBlack").Value);
             trail1.trailColor = Color.White * 0.7f * alpha;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = (int)(11f * scale);
@@ -367,7 +373,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             trail1.TrailLogic();
 
             //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5Loop").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5Loop").Value);
             trail2.trailColor = Color.DeepSkyBlue * alpha;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = (int)(40 * scale);
@@ -378,7 +384,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 
 
             //trail2.gradient = true;
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.03f;
 
@@ -453,7 +459,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightHitFlare>(), 0, 0, Main.myPlayer);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightHitFlare>(), 0, 0, Main.myPlayer);
+            }
 
             Projectile.velocity *= 0.8f;
 
@@ -567,7 +576,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
         {
 
             //Trail1 Info Dump
-            trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FlamesTextureButBlack").Value;
+            trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/FlamesTextureButBlack").Value);
             trail1.trailColor = Color.White * 0.7f;
             trail1.trailPointLimit = 300;
             trail1.trailWidth = 22 * 2;
@@ -582,7 +591,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             trail1.TrailLogic();
 
             //Trail2 Info Dump
-            trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5Loop").Value;
+            trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5Loop").Value);
             trail2.trailColor = Color.DeepSkyBlue;
             trail2.trailPointLimit = 300;
             trail2.trailWidth = 80 * 2;
@@ -591,7 +600,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             trail2.pinch = true;
             trail2.pinchAmount = 0.8f;
 
-            trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value;
+            trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/LoopingThunderGrad").Value);
             trail2.shouldScrollColor = true;
             trail2.gradientTime = timer * 0.02f;
 
@@ -623,14 +632,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 
         public override void OnHitPlayer(Player target, Player.HurtInfo info)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightVFX>(), 0, 0, Main.myPlayer);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightVFX>(), 0, 0, Main.myPlayer);
+            }
             AoE();
             spawnedExplosion = true;
         }
 
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
-            Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightVFX>(), 0, 0, Main.myPlayer);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<SkylightVFX>(), 0, 0, Main.myPlayer);
+            }
             AoE();
             spawnedExplosion = true;
         }
@@ -639,6 +654,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 
         public void AoE()
         {
+            if (Projectile.owner != Main.myPlayer) return;
             for (int i = 0; i < Main.maxNPCs; i++)
             {
                 if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 200f)
@@ -655,6 +671,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                     myHit.HitDirection = Direction;
 
                     Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
 
 
                     for (int k = 0; k < 8; k++)
@@ -744,19 +761,27 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
 
                     float ai2 = Main.rand.Next(100);
 
-                    int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
-                    Main.projectile[lightning].scale = 0.3f;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int lightning = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 10, ai1.RotatedByRandom(6.28f) * 2.5f, ModContent.ProjectileType<LightningHitFX>(), 0, 0, Main.myPlayer, ai1.ToRotation(), ai2);
+                        Main.projectile[lightning].scale = 0.3f;
+                        Main.projectile[lightning].netUpdate = true;
+                    }
                 }
 
-                int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
-                Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
-                Main.projectile[afg].timeLeft = 10;
-
-                if (Main.projectile[afg].ModProjectile is DistortProj distort)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    distort.tex = (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall");
-                    distort.implode = false;
-                    distort.scale = 0.6f;
+                    int afg = Projectile.NewProjectile(null, Projectile.Center, Vector2.Zero, ModContent.ProjectileType<DistortProj>(), 0, 0);
+                    Main.projectile[afg].rotation = Main.rand.NextFloat(6.28f);
+                    Main.projectile[afg].timeLeft = 10;
+
+                    if (Main.projectile[afg].ModProjectile is DistortProj distort)
+                    {
+                        distort.tex = (Main.dedServ ? null : (Texture2D)ModContent.Request<Texture2D>("AerovelenceMod/Content/Items/Weapons/Ember/MagmaBall"));
+                        distort.implode = false;
+                        distort.scale = 0.6f;
+                    }
+                    Main.projectile[afg].netUpdate = true;
                 }
             }
 
@@ -907,7 +932,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             player.ChangeDir(Projectile.direction);
 
 
-            float difference = Main.MouseWorld.X - player.Center.X;
+            float difference = Projectile.AimWorld().X - player.Center.X;
             Vector2 aimPos = new Vector2(player.Center.X + (difference * 0.6f), player.Center.Y - 1000);
 
 
@@ -915,10 +940,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
             {
                 hasShot = true;
 
-                float angle = (Main.MouseWorld - aimPos).ToRotation();
-                int afg = Projectile.NewProjectile(Projectile.GetSource_FromAI(), aimPos, new Vector2(30f, 0).RotatedBy(angle), ModContent.ProjectileType<SkylightThunderStrike>(), Projectile.damage * 3, 0);
+                float angle = (Projectile.AimWorld() - aimPos).ToRotation();
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int afg = Projectile.NewProjectile(Projectile.GetSource_FromAI(), aimPos, new Vector2(30f, 0).RotatedBy(angle), ModContent.ProjectileType<SkylightThunderStrike>(), Projectile.damage * 3, 0, Projectile.owner);
 
-                SkillStrikeUtil.setSkillStrike(Main.projectile[afg], 1.3f);
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[afg], 1.3f);
+                    Main.projectile[afg].netUpdate = true;
+                }
 
 
                 SoundStyle style = new SoundStyle("AerovelenceMod/Sounds/Effects/lightning_flash_01") with { Pitch = 0.7f, PitchVariance = 0.2f, Volume = 0.35f };
@@ -948,7 +977,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns.Skylight
                         Projectile.velocity.RotatedBy(rotAdd) * Main.rand.NextFloat(0.5f, 5) * 1.5f, newColor: Color.DodgerBlue, Scale: 0.2f + Main.rand.NextFloat(0, 0.2f));
                 }
 
-                int spark = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 40, Vector2.Zero, ModContent.ProjectileType<SkylightHitFlare>(), 0, 0);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int spark = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + Projectile.velocity * 40, Vector2.Zero, ModContent.ProjectileType<SkylightHitFlare>(), 0, 0);
+                }
 
                 offset = new Vector2(-5, 0);
                 glowVal = 20;

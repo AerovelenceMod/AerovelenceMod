@@ -114,6 +114,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
                 if (Main.projectile[heldProj].ModProjectile is RedundantFibberHeldProj gunProj)
                     gunProj.TriggerShoot();
+                Main.projectile[heldProj].netUpdate = true;
             }
             return false;
         }
@@ -196,8 +197,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
             Projectile.velocity = Vector2.Zero;
             Projectile.timeLeft = 2;
-            if (Projectile.owner == Main.myPlayer)
-                Angle = (Main.MouseWorld - (Owner.MountedCenter)).ToRotation();
+            Projectile.UpdateAimAngle(Owner.MountedCenter, ref Angle);
             direction = Angle.ToRotationVector2();
             Owner.ChangeDir(direction.X > 0 ? 1 : -1);
             lerpVal = Math.Clamp(MathHelper.Lerp(lerpVal, -0.2f, 0.002f), 0, 0.4f);
@@ -288,7 +288,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             }
 
             player.heldProj = Projectile.whoAmI;
-            Vector2 aimDirection = Vector2.Normalize(Main.MouseWorld - Projectile.Center);
+            Vector2 aimDirection = Vector2.Normalize(Projectile.AimWorld() - Projectile.Center);
             bool playerWantsToShoot = needToShoot;
 
             if (playerWantsToShoot)
@@ -298,31 +298,34 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 Vector2 velocity = aimDirection * player.HeldItem.shootSpeed;
                 int bulletType = ModContent.ProjectileType<FibberBullet>();
                 bool skillStrikeShot = canSkillStrike;
-                int bulletProj = Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem), Projectile.Center + aimDirection * 36f, velocity, bulletType, bulletDamage, player.HeldItem.knockBack, player.whoAmI);
-                if (Main.projectile[bulletProj].ModProjectile is FibberBullet fibberBullet)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    fibberBullet.fakeDisplayDamage = Main.rand.Next(500000, 1000001);
-                    fibberBullet.colorIndex = RedundantFibber.CurrentColorIndex;
-                    RedundantFibber.CurrentColorIndex = (RedundantFibber.CurrentColorIndex + 1) % FibberBullet.colorOptions.Length;
-                }
-
-                ApplyRecoil();
-
-                if (skillStrikeShot)
-                {
-                    SkillStrikeUtil.setSkillStrikeWithImpactType(Main.projectile[bulletProj], 1.5f, 1, SkillStrikeImpactType.Basic, 0.6f, 1.2f);
-                    for (int i = 0; i < 12; i++)
+                    int bulletProj = Projectile.NewProjectile(player.GetSource_ItemUse(player.HeldItem), Projectile.Center + aimDirection * 36f, velocity, bulletType, bulletDamage, player.HeldItem.knockBack, player.whoAmI);
+                    if (Main.projectile[bulletProj].ModProjectile is FibberBullet fibberBullet)
                     {
-                        Dust d = Dust.NewDustDirect(
-                            Projectile.Center,
-                            10, 10,
-                            DustID.GoldFlame,
-                            aimDirection.X * 2f, aimDirection.Y * 2f,
-                            0, Color.Orange, 1.2f);
-                        d.noGravity = true;
+                        fibberBullet.fakeDisplayDamage = Main.rand.Next(500000, 1000001);
+                        fibberBullet.colorIndex = RedundantFibber.CurrentColorIndex;
+                        RedundantFibber.CurrentColorIndex = (RedundantFibber.CurrentColorIndex + 1) % FibberBullet.colorOptions.Length;
                     }
-                    SoundStyle skillStrikeSound = new SoundStyle("Terraria/Sounds/Item_14") with { Pitch = 0.15f, Volume = 0.7f };
-                    SoundEngine.PlaySound(skillStrikeSound, Projectile.position);
+
+                    ApplyRecoil();
+
+                    if (skillStrikeShot)
+                    {
+                        SkillStrikeUtil.setSkillStrikeWithImpactType(Main.projectile[bulletProj], 1.5f, 1, SkillStrikeImpactType.Basic, 0.6f, 1.2f);
+                        for (int i = 0; i < 12; i++)
+                        {
+                            Dust d = Dust.NewDustDirect(
+                                Projectile.Center,
+                                10, 10,
+                                DustID.GoldFlame,
+                                aimDirection.X * 2f, aimDirection.Y * 2f,
+                                0, Color.Orange, 1.2f);
+                            d.noGravity = true;
+                        }
+                        SoundStyle skillStrikeSound = new SoundStyle("Terraria/Sounds/Item_14") with { Pitch = 0.15f, Volume = 0.7f };
+                        SoundEngine.PlaySound(skillStrikeSound, Projectile.position);
+                    }
                 }
             }
         }
@@ -399,7 +402,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 CombatText.NewText(new Rectangle((int)target.position.X, (int)target.position.Y, target.width, target.height), new Color(201, 125, 062), displayDamage, dramatic: true, dot: false);
             }
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleQuadStar>(),
@@ -430,11 +433,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 Volume = 0.2f
             };
             SoundEngine.PlaySound(ricochetSound, Projectile.Center);
-            int ricochetController = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FibberRicochetController>(), Projectile.damage / 2, Projectile.knockBack / 2, Projectile.owner, oldVelocity.X, oldVelocity.Y);
-            if (ricochetController >= 0 && Main.projectile[ricochetController].ModProjectile is FibberRicochetController controller)
+            if (Projectile.owner == Main.myPlayer)
             {
-                controller.colorIndex = colorIndex;
-                controller.ammoType = CurrentAmmoType;
+                int ricochetController = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FibberRicochetController>(), Projectile.damage / 2, Projectile.knockBack / 2, Projectile.owner, oldVelocity.X, oldVelocity.Y);
+                if (ricochetController >= 0 && Main.projectile[ricochetController].ModProjectile is FibberRicochetController controller)
+                {
+                    controller.colorIndex = colorIndex;
+                    controller.ammoType = CurrentAmmoType;
+                }
+                Main.projectile[ricochetController].netUpdate = true;
             }
         }
 
@@ -443,7 +450,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
             Projectile.rotation += 5;
             if (!justHit)
             {
-                trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/ThinGlowLine").Value;
+                trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/ThinGlowLine").Value);
                 trailColor = colorOptions[colorIndex];
                 trailTime = timer * 0.02f;
                 trailPointLimit = 22;
@@ -512,13 +519,34 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
 
             Collision.HitTiles(Projectile.position + (Projectile.velocity * 0.5f), Projectile.velocity * 0.5f, Projectile.width, Projectile.height);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleQuadStar>(),
                     Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(MathHelper.Pi + Main.rand.NextFloat(-1, 1)) * Main.rand.Next(1, 3),
                     colorOptions[colorIndex], Main.rand.NextFloat(0.35f, 0.55f), 0.4f, 0f, dustShader);
             }
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(CurrentAmmoType);
+            writer.Write(fakeDisplayDamage);
+            writer.Write(colorIndex);
+            writer.Write(justHit);
+            writer.Write(justHitTimer);
+            writer.Write(originalDamage);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            CurrentAmmoType = reader.ReadInt32();
+            fakeDisplayDamage = reader.ReadInt32();
+            colorIndex = reader.ReadInt32();
+            justHit = reader.ReadBoolean();
+            justHitTimer = reader.ReadSingle();
+            originalDamage = reader.ReadInt32();
         }
     }
 
@@ -572,25 +600,28 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
                 spreadVelocity = Vector2.Normalize(spreadVelocity) * speed;
                 Vector2 offsetPosition = Projectile.Center + Vector2.Normalize(spreadVelocity) * 8f;
 
-                int bullet = Projectile.NewProjectile(
-                    Projectile.GetSource_FromThis(),
-                    offsetPosition,
-                    spreadVelocity,
-                    projType,
-                    Projectile.damage,
-                    Projectile.knockBack,
-                    Projectile.owner);
-
-                if (bullet >= 0)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    ricochetBullets.Add(bullet);
-                    Main.projectile[bullet].timeLeft = Math.Min(Main.projectile[bullet].timeLeft, 60);
-                    Main.projectile[bullet].GetGlobalProjectile<FibberLieDamageGlobal>().isFibberRicochet = true;
-                    Main.projectile[bullet].GetGlobalProjectile<FibberLieDamageGlobal>().fakeDamage = Main.rand.Next(100000, 900001);
-                    Color dustColor = FibberBullet.colorOptions[colorIndex];
-                    for (int d = 0; d < 3; d++)
+                    int bullet = Projectile.NewProjectile(
+                        Projectile.GetSource_FromThis(),
+                        offsetPosition,
+                        spreadVelocity,
+                        projType,
+                        Projectile.damage,
+                        Projectile.knockBack,
+                        Projectile.owner);
+
+                    if (bullet >= 0)
                     {
-                        Dust.NewDustDirect(offsetPosition, 4, 4, DustID.GoldFlame, spreadVelocity.X * 0.1f, spreadVelocity.Y * 0.1f, 0, dustColor, 1f).noGravity = true;
+                        ricochetBullets.Add(bullet);
+                        Main.projectile[bullet].timeLeft = Math.Min(Main.projectile[bullet].timeLeft, 60);
+                        Main.projectile[bullet].GetGlobalProjectile<FibberLieDamageGlobal>().isFibberRicochet = true;
+                        Main.projectile[bullet].GetGlobalProjectile<FibberLieDamageGlobal>().fakeDamage = Main.rand.Next(100000, 900001);
+                        Color dustColor = FibberBullet.colorOptions[colorIndex];
+                        for (int d = 0; d < 3; d++)
+                        {
+                            Dust.NewDustDirect(offsetPosition, 4, 4, DustID.GoldFlame, spreadVelocity.X * 0.1f, spreadVelocity.Y * 0.1f, 0, dustColor, 1f).noGravity = true;
+                        }
                     }
                 }
             }
@@ -600,6 +631,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns
         public override bool PreDraw(ref Color lightColor)
         {
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(colorIndex);
+            writer.Write(ammoType);
+            writer.Write(hasSpawnedBullets);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            colorIndex = reader.ReadInt32();
+            ammoType = reader.ReadInt32();
+            hasSpawnedBullets = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
     public class FibberLieDamageGlobal : GlobalProjectile

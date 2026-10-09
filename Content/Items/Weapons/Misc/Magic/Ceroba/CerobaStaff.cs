@@ -100,7 +100,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         {
             bool checkOne = player.ownedProjectileCounts[ModContent.ProjectileType<CerobaIdleHeldProj>()] < 1;
             bool checkTwo = player.ownedProjectileCounts[ModContent.ProjectileType<CerobaSpinProj>()] < 1;
-            if (checkOne && checkTwo)
+            if (player.whoAmI == Main.myPlayer && checkOne && checkTwo)
                 Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<CerobaIdleHeldProj>(), 0, 0, player.whoAmI);
 
         }
@@ -127,6 +127,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                             (p.ModProjectile as CerobaIdleHeldProj).justShotValue = 1;
                             (p.ModProjectile as CerobaIdleHeldProj).starRot += MathHelper.PiOver4;
                             (p.ModProjectile as CerobaIdleHeldProj).starDir *= -1;
+                            p.netUpdate = true;
 
                             Vector2 spawnPos = (p.ModProjectile as CerobaIdleHeldProj).ProjSpawnPosition;
 
@@ -212,6 +213,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                     SoundStyle style2 = new SoundStyle("AerovelenceMod/Sounds/Effects/trident_twirl_01") with { Pitch = .29f, Volume = 0.25f, };
                     SoundEngine.PlaySound(style2, Projectile.Center);
                 }
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
 
             Projectile.timeLeft++;
@@ -318,7 +320,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         float alpha = 1f;
         float animProgress = 0f;
-        public List<float> previousRotations;
+        public List<float> previousRotations = new();
         public float starRot = 0f;
         public int starDir = 1;
 
@@ -436,6 +438,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             return false;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(startDone);
+            writer.Write(timer);
+            writer.Write(justShotValue);
+            writer.Write(starRot);
+            writer.Write(starDir);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            startDone = reader.ReadBoolean();
+            timer = reader.ReadInt32();
+            justShotValue = reader.ReadSingle();
+            starRot = reader.ReadSingle();
+            starDir = reader.ReadInt32();
+        }
     }
 
     public class CerobaFireBall : ModProjectile
@@ -474,6 +495,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 Projectile.rotation = Projectile.velocity.ToRotation();
 
                 pulseIntensity = 1f;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
 
             if (timer > 5)
@@ -557,8 +579,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             return MathHelper.Lerp(toMin, toMax, Easings.easeInOutSine(Utils.GetLerpValue(fromMin, fromMax, fromValue, clamp)));
         }
 
-        public List<float> previousRotations;
-        public List<Vector2> previousPostions;
+        public List<float> previousRotations = new();
+        public List<Vector2> previousPostions = new();
 
         public override bool PreDraw(ref Color lightColor)
         {
@@ -704,8 +726,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                 SkillStrikeUtil.setSkillStrike(Projectile, 1.75f, impactVolume: 0.5f, impactScale: 0f);
 
-                int a = Projectile.NewProjectile(null, Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CerobaSkillStrikeFX>(), 0, 0, Main.myPlayer);
-                Main.projectile[a].scale = 0.75f;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Projectile.velocity, ModContent.ProjectileType<CerobaSkillStrikeFX>(), 0, 0, Projectile.owner);
+                    if (a < Main.maxProjectiles)
+                    {
+                        Main.projectile[a].scale = 0.75f;
+                        Main.projectile[a].netUpdate = true;
+                    }
+                }
 
                 modifiers.FinalDamage *= 1f;
             }
@@ -716,6 +745,17 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         public override void OnHitNPC(NPC target, HitInfo hit, int damageDone)
         {
             base.OnHitNPC(target, hit, damageDone);
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
         }
     }
 
@@ -754,6 +794,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             {
                 storedDistanceFromOwner = Projectile.Center - owner.Center;
                 Projectile.ai[0] = (storedDistanceFromOwner.X + owner.Center.X) > owner.Center.X ? -1f : 1f;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
 
 
@@ -811,9 +852,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                                 myHit.Knockback = 0;
                                 myHit.HitDirection = Direction;
 
-                                Main.npc[i].StrikeNPC(myHit);
-
-                                Main.npc[i].AddBuff(ModContent.BuffType<CerobaMark>(), 320);
+                                if (Projectile.owner == Main.myPlayer)
+                                {
+                                    Main.npc[i].StrikeNPC(myHit);
+                                    if (Main.netMode == NetmodeID.MultiplayerClient)
+                                        NetMessage.SendStrikeNPC(Main.npc[i], myHit);
+                                    Main.npc[i].AddBuff(ModContent.BuffType<CerobaMark>(), 320);
+                                }
 
 
                                 for (int k = 0; k < 4 + Main.rand.Next(0, 2); k++)
@@ -879,6 +924,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             return false;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(storedDistanceFromOwner.X);
+            writer.Write(storedDistanceFromOwner.Y);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            storedDistanceFromOwner = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+        }
     }
 
     public class CerobaPrimarySwing : ModProjectile
@@ -928,6 +987,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
                 arcStartAngle = middleRot + 9f * swingDir;
                 arcEndAngle = middleRot - 9f * swingDir;
                 timer++;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
 
             Projectile.timeLeft++;
@@ -960,7 +1020,8 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             {
                 Vector2 randomVel = arcMiddleAngle.ToRotationVector2().RotatedByRandom(1f) * Main.rand.NextFloat(9f, 11f);
 
-                int firePulse = Projectile.NewProjectile(null, player.Center, randomVel * 2f, ModContent.ProjectileType<CerobaFireBall>(), 10, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, randomVel * 2f, ModContent.ProjectileType<CerobaFireBall>(), 10, 0, Projectile.owner);
 
                 for (int d = 0; d < 18; d++)
                 {
@@ -990,7 +1051,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
         float alpha = 1f;
         float animProgress = 0f;
-        public List<float> previousRotations;
+        public List<float> previousRotations = new();
         public override bool PreDraw(ref Color lightColor)
         {
             string path = "Content/Items/Weapons/Misc/Magic/Ceroba/";
@@ -1044,6 +1105,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             return false;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(arcCurrentAngle);
+            writer.Write(arcStartAngle);
+            writer.Write(arcMiddleAngle);
+            writer.Write(arcEndAngle);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            arcCurrentAngle = reader.ReadSingle();
+            arcStartAngle = reader.ReadSingle();
+            arcMiddleAngle = reader.ReadSingle();
+            arcEndAngle = reader.ReadSingle();
+        }
     }
 
     public class CerobaSkillStrikeFX : ModProjectile
@@ -1116,6 +1196,21 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(Projectile.scale);
+            writer.Write(Projectile.rotation);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            Projectile.scale = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+        }
     }
 
     public class CerobaSpinProj : ModProjectile
@@ -1153,6 +1248,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
                 goalAngle = Projectile.velocity.ToRotation();
                 Projectile.velocity = Vector2.Zero;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
             }
 
             Player player = Main.player[Projectile.owner];
@@ -1221,13 +1317,16 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
 
             if (timer == 80)
             {
-                int idle = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<CerobaIdleHeldProj>(), 0, 0, player.whoAmI);
-
-                if (Main.projectile[idle].ModProjectile is CerobaIdleHeldProj cihp)
+                if (Projectile.owner == Main.myPlayer)
                 {
-                    cihp.startDone = true;
+                    int idle = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center, Vector2.Zero, ModContent.ProjectileType<CerobaIdleHeldProj>(), 0, 0, player.whoAmI);
+                    if (idle < Main.maxProjectiles && Main.projectile[idle].ModProjectile is CerobaIdleHeldProj cihp)
+                    {
+                        cihp.startDone = true;
+                        Main.projectile[idle].netUpdate = true;
+                    }
                 }
-                Projectile.active = false;
+                Projectile.Kill();
             }
 
             int trailCount = 6;
@@ -1260,7 +1359,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
         float starRot = 0f;
         float alpha = 0f;
         float animProgress = 0f;
-        public List<float> previousRotations;
+        public List<float> previousRotations = new();
         public override bool PreDraw(ref Color lightColor)
         {
             if (timer == 0 || timer == 1)
@@ -1362,6 +1461,19 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.Ceroba
             return false;
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(goalAngle);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            goalAngle = reader.ReadSingle();
+        }
     }
 
     public class CerobaMark : ModBuff

@@ -159,7 +159,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             }
 
             if (firstFrame)
-                storedDirection = player.direction;
+            {
+                storedDirection = Projectile.velocity.X < 0 ? -1 : 1;
+                if (Projectile.owner == Main.myPlayer) Projectile.netUpdate = true;
+            }
 
             float itemrotate = storedDirection < 0 ? MathHelper.Pi : 0;
             if (player.direction != storedDirection)
@@ -213,7 +216,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 firstFrame = false;
 
                 previousRotations = new List<float>();
-                Projectile.spriteDirection = Main.MouseWorld.X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
+                Projectile.spriteDirection = Projectile.AimWorld().X > Main.player[Projectile.owner].MountedCenter.X ? 1 : -1;
             }
 
 
@@ -325,7 +328,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 trailCol = Color.Lerp(Color.OrangeRed * 1.2f, Color.OrangeRed * 0.3f, (getProgress(easingProgress) - 0.87f) / 0.13f);
             }
 
-            relativeTrail.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5").Value; //Trail5!!!
+            relativeTrail.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Trails/Trail5").Value); //Trail5!!!
             relativeTrail.trailColor = trailCol;
             relativeTrail.trailPointLimit = 800;
             relativeTrail.trailWidth = (int)(30 * (mytrailWidth / 28));
@@ -495,21 +498,25 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Vector2 orthToSwing = (MathHelper.PiOver2 + currentAng).ToRotationVector2() * (Projectile.ai[0] == 1 ? -1 : 1f);
 
 
-            int explosion = Projectile.NewProjectile(null, Main.player[Projectile.owner].Center + vec * 45f, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
-
-            if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
+            if (Projectile.owner == Main.myPlayer)
             {
-                feh.color = Color.OrangeRed;
-                feh.colorIntensity = 0.8f;
-                feh.fadeSpeed = 0.035f;
-                for (int m = 0; m < 10; m++)
+                int explosion = Projectile.NewProjectile(null, Main.player[Projectile.owner].Center + vec * 45f, Vector2.Zero, ModContent.ProjectileType<FadeExplosionHandler>(), 0, 0, Main.myPlayer);
+
+                if (Main.projectile[explosion].ModProjectile is FadeExplosionHandler feh)
                 {
-                    FadeExplosionClass newSmoke = new FadeExplosionClass(target.Center, orthToSwing.RotatedByRandom(1.2f) * Main.rand.NextFloat(0.5f, 2f) * 2f * bigSwingMultiplier);
+                    feh.color = Color.OrangeRed;
+                    feh.colorIntensity = 0.8f;
+                    feh.fadeSpeed = 0.035f;
+                    for (int m = 0; m < 10; m++)
+                    {
+                        FadeExplosionClass newSmoke = new FadeExplosionClass(target.Center, orthToSwing.RotatedByRandom(1.2f) * Main.rand.NextFloat(0.5f, 2f) * 2f * bigSwingMultiplier);
 
-                    newSmoke.size = (0.25f + Main.rand.NextFloat(-0.15f, 0.15f)) * bigSwingMultiplier;
-                    feh.Smokes.Add(newSmoke);
+                        newSmoke.size = (0.25f + Main.rand.NextFloat(-0.15f, 0.15f)) * bigSwingMultiplier;
+                        feh.Smokes.Add(newSmoke);
 
+                    }
                 }
+                Main.projectile[explosion].netUpdate = true;
             }
 
             for (int fg = 0; fg < 10 * bigSwingMultiplier; fg++)
@@ -612,6 +619,35 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), start, end, 50f * Projectile.scale, ref collisionPoint);
         }
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(bigSwing);
+            writer.Write(firstFrame);
+            writer.Write(startingAng);
+            writer.Write(currentAng);
+            writer.Write(Angle);
+            writer.Write(storedDirection);
+            writer.Write(timer);
+            writer.Write(timerAfterEnd);
+            writer.Write(easingProgress);
+            writer.Write(justHitTime);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            bigSwing = reader.ReadBoolean();
+            firstFrame = reader.ReadBoolean();
+            startingAng = reader.ReadSingle();
+            currentAng = reader.ReadSingle();
+            Angle = reader.ReadSingle();
+            storedDirection = reader.ReadSingle();
+            timer = reader.ReadInt32();
+            timerAfterEnd = reader.ReadInt32();
+            easingProgress = reader.ReadSingle();
+            justHitTime = reader.ReadInt32();
+        }
     }
 
     public class BurningJealousyGuard : ModProjectile
@@ -647,7 +683,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         int timer = 0;
         float Angle = 0;
 
-        bool fading = false;
+        bool fading
+        {
+            get => Projectile.ai[0] == 1f;
+            set => Projectile.ai[0] = value ? 1f : 0f;
+        }
         float fadeCounter = 0;
         float symbolIntensity_Sword = 0;
 
@@ -660,9 +700,9 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public override void AI()
         {
             Player player = Main.player[Projectile.owner];
-            if (symbol == null)
-                symbol = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), player.Center, Vector2.Zero, ModContent.ProjectileType<BlockFX>(), 0, 0, Main.myPlayer);
-            else if (symbol.ModProjectile is BlockFX fx)
+            if (symbol == null && !Main.dedServ)
+                symbol = Projectile.NewProjectileDirect(Projectile.GetSource_FromAI(), player.Center, Vector2.Zero, ModContent.ProjectileType<BlockFX>(), 0, 0, Main.maxPlayers);
+            else if (symbol?.ModProjectile is BlockFX fx)
             {
                 fx.symbolIntensity = symbolIntensity_Sword;
                 fx.fadeInBonus = fadeInVal;
@@ -678,10 +718,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             player.heldProj = Projectile.whoAmI;
             #region arm shit
 
-            if (Projectile.owner == Main.myPlayer)
-            {
-                Angle = (Main.MouseWorld - player.Center).ToRotation();
-            }
+            Angle = (Projectile.AimWorld() - player.Center).ToRotation();
 
             player.itemRotation = Angle;
             player.itemRotation = MathHelper.WrapAngle(player.itemRotation);
@@ -712,9 +749,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             player.itemAnimation = 10;
 
 
-            if (!Main.mouseRight)
+            if (Projectile.owner == Main.myPlayer && !Main.mouseRight && !fading)
             {
                 fading = true;
+                Projectile.netUpdate = true;
             }
 
             if (fading)
@@ -753,9 +791,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_explosive_trap_explode_1") with { PitchVariance = 1.16f, };
                 SoundEngine.PlaySound(style, player.Center);
 
-                int a = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<BurningJealousyPulse>(), Projectile.damage * 2, 0, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(null, player.Center, Vector2.Zero, ModContent.ProjectileType<BurningJealousyPulse>(), Projectile.damage * 2, 0, player.whoAmI);
 
-                SkillStrikeUtil.setSkillStrike(Main.projectile[a], 2f, 1000, 0f, 0f);
+                    SkillStrikeUtil.setSkillStrike(Main.projectile[a], 2f, 1000, 0f, 0f);
+                    Main.projectile[a].netUpdate = true;
+                }
 
 
                 if (symbol != null)
@@ -806,6 +848,23 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
             Main.spriteBatch.Draw(Glow, armPosition - Main.screenPosition + otherOffset + Main.rand.NextVector2Circular(1.5f, 1.5f), null, glowMaskCol with { A = 0 } * (0.5f + (sinVal * 0.25f)), rot + rotationOffset + x1, origin, scale, effects, 0f);
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(fadeCounter);
+            writer.Write(symbolIntensity_Sword);
+            writer.Write(fadeInVal);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            fadeCounter = reader.ReadSingle();
+            symbolIntensity_Sword = reader.ReadSingle();
+            fadeInVal = reader.ReadSingle();
         }
     }
 
@@ -888,7 +947,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
         public bool notTile = false;
         public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo)
         {
-            if (gaurding)
+            if (gaurding && Player.whoAmI == Main.myPlayer)
             {
                 Player player = Main.player[Main.myPlayer];
 
@@ -901,6 +960,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 }
 
                 SkillStrikeUtil.setSkillStrike(a, 3f, 1000, 0f, 0f);
+                a.netUpdate = true;
 
 
                 player.ChangeDir(Main.MouseWorld.X > player.Center.X ? 1 : -1);
@@ -912,7 +972,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
         public override void OnHitByProjectile(Projectile proj, Player.HurtInfo hurtInfo)
         {
-            if (gaurding)
+            if (gaurding && Player.whoAmI == Main.myPlayer)
             {
                 int itemDamage = Player.inventory[Player.selectedItem].damage;
                 int bigSwingDamage = (int)(itemDamage * 2.5f);
@@ -927,6 +987,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                     sword.bigSwing = true;
                 }
                 SkillStrikeUtil.setSkillStrike(a, 3f, 1000, 0f, 0f);
+                a.netUpdate = true;
 
                 player.ChangeDir(Main.MouseWorld.X > player.Center.X ? 1 : -1);
                 justHit = true;
@@ -937,7 +998,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
 
         public override void ModifyHurt(ref Player.HurtModifiers modifiers)
         {
-            if (gaurding)
+            if (gaurding && Player.whoAmI == Main.myPlayer)
             {
                 Player player = Main.player[Main.myPlayer];
                 player.statDefense = player.statDefense + 30;
@@ -990,7 +1051,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 //AOE
                 for (int i = 0; i < Main.maxNPCs; i++)
                 {
-                    if (Main.npc[i].active && !Main.npc[i].dontTakeDamage && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 170f)
+                    if (Projectile.owner == Main.myPlayer && Main.npc[i].active && !Main.npc[i].dontTakeDamage && Vector2.Distance(Projectile.Center, Main.npc[i].Center) < 170f)
                     {
                         int Direction = 0;
                         if (Projectile.position.X - Main.npc[i].position.X < 0)
@@ -1005,6 +1066,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                         myHit.DamageType = DamageClass.Melee;
 
                         Main.npc[i].StrikeNPC(myHit);
+                    if (Main.netMode == NetmodeID.MultiplayerClient) NetMessage.SendStrikeNPC(Main.npc[i], myHit);
 
                         //Main.npc[i].AddBuff(ModContent.BuffType<EmberFire>(), 30);
 
@@ -1016,7 +1078,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Ember
                 Projectile.rotation = Main.rand.NextFloat(6.28f);
 
                 //Spawn Dust
-                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader2 = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 30; i++)
                 {

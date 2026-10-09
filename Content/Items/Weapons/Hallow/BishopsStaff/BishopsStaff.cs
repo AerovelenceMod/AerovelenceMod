@@ -223,7 +223,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
                     player.releaseJump = true;
                     break;
             }
-            player.direction = Utils.ToDirectionInt(Main.MouseWorld.X > player.Center.X);
+            player.direction = Utils.ToDirectionInt(Projectile.AimWorld().X > player.Center.X);
             UpdateCompositeArm(player);
 
             if (timer % 2 == 0)
@@ -244,7 +244,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             if (ActionDustTime % 9 == 0)
             {
-                Projectile.NewProjectile(null, player.Center, Main.rand.NextVector2CircularEdge(3, 3), ModContent.ProjectileType<BishopsStaffStar>(), 0, 0, Main.myPlayer);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    Projectile.NewProjectile(null, player.Center, Main.rand.NextVector2CircularEdge(3, 3), ModContent.ProjectileType<BishopsStaffStar>(), 0, 0, Main.myPlayer);
+                }
             }
 
             ActionDustTime++;
@@ -294,6 +297,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
         private void SpawnStarInArc(Player player)
         {
+            if (Projectile.owner != Main.myPlayer) return;
             float arcRadius = 500f;
             float innerRadius = 100f;
             for (int attempts = 0; attempts < 10; attempts++)
@@ -499,6 +503,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
     public class JesusStar : ModProjectile
     {
+        public override void SetStaticDefaults() => ProjectileID.Sets.NeedsUUID[Type] = true;
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public int timer = 0;
@@ -613,28 +618,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
                 rotateLeft = false;
             }
 
-            int laserIndex = Projectile.NewProjectile(
-                Projectile.GetSource_FromAI(),
-                Projectile.Center,
-                Vector2.Zero,
-                ModContent.ProjectileType<JesusStarLaser>(),
-                Projectile.damage,
-                1f,
-                Projectile.owner
-            );
-
-            if (laserIndex >= 0 && laserIndex < Main.maxProjectiles)
+            if (Projectile.owner == Main.myPlayer)
             {
-                Main.projectile[laserIndex].timeLeft = 180;
+                int laserIndex = Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<JesusStarLaser>(),
+                    Projectile.damage,
+                    1f,
+                    Projectile.owner, Projectile.identity, initialAngle, rotateLeft ? -1f : 1f
+                );
 
-                if (Main.projectile[laserIndex].ModProjectile is JesusStarLaser laser)
+                if (laserIndex >= 0 && laserIndex < Main.maxProjectiles)
                 {
-                    laser.ParentIndex = Projectile.whoAmI;
-                    laser.LaserRotation = initialAngle;
-                    laser.ForceRotateLeft = rotateLeft;
+                    Main.projectile[laserIndex].timeLeft = 180;
 
-                    if (staffProj != null)
-                        laser.StaffProjIndex = staffProj.whoAmI;
+                    if (Main.projectile[laserIndex].ModProjectile is JesusStarLaser laser)
+                    {
+                        Main.projectile[laserIndex].netUpdate = true;
+                    }
                 }
             }
 
@@ -686,7 +689,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
         public override void OnKill(int timeLeft)
         {
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
             SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Pitch = -.53f, };
             SoundEngine.PlaySound(style, Projectile.Center);
@@ -709,11 +712,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
             SoundEngine.PlaySound(style, Projectile.Center);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 
-            int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
-            Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
+                Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+                Main.projectile[a].netUpdate = true;
+            }
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
@@ -727,12 +734,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public int ParentIndex = -1;
-        public int StaffProjIndex = -1;
-        public float LaserRotation = 0;
+        public int ParentIdentity => (int)Projectile.ai[0];
+        public ref float LaserRotation => ref Projectile.ai[1];
         public float LaserLength = 850f;
         public float LaserWidth = 40f;
-        public bool ForceRotateLeft = false;
+        public bool ForceRotateLeft => Projectile.ai[2] < 0f;
         public bool UseVisualCenter = true;
         private Vector2 VisualOffset => new Vector2(0, 0);
         private Vector2 lastCollisionPos = Vector2.Zero;
@@ -766,9 +772,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
             if (timer == 0)
                 SoundEngine.PlaySound(SoundID.Item122.WithPitchOffset(0.3f), Projectile.Center);
-            if (ParentIndex >= 0 && ParentIndex < Main.maxProjectiles)
+            int parentIndex = Projectile.GetByUUID(Projectile.owner, ParentIdentity);
+            if (parentIndex >= 0 && parentIndex < Main.maxProjectiles)
             {
-                if (!Main.projectile[ParentIndex].active || Main.projectile[ParentIndex].type != ModContent.ProjectileType<JesusStar>())
+                if (!Main.projectile[parentIndex].active || Main.projectile[parentIndex].type != ModContent.ProjectileType<JesusStar>())
                 {
                     Projectile.alpha += 15;
                     if (Projectile.alpha >= 255)
@@ -779,7 +786,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
                 }
                 else
                 {
-                    Projectile.Center = Main.projectile[ParentIndex].Center;
+                    Projectile.Center = Main.projectile[parentIndex].Center;
                 }
             }
             else
@@ -981,6 +988,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
     public class HugeJesusStar : ModProjectile
     {
+        public override void SetStaticDefaults() => ProjectileID.Sets.NeedsUUID[Type] = true;
         public override string Texture => "Terraria/Images/Projectile_0";
 
         public int timer = 0;
@@ -1096,28 +1104,26 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
                 rotateLeft = false;
             }
 
-            int laserIndex = Projectile.NewProjectile(
-                Projectile.GetSource_FromAI(),
-                Projectile.Center,
-                Vector2.Zero,
-                ModContent.ProjectileType<HugeJesusStarLaser>(),
-                Projectile.damage,
-                1f,
-                Projectile.owner
-            );
-
-            if (laserIndex >= 0 && laserIndex < Main.maxProjectiles)
+            if (Projectile.owner == Main.myPlayer)
             {
-                Main.projectile[laserIndex].timeLeft = 180;
+                int laserIndex = Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    Projectile.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<HugeJesusStarLaser>(),
+                    Projectile.damage,
+                    1f,
+                    Projectile.owner, Projectile.identity, initialAngle, rotateLeft ? -1f : 1f
+                );
 
-                if (Main.projectile[laserIndex].ModProjectile is HugeJesusStarLaser laser)
+                if (laserIndex >= 0 && laserIndex < Main.maxProjectiles)
                 {
-                    laser.ParentIndex = Projectile.whoAmI;
-                    laser.LaserRotation = initialAngle;
-                    laser.ForceRotateLeft = rotateLeft;
+                    Main.projectile[laserIndex].timeLeft = 180;
 
-                    if (staffProj != null)
-                        laser.StaffProjIndex = staffProj.whoAmI;
+                    if (Main.projectile[laserIndex].ModProjectile is HugeJesusStarLaser laser)
+                    {
+                        Main.projectile[laserIndex].netUpdate = true;
+                    }
                 }
             }
 
@@ -1178,7 +1184,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
 
         public override void OnKill(int timeLeft)
         {
-            ArmorShaderData dustShader = new ArmorShaderData(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad), "ArmorBasic"));
             SoundStyle style = new SoundStyle("Terraria/Sounds/Custom/dd2_betsy_fireball_shot_2") with { Pitch = -.53f, };
             SoundEngine.PlaySound(style, Projectile.Center);
 
@@ -1199,11 +1205,15 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
             SoundEngine.PlaySound(style, Projectile.Center);
 
-            ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 
-            int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
-            Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
+                Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+                Main.projectile[a].netUpdate = true;
+            }
             for (int i = 0; i < 3; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
@@ -1217,12 +1227,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
     {
         public override string Texture => "Terraria/Images/Projectile_0";
 
-        public int ParentIndex = -1;
-        public int StaffProjIndex = -1;
-        public float LaserRotation = 0;
+        public int ParentIdentity => (int)Projectile.ai[0];
+        public ref float LaserRotation => ref Projectile.ai[1];
         public float LaserLength = 850f;
         public float LaserWidth = 120f;
-        public bool ForceRotateLeft = false;
+        public bool ForceRotateLeft => Projectile.ai[2] < 0f;
         public bool UseVisualCenter = true;
         private Vector2 lastCollisionPos = Vector2.Zero;
         private bool hadCollision = false;
@@ -1255,9 +1264,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
             SkillStrikeUtil.setSkillStrike(Projectile, 1.5f);
             if (timer == 0)
                 SoundEngine.PlaySound(SoundID.Item122.WithPitchOffset(0.3f), Projectile.Center);
-            if (ParentIndex >= 0 && ParentIndex < Main.maxProjectiles)
+            int parentIndex = Projectile.GetByUUID(Projectile.owner, ParentIdentity);
+            if (parentIndex >= 0 && parentIndex < Main.maxProjectiles)
             {
-                if (!Main.projectile[ParentIndex].active || Main.projectile[ParentIndex].type != ModContent.ProjectileType<HugeJesusStar>())
+                if (!Main.projectile[parentIndex].active || Main.projectile[parentIndex].type != ModContent.ProjectileType<HugeJesusStar>())
                 {
                     Projectile.alpha += 15;
                     if (Projectile.alpha >= 255)
@@ -1267,7 +1277,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Hallow.BishopsStaff
                     }
                 }
                 else
-                    Projectile.Center = Main.projectile[ParentIndex].Center;
+                    Projectile.Center = Main.projectile[parentIndex].Center;
             }
             else
             {
