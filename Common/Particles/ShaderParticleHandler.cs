@@ -1,15 +1,10 @@
 ﻿using AerovelenceMod.Common.Systems;
-
-
 using ReLogic.Content;
 using Steamworks;
 using System;
 using System.Collections.Generic;
-
 using Terraria.GameContent.UI.Elements;
 using Terraria.Graphics.Renderers;
-
-
 
 namespace AerovelenceMod.Common.Particles
 {

@@ -1,8 +1,4 @@
-﻿
-
-
-using System;
-
+﻿using System;
 using AerovelenceMod.Common.Systems;
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts

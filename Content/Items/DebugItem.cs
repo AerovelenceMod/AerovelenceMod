@@ -1,4 +1,4 @@
-﻿using AerovelenceMod.Common.Particles;
+using AerovelenceMod.Common.Particles;
 using AerovelenceMod.Content.Items.Weapons.Aurora.Eos;
 using AerovelenceMod.Content.Particles;
 using AerovelenceMod.Content.Projectiles.TempVFX;
@@ -8,12 +8,8 @@ namespace AerovelenceMod.Content.Items
 {
     public class DebugItem : ModItem
     {
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("DebugItem");
-            /* Tooltip.SetDefault("You shouldn't have this...\n" +
-                "[i:" + ModContent.ItemType<Emoji>() + "]"); */
-        }
+        public override string Texture => "Terraria/Images/Projectile_0";
+
         public override void SetDefaults()
         {
             //Item.UseSound = new SoundStyle("Terraria/Sounds/Item_122") with { Pitch = .86f, };

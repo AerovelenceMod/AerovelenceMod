@@ -2,9 +2,6 @@
 using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Content.Biomes;
 
-
-
-
 namespace AerovelenceMod.Common.Globals.Players
 {
     /// <summary>

@@ -1,20 +1,15 @@
 /*
-
+using AerovelenceMod.Common.Drawing;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Aurora;
-
-
 using ReLogic.Content;
 using System;
 using System.Linq;
-
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Events;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Shaders;
-
-
 
 namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
 {
@@ -989,7 +984,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             {
                 float scale = Projectile.scale * (Projectile.oldPos.Length - k) / Projectile.oldPos.Length * 1.0f;
                 Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + TextureAssets.Projectile[Projectile.type].Size() / 3f;
-                Color color = FetchRainbow() * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
+                Color color = ModContent.GetInstance<Rainbow>().FetchRainbow((int)Projectile.ai[1]) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
                 for (int i = 0; i < 1; i++)
                 {
                     Main.EntitySpriteDraw(texture2D, drawPos, null, color * 0.8f, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
@@ -1016,19 +1011,6 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             Projectile.extraUpdates = 1;
             Projectile.tileCollide = false;
         }
-        public Color FetchRainbow()
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians(Projectile.ai[1]));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians(Projectile.ai[1] + 120));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians(Projectile.ai[1] + 240));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
-        }
         int counter = 30;
         private bool spawned;
         public override void AI()
@@ -1047,7 +1029,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
             Vector2 circular = new Vector2(1, 0).RotatedBy(MathHelper.ToRadians(Projectile.ai[1] * 2));
             Projectile.velocity += toPlayer.SafeNormalize(Vector2.Zero) * (counter * 0.0004f) + circular * 0.05f;
             Projectile.ai[1] += 2f;
-            Color rainbow = FetchRainbow();
+            Color rainbow = ModContent.GetInstance<Rainbow>().FetchRainbow((int)Projectile.ai[1]);
             Lighting.AddLight(new Vector2(Projectile.position.X, Projectile.position.Y), rainbow.R / 255f, rainbow.G / 255f, rainbow.B / 255f);
             if (Main.rand.NextBool(10))
             {
@@ -1066,7 +1048,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Rimegeist
         }
     }
 
-    public class IcySpike : ModProjectile
+    /*public class IcySpike : ModProjectile
     {
         public override void SetStaticDefaults()
         {

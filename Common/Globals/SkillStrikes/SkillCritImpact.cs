@@ -1,11 +1,6 @@
-﻿
-
-using ReLogic.Content;
+﻿using ReLogic.Content;
 using System.Collections.Generic;
-
 using Terraria.Graphics.Shaders;
-
-
 
 namespace AerovelenceMod.Common.Globals.SkillStrikes
 {

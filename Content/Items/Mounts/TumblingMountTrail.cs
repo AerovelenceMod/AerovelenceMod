@@ -4,10 +4,6 @@ using System.IO;
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
 
-
-
-
-
 namespace AerovelenceMod.Content.Items.Mounts
 {
     public class TumblingMountTrail : ModProjectile

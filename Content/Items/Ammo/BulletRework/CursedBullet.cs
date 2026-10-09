@@ -1,15 +1,9 @@
 ﻿using System;
-
-
-
-
-
 using Terraria.GameContent;
 using Terraria.Audio;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using AerovelenceMod.Common.Bases;
-
 using System.Collections.Generic;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Items.Weapons.Misc.Ranged.Guns;

@@ -1,10 +1,4 @@
-﻿
-
-
-
-
-
-namespace AerovelenceMod.Content.Items.Crafting
+﻿namespace AerovelenceMod.Content.Items.Crafting
 {
     public class CrystalCornItem : TranslatableModItem
     {

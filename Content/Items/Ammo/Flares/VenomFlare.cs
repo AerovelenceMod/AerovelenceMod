@@ -57,8 +57,12 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
 
             Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
 
-            int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<VenomFlareExplosion>(), 0, 0, Main.myPlayer);
-            Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+            if (Projectile.owner == Main.myPlayer)
+            {
+                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<VenomFlareExplosion>(), 0, 0, Main.myPlayer);
+                Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
+                Main.projectile[a].netUpdate = true;
+            }
 
             target.AddBuff(ModContent.BuffType<FlareVenom>(), 200);
             target.AddBuff(BuffID.Venom, 20);

@@ -1,13 +1,7 @@
 ﻿using System;
-
-
-
 using Terraria.DataStructures;
-
-
 using Terraria.Audio;
 using ReLogic.Content;
-
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Projectiles;
@@ -20,7 +14,7 @@ using System.IO;
 using Terraria.Graphics.Effects;
 using AerovelenceMod.Common;
 using AerovelenceMod.Common.Bases;
-
+using AerovelenceMod.Common.Drawing;
 
 namespace AerovelenceMod.Content.Items.Weapons.Aurora
 {
@@ -216,20 +210,20 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
                             float xScaleMinus = Main.rand.NextFloat(0.3f, 1.6f);
                             MuraLine newWind = new MuraLine(Main.projectile[Mura].Center + Projectile.velocity.SafeNormalize(Vector2.UnitX) * -7f, Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-1 * range, range)) * -1 * Main.rand.NextFloat(1f, 8f), 2 - xScaleMinus);
-                            newWind.color = FetchRainbow();
+                            newWind.color = ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100);
                             mlh.lines.Add(newWind);
                         }
                     }
                     Main.projectile[Mura].netUpdate = true;
                 }
 
-                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+                ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
 
                 for (int i = 0; i < 5; i++)
                 {
                     float velVal = Main.rand.NextFloat(4f, 8f) * -1f;
                     Dust d = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleFlare>(),
-                            Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-0.4f, 0.41f)) * velVal, FetchRainbow(), 1f, 0.3f, 0f, dustShader);
+                            Projectile.velocity.SafeNormalize(Vector2.UnitX).RotatedBy(Main.rand.NextFloat(-0.4f, 0.41f)) * velVal, ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100), 1f, 0.3f, 0f, dustShader);
                     d.fadeIn = 1;
                     d.noLight = true;
                 }
@@ -242,11 +236,11 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
         public override void OnKill(int timeLeft)
         {
-            ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+            ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
             for (int i = 0; i < 8; i++)
             {
                 Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleFlare>(),
-                Projectile.rotation.ToRotationVector2().RotatedBy(i * MathHelper.PiOver4) * Main.rand.NextFloat(1.5f, 2.5f), FetchRainbow(), 0.8f, 0.3f, 0f, dustShader);
+                Projectile.rotation.ToRotationVector2().RotatedBy(i * MathHelper.PiOver4) * Main.rand.NextFloat(1.5f, 2.5f), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100), 0.8f, 0.3f, 0f, dustShader);
                 p.fadeIn = 1;
                 p.noLight = true;
 
@@ -264,14 +258,14 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             Vector2 scaleVec2 = new Vector2(Projectile.velocity.Length() * 0.05f + 1f, 1f - Projectile.velocity.Length() * 0.03f);
 
-            Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null, FetchRainbow() with { A = 0 } * 0.2f, Projectile.rotation, glow.Size() / 2, 0.2f, SpriteEffects.None, 0);
+            Main.EntitySpriteDraw(glow, Projectile.Center - Main.screenPosition, null, ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) with { A = 0 } * 0.2f, Projectile.rotation, glow.Size() / 2, 0.2f, SpriteEffects.None, 0);
 
 
             for (int k = 0; k < Projectile.oldPos.Length; k++)
             {
                 Vector2 scale = scaleVec2 * (Projectile.oldPos.Length - k) / Projectile.oldPos.Length * 1.0f;
                 Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition;
-                Color color = FetchRainbow() * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
+                Color color = ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * ((Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length);
                 for (int i = 0; i < 1; i++)
                 {
                     Main.EntitySpriteDraw(texture2D, drawPos + new Vector2(Projectile.width / 2, Projectile.height / 2), null, color with { A = 0 } * 0.8f, Projectile.rotation, origin, scale, SpriteEffects.None, 0);
@@ -279,20 +273,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                 }
             }
             return false;
-        }
-
-        public Color FetchRainbow()
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 100));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 220));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 340));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
         }
 
         public override void SendExtraAI(System.IO.BinaryWriter writer)
@@ -359,7 +339,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
                     if (i != 4 && i != 0)
                     {
                         Dust p = GlowDustHelper.DrawGlowDustPerfect(Projectile.Center, ModContent.DustType<GlowCircleFlare>(),
-                            Projectile.rotation.ToRotationVector2().RotatedBy(i * MathHelper.PiOver4) * 2, FetchRainbow(100), 0.8f, 0.3f, 0f, dustShader);
+                            Projectile.rotation.ToRotationVector2().RotatedBy(i * MathHelper.PiOver4) * 2, ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100), 0.8f, 0.3f, 0f, dustShader);
                         p.fadeIn = 2;
                         p.noLight = true;
 
@@ -390,13 +370,13 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Additive, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
-            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), FetchRainbow(100) * alpha * (alpha == 1 ? 2f : 1), Projectile.rotation, Flare.Size() / 2, vec2scale * 0.6f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), FetchRainbow(100) * alpha, Projectile.rotation, Flare.Size() / 2, vec2scale * 0.7f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * alpha * (alpha == 1 ? 2f : 1), Projectile.rotation, Flare.Size() / 2, vec2scale * 0.6f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * alpha, Projectile.rotation, Flare.Size() / 2, vec2scale * 0.7f, SpriteEffects.None, 0f);
 
-            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), FetchRainbow(100) * alpha, Projectile.rotation + MathHelper.PiOver4, Flare.Size() / 2, scale * 0.3f + alpha * 0.3f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Flare, Projectile.Center - Main.screenPosition, Flare.Frame(1, 1, 0, 0), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * alpha, Projectile.rotation + MathHelper.PiOver4, Flare.Size() / 2, scale * 0.3f + alpha * 0.3f, SpriteEffects.None, 0f);
 
-            Main.spriteBatch.Draw(Glow, Projectile.Center - Main.screenPosition, Glow.Frame(1, 1, 0, 0), FetchRainbow(100) * alpha, Projectile.rotation + MathHelper.PiOver4, Glow.Size() / 2, scale * 0.3f + alpha * 0.3f, SpriteEffects.None, 0f);
-            Main.spriteBatch.Draw(OuterGlow, Projectile.Center - Main.screenPosition, OuterGlow.Frame(1, 1, 0, 0), FetchRainbow(100) * alpha, Projectile.rotation + MathHelper.PiOver4, OuterGlow.Size() / 2, scale * 0.6f + alpha * 0.6f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(Glow, Projectile.Center - Main.screenPosition, Glow.Frame(1, 1, 0, 0), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * alpha, Projectile.rotation + MathHelper.PiOver4, Glow.Size() / 2, scale * 0.3f + alpha * 0.3f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(OuterGlow, Projectile.Center - Main.screenPosition, OuterGlow.Frame(1, 1, 0, 0), ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) * alpha, Projectile.rotation + MathHelper.PiOver4, OuterGlow.Size() / 2, scale * 0.6f + alpha * 0.6f, SpriteEffects.None, 0f);
 
 
             Main.spriteBatch.End();
@@ -404,22 +384,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             return false;
         }
-
-        //Something something make a helper method for this later
-        public Color FetchRainbow(int offset = 0)
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + offset));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 120 + offset));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 240 + offset));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
-        }
-
     }
 
     public class NewElementalShiftProj : BaseSwingSwordProj
@@ -527,7 +491,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
                 Dust d = Dust.NewDustPerfect(Main.player[Projectile.owner].Center + currentAngle.ToRotationVector2() * Main.rand.NextFloat(60f, 80f), ModContent.DustType<GlowPixelCross>(),
                     currentAngle.ToRotationVector2().RotatedByRandom(0.2f).RotatedBy(MathHelper.PiOver2 * (Projectile.ai[0] > 0 ? 1 : -1)) * -Main.rand.NextFloat(2f, 5f),
-                    newColor: FetchRainbow(100), Scale: 0.2f + Main.rand.NextFloat(-0.1f, 0.1f));
+                    newColor: ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100), Scale: 0.2f + Main.rand.NextFloat(-0.1f, 0.1f));
                 d.scale *= Projectile.scale;
 
                 d.customData = AssignBehavior_GPCBase(rotPower: 0.2f, timeBeforeSlow: 5, preSlowPower: 0.98f, postSlowPower: 0.92f, velToBeginShrink: 1f, fadePower: 0.9f, shouldFadeColor: false);
@@ -641,7 +605,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             float easedGlowIntensity = getProgress(easingProgress) <= 0.5f ? Easings.easeInCirc(glowIntensity) : Easings.easeOutCirc(glowIntensity);
 
-            Color rainbowCol = FetchRainbow(100) with { A = 0 } * easedGlowIntensity;
+            Color rainbowCol = ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100) with { A = 0 } * easedGlowIntensity;
 
             //SwingTex
             if (getProgress(easingProgress) > 0.0f && getProgress(easingProgress) < 0.99f)
@@ -696,7 +660,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
 
             for (int i = 0; i < 5; i++)
             {
-                Dust d = Dust.NewDustPerfect(target.Center, ModContent.DustType<RoaParticle>(), newColor: FetchRainbow(100), Scale: 0.55f + Main.rand.NextFloat(-0.2f, 0.2f));
+                Dust d = Dust.NewDustPerfect(target.Center, ModContent.DustType<RoaParticle>(), newColor: ModContent.GetInstance<Rainbow>().FetchRainbow((float)Main.timeForVisualEffects, 100), Scale: 0.55f + Main.rand.NextFloat(-0.2f, 0.2f));
                 d.velocity = orthToSwing * Main.rand.NextFloat(1f, 5f);
                 d.velocity = d.velocity.RotatedBy(Main.rand.NextFloat(-1.05f, 1.05f));
             }
@@ -741,22 +705,5 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora
             #endregion;
 
         }
-
-        public Color FetchRainbow(int offset = 0)
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + offset));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 120 + offset));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians((float)Main.timeForVisualEffects + 240 + offset));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
-        }
-
     }
-
-
 }

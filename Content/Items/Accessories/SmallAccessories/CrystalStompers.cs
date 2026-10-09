@@ -1,12 +1,6 @@
-using Terraria.Audio;
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
-
-
+using Terraria.Audio;
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {

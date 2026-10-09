@@ -1,13 +1,8 @@
 using System;
 using System.Collections.Generic;
-
 using AerovelenceMod.Content.NPCs.CrystalCaverns;
 using AerovelenceMod.Content.NPCs.TownNPC.BabyCondurtleTownPet;
-
-
 using Terraria.Audio;
-
-
 
 namespace AerovelenceMod.Content.Items.Misc
 {

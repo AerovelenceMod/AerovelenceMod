@@ -1,6 +1,3 @@
-
-
-
 namespace AerovelenceMod.Content.Items.Armor.Vanity
 {
     [AutoloadEquip(EquipType.Head)]

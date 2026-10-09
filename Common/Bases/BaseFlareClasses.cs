@@ -110,7 +110,7 @@ namespace AerovelenceMod.Common.Bases
             Projectile.tileCollide = true;
         }
 
-        float alpha = 0f;
+        public float alpha = 0f;
         public override void AI()
         {
             BaseAILogic();

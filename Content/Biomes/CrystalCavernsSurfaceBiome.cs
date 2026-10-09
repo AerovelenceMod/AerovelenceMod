@@ -1,8 +1,5 @@
 using Terraria.Graphics.Capture;
 using Terraria.Graphics.Effects;
-
-
-
 using AerovelenceMod.Common.Systems;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Furniture;
 

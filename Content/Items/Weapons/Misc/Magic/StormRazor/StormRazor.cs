@@ -1,17 +1,12 @@
-﻿using System;
+﻿/*
+using System;
 using System.Collections.Generic;
 using System.Linq;
-
-
-
-
-
 using Terraria.GameContent;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.DataStructures;
 using AerovelenceMod.Content.Projectiles.Weapons.Magic;
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using Terraria.Graphics.Shaders;
 using Terraria.GameContent.ItemDropRules;
@@ -161,3 +156,4 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Magic.StormRazor
 
 
 }
+*/

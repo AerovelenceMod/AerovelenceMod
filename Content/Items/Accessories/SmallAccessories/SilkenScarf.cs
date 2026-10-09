@@ -1,21 +1,13 @@
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using System.Collections.Generic;
 using System;
 using Terraria.DataStructures;
-
-
-
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
     public class SilkenScarf : TranslatableModItem
     {
         internal const string RibbonTexture = "AerovelenceMod/Content/Items/Accessories/SmallAccessories/SilkenScarf";
-        public override string Texture => "AerovelenceMod/Content/Items/Accessories/SmallAccessories/SilkenScarf";
         private const string EnglishTooltip = "Slightly reduces enemy aggression\nRestores 1 mana each second for each summoned minion\nAn ancient scarf of crystal moth silk, interlaced with crystal fibers\n'The moths refuse to eat it. Apart from the dust, it looks perfectly fine!'";
         public override void SetStaticDefaults()
         {

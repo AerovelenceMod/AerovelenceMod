@@ -62,20 +62,11 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
             SoundStyle style = new SoundStyle("Terraria/Sounds/Item_45") with { Pitch = .75f, PitchVariance = 0.2f };
             SoundEngine.PlaySound(style, Projectile.Center);
 
-            ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
-
             if (Projectile.owner == Main.myPlayer)
             {
                 int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<FireFlareExplosion>(), 0, 0, Main.myPlayer);
                 Main.projectile[a].rotation = Main.rand.NextFloat(6.28f);
                 Main.projectile[a].netUpdate = true;
-            }
-
-            for (int i = 0; i < 3; i++)
-            {
-                Dust p = GlowDustHelper.DrawGlowDustPerfect(target.Center, ModContent.DustType<GlowCircleRise>(),
-                    Main.rand.NextVector2Circular(5, 5), Color.OrangeRed, Main.rand.NextFloat(0.4f, 0.7f), 0.4f, 0f, dustShader);
-                p.alpha = 0;
             }
 
             target.AddBuff(ModContent.BuffType<FlareFire>(), 200);

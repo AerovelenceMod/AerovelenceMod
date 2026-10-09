@@ -1,11 +1,5 @@
-
 using System.Collections.Generic;
 using AerovelenceMod.Common.Globals.SkillStrikes;
-using LocalizedText = Terraria.Localization.LocalizedText;
-
-
-
-
 
 namespace AerovelenceMod.Content.Items.Potions
 {

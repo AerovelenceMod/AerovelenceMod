@@ -1,6 +1,5 @@
 using System;
 
-
 namespace AerovelenceMod.Content.Items.Mounts
 {
     internal static class TumblingRampMotion

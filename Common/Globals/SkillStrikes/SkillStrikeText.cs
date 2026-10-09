@@ -1,14 +1,8 @@
-﻿
-
-
-
-using Terraria.GameContent;
+﻿using Terraria.GameContent;
 using System;
 using ReLogic.Graphics;
 using Microsoft.Extensions.DependencyInjection;
-
 using Terraria.UI.Chat;
-
 
 namespace AerovelenceMod.Content.Dusts.GlowDusts
 {

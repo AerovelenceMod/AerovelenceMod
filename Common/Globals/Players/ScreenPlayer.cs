@@ -4,10 +4,7 @@ using AerovelenceMod.Common.Globals.Worlds;
 using AerovelenceMod.Content.Biomes;
 using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
 using AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler;
-
-
 using Terraria.DataStructures;
-
 
 namespace AerovelenceMod.Common.Globals.Players
 {

@@ -1,10 +1,10 @@
 ﻿using AerovelenceMod.Common.Bases;
-using Terraria.Graphics.Shaders;
-using ReLogic.Content;
-using AerovelenceMod.Content.Dusts.GlowDusts;
-using System;
 using AerovelenceMod.Content.Dusts;
+using AerovelenceMod.Content.Dusts.GlowDusts;
+using ReLogic.Content;
+using System;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 
 namespace AerovelenceMod.Content.Items.Ammo.Flares
 {

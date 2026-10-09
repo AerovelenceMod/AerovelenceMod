@@ -1,10 +1,5 @@
 ﻿using AerovelenceMod.Content.NPCs.Bosses.Cyvercry;
-
-
-
 using Terraria.Audio;
-
-
 
 namespace AerovelenceMod.Content.Items.BossSummons
 {

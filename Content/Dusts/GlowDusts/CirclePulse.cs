@@ -1,11 +1,6 @@
-﻿
-
-
-using System;
-
+﻿using System;
 using ReLogic.Content;
 using System.Collections.Generic;
-
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;

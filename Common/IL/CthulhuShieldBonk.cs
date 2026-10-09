@@ -3,8 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
-
 namespace AerovelenceMod.Common.IL
 {
     public class CthulhuShieldBonk : ModSystem

@@ -1,20 +1,14 @@
 ﻿using AerovelenceMod.Common.Systems;
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Core;
-
-
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
-
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.Graphics;
 using Terraria.Graphics.Shaders;
-
-
 
 namespace AerovelenceMod.Content.Items.Accessories.Boss
 {

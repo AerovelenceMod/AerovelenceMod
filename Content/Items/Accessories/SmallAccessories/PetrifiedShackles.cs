@@ -1,18 +1,11 @@
 using AerovelenceMod.Common.Globals.SkillStrikes;
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
-
-
-
 
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {

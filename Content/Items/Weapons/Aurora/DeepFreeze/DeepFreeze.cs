@@ -1,21 +1,15 @@
 ﻿using System;
-
-
-
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using System.Collections.Generic;
-
-
 using System.Collections.ObjectModel;
 using Terraria.Graphics.Shaders;
 using ReLogic.Content;
-
 using Terraria.Audio;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Globals.SkillStrikes;
 using AerovelenceMod.Common;
-
+using AerovelenceMod.Common.Drawing;
 
 namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 {
@@ -139,10 +133,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
             ProjectileExtensions.KillHeldProjIfPlayerDeadOrStunned(Projectile);
 
             Player Player = Main.player[Projectile.owner];
-            eyeCol = FetchRainbow(timer);
-            bandColors[0] = FetchRainbow((int)(timer * 1.5f));
-            bandColors[1] = FetchRainbow((int)(timer * 2f));
-            bandColors[2] = FetchRainbow((int)(timer * 2.5f));
+            eyeCol = ModContent.GetInstance<Rainbow>().FetchRainbow(timer * 2);
+            bandColors[0] = ModContent.GetInstance<Rainbow>().FetchRainbow((int)(timer * 2 * 1.5f));
+            bandColors[1] = ModContent.GetInstance<Rainbow>().FetchRainbow((int)(timer * 2 * 2f));
+            bandColors[2] = ModContent.GetInstance<Rainbow>().FetchRainbow((int)(timer * 2 * 2.5f));
 
             storedMousePos = Vector2.Lerp(storedMousePos, Projectile.AimWorld(), 0.04f);
 
@@ -323,22 +317,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
             return false;
         }
-
-        public Color FetchRainbow(int timer)
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians(timer * 2));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians(timer * 2 + 120));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians(timer * 2 + 240));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
-        }
-
-
     }
 
 
@@ -388,9 +366,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
     public class AuroraBlast : ModProjectile
     {
+        public override string Texture => "Terraria/Images/Projectile_0";
 
         public List<IcyWind> Wind = new List<IcyWind>();
-        public int timer = 0;
+        public float timer = 0;
         public bool spawnedWind = false;
         float colorIntensity = 1.75f;
         float colorTimeOffset = Main.rand.NextFloat(0, 1000);
@@ -465,10 +444,10 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
         public override bool PreDraw(ref Color lightColor)
         {
-            var Tex = Mod.Assets.Request<Texture2D>("Content/Items/Weapons/Aurora/DeepFreeze/DeepFreezeProj").Value;
+            var Tex = Mod.Assets.Request<Texture2D>("Assets/Smoke/DeepFreezeProj").Value;
 
             Effect myEffect = ModContent.Request<Effect>("AerovelenceMod/Effects/GlowMisc", AssetRequestMode.ImmediateLoad).Value;
-            myEffect.Parameters["uColor"].SetValue(FetchRainbow().ToVector3() * (colorIntensity));
+            myEffect.Parameters["uColor"].SetValue(ModContent.GetInstance<Rainbow>().FetchRainbow(timer, colorTimeOffset).ToVector3() * colorIntensity);
             myEffect.Parameters["uTime"].SetValue(2);
             myEffect.Parameters["uOpacity"].SetValue(0.5f); //0.6
             myEffect.Parameters["uSaturation"].SetValue(1.2f);
@@ -488,20 +467,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
 
             return false;
         }
-        public Color FetchRainbow()
-        {
-            float sin1 = (float)Math.Sin(MathHelper.ToRadians(timer + colorTimeOffset));
-            float sin2 = (float)Math.Sin(MathHelper.ToRadians(timer + colorTimeOffset + 120));
-            float sin3 = (float)Math.Sin(MathHelper.ToRadians(timer + colorTimeOffset + 240));
-            int middle = 180;
-            int length = 75;
-            float r = middle + length * sin1;
-            float g = middle + length * sin2;
-            float b = middle + length * sin3;
-            Color color = new Color((int)r, (int)g, (int)b);
-            return color;
-        }
-
+        
         public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone)
         {
             if (!target.HasBuff<AuroraFire>())
@@ -522,7 +488,7 @@ namespace AerovelenceMod.Content.Items.Weapons.Aurora.DeepFreeze
                 for (int i = 0; i < 9; i++)
                 {
                     //have to make new dustShader everytime so color is different
-                    ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
+                    ArmorShaderData dustShader = Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
 
                     Color c = new Color(
                         (byte)Main.rand.Next(0, 255),

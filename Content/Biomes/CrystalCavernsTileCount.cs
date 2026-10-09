@@ -1,9 +1,6 @@
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
 using System;
-
 using Terraria.Graphics.Capture;
-
 
 namespace AerovelenceMod.Content.Biomes
 {

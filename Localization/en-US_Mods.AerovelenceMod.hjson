@@ -292,6 +292,31 @@ Buffs: {
 		DisplayName: Flare Venom
 		Description: Mods.AerovelenceMod.Buffs.FlareVenom.Description
 	}
+
+	FlareBlue: {
+		DisplayName: Flare Blue
+		Description: Mods.AerovelenceMod.Buffs.FlareBlue.Description
+	}
+
+	FlareCursed: {
+		DisplayName: Flare Cursed
+		Description: Mods.AerovelenceMod.Buffs.FlareCursed.Description
+	}
+
+	FlareRainbow: {
+		DisplayName: Flare Rainbow
+		Description: Mods.AerovelenceMod.Buffs.FlareRainbow.Description
+	}
+
+	FlareShimmer: {
+		DisplayName: Flare Shimmer
+		Description: Mods.AerovelenceMod.Buffs.FlareShimmer.Description
+	}
+
+	FlareSpelunker: {
+		DisplayName: Flare Spelunker
+		Description: Mods.AerovelenceMod.Buffs.FlareSpelunker.Description
+	}
 }
 
 Items: {
@@ -2339,6 +2364,33 @@ Items: {
 		DisplayName: Flare Shark
 		Tooltip: ""
 	}
+
+	Razortooth: {
+		DisplayName: Razortooth
+		Tooltip: Throws a tethered razor that loses damage as it unwinds
+		SkillStrike: "[i:75] Skill Strikes at close range [i:75]"
+	}
+
+	WormWhacker: {
+		DisplayName: Worm Whacker
+		Tooltip:
+			'''
+			1 summon tag damage
+			Every twelfth swing sheds a thrashing worm
+			Charges rapidly with the Repurposed Winch
+			'''
+		SkillStrike: "[i:75] Shed worms latch onto your minions and deal Skill Strikes [i:75]"
+	}
+
+	MagnifiedGlass: {
+		DisplayName: Magnified Glass
+		Tooltip:
+			'''
+			Focuses light into a burning point
+			Only works where there is enough natural light
+			'''
+		SkillStrike: "[i:75] Focusing beams leaves fire that Skill Strikes [i:75]"
+	}
 }
 
 Projectiles: {
@@ -2924,6 +2976,17 @@ Projectiles: {
 	ChloroFlareExplosion.DisplayName: Chloro Flare Explosion
 	VenomFlareExplosion.DisplayName: Venom Flare Explosion
 	OverheatExplosion.DisplayName: Overheat Explosion
+	BlueFlareExplosion.DisplayName: Blue Flare Explosion
+	BlueFlareProj.DisplayName: Blue Flare Proj
+	CursedFlareExplosion.DisplayName: Cursed Flare Explosion
+	CursedFlareProj.DisplayName: Cursed Flare Proj
+	RainbowFlareExplosion.DisplayName: Rainbow Flare Explosion
+	RainbowFlareProj.DisplayName: Rainbow Flare Proj
+	ShimmerFlareExplosion.DisplayName: Shimmer Flare Explosion
+	ShimmerFlareProj.DisplayName: Shimmer Flare Proj
+	SpelunkerFlareExplosion.DisplayName: Spelunker Flare Explosion
+	SpelunkerFlareProj.DisplayName: Spelunker Flare Proj
+	RockCollectorsWhip.DisplayName: Rock Collectors Whip
 }
 
 Configs: {
@@ -4823,6 +4886,8 @@ Text: {
 					ZiplineRopeTile.947CF8E3198BE6E4CB9F66C73CD8FE0F9E18E5C97C49D29E47B99F802662DF9F: Zipline
 				}
 			}
+
+			Items.Weapons.Corruption.WormWhackerTag.CF831B663AF2602E0CF165C20EBE20DD73F59F658259C3E9C89CB8ECD432E303: Minions deal 1 extra damage
 		}
 	}
 }

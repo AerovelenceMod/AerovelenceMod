@@ -1,8 +1,3 @@
-
-
-
-
-
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
     public class BuildersPermit : TranslatableModItem

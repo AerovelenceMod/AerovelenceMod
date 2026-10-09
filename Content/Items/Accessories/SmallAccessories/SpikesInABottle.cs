@@ -1,22 +1,14 @@
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 
-
-
-
 namespace AerovelenceMod.Content.Items.Accessories.SmallAccessories
 {
     public class SpikesInABottle : TranslatableModItem
     {
-        public override string Texture => "AerovelenceMod/Content/Items/Accessories/SmallAccessories/SpikesInABottle";
         private const string EnglishTooltip = "Allows a Cloud-strength double jump that scatters crystal caltrops\nTaking at least 15% of maximum life in one hit scatters more after half a second\nThe retaliation can occur once every 6 seconds\n'Wouldn't work in a balloon...'";
 
         public override void SetStaticDefaults()

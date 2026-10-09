@@ -1,16 +1,9 @@
 using System;
 using System.Collections.Generic;
 using AerovelenceMod.Common.Bases;
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
-
-
 using ReLogic.Content;
-
 using Terraria.Audio;
-
-
 
 namespace AerovelenceMod.Content.Items.Ammo
 {

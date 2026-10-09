@@ -1,8 +1,4 @@
-﻿
-
-
-
-using Terraria.Graphics.Shaders;
+﻿using Terraria.Graphics.Shaders;
 using ReLogic.Content;
 using System.IO;
 using System.Linq;
@@ -10,7 +6,6 @@ using Terraria.Chat;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.Graphics.Effects;
-
 using Terraria.Localization;
 using Terraria.UI;
 using static Terraria.ModLoader.ModContent;

@@ -1,9 +1,4 @@
-﻿
-
-
-
-
-namespace AerovelenceMod.Common.Globals.Players
+﻿namespace AerovelenceMod.Common.Globals.Players
 {
     public class DebuffWorkOnEnemies : GlobalBuff
     {

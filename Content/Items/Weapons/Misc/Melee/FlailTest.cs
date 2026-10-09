@@ -1,19 +1,12 @@
 ﻿using System;
-
-
-
 using Terraria.DataStructures;
 using Terraria.GameContent;
-
 using System.Collections.Generic;
-
-
 using System.Collections.ObjectModel;
 using Terraria.Audio;
 using ReLogic.Content;
 using Terraria.Graphics;
 using AerovelenceMod.Common.Bases;
-
 using Terraria.Graphics.Shaders;
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Common.Globals.SkillStrikes;
@@ -27,12 +20,6 @@ namespace AerovelenceMod.Content.Items.Weapons.Misc.Melee
     public class FlailTest : ModItem
     {
         public override string Texture => "Terraria/Images/Projectile_0";
-
-        public override void SetStaticDefaults()
-        {
-            // DisplayName.SetDefault("Flail Test");
-            // Tooltip.SetDefault("");
-        }
 
         public override void SetDefaults()
         {

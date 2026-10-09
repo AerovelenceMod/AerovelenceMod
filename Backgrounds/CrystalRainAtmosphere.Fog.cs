@@ -1,11 +1,6 @@
 using System;
-
-
 using ReLogic.Content;
-
-
 using Terraria.Graphics.Capture;
-
 
 namespace AerovelenceMod.Backgrounds
 {

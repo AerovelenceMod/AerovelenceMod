@@ -1,10 +1,10 @@
 ﻿using AerovelenceMod.Common.Bases;
-using Terraria.Graphics.Shaders;
-using ReLogic.Content;
-using AerovelenceMod.Content.Dusts.GlowDusts;
-using System;
 using AerovelenceMod.Content.Dusts;
+using AerovelenceMod.Content.Dusts.GlowDusts;
+using ReLogic.Content;
+using System;
 using Terraria.Audio;
+using Terraria.Graphics.Shaders;
 
 namespace AerovelenceMod.Content.Items.Ammo.Flares
 {
@@ -13,8 +13,6 @@ namespace AerovelenceMod.Content.Items.Ammo.Flares
         public int timer = 0;
         public override void SetStaticDefaults()
         {
-            // DisplayName.SetDefault("Frost Fire"); // Buff display name
-            // Description.SetDefault("So cold it burns!"); // Buff description
             Main.debuff[Type] = true;  // Is it a debuff?
             Main.buffNoSave[Type] = true; // Causes this buff not to persist when exiting and rejoining the world
             BuffID.Sets.IsATagBuff[Type] = true;

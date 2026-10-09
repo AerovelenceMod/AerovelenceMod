@@ -1,8 +1,4 @@
-
-
 using ReLogic.Content;
-
-
 
 namespace AerovelenceMod.Common
 {

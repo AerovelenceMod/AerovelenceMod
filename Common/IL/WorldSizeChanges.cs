@@ -1,11 +1,7 @@
-
 using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using System;
-
 using Terraria.GameContent.UI.States;
-
-
 
 namespace AerovelenceMod.ILEditing
 {

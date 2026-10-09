@@ -1,11 +1,6 @@
-
-
 using System.Collections.Generic;
-
 using Terraria.Audio;
 using Terraria.GameContent;
-
-
 using Terraria.DataStructures;
 using System;
 using Terraria.Graphics.Shaders;

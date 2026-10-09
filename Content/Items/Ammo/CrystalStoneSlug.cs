@@ -1,16 +1,9 @@
-
-
 using AerovelenceMod.Content.Dusts.GlowDusts;
 using AerovelenceMod.Content.Tiles.CrystalCaverns.Natural;
-
-
 using System.Collections.Generic;
 using System;
 using Terraria.Audio;
 using Terraria.GameContent;
-
-
-
 
 namespace AerovelenceMod.Content.Items.Ammo
 {
