@@ -181,6 +181,23 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             toReturn = c3 * input * input * input - c1 * input * input;
             return toReturn;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(reverse);
+            writer.Write(blue);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            reverse = reader.ReadBoolean();
+            blue = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class StarParticle
@@ -315,6 +332,23 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Main.spriteBatch.End();
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(PinkTrueBlueFalse);
+            writer.Write(scale);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            PinkTrueBlueFalse = reader.ReadBoolean();
+            scale = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 
@@ -469,6 +503,29 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(intensity);
+            writer.Write(forRoar);
+            writer.Write(pixel);
+            writer.Write(scale);
+            writer.Write(special);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            intensity = reader.ReadSingle();
+            forRoar = reader.ReadBoolean();
+            pixel = reader.ReadBoolean();
+            scale = reader.ReadSingle();
+            special = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 

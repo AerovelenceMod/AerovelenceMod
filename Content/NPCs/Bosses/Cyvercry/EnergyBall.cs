@@ -79,7 +79,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
             int trailVersion = 1;
             if (trailVersion == 1)
             {
-                trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value;
+                trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/spark_07_Black").Value);
                 trail1.trailColor = new Color(78, 225, 245) * 0.75f;
                 trail1.trailPointLimit = 800;
                 trail1.trailWidth = 36;
@@ -93,7 +93,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
             }
             else if (trailVersion == 2)
             {
-                trail1.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value;
+                trail1.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/EnergyTex").Value);
                 trail1.trailColor = Color.White * 1f;
                 trail1.trailPointLimit = 800;
                 trail1.trailWidth = 15;
@@ -106,7 +106,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                 trail1.TrailLogic();
 
                 //Trail2 Info Dump
-                trail2.trailTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value;
+                trail2.trailTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Extra_196_Black").Value);
                 trail2.trailColor = Color.Wheat;
                 trail2.trailPointLimit = 800;
                 trail2.trailWidth = 45;
@@ -115,7 +115,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
                 trail2.pinch = true;
 
                 trail2.gradient = true;
-                trail2.gradientTexture = ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value;
+                trail2.gradientTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>("AerovelenceMod/Assets/Gradients/CyverGrad2").Value);
                 trail2.shouldScrollColor = true;
                 trail2.gradientTime = Projectile.ai[2] * 0.03f;
 
@@ -132,12 +132,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
         {
             SoundEngine.PlaySound(SoundID.Item94 with { Pitch = 0.4f, Volume = 0.35f, PitchVariance = 0.2f }, Projectile.Center);
 
-            int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverRoarPulse>(), 0, 0, Main.myPlayer);
-
-            if (Main.projectile[explo].ModProjectile is CyverRoarPulse crp)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                crp.pixel = true;
-                crp.forRoar = false;
+                int explo = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverRoarPulse>(), 0, 0, Main.myPlayer);
+
+                if (Main.projectile[explo].ModProjectile is CyverRoarPulse crp)
+                {
+                    crp.pixel = true;
+                    crp.forRoar = false;
+                }
+                Main.projectile[explo].netUpdate = true;
             }
 
         }

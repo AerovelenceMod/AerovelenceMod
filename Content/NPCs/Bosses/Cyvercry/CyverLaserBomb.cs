@@ -70,12 +70,18 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                     damage = (cyver.ModNPC as Cyvercry).GetDamage("SplitLaserShard");
 
 
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + offset,
-                    Projectile.rotation.ToRotationVector2() * -0.1f, ModContent.ProjectileType<CyverBeam>(),
-                    Projectile.damage, Projectile.knockBack);
-                Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + offset * -1,
-                    Projectile.rotation.ToRotationVector2() * 0.1f, ModContent.ProjectileType<CyverBeam>(),
-                    Projectile.damage, Projectile.knockBack);
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + offset,
+                        Projectile.rotation.ToRotationVector2() * -0.1f, ModContent.ProjectileType<CyverBeam>(),
+                        Projectile.damage, Projectile.knockBack);
+                }
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center + offset * -1,
+                        Projectile.rotation.ToRotationVector2() * 0.1f, ModContent.ProjectileType<CyverBeam>(),
+                        Projectile.damage, Projectile.knockBack);
+                }
             }
 
             if (timer >= 65 + extraTimeBeforeShoot)
@@ -176,6 +182,31 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Main.spriteBatch.Draw(White, L2pos - Main.screenPosition, White.Frame(1, 1, 0, 0), Color.White * 0.75f * drawAlpha, L2rot, White.Size() / 2, overallScale * 0.9f, SpriteEffects.None, 0f);
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(telegraphLong);
+            writer.Write(longTelegraph);
+            writer.Write(overallScale);
+            writer.Write(CyverIndex);
+            writer.Write(fromSplitLaser);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            telegraphLong = reader.ReadBoolean();
+            longTelegraph = reader.ReadBoolean();
+            overallScale = reader.ReadSingle();
+            CyverIndex = reader.ReadInt32();
+            fromSplitLaser = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
     public class CyverBeam : ModProjectile
@@ -299,6 +330,21 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         {
             extraAngle = input;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
     public class NewCyverBombBeam : ModProjectile
     {
@@ -390,6 +436,25 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             // It will look for collisions on the given line using AABB
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
                 Projectile.Center + unit * 1000, 22, ref point);
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(width);
+            writer.Write(scale);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            width = reader.ReadSingle();
+            scale = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 }

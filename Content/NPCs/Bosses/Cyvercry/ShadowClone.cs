@@ -166,6 +166,23 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             for (int b = 0; b < 20; b++)
                 Dust.NewDust(Projectile.Center, 12, Projectile.height, ModContent.DustType<DashTrailDust>(), Projectile.velocity.X * 0.5f, Projectile.velocity.Y * 0.5f, 0, new Color(0, 255, 255), 1f);
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(dashSpeed);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            dashSpeed = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
     public class ShadowClonePink : ModProjectile
     {
@@ -175,6 +192,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public float dashSpeed = 20;
         public override void SetStaticDefaults()
         {
+            ProjectileID.Sets.NeedsUUID[Type] = true;
             // DisplayName.SetDefault("Shadow Clone");
             ProjectileID.Sets.TrailCacheLength[Projectile.type] = 8;
             ProjectileID.Sets.TrailingMode[Projectile.type] = 0;
@@ -252,6 +270,23 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public void SetGoalPoint(Vector2 input)
         {
             GoalPoint = input;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(dashSpeed);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            dashSpeed = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 }

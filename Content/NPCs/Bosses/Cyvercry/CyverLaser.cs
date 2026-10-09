@@ -121,7 +121,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         {
             if (Projectile.tileCollide == true)
             {
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 5; i++)
                 {
@@ -163,6 +163,33 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         {
             if (damageDelay > 0) return false;
             return true;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(damageDelay);
+            writer.Write(tileCollideDelay);
+            writer.Write(accelerate);
+            writer.Write(accelerateAmount);
+            writer.Write(accelerateTime);
+            writer.Write(teleAhead);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            damageDelay = reader.ReadInt32();
+            tileCollideDelay = reader.ReadInt32();
+            accelerate = reader.ReadBoolean();
+            accelerateAmount = reader.ReadSingle();
+            accelerateTime = reader.ReadSingle();
+            teleAhead = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 

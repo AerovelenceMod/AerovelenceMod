@@ -141,5 +141,38 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry //Change me
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(rotationOffset);
+            writer.Write(stretchLaserAccelTime);
+            writer.Write(stretchLaserAccelStrength);
+            writer.Write(stretchLaserTimeLeft);
+            writer.Write(numberOfLasers);
+            writer.Write(projType);
+            writer.Write(vel);
+            writer.Write(burstFX);
+            writer.Write(projTimeLeft);
+            writer.Write(CyverIndex);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            rotationOffset = reader.ReadSingle();
+            stretchLaserAccelTime = reader.ReadInt32();
+            stretchLaserAccelStrength = reader.ReadSingle();
+            stretchLaserTimeLeft = reader.ReadInt32();
+            numberOfLasers = reader.ReadInt32();
+            projType = reader.ReadInt32();
+            vel = reader.ReadSingle();
+            burstFX = reader.ReadBoolean();
+            projTimeLeft = reader.ReadInt32();
+            CyverIndex = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 }

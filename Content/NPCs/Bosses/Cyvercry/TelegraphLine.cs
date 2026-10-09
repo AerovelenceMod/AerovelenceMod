@@ -23,6 +23,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
         public override void SetStaticDefaults()
         {
+            ProjectileID.Sets.NeedsUUID[Type] = true;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
 
@@ -139,6 +140,41 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, Main.DefaultSamplerState, DepthStencilState.None, RasterizerState.CullCounterClockwise, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(endPoint.X);
+            writer.Write(endPoint.Y);
+            writer.Write(Rotation);
+            writer.Write(sweepTell);
+            writer.Write(sweepDir);
+            writer.Write(rotOffset);
+            writer.Write(custom);
+            writer.Write(timeToLast);
+            writer.Write(timer);
+            writer.Write(NPCTetheredTo?.whoAmI ?? -1);
+            writer.Write(uColorIntensity);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            endPoint = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            Rotation = reader.ReadSingle();
+            sweepTell = reader.ReadBoolean();
+            sweepDir = reader.ReadBoolean();
+            rotOffset = reader.ReadSingle();
+            custom = reader.ReadBoolean();
+            timeToLast = reader.ReadInt32();
+            timer = reader.ReadInt32();
+            int NPCTetheredToIndex = reader.ReadInt32();
+            NPCTetheredTo = (uint)NPCTetheredToIndex < Main.maxNPCs ? Main.npc[NPCTetheredToIndex] : null;
+            uColorIntensity = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 }

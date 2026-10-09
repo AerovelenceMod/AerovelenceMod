@@ -243,6 +243,21 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class PhantomLaserTelegraph : ModProjectile
@@ -300,10 +315,14 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         {
             Projectile.velocity = Vector2.Zero;
 
-            int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PhantomLaser>(), Projectile.damage, 0);
-            if (Main.projectile[a].ModProjectile is PhantomLaser Laser)
+            if (Main.netMode != NetmodeID.MultiplayerClient)
             {
-                Laser.startingPos = startingPos;
+                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<PhantomLaser>(), Projectile.damage, 0);
+                if (Main.projectile[a].ModProjectile is PhantomLaser Laser)
+                {
+                    Laser.startingPos = startingPos;
+                }
+                Main.projectile[a].netUpdate = true;
             }
 
             Projectile.active = false;
@@ -354,6 +373,33 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public override void OnKill(int timeLeft)
         {
 
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(startingPos.X);
+            writer.Write(startingPos.Y);
+            writer.Write(tethered);
+            writer.Write(pulse);
+            writer.Write(NPCTetheredTo?.whoAmI ?? -1);
+            writer.Write(timer);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            startingPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            tethered = reader.ReadBoolean();
+            pulse = reader.ReadBoolean();
+            int NPCTetheredToIndex = reader.ReadInt32();
+            NPCTetheredTo = (uint)NPCTetheredToIndex < Main.maxNPCs ? Main.npc[NPCTetheredToIndex] : null;
+            timer = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 
@@ -497,6 +543,33 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(startingPos.X);
+            writer.Write(startingPos.Y);
+            writer.Write(tethered);
+            writer.Write(pulse);
+            writer.Write(NPCTetheredTo?.whoAmI ?? -1);
+            writer.Write(timer);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            startingPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            tethered = reader.ReadBoolean();
+            pulse = reader.ReadBoolean();
+            int NPCTetheredToIndex = reader.ReadInt32();
+            NPCTetheredTo = (uint)NPCTetheredToIndex < Main.maxNPCs ? Main.npc[NPCTetheredToIndex] : null;
+            timer = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class FinaleBeam : ModProjectile
@@ -602,6 +675,21 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             Main.spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.AlphaBlend, null, null, null, null, Main.GameViewMatrix.TransformationMatrix);
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 }

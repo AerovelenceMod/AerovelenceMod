@@ -147,6 +147,25 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
                 Projectile.Center + Projectile.velocity * 30, 10, ref point);
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(accelerateTime);
+            writer.Write(accelerateStrength);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            accelerateTime = reader.ReadInt32();
+            accelerateStrength = reader.ReadSingle();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class FocusedLaser : ModProjectile
@@ -299,6 +318,31 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(laserWidth);
+            writer.Write(timer);
+            writer.Write(direction);
+            writer.Write(parentIndex);
+            writer.Write(spinDir);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            laserWidth = reader.ReadSingle();
+            timer = reader.ReadInt32();
+            direction = reader.ReadSingle();
+            parentIndex = reader.ReadInt32();
+            spinDir = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class SplittingLaser : ModProjectile
@@ -348,13 +392,17 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
                 NPC cyver = Main.npc[CyverIndex];
                 int damage = (cyver.ModNPC as Cyvercry).GetDamage("SplitLaserShard");
 
-                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverLaserBomb>(), damage, 0);
-                Main.projectile[a].rotation = Projectile.rotation;
+                if (Main.netMode != NetmodeID.MultiplayerClient)
+                {
+                    int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverLaserBomb>(), damage, 0);
+                    Main.projectile[a].rotation = Projectile.rotation;
 
-                (Main.projectile[a].ModProjectile as CyverLaserBomb).CyverIndex = CyverIndex;
-                (Main.projectile[a].ModProjectile as CyverLaserBomb).fromSplitLaser = true;
+                    (Main.projectile[a].ModProjectile as CyverLaserBomb).CyverIndex = CyverIndex;
+                    (Main.projectile[a].ModProjectile as CyverLaserBomb).fromSplitLaser = true;
+                    Main.projectile[a].netUpdate = true;
+                }
 
-                ArmorShaderData dustShader = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 for (int i = 0; i < 360; i += 20)
                 {
@@ -370,7 +418,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             {
                 //My old shader dust system is yucky and stupid so replace this when i redo it
 
-                ArmorShaderData dustShader2 = new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic");
+                ArmorShaderData dustShader2 = (Main.dedServ ? null : new ArmorShaderData(new Ref<Effect>(Mod.Assets.Request<Effect>("Effects/GlowDustShader", AssetRequestMode.ImmediateLoad).Value), "ArmorBasic"));
 
                 int gd = GlowDustHelper.DrawGlowDust(Projectile.position, Projectile.width, Projectile.height, ModContent.DustType<GlowCircleFlare>(),
                     Color.DeepPink, 0.4f + Main.rand.NextFloat(0.15f), 0.55f, 0f, dustShader2);
@@ -441,6 +489,25 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             return Collision.CheckAABBvLineCollision(targetHitbox.TopLeft(), targetHitbox.Size(), Projectile.Center,
                 Projectile.Center + Projectile.velocity * 30, 10, ref point);
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(timer);
+            writer.Write(shotTimer);
+            writer.Write(CyverIndex);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            timer = reader.ReadInt32();
+            shotTimer = reader.ReadInt32();
+            CyverIndex = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class EyeSword : ModProjectile
@@ -448,6 +515,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetStaticDefaults()
         {
+            ProjectileID.Sets.NeedsUUID[Type] = true;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 99999999;
         }
         public override void SetDefaults()
@@ -651,6 +719,54 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
 
             return false;
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(LaserRotation);
+            writer.Write(laserWidth);
+            writer.Write(timer);
+            writer.Write(direction);
+            writer.Write(parentIndex);
+            writer.Write(startCenter.X);
+            writer.Write(startCenter.Y);
+            writer.Write(initialBurst);
+            writer.Write(progress);
+            writer.Write(dash);
+            writer.Write(spinDir);
+            writer.Write(fade);
+            writer.Write(start);
+            writer.Write(easeProg);
+            writer.Write(currentAngle);
+            writer.Write(centerAngle);
+            writer.Write(drawSlash);
+            writer.Write(fadeTimeLeft);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            LaserRotation = reader.ReadSingle();
+            laserWidth = reader.ReadSingle();
+            timer = reader.ReadInt32();
+            direction = reader.ReadSingle();
+            parentIndex = reader.ReadInt32();
+            startCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            initialBurst = reader.ReadSingle();
+            progress = reader.ReadSingle();
+            dash = reader.ReadBoolean();
+            spinDir = reader.ReadBoolean();
+            fade = reader.ReadBoolean();
+            start = reader.ReadBoolean();
+            easeProg = reader.ReadSingle();
+            currentAngle = reader.ReadSingle();
+            centerAngle = reader.ReadSingle();
+            drawSlash = reader.ReadBoolean();
+            fadeTimeLeft = reader.ReadInt32();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
         }
     }
 

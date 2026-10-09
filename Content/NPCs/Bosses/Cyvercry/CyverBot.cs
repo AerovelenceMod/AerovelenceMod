@@ -23,7 +23,11 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
         public bool Leader = false;
 
         //Enum and State beacuse I don't want to redo the drawing code in a different file
-        public int State = (int)Behavior.PrimeLaser;
+        public int State
+        {
+            get => (int)NPC.ai[3];
+            set { NPC.ai[3] = value; NPC.netUpdate = true; }
+        }
         public enum Behavior
         {
             PrimeLaser = 0,
@@ -99,8 +103,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             }
         }
 
-        int timer = 0;
-        int advancer = 0;
+        int timer
+        {
+            get => (int)NPC.ai[0];
+            set => NPC.ai[0] = value;
+        }
+        int advancer
+        {
+            get => (int)NPC.ai[2];
+            set => NPC.ai[2] = value;
+        }
 
         Vector2 GoalPos = Vector2.Zero;
         bool UpTrueDownFalse = false;
@@ -236,20 +248,24 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
                     Vector2 offset = (NPC.rotation + MathHelper.Pi).ToRotationVector2();    //NPC.direction == 1 ? (NPC.rotation + MathHelper.Pi).ToRotationVector2() : NPC.rotation.ToRotationVector2(); 
                     float speedMultiplier = (isFarFromCenter ? 6.5f : 6.5f); //13 : 8
-                    int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset * 20, (NPC.rotation + MathHelper.Pi).ToRotationVector2() * speedMultiplier,
-                        ModContent.ProjectileType<CyverLaser>(), damage, 1);
-
-
-
-                    Main.projectile[a].scale = 0.8f;
-                    Main.projectile[a].timeLeft = 300;
-
-
-                    if (Main.projectile[a].ModProjectile is CyverLaser laser)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        laser.damageDelay = 40;
-                        //Never collide
-                        laser.tileCollideDelay = 400;
+                        int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + offset * 20, (NPC.rotation + MathHelper.Pi).ToRotationVector2() * speedMultiplier,
+                            ModContent.ProjectileType<CyverLaser>(), damage, 1);
+
+
+
+                        Main.projectile[a].scale = 0.8f;
+                        Main.projectile[a].timeLeft = 300;
+
+
+                        if (Main.projectile[a].ModProjectile is CyverLaser laser)
+                        {
+                            laser.damageDelay = 40;
+                            //Never collide
+                            laser.tileCollideDelay = 400;
+                        }
+                        Main.projectile[a].netUpdate = true;
                     }
 
                     //Dust
@@ -575,12 +591,16 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
 
                 for (int i = 0; i < 8; i++)
                 {
-                    int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + NPC.velocity.SafeNormalize(Vector2.UnitX) * 10f, new Vector2(1.2f, 0).RotatedBy(MathHelper.ToRadians(i * 45)), ModContent.ProjectileType<StretchLaser>(), 14, 0);
-                    Main.projectile[a].timeLeft = 400;
-                    if (Main.projectile[a].ModProjectile is StretchLaser laser)
+                    if (Main.netMode != NetmodeID.MultiplayerClient)
                     {
-                        laser.accelerateTime = 150;
-                        laser.accelerateStrength = 1.02f; //1.025
+                        int a = Projectile.NewProjectile(NPC.GetSource_FromAI(), NPC.Center + NPC.velocity.SafeNormalize(Vector2.UnitX) * 10f, new Vector2(1.2f, 0).RotatedBy(MathHelper.ToRadians(i * 45)), ModContent.ProjectileType<StretchLaser>(), 14, 0);
+                        Main.projectile[a].timeLeft = 400;
+                        if (Main.projectile[a].ModProjectile is StretchLaser laser)
+                        {
+                            laser.accelerateTime = 150;
+                            laser.accelerateStrength = 1.02f; //1.025
+                        }
+                        Main.projectile[a].netUpdate = true;
                     }
                 }
             }
@@ -634,6 +654,56 @@ namespace AerovelenceMod.Content.NPCs.Bosses.Cyvercry
             SoundStyle style = new SoundStyle("Terraria/Sounds/NPC_Killed_44") with { Pitch = 0f, PitchVariance = 0, MaxInstances = -1, Volume = 0.1f * volumeMult };
             SoundEngine.PlaySound(style, NPC.Center);
 
+        }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(Leader);
+            writer.Write(GoalPos.X);
+            writer.Write(GoalPos.Y);
+            writer.Write(UpTrueDownFalse);
+            writer.Write(storedCenter.X);
+            writer.Write(storedCenter.Y);
+            writer.Write(ESABallTimer);
+            writer.Write(TrueChaseX);
+            writer.Write(mode);
+            writer.Write(quadrant);
+            writer.Write(shouldHide);
+            writer.Write(newProjPause);
+            writer.Write(ballPauseTime);
+            writer.Write(isExpert);
+            writer.Write(isMaster);
+            writer.Write(isMasterPhase3);
+            writer.Write(volumeMult);
+            writer.Write(rotIntensity);
+            writer.Write(angleToCover);
+            writer.Write(originalVec.X);
+            writer.Write(originalVec.Y);
+            writer.Write(CyverIndex);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            Leader = reader.ReadBoolean();
+            GoalPos = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            UpTrueDownFalse = reader.ReadBoolean();
+            storedCenter = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            ESABallTimer = reader.ReadInt32();
+            TrueChaseX = reader.ReadBoolean();
+            mode = reader.ReadString();
+            quadrant = reader.ReadSingle();
+            shouldHide = reader.ReadBoolean();
+            newProjPause = reader.ReadInt32();
+            ballPauseTime = reader.ReadInt32();
+            isExpert = reader.ReadBoolean();
+            isMaster = reader.ReadBoolean();
+            isMasterPhase3 = reader.ReadBoolean();
+            volumeMult = reader.ReadSingle();
+            rotIntensity = reader.ReadSingle();
+            angleToCover = reader.ReadSingle();
+            originalVec = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            CyverIndex = reader.ReadInt32();
         }
     }
 
