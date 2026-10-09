@@ -21,11 +21,15 @@ using Terraria.IO;
 
 using Terraria.ObjectData;
 using Terraria.WorldBuilding;
+using Terraria.Utilities;
+using LocalizedText = Terraria.Localization.LocalizedText;
 
 namespace AerovelenceMod.Content.Tiles.Citadel;
 
 public class SilkenCacheTile : ModTile
 {
+    internal const int MinHeight = 5;
+    internal const int MaxHeight = 12;
     public override string Texture => "AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CavernChestTile";
     protected virtual bool Container => true;
 
@@ -37,11 +41,24 @@ public class SilkenCacheTile : ModTile
             {
                 data.AnchorBottom = AnchorData.Empty;
                 data.StyleHorizontal = true;
+                data.CoordinatePaddingFix = new Point16(0, (MaxHeight - MinHeight) * 18);
                 data.LavaDeath = data.WaterDeath = false;
                 data.AnchorInvalidTiles = [TileID.MagicalIceBlock, TileID.Sand, TileID.Silt, TileID.Slush];
-                if (!Container) return;
-                data.HookCheckIfCanPlace = new PlacementHook(CheckStorage, -1, 0, true);
-                data.HookPostPlaceMyPlayer = new PlacementHook(Chest.AfterPlacement_Hook, -1, 0, false);
+                if (Container)
+                {
+                    data.HookCheckIfCanPlace = new PlacementHook(CheckStorage, -1, 0, true);
+                    data.HookPostPlaceMyPlayer = new PlacementHook(Chest.AfterPlacement_Hook, -1, 0, false);
+                }
+                int styles = Container ? 1 : 6;
+                for (int style = styles; style < styles * (MaxHeight - MinHeight + 1); style++)
+                {
+                    int height = MinHeight + style / styles;
+                    TileObjectData.newSubTile.CopyFrom(data);
+                    TileObjectData.newSubTile.Height = height;
+                    TileObjectData.newSubTile.CoordinateHeights = Enumerable.Repeat(16, height).ToArray();
+                    TileObjectData.newSubTile.CoordinatePaddingFix = new Point16(0, (MaxHeight - height) * 18);
+                    TileObjectData.addSubTile(style);
+                }
             });
         Main.tileBlockLight[Type] = false;
         Main.tileCut[Type] = !Container;
@@ -67,7 +84,9 @@ public class SilkenCacheTile : ModTile
         int existing = Chest.FindChest(x, y);
         return existing >= 0 && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == type ? existing : Chest.FindEmptyChest(x, y);
     }
-    public static Point Root(int i, int j) => new(i - Main.tile[i, j].TileFrameX % 36 / 18, j - Main.tile[i, j].TileFrameY % 90 / 18);
+    public static Point Root(int i, int j) => new(i - Main.tile[i, j].TileFrameX % 36 / 18, j - Main.tile[i, j].TileFrameY / 18);
+    internal static int Height(Tile tile) => MinHeight + tile.TileFrameX / (tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 36 : 216);
+    internal static int Kind(Tile tile) => tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 0 : tile.TileFrameX / 36 % 6;
     public static bool CanRelease(Point root)
     {
         if (Main.tile[root.X, root.Y].TileType != ModContent.TileType<SilkenCacheTile>()) return true;
@@ -84,12 +103,13 @@ public class SilkenCacheTile : ModTile
     }
     public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) => CanRelease(Root(i, j));
     public override bool Slope(int i, int j) => false;
-    internal static bool InReach(int i, int j)
+    internal static bool InReach(int i, int j) => InReach(Main.LocalPlayer, Root(i, j));
+    internal static bool InReach(Player player, Point root)
     {
-        Point root = Root(i, j);
-        Point player = Main.LocalPlayer.Center.ToTileCoordinates();
-        return Main.LocalPlayer.InInteractionRange(Math.Clamp(player.X, root.X, root.X + 1),
-            Math.Clamp(player.Y, root.Y, root.Y + 4), TileReachCheckSettings.Simple);
+        Point position = player.Center.ToTileCoordinates();
+        int height = Height(Main.tile[root.X, root.Y]);
+        return player.InInteractionRange(Math.Clamp(position.X, root.X, root.X + 1),
+            Math.Clamp(position.Y, root.Y, root.Y + height - 1), TileReachCheckSettings.Simple);
     }
     public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) => InReach(i, j);
     public override bool RightClick(int i, int j)
@@ -118,7 +138,8 @@ public class SilkenCacheTile : ModTile
     public override void KillMultiTile(int i, int j, int frameX, int frameY)
     {
         SilkenCacheMotion.Forget(new Point(i, j));
-        if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, i, j, 2, 5);
+        int height = MinHeight + frameX / (Container ? 36 : 216);
+        if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, i, j, 2, height);
         if (Container)
         {
             if (Main.netMode == NetmodeID.MultiplayerClient) Chest.DestroyChestDirect(i, j, Chest.FindChest(i, j));
@@ -126,15 +147,17 @@ public class SilkenCacheTile : ModTile
             return;
         }
         if (Main.netMode == NetmodeID.MultiplayerClient) return;
-        int kind = frameX / 36;
+        int kind = frameX / 36 % 6;
         var source = new EntitySource_TileBreak(i, j);
-        if (kind == 1) NPC.NewNPC(source, (i + 1) * 16, (j + 4) * 16, ModContent.NPCType<SilkenCacheMoth>());
+        if (kind == 1) NPC.NewNPC(source, (i + 1) * 16, (j + height - 1) * 16, ModContent.NPCType<SilkenCacheMoth>());
+        else if (kind == 5 && !NPC.savedStylist && !NPC.AnyNPCs(NPCID.WebbedStylist) && !NPC.AnyNPCs(NPCID.Stylist))
+            NPC.NewNPC(source, (i + 1) * 16, (j + height - 1) * 16, NPCID.WebbedStylist);
         else if (kind == 2)
         {
-            Item.NewItem(source, i * 16, j * 16 + 48, 32, 32, ItemID.SilverCoin, Main.rand.Next(1, 4));
-            if (Main.rand.NextBool(3)) Item.NewItem(source, i * 16, j * 16 + 48, 32, 32, ItemID.HealingPotion);
+            Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.SilverCoin, Main.rand.Next(1, 4));
+            if (Main.rand.NextBool(3)) Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.HealingPotion);
         }
-        Item.NewItem(source, i * 16, j * 16 + 32, 32, 32, ItemID.Cobweb, Main.rand.Next(1, 4));
+        Item.NewItem(source, i * 16, (j + height - 3) * 16, 32, 32, ItemID.Cobweb, Main.rand.Next(1, 4));
     }
     public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
     {
@@ -161,7 +184,7 @@ public sealed class SilkenCacheAnchor : GlobalTile
     {
         if (!WorldGen.InWorld(i, j + 1)) return false;
         Tile below = Main.tile[i, j + 1];
-        return below.HasTile && SilkenCacheTile.IsCache(below.TileType) && below.TileFrameY % 90 == 0 &&
+        return below.HasTile && SilkenCacheTile.IsCache(below.TileType) && below.TileFrameY == 0 &&
             !SilkenCacheTile.CanRelease(SilkenCacheTile.Root(i, j + 1));
     }
     public override bool CanKillTile(int i, int j, int type, ref bool blockDamaged) => WorldGen.destroyObject || !LockedBelow(i, j);
@@ -184,6 +207,18 @@ public sealed class SilkenCacheMoth : Charger
         NPC.lifeMax = 35; NPC.damage = 12; NPC.value = 0;
     }
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => 0;
+}
+
+public sealed class SilkenCacheStylist : GlobalNPC
+{
+    public override bool AppliesToEntity(NPC entity, bool lateInstantiation) => entity.type == NPCID.WebbedStylist;
+    public override void OnSpawn(NPC npc, IEntitySource source)
+    {
+        if (Main.netMode == NetmodeID.MultiplayerClient || source is not EntitySource_SpawnNPC || NPC.savedStylist) return;
+        SilkenCacheMotion.WebStylist(npc.Center.ToTileCoordinates());
+        npc.active = false;
+        npc.netUpdate = true;
+    }
 }
 
 public sealed class SilkenCocoonWeapon : GlobalItem
@@ -211,10 +246,16 @@ public sealed class SilkenCachePass : GenPass
     public SilkenCachePass() : base("Weaving silken caches", 12) { }
     protected override void ApplyPass(GenerationProgress progress, GameConfiguration configuration)
     {
+        SilkenCitadelWorld.FinishSettlement();
+        progress.Message = SilkenCacheMotion.GenerationMessage.Value;
+        GenerateCitadel();
+        GenerateSpiderNests(progress);
+        progress.Set(1);
+    }
+    private static void GenerateCitadel()
+    {
         Rectangle bounds = SilkenCitadelWorld.Bounds;
         if (bounds.IsEmpty) return;
-        SilkenCitadelWorld.FinishSettlement();
-        progress.Message = "Weaving silken caches";
         int placed = 0, chests = 0, target = Math.Clamp(bounds.Width * bounds.Height / 6000, 16, 65);
         List<Point> anchors = new();
         Rectangle nursery = SilkenCitadelWorld.NestBounds;
@@ -223,56 +264,140 @@ public sealed class SilkenCachePass : GenPass
         {
             Rectangle search = nestCaches < 3 && !nursery.IsEmpty && attempt < target * 100 ? nursery : bounds;
             int x = WorldGen.genRand.Next(search.Left + 10, search.Right - 12), y = WorldGen.genRand.Next(search.Top + 12, search.Bottom - 15);
-            Rectangle space = new(x - 1, y - 1, 4, 7);
-            if (AeroStructure.ProtectedStructures.Any(area => area.Intersects(space)) || anchors.Any(p => Math.Abs(x - p.X) < 12 && Math.Abs(y - p.Y) < 10)) continue;
             if (!WorldGen.SolidTile(x, y - 1) || !WorldGen.SolidTile(x + 1, y - 1)) continue;
             ushort ceiling = Main.tile[x, y - 1].TileType;
             CCTerrainPass terrain = CCTerrainPass.Instance();
             if (ceiling != terrain.StoneTile && ceiling != terrain.DirtTile && ceiling != terrain.ChargedTile && ceiling != terrain.LushTile) continue;
-            if (Enumerable.Range(0, 2).Any(dx => Enumerable.Range(0, 5).Any(dy => (Main.tile[x + dx, y + dy].HasTile && Main.tile[x + dx, y + dy].TileType != TileID.Cobweb) || Main.tile[x + dx, y + dy].LiquidAmount > 0))) continue;
+            int available = Clearance(x, y, 9);
+            if (available < SilkenCacheTile.MinHeight) continue;
+            int height = WorldGen.genRand.Next(SilkenCacheTile.MinHeight, available + 1);
+            Rectangle space = new(x - 1, y - 1, 4, height + 2);
+            if (AeroStructure.ProtectedStructures.Any(area => area.Intersects(space)) || anchors.Any(p => Math.Abs(x - p.X) < 12 && Math.Abs(y - p.Y) < SilkenCacheTile.MaxHeight + 2)) continue;
             int roll = WorldGen.genRand.Next(100), kind = roll < 52 ? 0 : roll < 68 ? 1 : roll < 82 ? 2 : roll < 92 ? 3 : 4;
-            if (!Place(x, y, kind, true)) continue;
+            if (placed == 0) kind = 5;
+            if (!Place(x, y, kind, true, height)) continue;
             placed++; if (kind == 0) chests++;
             if (nursery.Contains(x, y)) nestCaches++;
             anchors.Add(new Point(x, y));
-            new AeroStructure(new Vector2(x - 1, y - 1), 4, 7, "silkencache").ProtectStructure();
+            new AeroStructure(new Vector2(x - 1, y - 1), 4, height + 2, "silkencache").ProtectStructure();
         }
         ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Silken caches placed: {placed}, chests={chests}, cocoons and remnants={placed - chests}.");
     }
-    public static bool Place(int x, int y, int kind, bool loot)
+    private static void GenerateSpiderNests(GenerationProgress progress)
     {
+        HashSet<Point> visited = new();
+        Stack<Point> pending = new();
+        List<Point> ceilings = new();
+        List<Point> anchors = new();
+        Point[] neighbors = [new(-1, 0), new(1, 0), new(0, -1), new(0, 1)];
+        int total = 0;
+        for (int x = 40; x < Main.maxTilesX - 40; x++)
+        {
+            if (x % 100 == 0) progress.Set(.35 + .6 * x / Main.maxTilesX);
+            for (int y = (int)Main.worldSurface; y < Main.UnderworldLayer - 30; y++)
+            {
+                Point start = new(x, y);
+                if (Main.tile[x, y].WallType != WallID.SpiderUnsafe || !visited.Add(start)) continue;
+                ceilings.Clear();
+                pending.Push(start);
+                while (pending.Count > 0)
+                {
+                    Point point = pending.Pop();
+                    if (WorldGen.SolidTile(point.X, point.Y - 1) && WorldGen.SolidTile(point.X + 1, point.Y - 1) &&
+                        Clearance(point.X, point.Y, SilkenCacheTile.MaxHeight) >= SilkenCacheTile.MinHeight)
+                        ceilings.Add(point);
+                    foreach (Point offset in neighbors)
+                    {
+                        Point next = new(point.X + offset.X, point.Y + offset.Y);
+                        if (WorldGen.InWorld(next.X, next.Y, 30) && Main.tile[next.X, next.Y].WallType == WallID.SpiderUnsafe && visited.Add(next))
+                            pending.Push(next);
+                    }
+                }
+                int count = 0, target = Math.Clamp(ceilings.Count / 8, 2, 6);
+                while (ceilings.Count > 0 && count < target)
+                {
+                    int choice = WorldGen.genRand.Next(ceilings.Count);
+                    Point point = ceilings[choice];
+                    ceilings.RemoveAt(choice);
+                    if (anchors.Any(p => Math.Abs(point.X - p.X) < 10 && Math.Abs(point.Y - p.Y) < SilkenCacheTile.MaxHeight + 2)) continue;
+                    int available = Clearance(point.X, point.Y, SilkenCacheTile.MaxHeight);
+                    if (available < SilkenCacheTile.MinHeight) continue;
+                    int height = WorldGen.genRand.Next(Math.Min(7, available), available + 1);
+                    Rectangle space = new(point.X - 1, point.Y - 1, 4, height + 2);
+                    if (AeroStructure.ProtectedStructures.Any(area => area.Intersects(space))) continue;
+                    int roll = WorldGen.genRand.Next(100);
+                    int kind = count == 0 ? 5 : count == 1 ? 0 : roll < 45 ? 0 : roll < 70 ? 2 : roll < 90 ? 3 : 4;
+                    if (!Place(point.X, point.Y, kind, true, height)) continue;
+                    anchors.Add(point);
+                    new AeroStructure(new Vector2(space.X, space.Y), space.Width, space.Height, "spidercache").ProtectStructure();
+                    count++;
+                    total++;
+                }
+            }
+        }
+        ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Spider's Nest silken caches placed: {total}.");
+    }
+    internal static int Clearance(int x, int y, int maximum)
+    {
+        for (int row = 0; row <= maximum; row++)
+            for (int column = -1; column <= 2; column++)
+            {
+                if (!WorldGen.InWorld(x + column, y + row, 2)) return Math.Max(0, row - 1);
+                Tile tile = Main.tile[x + column, y + row];
+                if (tile.LiquidAmount > 0 || tile.HasTile && tile.TileType != TileID.Cobweb) return Math.Max(0, row - 1);
+            }
+        return maximum;
+    }
+    public static bool Place(int x, int y, int kind, bool loot, int height = SilkenCacheTile.MinHeight)
+    {
+        height = Math.Clamp(height, SilkenCacheTile.MinHeight, SilkenCacheTile.MaxHeight);
         int index = kind == 0 ? Chest.CreateChest(x, y) : -1;
         if (kind == 0 && index < 0) return false;
-        Stamp(x, y, kind);
+        Stamp(x, y, kind, height);
         if (kind == 0 && loot)
-            new AeroStructure(new Vector2(x, y), 2, 5, "silkencacheloot").ApplyItemConfigurationsToAll(WorldGen.genRand,
-                CCLoot.CreatePrimaryLootPool(), CCLoot.CreateSecondaryLootPool());
+        {
+            WeightedRandom<PrimaryItemConfiguration> pool = new(WorldGen.genRand);
+            foreach (PrimaryItemConfiguration item in CCLoot.CreatePrimaryLootPool()) pool.Add(item, (int)(item.Weight * 100));
+            ChestConfiguration contents = new();
+            contents.AddPrimaryItemConfiguration(pool.Get());
+            foreach (ItemConfiguration item in CCLoot.CreateSecondaryLootPool()) contents.AddItemConfiguration(item);
+            ChestConfigurator.ApplyConfiguration(x, y, contents);
+        }
         return true;
     }
-    internal static void Stamp(int x, int y, int kind)
+    internal static void Stamp(int x, int y, int kind, int height = SilkenCacheTile.MinHeight)
     {
         ushort type = (ushort)(kind == 0 ? ModContent.TileType<SilkenCacheTile>() : ModContent.TileType<SilkenCocoonTile>());
+        int style = kind == 0 ? height - SilkenCacheTile.MinHeight : kind + (height - SilkenCacheTile.MinHeight) * 6;
         for (int dx = 0; dx < 2; dx++)
-            for (int dy = 0; dy < 5; dy++)
+            for (int dy = 0; dy < height; dy++)
             {
                 Tile tile = Main.tile[x + dx, y + dy]; tile.ResetToType(type);
-                tile.TileFrameX = (short)(kind * 36 + dx * 18); tile.TileFrameY = (short)(dy * 18);
+                tile.TileFrameX = (short)(style * 36 + dx * 18); tile.TileFrameY = (short)(dy * 18);
             }
     }
 }
 
 public sealed class SilkenCacheMotion : ModSystem
 {
+    internal static LocalizedText GenerationMessage { get; private set; }
+    public override void SetStaticDefaults() => GenerationMessage = this.Localize("Weaving silken caches");
     private sealed class Strand
     {
         public readonly List<VerletSegment> Nodes = new();
         public readonly float Phase;
+        public readonly int Height;
+        private readonly float segmentLength;
         public ulong Seen;
         public Strand(Point root)
         {
+            Height = SilkenCacheTile.Height(Main.tile[root.X, root.Y]);
             Phase = ((root.X * 73856093L ^ root.Y * 19349663L) & 1023) / 1024f * MathHelper.TwoPi;
             Vector2 anchor = new(root.X * 16 + 16, root.Y * 16 + 17);
-            for (int n = 0; n < 10; n++) Nodes.Add(new VerletSegment(anchor + new Vector2(0, n * 4.8f)));
+            float length = Height * 16f - 45f;
+            int segments = (int)MathF.Ceiling(length / 4.8f);
+            segmentLength = length / segments;
+            for (int n = 0; n <= segments; n++) Nodes.Add(new VerletSegment(anchor + new Vector2(0, n * segmentLength)));
             Nodes[0].isFixed = true;
         }
         public void Update()
@@ -298,13 +423,53 @@ public sealed class SilkenCacheMotion : ModSystem
                     VerletSegment a = Nodes[n - 1], b = Nodes[n]; Vector2 delta = b.currentPosition - a.currentPosition;
                     float length = delta.Length();
                     if (length < .001f) continue;
-                    Vector2 correction = delta * ((length - 4.8f) / length);
+                    Vector2 correction = delta * ((length - segmentLength) / length);
                     if (a.isFixed) b.currentPosition -= correction;
                     else { a.currentPosition += correction * .5f; b.currentPosition -= correction * .5f; }
                 }
         }
     }
     private static readonly Dictionary<Point, Strand> strands = new();
+    internal static void WebStylist(Point spawn)
+    {
+        Point nearest = Point.Zero, ceiling = Point.Zero;
+        int nearestDistance = int.MaxValue, ceilingDistance = int.MaxValue;
+        int type = ModContent.TileType<SilkenCocoonTile>();
+        for (int x = Math.Max(30, spawn.X - 50); x < Math.Min(Main.maxTilesX - 30, spawn.X + 50); x++)
+            for (int y = Math.Max(30, spawn.Y - 50); y < Math.Min(Main.maxTilesY - 30, spawn.Y + 25); y++)
+            {
+                Tile tile = Main.tile[x, y];
+                int distance = (x - spawn.X) * (x - spawn.X) + (y - spawn.Y) * (y - spawn.Y);
+                if (tile.HasTile && tile.TileType == type && tile.TileFrameY == 0 && tile.TileFrameX % 36 == 0 &&
+                    SilkenCacheTile.Kind(tile) is 3 or 5 && distance < nearestDistance)
+                {
+                    nearest = new Point(x, y);
+                    nearestDistance = distance;
+                }
+                if (tile.WallType == WallID.SpiderUnsafe && distance < ceilingDistance &&
+                    WorldGen.SolidTile(x, y - 1) && WorldGen.SolidTile(x + 1, y - 1) &&
+                    SilkenCachePass.Clearance(x, y, SilkenCacheTile.MaxHeight) >= SilkenCacheTile.MinHeight)
+                {
+                    ceiling = new Point(x, y);
+                    ceilingDistance = distance;
+                }
+            }
+        if (nearest != Point.Zero)
+        {
+            Tile tile = Main.tile[nearest.X, nearest.Y];
+            if (SilkenCacheTile.Kind(tile) == 5) return;
+            int height = SilkenCacheTile.Height(tile);
+            for (int x = 0; x < 2; x++)
+                for (int y = 0; y < height; y++) Main.tile[nearest.X + x, nearest.Y + y].TileFrameX += 36 * 2;
+            Forget(nearest);
+            if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, nearest.X, nearest.Y, 2, height);
+            return;
+        }
+        if (ceiling == Point.Zero) return;
+        int length = Math.Min(9, SilkenCachePass.Clearance(ceiling.X, ceiling.Y, SilkenCacheTile.MaxHeight));
+        SilkenCachePass.Place(ceiling.X, ceiling.Y, 5, false, length);
+        if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, ceiling.X, ceiling.Y, 2, length);
+    }
     internal static void Cut(Rectangle hitbox)
     {
         HashSet<Point> hits = null;
@@ -315,12 +480,12 @@ public sealed class SilkenCacheMotion : ModSystem
                     (hits ??= new()).Add(SilkenCacheTile.Root(x, y));
         foreach (var (root, strand) in strands)
         {
-            if (!hitbox.Intersects(new Rectangle(root.X * 16 - 56, root.Y * 16 - 40, 144, 144))) continue;
+            if (!hitbox.Intersects(new Rectangle(root.X * 16 - 56, root.Y * 16 - 40, 144, strand.Height * 16 + 80))) continue;
             Tile tile = Main.tile[root.X, root.Y];
             if (!tile.HasTile || tile.TileType != type) continue;
-            int end = tile.TileFrameX / 36 == 4 ? 5 : strand.Nodes.Count;
+            int end = SilkenCacheTile.Kind(tile) == 4 ? Math.Max(2, strand.Nodes.Count / 2) : strand.Nodes.Count;
             Vector2 tip = strand.Nodes[end - 1].currentPosition;
-            bool hit = hitbox.Intersects(new Rectangle((int)tip.X - 16, (int)tip.Y - 4, 32, end == 5 ? 14 : 32));
+            bool hit = hitbox.Intersects(new Rectangle((int)tip.X - 18, (int)tip.Y - 10, 36, end < strand.Nodes.Count ? 14 : 40));
             float distance = 0;
             for (int n = 1; n < end && !hit; n++)
                 hit = Collision.CheckAABBvLineCollision(new Vector2(hitbox.X, hitbox.Y), new Vector2(hitbox.Width, hitbox.Height),
@@ -335,18 +500,29 @@ public sealed class SilkenCacheMotion : ModSystem
                 NetMessage.SendData(MessageID.TileManipulation, number: 0, number2: root.X, number3: root.Y);
         }
     }
-    public override void Load() => On_WorldGen.PlaceChestDirect += ReceivePlacement;
+    public override void Load()
+    {
+        On_WorldGen.PlaceChestDirect += ReceivePlacement;
+        On_Player.IsInInteractionRangeToMultiTileHitbox += ChestInReach;
+    }
+    private static bool ChestInReach(On_Player.orig_IsInInteractionRangeToMultiTileHitbox orig, Player player, int x, int y)
+    {
+        if (WorldGen.InWorld(x, y) && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == ModContent.TileType<SilkenCacheTile>())
+            return SilkenCacheTile.InReach(player, SilkenCacheTile.Root(x, y));
+        return orig(player, x, y);
+    }
     private static void ReceivePlacement(On_WorldGen.orig_PlaceChestDirect orig, int x, int y, ushort type, int style, int id)
     {
         if (type != ModContent.TileType<SilkenCacheTile>()) { orig(x, y, type, style, id); return; }
         Chest.CreateChest(x, y, id);
-        SilkenCachePass.Stamp(x, y, 0);
+        SilkenCachePass.Stamp(x, y, 0, Math.Clamp(SilkenCacheTile.MinHeight + style, SilkenCacheTile.MinHeight, SilkenCacheTile.MaxHeight));
     }
     public static void Forget(Point root) => strands.Remove(root);
     public override void ClearWorld() => strands.Clear();
     public override void Unload()
     {
         On_WorldGen.PlaceChestDirect -= ReceivePlacement;
+        On_Player.IsInInteractionRangeToMultiTileHitbox -= ChestInReach;
         strands.Clear();
     }
     public override void PostUpdateInput()
@@ -360,8 +536,13 @@ public sealed class SilkenCacheMotion : ModSystem
             if (!WorldGen.InWorld(root.X, root.Y)) continue;
             Tile tileData = Main.tile[root.X, root.Y];
             if (!tileData.HasTile || Main.GameUpdateCount - strand.Seen > 2) continue;
-            int end = tileData.TileFrameX / 36 == 4 ? 5 : strand.Nodes.Count;
-            bool hit = end == strand.Nodes.Count && Vector2.DistanceSquared(Main.MouseWorld, strand.Nodes[^1].currentPosition + new Vector2(0, 8)) < 18 * 18;
+            int kind = SilkenCacheTile.Kind(tileData);
+            int end = kind == 4 ? Math.Max(2, strand.Nodes.Count / 2) : strand.Nodes.Count;
+            Vector2 tip = strand.Nodes[^1].currentPosition;
+            Vector2 tangent = tip - strand.Nodes[^2].currentPosition;
+            float rotation = MathHelper.Clamp(tangent.ToRotation() - MathHelper.PiOver2 + MathF.Sin(strand.Phase) * .13f, -.6f, .6f);
+            Vector2 local = (Main.MouseWorld - tip).RotatedBy(-rotation) - new Vector2(0, 8);
+            bool hit = end == strand.Nodes.Count && Math.Abs(local.X) < 18f && Math.Abs(local.Y) < (kind == 5 ? 22f : 18f);
             for (int n = 1; n < end && !hit; n++)
             {
                 Vector2 a = strand.Nodes[n - 1].currentPosition;
@@ -395,13 +576,13 @@ public sealed class SilkenCacheMotion : ModSystem
     {
         if (!strands.TryGetValue(root, out Strand strand)) strands[root] = strand = new Strand(root);
         strand.Seen = Main.GameUpdateCount;
-        Tile tile = Main.tile[root.X, root.Y]; int kind = tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 0 : tile.TileFrameX / 36;
+        Tile tile = Main.tile[root.X, root.Y]; int kind = SilkenCacheTile.Kind(tile);
         float time = Main.GlobalTimeWrappedHourly, phase = strand.Phase;
         Vector2 anchor = strand.Nodes[0].currentPosition, tip = strand.Nodes[^1].currentPosition;
         Vector2 tangent = tip - strand.Nodes[^2].currentPosition;
         float rotation = MathHelper.Clamp(tangent.ToRotation() - MathHelper.PiOver2 + MathF.Sin(phase) * .13f, -.6f, .6f);
         Vector2 body = tip + new Vector2(0, 8).RotatedBy(rotation);
-        Color light = Lighting.GetColor(root.X, root.Y + 3);
+        Color light = Lighting.GetColor(body.ToTileCoordinates());
         Color silk = Color.Lerp(light, new Color(214, 211, 241), .16f);
         bool treasure = kind == 0 && Main.LocalPlayer.findTreasure;
         if (treasure) silk = Color.Lerp(silk, new Color(255, 222, 117), .65f);
@@ -435,7 +616,7 @@ public sealed class SilkenCacheMotion : ModSystem
                 Vector2 a = Vector2.Lerp(roots[n], anchor, t), b = Vector2.Lerp(roots[n + 1], anchor, t);
                 Thread(a, (a + b) * .5f + new Vector2(0, 1.7f + .8f * MathF.Sin(time + phase)), b, silk * .3f, 4);
             }
-        int end = kind == 4 ? 5 : strand.Nodes.Count;
+        int end = kind == 4 ? Math.Max(2, strand.Nodes.Count / 2) : strand.Nodes.Count;
         for (int n = 1; n < end; n++)
         {
             Vector2 a = strand.Nodes[n - 1].currentPosition, b = strand.Nodes[n].currentPosition;
@@ -451,7 +632,7 @@ public sealed class SilkenCacheMotion : ModSystem
         }
         if (kind == 4)
         {
-            Vector2 torn = strand.Nodes[4].currentPosition;
+            Vector2 torn = strand.Nodes[end - 1].currentPosition;
             for (int n = 0; n < 4; n++) Thread(torn, torn + new Vector2((n - 1.5f) * 3, 4), torn + new Vector2((n - 1.5f) * 3 + MathF.Sin(time + phase + n) * 2, 8 - n), silk * .45f, 5);
             return;
         }
@@ -462,17 +643,24 @@ public sealed class SilkenCacheMotion : ModSystem
             for (int x = 0; x < 2; x++)
                 for (int y = 0; y < 2; y++)
                 {
-                    Vector2 local = new Vector2(x * 16 - 8, y * 16 - 8) * .74f;
+                    Vector2 local = new(x * 16 - 8, y * 16 - 8);
                     Rectangle source = new(x * 18, frame * 38 + y * 18, 16, 16);
                     if (source.Bottom > chest.Height) source.Y = y * 18;
                     Vector2 position = body + local.RotatedBy(rotation) - offset;
                     if (treasure)
-                        for (int glow = 0; glow < 4; glow++) batch.Draw(chest, position + new Vector2(1.5f, 0).RotatedBy(glow * MathHelper.PiOver2), source, new Color(255, 205, 90, 0) * .7f, rotation, new Vector2(8), .74f, SpriteEffects.None, 0);
-                    batch.Draw(chest, position, source, light, rotation, new Vector2(8), .74f, SpriteEffects.None, 0);
+                        for (int glow = 0; glow < 4; glow++) batch.Draw(chest, position + new Vector2(1.5f, 0).RotatedBy(glow * MathHelper.PiOver2), source, new Color(255, 205, 90, 0) * .7f, rotation, new Vector2(8), 1f, SpriteEffects.None, 0);
+                    batch.Draw(chest, position, source, light, rotation, new Vector2(8), 1f, SpriteEffects.None, 0);
                 }
         }
         else
         {
+            if (kind == 5 && !NPC.savedStylist)
+            {
+                Main.instance.LoadNPC(NPCID.WebbedStylist);
+                Texture2D stylist = TextureAssets.Npc[NPCID.WebbedStylist].Value;
+                Rectangle frame = stylist.Frame(1, Main.npcFrameCount[NPCID.WebbedStylist]);
+                batch.Draw(stylist, body - offset, frame, light, rotation, frame.Size() * .5f, .75f, SpriteEffects.None, 0);
+            }
             if (kind == 1)
             {
                 Texture2D moth = ModContent.Request<Texture2D>("AerovelenceMod/Content/NPCs/CrystalCaverns/Charger").Value;
@@ -497,7 +685,7 @@ public sealed class SilkenCacheMotion : ModSystem
         }
         for (int strandIndex = 0; strandIndex < 17; strandIndex++)
         {
-            float angle = strandIndex / 17f * MathHelper.TwoPi + phase, radius = kind == 0 ? 14 : kind == 3 ? 7 : 10;
+            float angle = strandIndex / 17f * MathHelper.TwoPi + phase, radius = kind == 0 ? 19 : kind == 3 ? 7 : 10;
             Vector2 a = kind == 0 ? tip - new Vector2(0, 7).RotatedBy(rotation) : tip;
             Vector2 b = body + new Vector2(MathF.Sin(angle) * radius, 4 + MathF.Cos(angle) * 6).RotatedBy(rotation);
             Vector2 c = body + new Vector2(MathF.Sin(angle + 1) * 3, 12).RotatedBy(rotation);
@@ -507,7 +695,7 @@ public sealed class SilkenCacheMotion : ModSystem
         }
         for (int n = 0; n < 6; n++)
         {
-            float y = -6 + n * 3, width = kind == 0 ? 11 : 7;
+            float y = -9 + n * 4, width = kind == 0 ? 16 : 7;
             Thread(body + new Vector2(-width, y).RotatedBy(rotation), body + new Vector2(0, y + 4).RotatedBy(rotation), body + new Vector2(width, y + 1).RotatedBy(rotation), silk * .25f, 6);
         }
     }
