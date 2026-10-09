@@ -30,6 +30,10 @@ public class SilkenCacheTile : ModTile
 {
     internal const int MinHeight = 5;
     internal const int MaxHeight = 12;
+    internal const int HeightCount = MaxHeight - MinHeight + 1;
+    private static readonly Action<int, int, int, int, int> DropPot = typeof(WorldGen)
+        .GetMethod("SpawnThingsFromPot", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)
+        .CreateDelegate<Action<int, int, int, int, int>>();
     public override string Texture => "AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CavernChestTile";
     protected virtual bool Container => true;
 
@@ -50,9 +54,9 @@ public class SilkenCacheTile : ModTile
                     data.HookPostPlaceMyPlayer = new PlacementHook(Chest.AfterPlacement_Hook, -1, 0, false);
                 }
                 int styles = Container ? 1 : 6;
-                for (int style = styles; style < styles * (MaxHeight - MinHeight + 1); style++)
+                for (int style = styles; style < styles * HeightCount * 2; style++)
                 {
-                    int height = MinHeight + style / styles;
+                    int height = MinHeight + style / styles % HeightCount;
                     TileObjectData.newSubTile.CopyFrom(data);
                     TileObjectData.newSubTile.Height = height;
                     TileObjectData.newSubTile.CoordinateHeights = Enumerable.Repeat(16, height).ToArray();
@@ -75,7 +79,11 @@ public class SilkenCacheTile : ModTile
         TileID.Sets.DisableSmartCursor[Type] = true;
         TileID.Sets.DoesntGetReplacedWithTileReplacement[Type] = true;
         TileID.Sets.PreventsSandfall[Type] = true;
-        if (Container) RegisterItemDrop(ModContent.ItemType<SilkenCacheItem>());
+        if (Container)
+        {
+            RegisterItemDrop(ModContent.ItemType<SilkenCacheItem>());
+            RegisterItemDrop(ItemID.WebCoveredChest, Enumerable.Range(HeightCount, HeightCount).ToArray());
+        }
     }
 
     public static bool IsCache(int type) => type == ModContent.TileType<SilkenCacheTile>() || type == ModContent.TileType<SilkenCocoonTile>();
@@ -85,7 +93,8 @@ public class SilkenCacheTile : ModTile
         return existing >= 0 && Main.tile[x, y].HasTile && Main.tile[x, y].TileType == type ? existing : Chest.FindEmptyChest(x, y);
     }
     public static Point Root(int i, int j) => new(i - Main.tile[i, j].TileFrameX % 36 / 18, j - Main.tile[i, j].TileFrameY / 18);
-    internal static int Height(Tile tile) => MinHeight + tile.TileFrameX / (tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 36 : 216);
+    internal static int Height(Tile tile) => MinHeight + tile.TileFrameX / (tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 36 : 216) % HeightCount;
+    internal static bool SpiderNest(Tile tile) => tile.TileFrameX / (tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 36 : 216) >= HeightCount;
     internal static int Kind(Tile tile) => tile.TileType == ModContent.TileType<SilkenCacheTile>() ? 0 : tile.TileFrameX / 36 % 6;
     public static bool CanRelease(Point root)
     {
@@ -127,7 +136,7 @@ public class SilkenCacheTile : ModTile
         Main.LocalPlayer.cursorItemIconText = string.Empty;
         Main.LocalPlayer.noThrow = 2;
         Main.LocalPlayer.cursorItemIconEnabled = true;
-        Main.LocalPlayer.cursorItemIconID = Container ? ModContent.ItemType<SilkenCacheItem>() : ItemID.Silk;
+        Main.LocalPlayer.cursorItemIconID = Container ? (SpiderNest(Main.tile[i, j]) ? ItemID.WebCoveredChest : ModContent.ItemType<SilkenCacheItem>()) : ItemID.Silk;
     }
     public override void MouseOverFar(int i, int j)
     {
@@ -138,7 +147,7 @@ public class SilkenCacheTile : ModTile
     public override void KillMultiTile(int i, int j, int frameX, int frameY)
     {
         SilkenCacheMotion.Forget(new Point(i, j));
-        int height = MinHeight + frameX / (Container ? 36 : 216);
+        int height = MinHeight + frameX / (Container ? 36 : 216) % HeightCount;
         if (Main.netMode == NetmodeID.Server) NetMessage.SendTileSquare(-1, i, j, 2, height);
         if (Container)
         {
@@ -154,8 +163,12 @@ public class SilkenCacheTile : ModTile
             NPC.NewNPC(source, (i + 1) * 16, (j + height - 1) * 16, NPCID.WebbedStylist);
         else if (kind == 2)
         {
-            Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.SilverCoin, Main.rand.Next(1, 4));
-            if (Main.rand.NextBool(3)) Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.HealingPotion);
+            if (frameX / 216 >= HeightCount) DropPot(i, j + height - 2, i, j + height - 2, 0);
+            else
+            {
+                Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.SilverCoin, Main.rand.Next(1, 4));
+                if (Main.rand.NextBool(3)) Item.NewItem(source, i * 16, (j + height - 2) * 16, 32, 32, ItemID.HealingPotion);
+            }
         }
         Item.NewItem(source, i * 16, (j + height - 3) * 16, 32, 32, ItemID.Cobweb, Main.rand.Next(1, 4));
     }
@@ -299,10 +312,14 @@ public sealed class SilkenCachePass : GenPass
                 Point start = new(x, y);
                 if (Main.tile[x, y].WallType != WallID.SpiderUnsafe || !visited.Add(start)) continue;
                 ceilings.Clear();
+                int webChest = -1;
                 pending.Push(start);
                 while (pending.Count > 0)
                 {
                     Point point = pending.Pop();
+                    Tile tile = Main.tile[point.X, point.Y];
+                    if (tile.HasTile && tile.TileType == TileID.Containers && tile.TileFrameX == 15 * 36 && tile.TileFrameY == 0)
+                        webChest = Chest.FindChest(point.X, point.Y);
                     if (WorldGen.SolidTile(point.X, point.Y - 1) && WorldGen.SolidTile(point.X + 1, point.Y - 1) &&
                         Clearance(point.X, point.Y, SilkenCacheTile.MaxHeight) >= SilkenCacheTile.MinHeight)
                         ceilings.Add(point);
@@ -326,8 +343,9 @@ public sealed class SilkenCachePass : GenPass
                     Rectangle space = new(point.X - 1, point.Y - 1, 4, height + 2);
                     if (AeroStructure.ProtectedStructures.Any(area => area.Intersects(space))) continue;
                     int roll = WorldGen.genRand.Next(100);
-                    int kind = count == 0 ? 5 : count == 1 ? 0 : roll < 45 ? 0 : roll < 70 ? 2 : roll < 90 ? 3 : 4;
-                    if (!Place(point.X, point.Y, kind, true, height)) continue;
+                    int kind = count == 0 ? 0 : count == 1 ? 5 : roll < 55 ? 2 : roll < 85 ? 3 : 4;
+                    bool placed = kind == 0 ? PlaceWebChest(point.X, point.Y, height, webChest) : Place(point.X, point.Y, kind, true, height);
+                    if (!placed) continue;
                     anchors.Add(point);
                     new AeroStructure(new Vector2(space.X, space.Y), space.Width, space.Height, "spidercache").ProtectStructure();
                     count++;
@@ -336,6 +354,45 @@ public sealed class SilkenCachePass : GenPass
             }
         }
         ModContent.GetInstance<AerovelenceMod>().Logger.Info($"Spider's Nest silken caches placed: {total}.");
+    }
+    private static bool PlaceWebChest(int x, int y, int height, int index)
+    {
+        if (index < 0)
+        {
+            var floor = new (bool Active, ushort Type, SlopeType Slope, bool Half, short X, short Y)[2];
+            for (int column = 0; column < 2; column++)
+            {
+                Tile tile = Main.tile[x + column, y + height];
+                floor[column] = (tile.HasTile, tile.TileType, tile.Slope, tile.IsHalfBlock, tile.TileFrameX, tile.TileFrameY);
+                tile.HasTile = true; tile.TileType = TileID.Stone; tile.Slope = SlopeType.Solid; tile.IsHalfBlock = false;
+            }
+            try
+            {
+                if (!WorldGen.AddBuriedChest(x + 1, y + height - 1, ItemID.WebSlinger, Style: 15)) return false;
+                index = Chest.FindChest(x, y + height - 2);
+            }
+            finally
+            {
+                for (int column = 0; column < 2; column++)
+                {
+                    Tile tile = Main.tile[x + column, y + height];
+                    tile.HasTile = floor[column].Active; tile.TileType = floor[column].Type;
+                    tile.Slope = floor[column].Slope; tile.IsHalfBlock = floor[column].Half;
+                    tile.TileFrameX = floor[column].X; tile.TileFrameY = floor[column].Y;
+                }
+            }
+            if (index < 0) return false;
+        }
+        Chest chest = Main.chest[index];
+        for (int column = 0; column < 2; column++)
+            for (int row = 0; row < 2; row++)
+            {
+                Tile tile = Main.tile[chest.x + column, chest.y + row];
+                tile.HasTile = false;
+            }
+        chest.x = x; chest.y = y;
+        Stamp(x, y, 0, height, true);
+        return true;
     }
     internal static int Clearance(int x, int y, int maximum)
     {
@@ -351,9 +408,11 @@ public sealed class SilkenCachePass : GenPass
     public static bool Place(int x, int y, int kind, bool loot, int height = SilkenCacheTile.MinHeight)
     {
         height = Math.Clamp(height, SilkenCacheTile.MinHeight, SilkenCacheTile.MaxHeight);
+        bool spiderNest = Main.tile[x, y].WallType == WallID.SpiderUnsafe;
+        if (kind == 0 && loot && spiderNest) return PlaceWebChest(x, y, height, -1);
         int index = kind == 0 ? Chest.CreateChest(x, y) : -1;
         if (kind == 0 && index < 0) return false;
-        Stamp(x, y, kind, height);
+        Stamp(x, y, kind, height, spiderNest);
         if (kind == 0 && loot)
         {
             WeightedRandom<PrimaryItemConfiguration> pool = new(WorldGen.genRand);
@@ -365,10 +424,11 @@ public sealed class SilkenCachePass : GenPass
         }
         return true;
     }
-    internal static void Stamp(int x, int y, int kind, int height = SilkenCacheTile.MinHeight)
+    internal static void Stamp(int x, int y, int kind, int height = SilkenCacheTile.MinHeight, bool spiderNest = false)
     {
         ushort type = (ushort)(kind == 0 ? ModContent.TileType<SilkenCacheTile>() : ModContent.TileType<SilkenCocoonTile>());
         int style = kind == 0 ? height - SilkenCacheTile.MinHeight : kind + (height - SilkenCacheTile.MinHeight) * 6;
+        if (spiderNest) style += SilkenCacheTile.HeightCount * (kind == 0 ? 1 : 6);
         for (int dx = 0; dx < 2; dx++)
             for (int dy = 0; dy < height; dy++)
             {
@@ -515,7 +575,7 @@ public sealed class SilkenCacheMotion : ModSystem
     {
         if (type != ModContent.TileType<SilkenCacheTile>()) { orig(x, y, type, style, id); return; }
         Chest.CreateChest(x, y, id);
-        SilkenCachePass.Stamp(x, y, 0, Math.Clamp(SilkenCacheTile.MinHeight + style, SilkenCacheTile.MinHeight, SilkenCacheTile.MaxHeight));
+        SilkenCachePass.Stamp(x, y, 0, SilkenCacheTile.MinHeight + style % SilkenCacheTile.HeightCount, style >= SilkenCacheTile.HeightCount);
     }
     public static void Forget(Point root) => strands.Remove(root);
     public override void ClearWorld() => strands.Clear();
@@ -577,6 +637,7 @@ public sealed class SilkenCacheMotion : ModSystem
         if (!strands.TryGetValue(root, out Strand strand)) strands[root] = strand = new Strand(root);
         strand.Seen = Main.GameUpdateCount;
         Tile tile = Main.tile[root.X, root.Y]; int kind = SilkenCacheTile.Kind(tile);
+        bool spiderNest = SilkenCacheTile.SpiderNest(tile);
         float time = Main.GlobalTimeWrappedHourly, phase = strand.Phase;
         Vector2 anchor = strand.Nodes[0].currentPosition, tip = strand.Nodes[^1].currentPosition;
         Vector2 tangent = tip - strand.Nodes[^2].currentPosition;
@@ -638,13 +699,14 @@ public sealed class SilkenCacheMotion : ModSystem
         }
         if (kind == 0)
         {
-            Texture2D chest = ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CavernChestTile").Value;
+            if (spiderNest) Main.instance.LoadTiles(TileID.Containers);
+            Texture2D chest = spiderNest ? TextureAssets.Tile[TileID.Containers].Value : ModContent.Request<Texture2D>("AerovelenceMod/Content/Tiles/CrystalCaverns/Furniture/CavernChestTile").Value;
             int index = Chest.FindChest(root.X, root.Y), frame = index >= 0 ? Math.Clamp(Main.chest[index].frame, 0, 2) : 0;
             for (int x = 0; x < 2; x++)
                 for (int y = 0; y < 2; y++)
                 {
                     Vector2 local = new(x * 16 - 8, y * 16 - 8);
-                    Rectangle source = new(x * 18, frame * 38 + y * 18, 16, 16);
+                    Rectangle source = new((spiderNest ? 15 * 36 : 0) + x * 18, frame * 38 + y * 18, 16, 16);
                     if (source.Bottom > chest.Height) source.Y = y * 18;
                     Vector2 position = body + local.RotatedBy(rotation) - offset;
                     if (treasure)
@@ -669,17 +731,26 @@ public sealed class SilkenCacheMotion : ModSystem
             }
             if (kind == 2)
             {
-                string texture = ModContent.GetInstance<CavernPot2x2Rubble>().Texture;
-                Texture2D pot = ModContent.Request<Texture2D>(texture).Value;
-                Texture2D glow = ModContent.Request<Texture2D>(texture + "_Glowmask").Value;
-                int style = (root.X * 17 + root.Y) % 9;
+                Texture2D pot, glow = null;
+                if (spiderNest)
+                {
+                    Main.instance.LoadTiles(TileID.Pots);
+                    pot = TextureAssets.Tile[TileID.Pots].Value;
+                }
+                else
+                {
+                    string texture = ModContent.GetInstance<CavernPot2x2Rubble>().Texture;
+                    pot = ModContent.Request<Texture2D>(texture).Value;
+                    glow = ModContent.Request<Texture2D>(texture + "_Glowmask").Value;
+                }
+                int style = (root.X * 17 + root.Y) % (spiderNest ? 3 : 9);
                 for (int x = 0; x < 2; x++)
                     for (int y = 0; y < 2; y++)
                     {
                         Rectangle source = new(style % 3 * 36 + x * 18, style / 3 * 36 + y * 18, 16, 16);
                         Vector2 position = body + (new Vector2(x * 16 - 8, y * 16 - 8) * .65f).RotatedBy(rotation) - offset;
                         batch.Draw(pot, position, source, light, rotation, new Vector2(8), .65f, SpriteEffects.None, 0);
-                        batch.Draw(glow, position, source, Color.White * (.35f + .2f * MathF.Sin(time * .7f + phase)), rotation, new Vector2(8), .65f, SpriteEffects.None, 0);
+                        if (glow != null) batch.Draw(glow, position, source, Color.White * (.35f + .2f * MathF.Sin(time * .7f + phase)), rotation, new Vector2(8), .65f, SpriteEffects.None, 0);
                     }
             }
         }

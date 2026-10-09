@@ -30,6 +30,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
 
                     // If there is floor beneath, 1/7 chance to pick a pot, 6/7 chance to pick a random grounded rubble. If no floor, pick a random hanging rubble.
                     int choice = floor ? (WorldGen.genRand.NextBool(7) ? 6 : WorldGen.genRand.Next(4)) : WorldGen.genRand.Next(3, 6);
+                    if (choice == 6 && Main.tile[x, y].WallType == WallID.SpiderUnsafe) continue;
 
                     if (!floor && !ceiling && !(choice == 3 && (left || right))) continue; // CrystalGrowth can be placed on the side of tiles
 
@@ -88,6 +89,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
             // Remove vanilla rubble
             WorldUtils.Gen(mainPass.Origin, new ModShapes.All(mainPass.TotalBiome), Actions.Chain(new GenAction[]
             {
+                new Modifiers.SkipWalls(WallID.SpiderUnsafe),
                 new Modifiers.OnlyTiles(rubbleRemovalTypes),
                 new Actions.ClearTile()
             }));
@@ -193,7 +195,7 @@ namespace AerovelenceMod.Common.Systems.Generation.CrystalCaverns
                     }
                     int x = WorldGen.genRand.Next(mainPass.Origin.X - mainPass.BiomeWidth / 2, mainPass.Origin.X + mainPass.BiomeWidth / 2);
                     int y = WorldGen.genRand.Next(mainPass.Origin.Y - (int)(mainPass.SurfaceHeight), mainPass.Origin.Y + mainPass.UndergroundHeight);
-                    if (LushReservoirGenerator.Contains(x, y, 3)) continue;
+                    if (LushReservoirGenerator.Contains(x, y, 3) || Main.tile[x, y].WallType == WallID.SpiderUnsafe) continue;
 
                     // Ensure rubble is only placed within the biome
                     // TotalUnderground is relative to the origin, not the world, so subtract the origin
