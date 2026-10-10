@@ -23,7 +23,7 @@ namespace AerovelenceMod.Content.Walls.CrystalCaverns.Natural
     {
         public override void SetDefaults()
         {
-            Item.DefaultToPlaceableWall(ModContent.WallType<CavernStoneWall>());
+            Item.DefaultToPlaceableWall(ModContent.WallType<CavernSandWall>());
         }
     }
 }

@@ -1354,7 +1354,7 @@ Items: {
 	}
 
 	CavernSandWallItem: {
-		DisplayName: Cavern Sand Wall Item
+		DisplayName: Cavern Sand Wall
 		Tooltip: ""
 	}
 
@@ -2077,6 +2077,7 @@ Items: {
 			Right-click to conjure a protective aura
 			'''
 		DisplayName: Evil Lightbulb
+		SkillStrike: "[i:75] Charge the aura with light, then stand inside and shoot to Skill Strike [i:75]"
 	}
 
 	PrismaticAsterItem: {
@@ -2390,6 +2391,28 @@ Items: {
 			Only works where there is enough natural light
 			'''
 		SkillStrike: "[i:75] Focusing beams leaves fire that Skill Strikes [i:75]"
+	}
+
+	JarOfWorms: {
+		DisplayName: Jar of Worms
+		Tooltip: Hold to conjure a jar of worms
+		SkillStrike: "[i:75] Break the jar by slamming it into enemies to Skill Strike [i:75]"
+	}
+
+	PouchOfMagnets: {
+		DisplayName: Pouch of Magnets
+		Tooltip: Throws 2 magnetic stones which can collide and explode
+		SkillStrike: "[i:75] The explosions Skill Strike [i:75]"
+	}
+
+	CharmingFlower: {
+		DisplayName: Charming Flower
+		Tooltip: Grows a branching flower that fires magic bolts
+	}
+
+	JellyfishHat: {
+		DisplayName: Jellyfish Hat
+		Tooltip: ""
 	}
 }
 
@@ -2987,6 +3010,8 @@ Projectiles: {
 	SpelunkerFlareExplosion.DisplayName: Spelunker Flare Explosion
 	SpelunkerFlareProj.DisplayName: Spelunker Flare Proj
 	RockCollectorsWhip.DisplayName: Rock Collectors Whip
+	JellyfishAuraProjectile.DisplayName: Jellyfish Aura Projectile
+	EvilLightbulbHeld.DisplayName: Evil Lightbulb Held
 }
 
 Configs: {
@@ -4885,9 +4910,16 @@ Text: {
 					ZiplinePostTile.643159DB372372544D7B07AC060B4566E42ACFEA94018915EC6D25DBE12FDB8B: Zipline Post
 					ZiplineRopeTile.947CF8E3198BE6E4CB9F66C73CD8FE0F9E18E5C97C49D29E47B99F802662DF9F: Zipline
 				}
+
+				Citadel.SilkenCacheMotion.2A6A5A5CF0C8BD0D934CCCB556CAC671DDE8A608CF6933109B921AAF7E3021C6: Weaving silken caches
 			}
 
-			Items.Weapons.Corruption.WormWhackerTag.CF831B663AF2602E0CF165C20EBE20DD73F59F658259C3E9C89CB8ECD432E303: Minions deal 1 extra damage
+			Items: {
+				Weapons: {
+					Corruption.WormWhackerTag.CF831B663AF2602E0CF165C20EBE20DD73F59F658259C3E9C89CB8ECD432E303: Minions deal 1 extra damage
+					Sky.CharmingFlowerBuff.6CB69E60C62EB9572DD4EE205787C2E97A8858F701A03B4D69DEBC30FD5D022A: Flowers grow from your back and fight for you
+				}
+			}
 		}
 	}
 }
