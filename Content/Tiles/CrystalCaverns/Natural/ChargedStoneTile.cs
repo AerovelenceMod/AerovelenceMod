@@ -72,7 +72,7 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural
                         GlowScale = 0.15f,
                     };
 
-                    TileLightningSystem.LightningLifetimes.Add(newData, lightningLifetimeTicks);
+                    TileLightningSystem.SpawnTileLightning(newData, lightningLifetimeTicks);
                 }
             }
         }
