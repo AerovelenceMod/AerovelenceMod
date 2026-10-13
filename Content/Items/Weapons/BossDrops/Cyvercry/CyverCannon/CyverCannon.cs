@@ -116,8 +116,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 Projectile.active = false;
 
             Vector2 mousePos = Vector2.Zero;
-            if (Projectile.owner == Main.myPlayer)
-                mousePos = Main.MouseWorld;
+            mousePos = Projectile.AimWorld();
 
             float rotDir = (mousePos - Projectile.Center).ToRotation();
 
@@ -151,10 +150,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 else if (timer == 30)
                     shotRot += 0.07f * (burstUp ? 1f : -1f);
 
-                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), storedPosition, shotRot.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(),
-                    Projectile.damage, 0f, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), storedPosition, shotRot.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(),
+                        Projectile.damage, 0f, player.whoAmI);
 
-                Main.projectile[a].scale = 0.4f; //35
+                    Main.projectile[a].scale = 0.4f;
+                    Main.projectile[a].netUpdate = true;
+                } //35
 
                 //Dust
                 for (int i = 0; i < 2 + Main.rand.Next(1, 4); i++)
@@ -182,10 +185,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
                 justShotPower = 1.25f;
                 offset -= 10;
 
-                int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + rotDir.ToRotationVector2() * 38f, rotDir.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(),
-                    (int)(Projectile.damage * 1.5f), 0f, player.whoAmI);
-                Main.projectile[a].scale = 0.8f; //75
-                (Main.projectile[a].ModProjectile as CyverCannonLaser).bigLaser = true;
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int a = Projectile.NewProjectile(Projectile.GetSource_FromAI(), player.Center + rotDir.ToRotationVector2() * 38f, rotDir.ToRotationVector2(), ModContent.ProjectileType<CyverCannonLaser>(),
+                        (int)(Projectile.damage * 1.5f), 0f, player.whoAmI);
+                    Main.projectile[a].scale = 0.8f; //75
+                    (Main.projectile[a].ModProjectile as CyverCannonLaser).bigLaser = true;
+                    Main.projectile[a].netUpdate = true;
+                }
 
                 player.velocity -= Projectile.rotation.ToRotationVector2() * 2f;
 
@@ -495,7 +502,22 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
         public override bool? CanCutTiles() => false;
 
 
-        public Projectile laser = null;
+        private int laserOwner = -1;
+        private int laserIdentity = -1;
+        private Projectile laser
+        {
+            get
+            {
+                int index = (uint)laserOwner <= Main.maxPlayers && (uint)laserIdentity < Main.maxProjectiles
+                    ? Projectile.GetByUUID(laserOwner, laserIdentity) : -1;
+                return (uint)index < Main.maxProjectiles && Main.projectile[index].active ? Main.projectile[index] : null;
+            }
+            set
+            {
+                laserOwner = value?.owner ?? -1;
+                laserIdentity = value?.identity ?? -1;
+            }
+        }
 
         int timeBetweenFrames = 5;
 
@@ -528,14 +550,18 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             Projectile.timeLeft = 2;
 
             float lerpValue = (shootingLaser ? 0.02f : 0.13f); //015 | 13
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, player.DirectionTo(Main.MouseWorld), lerpValue);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, player.DirectionTo(Projectile.AimWorld()), lerpValue);
 
             if (timer == 90)
             {
-                int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverCannonHyperBeam>(),
-                    Projectile.damage, Projectile.knockBack, player.whoAmI);
+                if (Projectile.owner == Main.myPlayer)
+                {
+                    int proj = Projectile.NewProjectile(Projectile.GetSource_FromAI(), Projectile.Center, Vector2.Zero, ModContent.ProjectileType<CyverCannonHyperBeam>(),
+                        Projectile.damage, Projectile.knockBack, player.whoAmI);
 
-                laser = Main.projectile[proj];
+                    laser = Main.projectile[proj];
+                    Main.projectile[proj].netUpdate = true;
+                }
                 shootingLaser = true;
 
                 Main.player[player.whoAmI].GetModPlayer<CyverCannonPlayer>().barProgress = 0f;
@@ -559,7 +585,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
             if (timer == 150)
             {
                 Projectile.active = false;
-                laser.active = false;
+                if (laser != null) laser.active = false;
             }
 
             justShotPower = Math.Clamp(MathHelper.Lerp(justShotPower, -0.5f, 0.08f), 0f, 1f);
@@ -638,6 +664,27 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
 
             return false;
         }
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(laserOwner);
+            writer.Write(laserIdentity);
+            writer.Write(timer);
+            writer.Write(shootingLaser);
+            writer.Write(Projectile.rotation);
+            writer.Write(Projectile.scale);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            laserOwner = reader.ReadInt32();
+            laserIdentity = reader.ReadInt32();
+            timer = reader.ReadInt32();
+            shootingLaser = reader.ReadBoolean();
+            Projectile.rotation = reader.ReadSingle();
+            Projectile.scale = reader.ReadSingle();
+        }
     }
 
     public class CyverCannonHyperBeam : ModProjectile
@@ -645,6 +692,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.CyverCannon
         public override string Texture => "Terraria/Images/Projectile_0";
         public override void SetStaticDefaults()
         {
+            ProjectileID.Sets.NeedsUUID[Type] = true;
             ProjectileID.Sets.DrawScreenCheckFluff[Projectile.type] = 7500;
         }
         public override void SetDefaults()

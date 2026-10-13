@@ -173,8 +173,11 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
                 {
                     Vector2 toTarget = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitX);
 
-                    int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotateRandom(0.1f * 0f) * 6f, ProjectileID.PurpleLaser, 10, 1, Projectile.owner);
-                    Main.projectile[laser].scale *= 1f;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotateRandom(0.1f * 0f) * 6f, ProjectileID.PurpleLaser, 10, 1, Projectile.owner);
+                        Main.projectile[laser].scale *= 1f;
+                    }
                     //Main.projectile[laser].penetrate = 1;
 
                     //Recoil
@@ -336,13 +339,19 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
                     float offRot = (MathHelper.TwoPi / 3);
 
-                    int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
-                    int laser2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(-offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
-                    int laser3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget * 4f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                        int laser2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(-offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                        int laser3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget * 4f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
 
-                    Main.projectile[laser].scale *= 0.65f;
-                    Main.projectile[laser2].scale *= 0.65f;
-                    Main.projectile[laser3].scale *= 1f;
+                        Main.projectile[laser].scale *= 0.65f;
+                        Main.projectile[laser].netUpdate = true;
+                        Main.projectile[laser2].scale *= 0.65f;
+                        Main.projectile[laser2].netUpdate = true;
+                        Main.projectile[laser3].scale *= 1f;
+                        Main.projectile[laser3].netUpdate = true;
+                    }
 
                     //Recoil
                     Projectile.velocity += toTarget * -14f;

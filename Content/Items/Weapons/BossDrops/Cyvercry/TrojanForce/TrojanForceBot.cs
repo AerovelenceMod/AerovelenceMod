@@ -51,7 +51,13 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             Glitching
         }
 
-        State currentState = State.TriangleLaser;
+        State currentState
+        {
+            get => (State)Projectile.ai[0];
+            set => Projectile.ai[0] = (float)value;
+        }
+
+        public override void OnSpawn(IEntitySource source) => currentState = State.TriangleLaser;
 
         //How blue the colors should be 0f = pink, 1f = blue
         float dashColorProgress = 0f;
@@ -60,13 +66,22 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
         float justShotPower = 0f;
 
-        int timer = 0;
-        int substateTimer = 0;
+        int timer
+        {
+            get => (int)Projectile.ai[1];
+            set => Projectile.ai[1] = value;
+        }
+        int substateTimer
+        {
+            get => (int)Projectile.ai[2];
+            set => Projectile.ai[2] = value;
+        }
 
         float overallScale = 1f;
         float overallAlpha = 1f;
         public override void AI()
         {
+            State previousState = currentState;
             FindTarget();
 
             //currentState = State.Idle;
@@ -130,6 +145,8 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             else
                 dashColorProgress = Math.Clamp(MathHelper.Lerp(dashColorProgress, -0.5f, 0.1f), 0f, 1f);
 
+            if (previousState != currentState && Projectile.owner == Main.myPlayer)
+                Projectile.netUpdate = true;
             timer++;
         }
 
@@ -139,7 +156,14 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             substateTimer++;
         }
 
-        Vector2 orbitVector = Main.rand.NextVector2CircularEdge(200f, 200f);
+        Vector2 orbitVector = Vector2.Zero;
+        private void ChooseOrbit(float radius)
+        {
+            if (Projectile.owner != Main.myPlayer) return;
+            orbitVector = Main.rand.NextVector2CircularEdge(radius, radius);
+            Projectile.netUpdate = true;
+        }
+
         public void TriangleLaser()
         {
             if (!FindTarget())
@@ -151,7 +175,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             if (substateTimer < timeBeforeShot)
             {
                 if (substateTimer == 0)
-                    orbitVector = Main.rand.NextVector2CircularEdge(200f, 200f);
+                    ChooseOrbit(200f);
 
                 //Move to target
                 Vector2 goalPos = target.Center + orbitVector;
@@ -168,8 +192,11 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
                 {
                     Vector2 toTarget = (target.Center - Projectile.Center).SafeNormalize(Vector2.UnitX);
 
-                    int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotateRandom(0.1f * 0f) * 6f, ProjectileID.PurpleLaser, 10, 1, Projectile.owner);
-                    Main.projectile[laser].scale *= 1f;
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotateRandom(0.1f * 0f) * 6f, ProjectileID.PurpleLaser, 10, 1, Projectile.owner);
+                        Main.projectile[laser].scale *= 1f;
+                    }
                     //Main.projectile[laser].penetrate = 1;
 
                     //Recoil
@@ -294,7 +321,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             else if (substateTimer == timeBeforeDash + timeAfterDash)
             {
                 currentState = State.TriangleLaser;// Main.rand.NextBool(2) ? State.Orb : State.TriangleLaser;
-                orbitVector = Main.rand.NextVector2CircularEdge(200f, 200f);
+                ChooseOrbit(200f);
                 isDashing = false;
 
                 substateTimer = -1;
@@ -313,7 +340,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
             if (substateTimer < timeBeforeShot)
             {
                 if (substateTimer == 0)
-                    orbitVector = Main.rand.NextVector2CircularEdge(280f, 280f);
+                    ChooseOrbit(280f);
 
                 //Move to target
                 Vector2 goalPos = target.Center + orbitVector;
@@ -335,13 +362,19 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
                     float offRot = (MathHelper.TwoPi / 3);
 
-                    int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
-                    int laser2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(-offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
-                    int laser3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget * 4f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                    if (Projectile.owner == Main.myPlayer)
+                    {
+                        int laser = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                        int laser2 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget.RotatedBy(-offRot) * 6f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
+                        int laser3 = Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, toTarget * 4f, ModContent.ProjectileType<TrojanForceEnergyBall>(), 10, 1, Projectile.owner);
 
-                    Main.projectile[laser].scale *= 0.65f;
-                    Main.projectile[laser2].scale *= 0.65f;
-                    Main.projectile[laser3].scale *= 1f;
+                        Main.projectile[laser].scale *= 0.65f;
+                        Main.projectile[laser].netUpdate = true;
+                        Main.projectile[laser2].scale *= 0.65f;
+                        Main.projectile[laser2].netUpdate = true;
+                        Main.projectile[laser3].scale *= 1f;
+                        Main.projectile[laser3].netUpdate = true;
+                    }
 
                     //Recoil
                     Projectile.velocity += toTarget * -14f;
@@ -417,7 +450,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
         {
             //Every 90 frames, choose a random new location around player and try to move there
             if (substateTimer % 40 == 0)
-                orbitVector = Main.rand.NextVector2CircularEdge(70f, 70f);
+                ChooseOrbit(70f);
 
             Vector2 goalPos = Owner.Center + orbitVector + new Vector2(0f, -40f);
 
@@ -567,6 +600,25 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
         }
 
 
+        public override void SendExtraAI(System.IO.BinaryWriter writer)
+        {
+            base.SendExtraAI(writer);
+            writer.Write(orbitVector.X);
+            writer.Write(orbitVector.Y);
+            writer.Write(isDashing);
+            writer.Write(target?.whoAmI ?? -1);
+            writer.Write(Projectile.rotation);
+        }
+
+        public override void ReceiveExtraAI(System.IO.BinaryReader reader)
+        {
+            base.ReceiveExtraAI(reader);
+            orbitVector = new Vector2(reader.ReadSingle(), reader.ReadSingle());
+            isDashing = reader.ReadBoolean();
+            int targetIndex = reader.ReadInt32();
+            target = (uint)targetIndex < Main.maxNPCs ? Main.npc[targetIndex] : null;
+            Projectile.rotation = reader.ReadSingle();
+        }
     }
 
     public class TrojanForceEnergyBall : ModProjectile
@@ -881,8 +933,7 @@ namespace AerovelenceMod.Content.Items.Weapons.BossDrops.Cyvercry.TrojanForce
 
                 Vector2 mousePos = Vector2.Zero;
 
-                if (Main.myPlayer == Projectile.owner)
-                    mousePos = Main.MouseWorld;
+                mousePos = Projectile.AimWorld();
 
                 Vector2 toMouse = (mousePos - Projectile.Center).SafeNormalize(Vector2.UnitX);
                 toMouse *= turnPower;
