@@ -206,6 +206,11 @@ public sealed class LightningStrokeRenderer : IDisposable
 
     public void Dispose()
     {
+        if (!Program.IsMainThread)
+        {
+            Main.QueueMainThreadAction(Dispose);
+            return;
+        }
         texture?.Dispose();
         texture = null;
         pixels = null;
