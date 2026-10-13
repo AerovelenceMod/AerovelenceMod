@@ -22,6 +22,11 @@ namespace AerovelenceMod.Common.Utilities
 
     public static class CommonTileHelper
     {
+        public static Rectangle VerticalBeamFrame(int variation)
+        {
+            const int centerFrameX = 90, frameStride = 18, frameSize = 16, lastVariation = 2;
+            return new(centerFrameX, Math.Clamp(variation, 0, lastVariation) * frameStride, frameSize, frameSize);
+        }
         public static void SetMergeGroup(ModTile modTile, bool CrystalCaverns = false)
         {
             if (CrystalCaverns)
