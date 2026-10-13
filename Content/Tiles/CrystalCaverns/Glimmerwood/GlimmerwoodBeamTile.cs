@@ -15,8 +15,8 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Glimmerwood
         public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
         {
             if (!WorldGen.InWorld(i, j, 2)) return;
-            bool trackBelow = Main.tile[i, j + 1].HasTile && Main.tile[i, j + 1].TileType == TileID.MinecartTrack;
-            bool trackAbove = Main.tile[i, j - 1].HasTile && Main.tile[i, j - 1].TileType == TileID.MinecartTrack &&
+            bool trackBelow = MinecartTrackUtils.IsTrack(Main.tile[i, j + 1]);
+            bool trackAbove = MinecartTrackUtils.IsTrack(Main.tile[i, j - 1]) &&
                 Main.tile[i, j - 2].HasTile && Main.tile[i, j - 2].TileType == Type;
             if (!(trackBelow && Connected(i, j - 1) || trackAbove && Connected(i, j + 1))) return;
             Rectangle frame = CommonTileHelper.VerticalBeamFrame(Main.tile[i, j].TileFrameNumber);
