@@ -5,7 +5,12 @@ namespace AerovelenceMod.Common.Systems
 {
     public class TileLightningSystem : ModSystem
     {
-        public static Dictionary<LightningData, int> LightningLifetimes = new();
+        private static Dictionary<LightningData, int> LightningLifetimes = new();
+
+        public static void SpawnTileLightning(LightningData lightningData, int lifetimeTicks)
+        {
+            LightningLifetimes.Add(lightningData, lifetimeTicks);
+        }
 
         public override void PostUpdateEverything()
         {

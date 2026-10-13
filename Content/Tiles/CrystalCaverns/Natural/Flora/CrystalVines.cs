@@ -1,16 +1,17 @@
-using Terraria.Audio;
-
-
-
-
-
-using Terraria.GameContent.Drawing;
+using AerovelenceMod.Common.Bases;
+using AerovelenceMod.Common.Systems;
+using ReLogic.Content;
+using System;
+using Terraria.GameContent.RGB;
+using static AerovelenceMod.Common.Systems.GlowVineSystem;
 
 namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
 {
-    public class CrystalVines : ModTile
+    public class CrystalVines : BaseGlowVine
     {
-        public override void SetStaticDefaults()
+        private Asset<Texture2D> glowTexture;
+
+        public override void SetStaticDefaultsBase()
         {
             Main.tileCut[Type] = true;
             Main.tileBlockLight[Type] = true;
@@ -24,16 +25,9 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             AddMapEntry(new Color(100, 125, 255));
 
             HitSound = SoundID.Grass;
-            DustType = 116;
-        }
+            DustType = DustID.Skyware;
 
-        public override void KillMultiTile(int i, int j, int frameX, int frameY)
-        {
-            Tile tile = Framing.GetTileSafely(i, j + 1);
-            if (tile.HasTile && tile.TileType == Type)
-            {
-                WorldGen.KillTile(i, j + 1);
-            }
+            glowTexture = (Main.dedServ ? null : ModContent.Request<Texture2D>(Texture));
         }
 
         public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak)
@@ -96,10 +90,11 @@ namespace AerovelenceMod.Content.Tiles.CrystalCaverns.Natural.Flora
             b = 0.200f;
         }
 
-        public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
+        public override GlowVineData GetGlowVineData(int x, int y)
         {
-            Main.instance.TilesRenderer.CrawlToTopOfVineAndAddSpecialPoint(j, i);
-            return false;
+            return new GlowVineData(
+                glowTexture.Value,
+                Color.White * MathHelper.Lerp(0.1f, 0.7f, (float)Math.Pow(Math.Sin(NoiseHelper.GetDynamicNoise(new Vector2(x * 0.02f, y * 0.02f), Main.GlobalTimeWrappedHourly * 0.25f)), 2)));
         }
     }
 }
