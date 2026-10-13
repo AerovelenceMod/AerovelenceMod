@@ -97,9 +97,7 @@ namespace AerovelenceMod.Content.NPCs.Bosses.CrystalTumbler
                     upper[i] = position + normal * 52f;
                     lower[i] = position + normal * 68f;
                 }
-                TumblerLightningSystem.DrawPath([upper[0], lower[2], upper[4]], TumblerVFX.PhaseColor(0f), strength * 0.35f, 1f, false);
-                TumblerLightningSystem.DrawPath(upper, TumblerVFX.PhaseColor(1f), strength * 0.9f, 3f);
-                TumblerLightningSystem.DrawPath(lower, TumblerVFX.PhaseColor(0f), strength * 0.45f, 1.5f);
+                RailDrawUtils.Draw(upper, lower, TumblerVFX.PhaseColor(0f), TumblerVFX.PhaseColor(1f), strength);
                 if (supports && section % 6 == 3)
                 {
                     Vector2 anchor = new(lower[2].X, ArenaData.FloorY);
