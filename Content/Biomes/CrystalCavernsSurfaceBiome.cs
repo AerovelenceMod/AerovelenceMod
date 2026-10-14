@@ -16,7 +16,7 @@ namespace AerovelenceMod.Content.Biomes
             : (Main.raining
                 ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalRain")
                 : (Main.dayTime
-                    ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFields")
+                    ? MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFieldsDay")
                     : MusicLoader.GetMusicSlot(Mod, "Sounds/Music/CrystalFieldsNight")));
 
         public override SceneEffectPriority Priority => SceneEffectPriority.BiomeHigh; //default behavior is BiomeLow.
